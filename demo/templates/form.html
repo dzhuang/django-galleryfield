@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    {{ form.media }}
+    {% crispy form %}
+{% endblock %}
+
+{% block back_staff %}
+{% endblock %}

@@ -1,0 +1,73 @@
+{% load static i18n %}
+{% templatetag openbrace %}% for (var i=0, file; file=o.files[i]; i++) { %{% templatetag closebrace %}
+
+    <tr class="template-download fade">
+
+        {% block JS_DOWNLOAD_TEMPLATE_PREVIEW %}
+        <td>
+            <span class="preview">
+                {% templatetag openbrace %}% if (file.thumbnailUrl) { %{% templatetag closebrace %}
+                    <a href="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
+                     title="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
+                     download="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
+                     data-gallery><img src="{% templatetag openbrace %}%=file.thumbnailUrl%{% templatetag closebrace %}"
+                    ></a>
+                {% templatetag openbrace %}% } %{% templatetag closebrace %}
+            </span>
+        </td>
+        {% endblock %}
+
+        {% block JS_DOWNLOAD_TEMPLATE_DOWNLOAD %}
+        <td>
+            <p class="name">
+                {% templatetag openbrace %}% if (file.url) { %{% templatetag closebrace %}
+                    <a href="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
+                     title="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
+                     download="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
+                     {% templatetag openbrace %}%=file.thumbnailUrl?'data-gallery':''%{% templatetag closebrace %}>
+                     {% templatetag openbrace %}%=file.name%{% templatetag closebrace %}
+                    </a>
+                {% templatetag openbrace %}% } else { %{% templatetag closebrace %}
+                    <span>{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}</span>
+                {% templatetag openbrace %}% } %{% templatetag closebrace %}
+            </p>
+
+            {% block JS_DOWNLOAD_TEMPLATE_ERROR %}
+                {% templatetag openbrace %}% if (file.error) { %{% templatetag closebrace %}
+                    <div><span class="label label-danger">Error</span> {% templatetag openbrace %}%=file.error%{% templatetag closebrace %}</div>
+                {% templatetag openbrace %}% } %{% templatetag closebrace %}
+            {% endblock %}
+
+        </td>
+        {% endblock %}
+
+        {% block JS_DOWNLOAD_TEMPLATE_FSIZE %}
+        <td>
+            <span class="size">{% templatetag openbrace %}%=o.formatFileSize(file.size)%{% templatetag closebrace %}</span>
+        </td>
+        {% endblock %}
+
+        {% block JS_DOWNLOAD_TEMPLATE_DELETE %}
+        <td>
+            {% templatetag openbrace %}% if (file.deleteUrl) { %{% templatetag closebrace %}
+                <button class="btn btn-danger delete {% if uploader_disabled %} hidden disabled {% endif %}"
+                        data-type="{% templatetag openbrace %}%=file.deleteType%{% templatetag closebrace %}"
+                        data-data='{"csrfmiddlewaretoken": "{% templatetag openbrace %}% print(get_cookie("csrftoken")); %{% templatetag closebrace %}" }'
+                        data-url="{% templatetag openbrace %}%=file.deleteUrl%{% templatetag closebrace %}"
+                        {% templatetag openbrace %}% if (file.deleteWithCredentials) { %}
+                            data-xhr-fields='{"withCredentials":true}'{% }
+                        %{% templatetag closebrace %}>
+                    <i class="glyphicon glyphicon-trash"></i>
+                    <span>{% trans "Delete" %}</span>
+                </button>
+                <input type="checkbox" value="1" class="toggle {% if uploader_disabled %} hidden disabled {% endif %}">
+            {% templatetag openbrace %}% } else { %{% templatetag closebrace %}
+                <button class="btn btn-warning cancel {% if uploader_disabled %} hidden disabled {% endif %}">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>{% trans "Cancel" %}</span>
+                </button>
+            {% templatetag openbrace %}% } %{% templatetag closebrace %}
+        </td>
+        {% endblock %}
+    </tr>
+{% templatetag openbrace %}% } %{% templatetag closebrace %}

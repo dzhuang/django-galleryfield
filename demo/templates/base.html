@@ -1,0 +1,40 @@
+{% load static i18n %}
+
+<html>
+<head>
+
+    <title>Django Gallery</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+        body {
+            padding-top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="https://github.com/dzhuang/django-gallery-widget">Django-Gallery-widget</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    {% if form_description %}<h1>{{ form_description }}</h1>{% endif %}
+    <div class="hero-unit">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</div>
+</body>
+</html>

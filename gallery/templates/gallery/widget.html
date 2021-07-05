@@ -1,0 +1,283 @@
+{% load static i18n %}
+
+{% block CSS_HTML5_SHIM %}
+
+    {% comment %}
+     Shim to make HTML5 elements usable in older Internet Explorer versions
+    {% endcomment %}
+
+    <!--[if lt IE 9]>
+        <script src="{% static 'js/html5shiv.min.js' %}"></script>
+    <![endif]-->
+
+{% endblock %}
+
+{% block CSS_EXTRA %}
+{% endblock %}
+
+
+{% block UPLOAD_FORM %}
+
+<div class="gallery-widget">
+
+    {% if not uploader_disabled %}
+    {% block UPLOAD_FORM_BUTTON_BAR %}
+    <div class="row fileupload-buttonbar">
+    {% comment %}
+     The fileupload-buttonbar contains buttons to add/delete files and
+     start/cancel the upload
+    {% endcomment %}
+
+        <div class="col-lg-7">
+
+            {% comment %}
+             The fileinput-button span is used to style the file input field as button
+            {% endcomment %}
+
+            {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
+            <span class="btn btn-success fileinput-button {% if uploader_disabled %} hidden disabled {% endif %}">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span>{% trans "Add files..." %}</span>
+
+
+                {% block UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT %}
+                {% comment %}
+                    UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT and FILE_INPUT
+                    control the same block.
+
+                    FILE_INPUT is the original and shorter block name that has
+                    been kept to function as a convenient alias as well as to
+                    allow backward-compatibility with dependent projects.
+
+                    Note: Only one should be overriden in the inheriting templates.
+                {% endcomment %}
+                {% block FILE_INPUT %}
+                {% comment %}
+                    The file input for the upload form.
+                {% endcomment %}
+                <input
+                    type="file" id="{{ widget.id }}-gallery-files" multiple
+
+                    {% if accepted_mime_types %}
+                        accept = '{{ accepted_mime_types|join:"," }}'
+                    {% endif %}
+                    data-action="{{ upload_handler_url }}"
+                >
+                {% endblock %}
+                {% endblock %}
+
+            </span>
+
+            {% block UPLOAD_FORM_BUTTON_BAR_ADD_EXTRA %}
+            {% endblock %}
+
+            {% endblock %}
+
+
+            {% block UPLOAD_FORM_BUTTON_BAR_CONTROL %}
+            <button type="submit" class="btn btn-primary start {% if uploader_disabled %} hidden disabled {% endif %}">
+                <i class="glyphicon glyphicon-upload"></i>
+                <span>{% trans "Start upload" %}</span>
+            </button>
+            <button type="reset" class="btn btn-warning cancel {% if uploader_disabled %} hidden disabled {% endif %}">
+                <i class="glyphicon glyphicon-ban-circle"></i>
+                <span>{% trans "Cancel upload" %}</span>
+            </button>
+            <button type="button" class="btn btn-danger delete {% if uploader_disabled %} hidden disabled {% endif %}">
+                <i class="glyphicon glyphicon-trash"></i>
+                <span>{% trans "Delete" %}</span>
+            </button>
+            <input type="checkbox" class="toggle {% if uploader_disabled %} hidden disabled {% endif %}">
+            {% endblock %}
+
+            {% block UPLOAD_FORM_BUTTON_BAR_EXTRA %}
+            {% endblock %}
+
+        </div>
+
+        {% block UPLOAD_FORM_PROGRESS_BAR %}
+        {% comment %}
+         The global progress information
+        {% endcomment %}
+        <div class="col-lg-5 fileupload-progress fade">
+            {% comment %}
+             The global progress bar
+            {% endcomment %}
+            <div
+                class="progress progress-striped active"
+                role="progressbar"
+                aria-valuemin="0" aria-valuemax="100"
+            >
+                <div class="progress-bar progress-bar-success" style="width:0%;">
+                </div>
+            </div>
+            {% comment %}
+             The extended global progress information
+            {% endcomment %}
+            <div class="progress-extended">&nbsp;</div>
+        </div>
+        {% endblock %}
+
+    </div>
+    {% endblock %}
+    {% endif %}
+
+    {% comment %}
+     The loading indicator is shown during file processing
+    {% endcomment %}
+
+    {% block UPLOAD_FORM_LINDICATOR %}
+    <div class="fileupload-loading"></div>
+    <br>
+    {% endblock %}
+
+    {% block UPLOAD_FORM_LISTING %}
+    {% comment %}
+     The table listing the files available for upload/download
+    {% endcomment %}
+    <table role="presentation" class="table table-striped">
+        <tbody class="files"></tbody>
+    </table>
+
+
+
+    {% endblock %}
+
+    {% block UPLOAD_FORM_EXTRA %}
+    {% endblock %}
+
+</div>
+{% endblock %}
+
+
+
+{% block MODAL_GALLERY %}
+<div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
+    <div class="slides"></div>
+    <h3 class="title"></h3>
+    <a class="prev">&larr;</a>
+    <a class="next">&rarr;</a>
+    <a class="close">x</a>
+    <a class="play-pause"></a>
+    <ol class="indicator"></ol>
+</div>
+{% endblock %}
+
+
+
+{% block JS_TEMPLATES %}
+{% comment %}
+ The template to display files available for upload
+{% endcomment %}
+
+{% block JS_UPLOAD_TEMPLATE %}
+<script id="template-upload" type="text/x-tmpl">
+{% include "gallery/upload_template.html" %}
+</script>
+{% endblock %}
+
+
+{% block JS_DOWNLOAD_TEMPLATE %}
+{% comment %}
+ The template to display files available for download
+{% endcomment %}
+
+<script id="template-download" type="text/x-tmpl">
+{% include "gallery/download_template.html" %}
+</script>
+{% endblock %}
+{% endblock %}
+
+<script type="text/javascript">
+      function get_cookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie != '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                  var cookie = jQuery.trim(cookies[i]);
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+
+    $( function() {
+        'use strict';
+
+        var widget_initialized = false,
+            widgets = $('.gallery-widget');
+
+        widgets.each(function() {
+            var that = $(this),
+                $gallery_input_field = $('input[name={{widget.name}}]'),
+                existing_val = JSON.parse($gallery_input_field.val()),
+                $fileupload = that.closest('form'),
+                fileInput = $('#{{ widget.id }}-gallery-files'),
+                uploadURL = fileInput.data('action');
+            var formData = $fileupload.serializeArray();
+            $fileupload.fileupload({
+                formData: formData,
+                url: uploadURL,
+                type: 'POST',
+                paramName: 'files[]',
+
+                {% block JS_OPTS %}
+                sequentialUploads: true
+                {% endblock %}
+            });
+
+            function remove_deleted_file_from_json_data(delete_url) {
+                return existing_val.filter(function(emp) {
+                    if (emp.deleteUrl == delete_url) {
+                        return false;
+                    }
+                    return true;
+                });
+            }
+
+            $fileupload.on("fileuploadcompleted", function (e, data) {
+                if(widget_initialized == false){
+                    // Prevent fileuploadcompleted callback from removing existing files after initalizing.
+                    widget_initialized = true;
+                }
+                else{
+                    var add_method = $(this).fileupload('option', 'prependFiles') ? 'prepend' : 'append',
+                        added_data = $(this).fileupload('option', 'getFilesFromResponse').call($fileupload, data)[0];
+                    if(add_method === 'prepend'){
+                        existing_val.unshift(added_data);
+                    }else{
+                        existing_val.push(added_data);
+                    }
+                    $gallery_input_field.val(JSON.stringify(existing_val));
+                }
+            })
+            .on("fileuploaddestroyed", function (e, data) {
+                existing_val = remove_deleted_file_from_json_data(data.url);
+                $gallery_input_field.val(JSON.stringify(existing_val));
+            });
+
+            // Load existing files
+            $fileupload.addClass('fileupload-processing');
+            $fileupload.fileupload('option', 'done')
+                .call($fileupload, $.Event('done'), {result: {"files": existing_val}});
+                $(this).removeClass('fileupload-processing');
+        });
+    });
+</script>
+
+{% block JS_XDR_TRANSPORT %}
+{% comment %}
+ The XDomainRequest Transport is included for cross-domain file deletion for IE8+
+{% endcomment %}
+
+<!--[if gte IE 8]>
+<script src="{% static 'js/cors/jquery.xdr-transport.js' %}"></script>
+<![endif]-->
+{% endblock %}
+
+{% block JS_EXTRA %}
+{% endblock %}
