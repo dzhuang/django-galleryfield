@@ -1,76 +1,161 @@
 # -*- coding: utf-8 -*-
-from django.forms.widgets import HiddenInput, TextInput
-from django.utils.safestring import mark_safe
-from django.template import loader
-from django.urls import reverse
-from django.utils.encoding import force_text
+import json
 
-from .configs import (
-    JQUERY_JS_PATH, BOOTSTRAP_JS_PATH, BOOTSTRAP_CSS_PATH, GALLERY_EXTRA_JS, GALLERY_EXTRA_CSS,
-    GALLERY_UPLOAD_HANDLER_URL_NAME)
+from django import forms
+from django.urls import reverse_lazy
+
+from . import conf
+from .defaults import GALLERY_WIDGET_UI_DEFAULT_OPTIONS
 
 
 js = [
-    JQUERY_JS_PATH,
-    'js/vendor/jquery.ui.widget.js',
-    'js/tmpl.min.js',
-    "js/load-image.min.js",
-    "js/canvas-to-blob.min.js",
-    BOOTSTRAP_JS_PATH,
-    'js/jquery.blueimp-gallery.min.js',
-    "js/jquery.iframe-transport.js",
-    'js/jquery.fileupload.js',
-    "js/jquery.fileupload-process.js",
-    "js/jquery.fileupload-image.js",
-    "js/jquery.fileupload-audio.js",
-    "js/jquery.fileupload-video.js",
-    "js/jquery.fileupload-validate.js",
-    "js/jquery.fileupload-ui.js",
-] + GALLERY_EXTRA_JS
-
+    conf.JQUERY_JS_PATH,
+    'vendor/jquery-ui-dist/jquery-ui.min.js',
+    'vendor/blueimp-file-upload/js/vendor/jquery.ui.widget.js',
+    'vendor/blueimp-tmpl/js/tmpl.min.js',
+    "vendor/blueimp-load-image/js/load-image.all.min.js",
+    "vendor/blueimp-canvas-to-blob/js/canvas-to-blob.js",
+    conf.BOOTSTRAP_JS_PATH,
+    "vendor/jquery.iframe-transport/jquery.iframe-transport.js",
+    'vendor/blueimp-file-upload/js/jquery.fileupload.js',
+    'vendor/blueimp-file-upload/js/jquery.fileupload-process.js',
+    'vendor/blueimp-file-upload/js/jquery.fileupload-image.js',
+    'vendor/blueimp-file-upload/js/jquery.fileupload-audio.js',
+    'vendor/blueimp-file-upload/js/jquery.fileupload-video.js',
+    'vendor/blueimp-file-upload/js/jquery.fileupload-validate.js',
+    'vendor/blueimp-file-upload/js/jquery.fileupload-ui.js',
+    'vendor/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
+    "vendor/cropper/dist/cropper.min.js",
+    "js/jquery.fileupload-ui-extended.js",
+    "js/jquery.fileupload-ui-gallery-widget.js",
+] + conf.EXTRA_JS
 
 css = [
-    BOOTSTRAP_CSS_PATH,
-    'css/blueimp-gallery.css',
-    "css/jquery.fileupload.css",
-    "css/jquery.fileupload-ui.css",
-] + GALLERY_EXTRA_CSS
+          conf.BOOTSTRAP_CSS_PATH,
+          'vendor/jquery-ui-dist/jquery-ui.theme.min.css',
+          'vendor/blueimp-gallery/css/blueimp-gallery.min.css',
+          "vendor/blueimp-file-upload/css/jquery.fileupload.css",
+          "vendor/blueimp-file-upload/css/jquery.fileupload-ui.css",
+          'vendor/font-awesome/css/font-awesome.min.css',
+          "vendor/cropper/dist/cropper.min.css",
+] + conf.EXTRA_CSS
 
 
-class GalleryWidget(TextInput):
-    gallery_template_name = "gallery/widget.html"
+class GalleryWidget(forms.MultiWidget):
+    def __init__(
+            self,
+            target_image_model=conf.DEFAULT_TARGET_IMAGE_MODEL,
+            image_field_name=conf.DEFAULT_TARGET_IMAGE_FIELD_NAME,
+
+            upload_handler_url_name=conf.DEFAULT_UPLOAD_HANDLER_URL_NAME,
+            upload_handler_url_args=None, upload_handler_url_kwargs=None,
+
+            multiple=True,
+            preview_size=conf.DEFAULT_THUMBNAIL_SIZE,
+            template="gallery/widget.html",
+            attrs=None, options=None,
+            jquery_upload_ui_options=None,
+            **kwargs):
+
+        widgets = (forms.HiddenInput(attrs={"class": conf.FILES_FIELD_CLASS_NAME}),
+                   forms.HiddenInput(attrs={"class": conf.DELETED_FIELD_CLASS_NAME}),
+                   forms.HiddenInput(attrs={"class": conf.MOVED_FIELD_CLASS_NAME}))
+
+        super(GalleryWidget, self).__init__(widgets, attrs)
+
+        self.target_image_model = target_image_model
+        self.image_field_name = image_field_name
+        self.multiple = multiple
+        self.preview_size = preview_size
+        self.template = template
+
+        self.upload_handler_url = reverse_lazy(
+            upload_handler_url_name, args=upload_handler_url_args or (),
+            kwargs=upload_handler_url_kwargs or {})
+
+        jquery_upload_ui_options = jquery_upload_ui_options or {}
+        _jquery_upload_ui_options = GALLERY_WIDGET_UI_DEFAULT_OPTIONS.copy()
+        _jquery_upload_ui_options.update(jquery_upload_ui_options)
+
+        # https://github.com/blueimp/jQuery-File-Upload/wiki/Options#singlefileuploads
+        _jquery_upload_ui_options.pop("singleFileUploads", None)
+
+        _jquery_upload_ui_options.update(
+            {"previewMaxWidth": preview_size,
+             "previewMaxHeight": preview_size,
+             "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
+             "hiddenDeletedInput": "'.%s'" % conf.DELETED_FIELD_CLASS_NAME,
+             "hiddenRemovedInput": "'.%s'" % conf.MOVED_FIELD_CLASS_NAME,
+             "target_image_model": "'%s'" % target_image_model,
+             "image_field_name": "'%s'" % image_field_name,
+             })
+
+        self.ui_options = _jquery_upload_ui_options
+        self.options = options and options.copy() or {}
+        self.options.setdefault("accepted_mime_types", ['image/*'])
 
     class Media:
         js = tuple(_js for _js in js if _js)
         css = {'all': tuple(_css for _css in css if _css)}
 
-    def __init__(self, upload_handler_url_name=None, attrs=None, options=None,
-                 upload_handler_url_args=None, upload_handler_url_kwargs=None):
-        super(GalleryWidget, self).__init__(attrs)
+    @property
+    def is_hidden(self):
+        return False
 
-        upload_handler_url_name = (
-                upload_handler_url_name or GALLERY_UPLOAD_HANDLER_URL_NAME)
-
-        self.upload_handler_url = reverse(
-            upload_handler_url_name, args=upload_handler_url_args or (),
-            kwargs=upload_handler_url_kwargs or {})
-        self.options = options and options.copy() or {}
-        self.options.setdefault("accepted_mime_types", ['image/*'])
+    def decompress(self, value):
+        if value:
+            return [value, '', '', ]
+        return ['', '', '', ]
 
     def render(self, name, value, attrs=None, renderer=None):
-        context = self.get_context(name, value, attrs)
+        if not isinstance(value, list) or value == "null":
+            value, __, ___ = self.decompress(value)
+            assert isinstance(value, str), type(value)
+        else:
+            pass
+            value = json.dumps(value)
 
-        if (context["widget"]["attrs"].get("disabled", False)
-                or context["widget"]["attrs"].get("readonly") == "readonly"):
-            context["uploader_disabled"] = True
-
-        context.update({
+        context = {
+            'input_string': super().render(name, value, attrs, renderer),
+            'name': name,
+            'multiple': self.multiple and 1 or 0,
+            'preview_size': str(self.preview_size),
             "upload_handler_url": self.upload_handler_url,
             "accepted_mime_types": self.options["accepted_mime_types"],
-        })
+        }
 
-        uploader_html = loader.get_template(self.gallery_template_name).render(context)
+        def is_value_empty(_value):
+            if not _value:
+                return True
+            if isinstance(_value, str):
+                if _value == "[]":
+                    return True
+            if isinstance(_value, list):
+                if _value == ["[]", '', '']:
+                    return True
+            return False
 
-        input_html = HiddenInput().render(name, value, attrs, renderer)
+        # Do not fill in empty value to hidden inputs
+        if not is_value_empty(value):
+            context["files"] = value
 
-        return mark_safe(force_text(uploader_html + input_html))
+        _context = self.get_context(name, value, attrs)
+
+        if (_context["widget"]["attrs"].get("disabled", False)
+                or _context["widget"]["attrs"].get("readonly") == "readonly"):
+            context["uploader_disabled"] = True
+        context["widget"] = _context["widget"]
+
+        # Set blueimp Jquery upload ui options
+        from .utils import convert_dict_to_plain_text
+        max_number_of_allowed_upload_file = self.ui_options.get("maxNumberOfFiles", 0)
+        if not max_number_of_allowed_upload_file:
+            self.ui_options.pop("maxNumberOfFiles", None)
+
+        context["jquery_fileupload_ui_options"] = (
+            convert_dict_to_plain_text(self.ui_options, 16))
+
+        context["prompt_alert_on_window_reload_if_changed"] = (
+            conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED)
+
+        return renderer.render(self.template, context)

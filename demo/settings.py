@@ -39,9 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'gallery',
+    'sorl.thumbnail',
     'demo',
-    # 'gallery_demo.demo_application',
-    'imagekit'
 ]
 
 MIDDLEWARE = [
@@ -124,6 +123,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = BASE_DIR / 'media/'
+MEDIA_URL = "media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -132,13 +132,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-DJANGO_GALLERY_ALREADY_LOADED_BOOTSTRAP = True
-
 DJANGO_GALLERY_BACKEND = 'gallery.backends.backend.BackendWithThumbnailField'
-
-DJANGO_GALLERY_APP = {
-    'APP_LABEL': "demo",
-    'IMAGE_MODEL': "demo.DemoGalleryImage",
-    "DELETE_URL_NAME": "gallery_image_delete",
-    "UPLOAD_HANDER_URL_NAME": "gallery_image_upload"
-}

@@ -1,0 +1,117 @@
+{
+  "_args": [
+    [
+      "cropper@3.1.6",
+      "F:\\dev\\relate"
+    ]
+  ],
+  "_from": "cropper@3.1.6",
+  "_id": "cropper@3.1.6",
+  "_inBundle": false,
+  "_integrity": "sha512-N4m/rwlHmYh7y+7ShpSXUZ4TL6plhFHwh/gi8t2kFtSgLAO0dCU9KBmV1lwcCG1ZeY+ww4pfv3YKIgcIVNgZ4Q==",
+  "_location": "/cropper",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "cropper@3.1.6",
+    "name": "cropper",
+    "escapedName": "cropper",
+    "rawSpec": "3.1.6",
+    "saveSpec": null,
+    "fetchSpec": "3.1.6"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cropper/-/cropper-3.1.6.tgz",
+  "_spec": "3.1.6",
+  "_where": "F:\\dev\\relate",
+  "author": {
+    "name": "Chen Fengyuan",
+    "url": "http://chenfengyuan.com"
+  },
+  "browser": "dist/cropper.js",
+  "bugs": {
+    "url": "https://github.com/fengyuanchen/cropper/issues"
+  },
+  "description": "A simple jQuery image cropping plugin.",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "cpy-cli": "^1.0.1",
+    "cssnano": "^3.10.0",
+    "del-cli": "^1.1.0",
+    "eslint": "^4.18.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "jquery": "^3.3.1",
+    "node-qunit-phantomjs": "^2.0.0",
+    "npm-run-all": "^4.1.2",
+    "postcss-cli": "^5.0.0",
+    "postcss-cssnext": "^3.1.0",
+    "postcss-header": "^1.0.0",
+    "postcss-url": "^7.3.0",
+    "rollup": "^0.56.2",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-commonjs": "^8.3.0",
+    "rollup-plugin-node-resolve": "^3.0.3",
+    "rollup-watch": "^4.3.1",
+    "stylefmt": "^6.0.0",
+    "uglify-js": "^3.3.12"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "homepage": "https://fengyuanchen.github.io/cropper",
+  "keywords": [
+    "image",
+    "crop",
+    "cropper",
+    "cropping",
+    "processing",
+    "move",
+    "zoom",
+    "rotate",
+    "scale",
+    "jquery",
+    "plugin",
+    "jquery-plugin",
+    "html",
+    "css",
+    "javascript",
+    "front-end",
+    "web",
+    "development"
+  ],
+  "license": "MIT",
+  "main": "dist/cropper.common.js",
+  "module": "dist/cropper.esm.js",
+  "name": "cropper",
+  "peerDependencies": {
+    "jquery": ">= 1.9.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fengyuanchen/cropper.git"
+  },
+  "scripts": {
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "postcss src/css/cropper.css -o dist/cropper.css --no-map",
+    "build:js": "rollup -c",
+    "clear": "del-cli dist",
+    "compress": "npm run compress:css && npm run compress:js",
+    "compress:css": "postcss dist/cropper.css -u cssnano -o dist/cropper.min.css --no-map",
+    "compress:js": "uglifyjs dist/cropper.js -o dist/cropper.min.js -c -m --comments /^!/",
+    "copy": "cpy dist/cropper.css docs/css",
+    "lint": "eslint src/js --fix",
+    "release": "npm run clear && npm run lint && npm run build && npm run compress && npm run copy && npm test",
+    "start": "npm-run-all --parallel watch:*",
+    "test": "node-qunit-phantomjs test/index.html --timeout 10",
+    "watch:css": "postcss src/css/cropper.css -o docs/css/cropper.css -m -w",
+    "watch:js": "rollup -c -m -w"
+  },
+  "version": "3.1.6"
+}

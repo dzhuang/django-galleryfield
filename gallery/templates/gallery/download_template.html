@@ -4,17 +4,23 @@
     <tr class="template-download fade">
 
         {% block JS_DOWNLOAD_TEMPLATE_PREVIEW %}
+        {% templatetag openbrace %}% if (file.thumbnailurl) { %{% templatetag closebrace %}
         <td>
-            <span class="preview">
-                {% templatetag openbrace %}% if (file.thumbnailUrl) { %{% templatetag closebrace %}
+            <span class="preview"
+                    data-url="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
+                    data-thumbnailurl="{% templatetag openbrace %}%=file.thumbnailurl%{% templatetag closebrace %}"
+                    data-name="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
+                    data-pk="{% templatetag openbrace %}%=file.pk%{% templatetag closebrace %}"
+                    data-size="{% templatetag openbrace %}%=file.size%{% templatetag closebrace %}"
+                    data-deleteurl="javascript:void(0)">
                     <a href="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
                      title="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
-                     download="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
-                     data-gallery><img src="{% templatetag openbrace %}%=file.thumbnailUrl%{% templatetag closebrace %}"
-                    ></a>
-                {% templatetag openbrace %}% } %{% templatetag closebrace %}
+                     data-gallery>
+                        <img src="{% templatetag openbrace %}%=file.thumbnailurl%{% templatetag closebrace %}">
+                    </a>
             </span>
         </td>
+        {% templatetag openbrace %}% } %{% templatetag closebrace %}
         {% endblock %}
 
         {% block JS_DOWNLOAD_TEMPLATE_DOWNLOAD %}
@@ -22,9 +28,8 @@
             <p class="name">
                 {% templatetag openbrace %}% if (file.url) { %{% templatetag closebrace %}
                     <a href="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
-                     title="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
                      download="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
-                     {% templatetag openbrace %}%=file.thumbnailUrl?'data-gallery':''%{% templatetag closebrace %}>
+                     {% templatetag openbrace %}%=file.thumbnailurl?'data-gallery':''%{% templatetag closebrace %}>
                      {% templatetag openbrace %}%=file.name%{% templatetag closebrace %}
                     </a>
                 {% templatetag openbrace %}% } else { %{% templatetag closebrace %}
@@ -43,31 +48,29 @@
 
         {% block JS_DOWNLOAD_TEMPLATE_FSIZE %}
         <td>
-            <span class="size">{% templatetag openbrace %}%=o.formatFileSize(file.size)%{% templatetag closebrace %}</span>
+            <span class="size">{% templatetag openbrace %}%=o.formatFileSize(Number(file.size))%{% templatetag closebrace %}</span>
         </td>
         {% endblock %}
 
         {% block JS_DOWNLOAD_TEMPLATE_DELETE %}
         <td>
-            {% templatetag openbrace %}% if (file.deleteUrl) { %{% templatetag closebrace %}
-                <button class="btn btn-danger delete {% if uploader_disabled %} hidden disabled {% endif %}"
-                        data-type="{% templatetag openbrace %}%=file.deleteType%{% templatetag closebrace %}"
-                        data-data='{"csrfmiddlewaretoken": "{% templatetag openbrace %}% print(get_cookie("csrftoken")); %{% templatetag closebrace %}" }'
-                        data-url="{% templatetag openbrace %}%=file.deleteUrl%{% templatetag closebrace %}"
-                        {% templatetag openbrace %}% if (file.deleteWithCredentials) { %}
-                            data-xhr-fields='{"withCredentials":true}'{% }
-                        %{% templatetag closebrace %}>
+            {% templatetag openbrace %}% if (file.deleteurl) { %{% templatetag closebrace %}
+                <a type="button" class="btn btn-danger delete fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}"
+                        href="{% templatetag openbrace %}%=file.deleteurl%{% templatetag closebrace %}">
                     <i class="glyphicon glyphicon-trash"></i>
                     <span>{% trans "Delete" %}</span>
-                </button>
-                <input type="checkbox" value="1" class="toggle {% if uploader_disabled %} hidden disabled {% endif %}">
-            {% templatetag openbrace %}% } else { %{% templatetag closebrace %}
-                <button class="btn btn-warning cancel {% if uploader_disabled %} hidden disabled {% endif %}">
-                    <i class="glyphicon glyphicon-ban-circle"></i>
-                    <span>{% trans "Cancel" %}</span>
-                </button>
+                </a>
+                <input type="checkbox" value="1" class="toggle fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}">
             {% templatetag openbrace %}% } %{% templatetag closebrace %}
         </td>
+        {% if not uploader_disabled %}
+        <td class="sortableHandle hidden col-lg-1 col-md-1 col-sm-1 col-xs-1"
+             style="vertical-align: middle;text-align: center">
+                <span title="{% trans 'Drag to order' %}">
+                    <i class="fa fa-sort fa-3" aria-hidden="true"></i>
+                </span>
+        </td>
+        {% endif %}
         {% endblock %}
     </tr>
 {% templatetag openbrace %}% } %{% templatetag closebrace %}

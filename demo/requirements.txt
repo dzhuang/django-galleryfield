@@ -1,3 +1,4 @@
-django=3.2
+django<=3.3
 django-crispy-forms
-django-imagekit
+sorl-thumbnail
+pillow

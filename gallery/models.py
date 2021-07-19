@@ -1,0 +1,11 @@
+from django.db import models
+from django.core.files.storage import default_storage
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _
+
+
+class BuiltInGalleryImage(models.Model):
+    image = models.ImageField(upload_to="images", storage=default_storage)
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=False, blank=False,
+        verbose_name=_('Creator'), on_delete=models.CASCADE)
