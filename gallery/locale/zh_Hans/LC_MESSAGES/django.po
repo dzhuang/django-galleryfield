@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-20 14:41+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Dong Zhuang <dzhuang.scut@gmail.com>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "An array JSON object as attributes of (multiple) images"
+msgstr ""
+
+msgid "Value must be valid JSON."
+msgstr ""
+
+msgid "The submitted file is empty."
+msgstr ""
+
+msgid "Image"
+msgstr "图片"
+
+msgid "Creator"
+msgstr "创建者"
+
+msgid "Undo"
+msgstr "撤销"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Drag to order"
+msgstr "拖动以排序"
+
+msgid "Start"
+msgstr "开始"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Add files..."
+msgstr "添加文件..."
+
+msgid "Start upload"
+msgstr "开始上传"
+
+msgid "Cancel upload"
+msgstr "取消上传"
+
+msgid "Edit image"
+msgstr "编辑图片"
+
+msgid "This page requires a modern browser so that it can work properly"
+msgstr ""
+
+msgid ""
+"Chrome/Firefox are prefered browsers. If you want use Internet Explorer, "
+"please install one with version higher than 10."
+msgstr ""
+
+msgid "Submit"
+msgstr "提交"
+
+msgid "Reset"
+msgstr "重置"
+
+msgid "Close"
+msgstr "关闭"
+
+msgid "You have unsaved changes on this page."
+msgstr "你在本页有未保存的变更"
+
+msgid "File is too big"
+msgstr "文件太大"
+
+msgid "File is too small"
+msgstr "文件太小"
+
+msgid "Filetype not allowed"
+msgstr "不允许的文件类型"
+
+#, python-format
+msgid "Max number of files exceeded, only %(maxNumberOfFiles)s allowed"
+msgstr "超出了允许的文件数，只允许上传%(maxNumberOfFiles)s个文件"
+
+msgid "Uploaded bytes exceed file size"
+msgstr "上传的文件超出了允许的大小"
+
+msgid "Empty file upload result"
+msgstr "未上传文件"
+
+msgid "Only Ajax Post is allowed."
+msgstr "只允许Ajax Post"
+
+msgid "There are errors, please refresh the page or try again later"
+msgstr "发生错误，请刷新页面并重新上传"
+
+msgid "There are errors，please re-upload the image"
+msgstr "发生错误，请重新上传图片"
+
+msgid "Done!"
+msgstr "完成！"

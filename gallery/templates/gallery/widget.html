@@ -328,9 +328,7 @@
                     minFileSize: '{% trans "File is too small" %}',
                     acceptFileTypes: '{% trans "Filetype not allowed" %}',
             {% if maxNumberOfFiles %}
-                    maxNumberOfFiles: '{% blocktrans trimmed %}' +
-                        'Max number of files exceeded, only {{ maxNumberOfFiles }} allowed' +
-                        '{% endblocktrans %}',
+                    maxNumberOfFiles: "{% blocktrans trimmed %} Max number of files exceeded, only {{ maxNumberOfFiles }} allowed {% endblocktrans %}",
             {% endif %}
                     uploadedBytes: '{% trans "Uploaded bytes exceed file size" %}',
                     emptyResult: '{% trans "Empty file upload result" %}'
