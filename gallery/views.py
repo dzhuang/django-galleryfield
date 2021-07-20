@@ -7,10 +7,9 @@ from django.http import JsonResponse, Http404
 from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import format_lazy
 from django.views.decorators.http import require_POST, require_GET
+from django.apps import apps as django_apps
 
 from .backends import get_backend
-
-from gallery.registry import get_image_model
 
 from PIL import Image
 from io import BytesIO
@@ -78,8 +77,13 @@ def crop(request, *args, **kwargs):
         raise CropImageError(gettext('Only Ajax Post is allowed.'))
 
     pk = kwargs.get("pk")
+    preview_size = request.POST['preview_size']
+    model = request.POST['target_image_model']
+    image_field_name = request.POST['image_field_name']
 
-    crop_instance = get_object_or_404(get_image_model(), pk=pk)
+    image_model = django_apps.get_model(model_name=model)
+
+    crop_instance = get_object_or_404(image_model(), pk=pk)
 
     import json
     json_data = json.loads(request.POST.get("croppedResult"))
@@ -95,7 +99,7 @@ def crop(request, *args, **kwargs):
             gettext('There are errors, please refresh the page '
               'or try again later'))
 
-    image_orig_path = crop_instance.image.path
+    image_orig_path = getattr(crop_instance, image_field_name).path
 
     try:
         new_image = Image.open(image_orig_path)
@@ -120,19 +124,18 @@ def crop(request, *args, **kwargs):
     new_image.save(new_image_io, format=image_format)
 
     backend = get_backend()
-    file_wrapper = backend(new_image, request, *args, **kwargs)
+    file_wrapper = backend(image_model, image_field_name, new_image, request, *args, **kwargs)
     file_wrapper.save()
 
     file_dict = {
-        'name': file_wrapper.get_image_file_name(),
-        'size': file_wrapper.get_image_size(),
+        'name': file_wrapper.name,
+        'size': file_wrapper.size,
 
-        'url': file_wrapper.get_image_url(),
-        'thumbnailUrl': file_wrapper._get_thumbnail_url(),
+        'url': file_wrapper.url,
+        'thumbnailurl': file_wrapper.get_thumbnail_url(preview_size),
 
-        'deleteUrl': file_wrapper.get_delete_url(),
-        'deleteType': 'POST',
-        'crop_handler_url': file_wrapper.get_crop_url(),
+        'deleteurl': file_wrapper.deleteurl,
+        'cropurl': file_wrapper.crop_url,
         'pk': file_wrapper.pk,
     }
 

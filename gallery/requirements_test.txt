@@ -1,0 +1,13 @@
+django<=3.3
+sorl-thumbnail
+pillow
+codecov
+factory_boy
+pytest
+pytest-django
+pytest-factoryboy
+pytest-cov
+
+# flake8
+# pep8-naming
+# mypy

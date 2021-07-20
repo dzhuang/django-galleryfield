@@ -132,8 +132,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-DJANGO_GALLERY_WIDGET_CONFIG = {
-    "default_urls":
-        {"upload_handler_url_name": "gallery_image_upload",
-         "crop_url_name": "gallery_image_crop"},
-}
+# DJANGO_GALLERY_WIDGET_CONFIG = {
+#
+# }
