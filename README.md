@@ -87,7 +87,7 @@ Navigation
 Django Gallery Widget related settings is a dict as shown below with default value.   
 
 ```Python
-DJANGO_GALLERY_CONFIG = {
+DJANGO_GALLERY_WIDGET_CONFIG = {
     "default_urls": 
         {"upload_handler_url_name": "gallery_image_upload",
          "crop_url_name": "gallery_image_crop"},
@@ -110,7 +110,6 @@ DJANGO_GALLERY_CONFIG = {
     "field_hack": {
         "old_value_str": 'old_%s_value',
         "deleted_value_str": 'deleted_%s_value',
-        "moved_value_str": "moved_%s_value"
     },
     "multifield_css_class_basename": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,

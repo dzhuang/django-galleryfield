@@ -58,8 +58,8 @@ class GalleryWidget(forms.MultiWidget):
             **kwargs):
 
         widgets = (forms.HiddenInput(attrs={"class": conf.FILES_FIELD_CLASS_NAME}),
-                   forms.HiddenInput(attrs={"class": conf.DELETED_FIELD_CLASS_NAME}),
-                   forms.HiddenInput(attrs={"class": conf.MOVED_FIELD_CLASS_NAME}))
+                   forms.HiddenInput(attrs={"class": conf.DELETED_FIELD_CLASS_NAME})
+                   )
 
         super(GalleryWidget, self).__init__(widgets, attrs)
 
@@ -85,7 +85,6 @@ class GalleryWidget(forms.MultiWidget):
              "previewMaxHeight": preview_size,
              "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
              "hiddenDeletedInput": "'.%s'" % conf.DELETED_FIELD_CLASS_NAME,
-             "hiddenRemovedInput": "'.%s'" % conf.MOVED_FIELD_CLASS_NAME,
              "target_image_model": "'%s'" % target_image_model,
              "image_field_name": "'%s'" % image_field_name,
              })

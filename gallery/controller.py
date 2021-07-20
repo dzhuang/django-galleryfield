@@ -12,7 +12,6 @@ def manage_images(sender, instance, **kwargs):
     for field in fields:
         old_value_attr = OLD_VALUE_STR % field.name
         deleted_value_attr = DELETED_VALUE_STR % field.name
-        moved_value_attr = MOVED_VALUE_STR % field.name
         if not hasattr(instance, old_value_attr):
             continue
 
@@ -34,7 +33,6 @@ def manage_images(sender, instance, **kwargs):
         assert isinstance(current_images, list)
 
         deleted_images = (getattr(instance, deleted_value_attr) or [])
-        moved_images = (getattr(instance, moved_value_attr) or [])
         new_images = []
         changed = False
 
@@ -46,13 +44,12 @@ def manage_images(sender, instance, **kwargs):
             pass
 
         for img in old_images:
-            if img not in current_images and img not in deleted_images and img not in moved_images:
+            if img not in current_images and img not in deleted_images:
                 changed = True
                 new_images.append(img)
 
         delattr(instance, old_value_attr)
         delattr(instance, deleted_value_attr)
-        delattr(instance, moved_value_attr)
 
         if changed:
             setattr(instance, field.name, new_images)

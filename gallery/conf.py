@@ -1,10 +1,10 @@
 from django.conf import settings
 
 """
-DJANGO_GALLERY_CONFIG = {
+DJANGO_GALLERY_WIDGET_CONFIG = {
     "default_urls": 
         {"upload_handler_url_name": "gallery_image_upload",
-         "crop_url_name": "crop"},
+         "crop_url_name": "gallery_image_crop"},
     "default_image_model":
         {"target_image_model": "gallery.BuiltInGalleryImage",
          "target_image_field_name": "image"},
@@ -22,7 +22,6 @@ DJANGO_GALLERY_CONFIG = {
     "field_hack": {
         "old_value_str": 'old_%s_value',
         "deleted_value_str": 'deleted_%s_value',
-        "moved_value_str": "moved_%s_value"
     },
     "multifield_css_class_basename": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,
@@ -32,7 +31,7 @@ DJANGO_GALLERY_CONFIG = {
 """
 
 
-_APP_CONFIG = getattr(settings, "DJANGO_GALLERY_CONFIG", {})
+_APP_CONFIG = getattr(settings, "DJANGO_GALLERY_WIDGET_CONFIG", {})
 
 _APP_CONFIG_URLS = _APP_CONFIG.get("default_urls", {})
 DEFAULT_UPLOAD_HANDLER_URL_NAME = _APP_CONFIG_URLS.get(
@@ -71,15 +70,12 @@ OLD_VALUE_STR = _APP_CONFIG_FIELD_VALUE_NAME_HACK.get(
     'old_value_str', 'old_%s_value')
 DELETED_VALUE_STR = _APP_CONFIG_FIELD_VALUE_NAME_HACK.get(
     'deleted_value_str', 'deleted_%s_value')
-MOVED_VALUE_STR = _APP_CONFIG_FIELD_VALUE_NAME_HACK.get(
-    'moved_value_str', 'moved_%s_value')
 
 
 _APP_CONFIG_WIDGET_INPUT_CSS_CLASS = _APP_CONFIG.get(
     "multifield_css_class_basename", "django-gallery-widget")
 FILES_FIELD_CLASS_NAME = _APP_CONFIG_WIDGET_INPUT_CSS_CLASS + "-files-field"
 DELETED_FIELD_CLASS_NAME = _APP_CONFIG_WIDGET_INPUT_CSS_CLASS + "-deleted-field"
-MOVED_FIELD_CLASS_NAME = _APP_CONFIG_WIDGET_INPUT_CSS_CLASS + "-moved-field"
 
 
 PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = _APP_CONFIG.get(

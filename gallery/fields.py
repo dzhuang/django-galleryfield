@@ -14,11 +14,10 @@ from . import conf
 
 class UnicodeWithAttr(str):
     """
-    This is used to store deleted files and moved_files, which are then to be
+    This is used to store deleted files, which are then to be
     handled when calling `save_form_data`, through
     """
     deleted_files = None
-    moved_files = None
 
 
 def save_all_data(self, instance, data):
@@ -28,7 +27,6 @@ def save_all_data(self, instance, data):
     old_data = getattr(instance, self.name)
     setattr(instance, conf.OLD_VALUE_STR % self.name, old_data)
     setattr(instance, conf.DELETED_VALUE_STR % self.name, data.deleted_files)
-    setattr(instance, conf.MOVED_VALUE_STR % self.name, data.moved_files)
 
 
 class GalleryField(models.JSONField):
@@ -110,7 +108,5 @@ class GalleryFormField(forms.MultiValueField):
             data_list = ['', '', '']
 
         files = UnicodeWithAttr(json.dumps(data_list[0]))
-        assert data_list[2] is None or len(data_list[2]) == 0, data_list
         setattr(files, "deleted_files", data_list[1])
-        setattr(files, "moved_files", data_list[2])
         return files

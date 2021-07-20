@@ -16,7 +16,6 @@
         'mediaUrl',
         'hiddenFileInput',
         'hiddenDeletedInput',
-        'hiddenRemovedInput',
         'deletedTemplateId',
         'deletedFilesContainer',
         'editModalId',
@@ -37,7 +36,6 @@
             options: {
                 hiddenFileInput: undefined,
                 hiddenDeletedInput: undefined,
-                hiddenRemovedInput: undefined,
                 mediaUrl: undefined,
                 editModalId: undefined,
                 editModalImgId: undefined,
@@ -197,7 +195,6 @@
             _fillInHiddenInputs: function (data) {
                 var filesInput = this.options.hiddenFileInput,
                     deletedInput = this.options.hiddenDeletedInput,
-                    movedInput = this.options.hiddenRemovedInput,
                     files_data = [], deleted_data = [];
 
                 // get input files_data
@@ -703,11 +700,6 @@
                     options.hiddenDeletedInput = this.element.find("input[id$='_1'][name$='_1']");
                 } else if (!(options.hiddenDeletedInput instanceof $)) {
                     options.hiddenDeletedInput = $(options.hiddenDeletedInput);
-                }
-                if (options.hiddenRemovedInput === undefined) {
-                    options.hiddenRemovedInput = this.element.find("input[id$='_2'][name$='_2']");
-                } else if (!(options.hiddenRemovedInput instanceof $)) {
-                    options.hiddenRemovedInput = $(options.hiddenRemovedInput);
                 }
             },
         }
