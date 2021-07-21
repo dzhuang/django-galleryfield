@@ -93,9 +93,9 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
          "crop_url_name": "gallery_image_crop"},
     "default_image_model":
         {"target_image_model": "gallery.BuiltInGalleryImage",
-         "default_target_image_field_name": "image"},
-    "default_image_instance_handle_backend": 
-        'gallery.backends.backend.BackendWithThumbnailField',
+         "target_image_field_name": "image",
+         "target_creator_field_name": "creator",
+        },
     "assets": {
         "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
         "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
@@ -121,9 +121,9 @@ Django-Gallery-Widget has a built-in image Model `gallery.models.BuiltInGalleryI
  in which `image` is the target field of the gallery model. User can use these two models 
  without modifying in their apps. See the demo app for details. With that built-in model,
  default views are applied with default urls (i.e, `upload_handler_url_name` 
- and `crop_url_name`) and default handler backend `gallery.backends.backend.BackendWithThumbnailField`. 
+ and `crop_url_name`).
 
-However, it is heavily suggested for developers to write your own image models, views, urls and backend,
+However, it is heavily suggested for developers to write your own image models, views, urls,
 and override those settings for your apps, especially in terms of permission considerations.
 
 ### What are the difference as compared to peer apps

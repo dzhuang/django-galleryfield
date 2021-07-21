@@ -112,7 +112,9 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
          "crop_url_name": "gallery_image_crop"},
     "default_image_model":
         {"target_image_model": "gallery.BuiltInGalleryImage",
-         "target_image_field_name": "image"},
+         "target_image_field_name": "image",
+         "target_creator_field_name": "creator",
+         },
     "assets": {
         "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
         "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
@@ -130,8 +132,6 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
     },
     "multifield_css_class_basename": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,
-    "default_image_instance_handle_backend": 
-        'gallery.backends.backend.BackendWithThumbnailField'
 }
 """
 
@@ -224,7 +224,9 @@ class CheckDefaultUrls(CheckSettingsBase):
 """
     "default_image_model":
         {"target_image_model": "gallery.BuiltInGalleryImage",
-         "target_image_field_name": "image"},
+         "target_image_field_name": "image",
+         "target_creator_field_name": "creator",
+         },
 """
 
 
@@ -240,13 +242,15 @@ class CheckDefaultImageModel(CheckSettingsBase):
     VALID_CONF = {
         "default_image_model":
             {"target_image_model": "gallery.BuiltInGalleryImage",
-             "target_image_field_name": "image"},
+             "target_image_field_name": "image",
+             "target_creator_field_name": "creator",},
     }
 
     VALID_CONF_BOTH_NONE = {
         "default_image_model":
             {"target_image_model": None,
-             "target_image_field_name": None},
+             "target_image_field_name": None,
+             "target_creator_field_name": None},
     }
 
     VALID_CONF_MODEL_NONE = {
@@ -276,16 +280,34 @@ class CheckDefaultImageModel(CheckSettingsBase):
              "target_image_field_name": object},
     }
 
+    INVALID_CONF_MODEL_CREATOR_FIELD_NOT_str = {
+        "default_image_model":
+            {
+             "target_creator_field_name": object},
+    }
+
     INVALID_CONF_MODEL_IMAGE_FIELD_NOT_EXIST = {
         "default_image_model":
             {"target_image_model": "gallery.BuiltInGalleryImage",
              "target_image_field_name": "non_exist_field"},
     }
 
-    INVALID_CONF_MODEL_FIELD_NOT_IMAGEFIELD = {
+    INVALID_CONF_MODEL_CREATOR_FIELD_NOT_EXIST = {
+        "default_image_model":
+            {"target_image_model": "gallery.BuiltInGalleryImage",
+             "target_creator_field_name": "non_exist_field"},
+    }
+
+    INVALID_CONF_MODEL_IMAGE_FIELD_NOT_IMAGEFIELD = {
         "default_image_model":
             {"target_image_model": "gallery.BuiltInGalleryImage",
              "target_image_field_name": "creator"},
+    }
+
+    INVALID_CONF_MODEL_CREATOR_FIELD_NOT_FOREIGNKEY = {
+        "default_image_model":
+            {"target_image_model": "gallery.BuiltInGalleryImage",
+             "target_creator_field_name": "image"},
     }
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
@@ -328,9 +350,21 @@ class CheckDefaultImageModel(CheckSettingsBase):
     def test_invalid_config5(self):
         self.assertCheckMessages(["django-gallery-widget-default_image_model.E005"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_FIELD_NOT_IMAGEFIELD)
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_IMAGE_FIELD_NOT_IMAGEFIELD)
     def test_invalid_config6(self):
         self.assertCheckMessages(["django-gallery-widget-default_image_model.E006"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_CREATOR_FIELD_NOT_str)
+    def test_invalid_config7(self):
+        self.assertCheckMessages(["django-gallery-widget-default_image_model.E007"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_CREATOR_FIELD_NOT_EXIST)
+    def test_invalid_config9(self):
+        self.assertCheckMessages(["django-gallery-widget-default_image_model.E008"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_CREATOR_FIELD_NOT_FOREIGNKEY)
+    def test_invalid_config19(self):
+        self.assertCheckMessages(["django-gallery-widget-default_image_model.E009"])
 
 
 """
@@ -613,44 +647,6 @@ class CheckPromptAlert(CheckSettingsBase):
     def test_invalid_config1(self):
         self.assertCheckMessages([
             "django-gallery-widget-prompt_alert_if_changed_on_window_reload.E001"])
-
-
-"""
-    "default_image_instance_handle_backend": 
-        'gallery.backends.backend.BackendWithThumbnailField'
-"""
-
-
-class CheckDefaultImageInstanceHandleBackend(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget-default_image_instance_handle_backend"
-
-    VALID_CONF_None = {"default_image_instance_handle_backend": None}
-
-    VALID_CONF = {
-        "default_image_instance_handle_backend":
-        'gallery.backends.backend.BackendWithThumbnailField'}
-
-    INVALID_CONF_NOT_str = {"default_image_instance_handle_backend": object}
-
-    INVALID_CONF_INVALID_PATH = {"default_image_instance_handle_backend": "not.exist.path"}
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
-    def test_valid_config1(self):
-        self.assertCheckMessages([])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF)
-    def test_valid_config2(self):
-        self.assertCheckMessages([])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_str)
-    def test_invalid_config1(self):
-        self.assertCheckMessages([
-            "django-gallery-widget-default_image_instance_handle_backend.E001"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_INVALID_PATH)
-    def test_invalid_config2(self):
-        self.assertCheckMessages([
-            "django-gallery-widget-default_image_instance_handle_backend.E002"])
 
 
 """

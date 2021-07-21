@@ -46,6 +46,7 @@ class GalleryWidget(forms.MultiWidget):
             self,
             target_image_model=conf.DEFAULT_TARGET_IMAGE_MODEL,
             image_field_name=conf.DEFAULT_TARGET_IMAGE_FIELD_NAME,
+            creator_field_name=conf.DEFAULT_CREATOR_FIELD_NAME,
 
             upload_handler_url_name=conf.DEFAULT_UPLOAD_HANDLER_URL_NAME,
             upload_handler_url_args=None, upload_handler_url_kwargs=None,
@@ -87,6 +88,7 @@ class GalleryWidget(forms.MultiWidget):
              "hiddenDeletedInput": "'.%s'" % conf.DELETED_FIELD_CLASS_NAME,
              "target_image_model": "'%s'" % target_image_model,
              "image_field_name": "'%s'" % image_field_name,
+             "creator_field_name": "'%s'" % creator_field_name,
              })
 
         self.ui_options = _jquery_upload_ui_options

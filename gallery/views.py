@@ -9,8 +9,6 @@ from django.utils.text import format_lazy
 from django.views.decorators.http import require_POST, require_GET
 from django.apps import apps as django_apps
 
-from .backends import get_backend
-
 from PIL import Image
 from io import BytesIO
 
@@ -39,25 +37,22 @@ def upload(request, *args, **kwargs):
         raise RuntimeError()
 
     preview_size = request.POST['preview_size']
-    model = request.POST['target_image_model']
+    model_str = request.POST['target_image_model']
     image_field_name = request.POST['image_field_name']
+    creator_field_name = request.POST["creator_field_name"]
 
-    from .backends import get_backend
-
-    backend = get_backend()
-
-    file_wrapper = backend(model, image_field_name, file, request, *args, **kwargs)
-    file_wrapper.save()
+    model = django_apps.get_model(model_str)
+    save_kwargs = {image_field_name: file, creator_field_name: request.user}
+    instance = model.objects.create(**save_kwargs)
 
     file_dict = {
-        'pk': file_wrapper.pk,
-        'name': file_wrapper.name,
-        'size': file_wrapper.size,
+        'pk': instance.pk,
+        'name': instance.name,
+        'size': instance.size,
+        'url': instance.url,
+        'thumbnailurl': instance.get_thumbnail_url(preview_size),
 
-        'url': file_wrapper.url,
-        'thumbnailurl': file_wrapper.get_thumbnail_url(preview_size),
-
-        'deleteurl': file_wrapper.delete_url,
+        'deleteurl': instance.delete_url,
 
         # todo: not implemented
         # 'cropurl': file_wrapper.crop_url,
@@ -78,10 +73,11 @@ def crop(request, *args, **kwargs):
 
     pk = kwargs.get("pk")
     preview_size = request.POST['preview_size']
-    model = request.POST['target_image_model']
+    model_str = request.POST['target_image_model']
     image_field_name = request.POST['image_field_name']
+    creator_field_name = request.POST["creator_field_name"]
 
-    image_model = django_apps.get_model(model_name=model)
+    image_model = django_apps.get_model(model_name=model_str)
 
     crop_instance = get_object_or_404(image_model(), pk=pk)
 
@@ -123,20 +119,20 @@ def crop(request, *args, **kwargs):
     new_image_io = BytesIO()
     new_image.save(new_image_io, format=image_format)
 
-    backend = get_backend()
-    file_wrapper = backend(image_model, image_field_name, new_image, request, *args, **kwargs)
-    file_wrapper.save()
+    save_kwargs = {image_field_name: new_image, creator_field_name: request.user}
+    instance = image_model.objects.create(**save_kwargs)
 
     file_dict = {
-        'name': file_wrapper.name,
-        'size': file_wrapper.size,
+        'pk': instance.pk,
+        'name': instance.name,
+        'size': instance.size,
+        'url': instance.url,
+        'thumbnailurl': instance.get_thumbnail_url(preview_size),
 
-        'url': file_wrapper.url,
-        'thumbnailurl': file_wrapper.get_thumbnail_url(preview_size),
+        'deleteurl': instance.delete_url,
 
-        'deleteurl': file_wrapper.deleteurl,
-        'cropurl': file_wrapper.crop_url,
-        'pk': file_wrapper.pk,
+        # todo: not implemented
+        'cropurl': instance.crop_url,
     }
 
     return JsonResponse({"files": [file_dict], 'message': gettext('Done!')}, status=200)

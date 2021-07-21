@@ -8,7 +8,9 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
          "crop_url_name": "gallery_image_crop"},
     "default_image_model":
         {"target_image_model": "gallery.BuiltInGalleryImage",
-         "target_image_field_name": "image"},
+         "target_image_field_name": "image",
+         "target_creator_field_name": "creator",
+         },
     "assets": {
         "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
         "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
@@ -26,8 +28,6 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
     },
     "multifield_css_class_basename": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,
-    "default_image_instance_handle_backend": 
-        'gallery.backends.backend.BackendWithThumbnailField'
 }
 """
 
@@ -45,7 +45,10 @@ _APP_CONFIG_IMAGE_MODEL = _APP_CONFIG.get("default_image_model", {})
 DEFAULT_TARGET_IMAGE_MODEL = _APP_CONFIG_IMAGE_MODEL.get(
     "default_target_image_model", defaults.DEFAULT_TARGET_IMAGE_MODEL)
 DEFAULT_TARGET_IMAGE_FIELD_NAME = _APP_CONFIG_IMAGE_MODEL.get(
-    "default_target_image_field_name", defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME)
+    "target_image_field_name", defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME)
+DEFAULT_CREATOR_FIELD_NAME = _APP_CONFIG_IMAGE_MODEL.get(
+    "target_creator_field_name", defaults.DEFAULT_CREATOR_FIELD_NAME
+)
 
 
 _APP_CONFIG_ASSETS = _APP_CONFIG.get("assets", {})
@@ -83,8 +86,3 @@ PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = _APP_CONFIG.get(
     'prompt_alert_if_changed_on_window_reload',
     defaults.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED
 )
-
-
-DEFAULT_BACKEND = _APP_CONFIG.get(
-    "default_image_instance_handle_backend",
-    defaults.DEFAULT_BACKEND)

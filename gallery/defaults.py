@@ -19,6 +19,7 @@ DEFAULT_CROP_URL_NAME = "gallery_image_crop"
 
 DEFAULT_TARGET_IMAGE_MODEL = "gallery.BuiltInGalleryImage"
 DEFAULT_TARGET_IMAGE_FIELD_NAME = "image"
+DEFAULT_CREATOR_FIELD_NAME = "creator"
 
 BOOTSTRAP_JS_PATH = 'vendor/bootstrap/dist/js/bootstrap.min.js'
 BOOTSTRAP_CSS_PATH = 'vendor/bootstrap/dist/css/bootstrap.min.css'
@@ -35,5 +36,3 @@ DELETED_VALUE_STR = 'deleted_%s_value'
 WIDGET_HIDDEN_INPUT_CSS_CLASS = "django-gallery-widget"
 
 PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = True
-
-DEFAULT_BACKEND = 'gallery.backends.backend.BackendWithThumbnailField'

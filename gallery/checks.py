@@ -1,10 +1,9 @@
 from django.conf import settings
 from django.core.checks import Critical, Warning, register
 from django.core.exceptions import ImproperlyConfigured, FieldDoesNotExist
-from django.utils.module_loading import import_string
 from django.apps import apps
 from django.urls import reverse
-from django.db.models import ImageField
+from django.db.models import ImageField, ForeignKey
 
 
 from . import conf as app_conf
@@ -21,6 +20,7 @@ CROP_URL_NAME = "crop_url_name"
 DEFAULT_IMAGE_MODEL = "default_image_model"
 TARGET_IMAGE_MODEL = "target_image_model"
 TARGET_IMAGE_FIELD_NAME = "target_image_field_name"
+TARGET_CREATOR_FIELD_NAME = "target_creator_field_name"
 
 ASSETS = "assets"
 BOOTSTRAP_JS_PATH = "bootstrap_js_path"
@@ -41,8 +41,6 @@ MULTIFIELD_CSS_CLASS_BASENAME = "multifield_css_class_basename"
 
 PROMPT_ALERT_IF_CHANGED_ON_WINDOW_RELOAD = (
     "prompt_alert_if_changed_on_window_reload")
-
-DEFAULT_IMAGE_INSTANCE_HANDLE_BACKEND = "default_image_instance_handle_backend"
 
 
 def register_gallery_widget_settings_checks():
@@ -133,7 +131,7 @@ def check_settings(app_configs, **kwargs):
                         ))
 
     default_image_model = conf.get(DEFAULT_IMAGE_MODEL, None)
-    will_check_image_field = True
+    will_check_model_fields = True
     if default_image_model is not None:
         if not isinstance(default_image_model, dict):
             errors.append(DJGalleryCriticalCheckMessage(
@@ -157,7 +155,7 @@ def check_settings(app_configs, **kwargs):
                                 "types": "str"}),
                         id="django-gallery-widget-default_image_model.E002"
                     ))
-                    will_check_image_field = False
+                    will_check_model_fields = False
                 else:
                     try:
                         target_model = apps.get_model(target_image_model)
@@ -175,9 +173,9 @@ def check_settings(app_configs, **kwargs):
                                  ),
                             id="django-gallery-widget-default_image_model.E003"
                         ))
-                        will_check_image_field = False
+                        will_check_model_fields = False
 
-            if will_check_image_field:
+            if will_check_model_fields:
                 target_image_field_name = default_image_model.get(
                     TARGET_IMAGE_FIELD_NAME, None)
                 will_proceed_image_field_validation = True
@@ -231,6 +229,62 @@ def check_settings(app_configs, **kwargs):
                                             % target_image_field_name}
                                      ),
                                 id="django-gallery-widget-default_image_model.E006"
+                            ))
+
+                target_creator_field_name = default_image_model.get(
+                    TARGET_CREATOR_FIELD_NAME, None)
+                will_proceed_creator_field_validation = True
+                if target_creator_field_name is not None:
+                    if not isinstance(target_creator_field_name, str):
+                        errors.append(DJGalleryCriticalCheckMessage(
+                            msg=(INSTANCE_ERROR_PATTERN
+                                 % {"location": "'%s' in '%s' in '%s'" % (
+                                        TARGET_CREATOR_FIELD_NAME,
+                                        DEFAULT_IMAGE_MODEL,
+                                        DJANGO_GALLERY_WIDGET_CONFIG),
+                                    "types": "str"}),
+                            id="django-gallery-widget-default_image_model.E007"
+                        ))
+                        will_proceed_creator_field_validation = False
+
+                else:
+                    target_creator_field_name = (
+                        app_conf.DEFAULT_CREATOR_FIELD_NAME)
+
+                assert target_creator_field_name is not None
+
+                if will_proceed_creator_field_validation:
+                    if target_model is None:
+                        target_model = apps.get_model(
+                            app_conf.DEFAULT_TARGET_IMAGE_MODEL)
+
+                    try:
+                        creator_field = target_model._meta.get_field(target_creator_field_name)
+                    except FieldDoesNotExist as e:
+                        errors.append(DJGalleryCriticalCheckMessage(
+                            msg=(GENERIC_ERROR_PATTERN
+                                 % {"location": "'%s' in '%s' in '%s'" % (
+                                        TARGET_CREATOR_FIELD_NAME, DEFAULT_IMAGE_MODEL,
+                                        DJANGO_GALLERY_WIDGET_CONFIG),
+                                    "error_type": type(e).__name__,
+                                    "error_str": str(e)}
+                                 ),
+                            id="django-gallery-widget-default_image_model.E008"
+                        ))
+                    else:
+                        if type(creator_field) is not ForeignKey:
+                            errors.append(DJGalleryCriticalCheckMessage(
+                                msg=(GENERIC_ERROR_PATTERN
+                                     % {"location": "'%s' in '%s' in '%s'" % (
+                                            TARGET_IMAGE_MODEL, DEFAULT_IMAGE_MODEL,
+                                            DJANGO_GALLERY_WIDGET_CONFIG),
+                                        "error_type": type(TypeError).__name__,
+                                        "error_str":
+                                            "%s is not a ForeignKey user model of"
+                                            " target image model."
+                                            % target_image_field_name}
+                                     ),
+                                id="django-gallery-widget-default_image_model.E009"
                             ))
 
     assets = conf.get(ASSETS, None)
@@ -512,34 +566,5 @@ def check_settings(app_configs, **kwargs):
                         "types": "bool"}),
                 id="django-gallery-widget-prompt_alert_if_changed_on_window_reload.E001"  # noqa
             ))
-
-    default_image_instance_handle_backend = conf.get(
-        DEFAULT_IMAGE_INSTANCE_HANDLE_BACKEND, None
-    )
-
-    if default_image_instance_handle_backend is not None:
-        if not isinstance(default_image_instance_handle_backend, str):
-            errors.append(DJGalleryCriticalCheckMessage(
-                msg=(INSTANCE_ERROR_PATTERN
-                     % {"location": "'%s' in '%s'" % (
-                            DEFAULT_IMAGE_INSTANCE_HANDLE_BACKEND,
-                            DJANGO_GALLERY_WIDGET_CONFIG),
-                        "types": "bool"}),
-                id="django-gallery-widget-default_image_instance_handle_backend.E001"  # noqa
-            ))
-        else:
-            try:
-                import_string(default_image_instance_handle_backend)
-            except Exception as e:
-                errors.append(DJGalleryCriticalCheckMessage(
-                    msg=(GENERIC_ERROR_PATTERN
-                         % {"location": "'%s' in '%s'" % (
-                                DEFAULT_IMAGE_INSTANCE_HANDLE_BACKEND,
-                                DJANGO_GALLERY_WIDGET_CONFIG),
-                            "error_type": type(e).__name__,
-                            "error_str": str(e)}
-                         ),
-                    id="django-gallery-widget-default_image_instance_handle_backend.E002"  # noqa
-                ))
 
     return errors
