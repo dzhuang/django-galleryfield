@@ -2,8 +2,6 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
-# from gallery.widgets import GalleryWidget
-
 from demo.models import DemoGallery
 from django.forms.widgets import Textarea
 
@@ -19,7 +17,7 @@ class GalleryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # self.fields["images"].required = False
+        self.fields["images"].required = False
 
         # self.fields["images"].widget = Textarea()
         self.helper = FormHelper(self)

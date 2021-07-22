@@ -117,8 +117,8 @@ class GalleryWidget(forms.MultiWidget):
 
     def decompress(self, value):
         if value:
-            return [value, '', '', ]
-        return ['', '', '', ]
+            return [value, '']
+        return ['', '']
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
@@ -129,10 +129,11 @@ class GalleryWidget(forms.MultiWidget):
         return context
 
     def render(self, name, value, attrs=None, renderer=None):
-        if not isinstance(value, list) or value == "null":
-            value, __, ___ = self.decompress(value)
+        if not isinstance(value, list):
+            value, __ = self.decompress(value)
             assert isinstance(value, str), type(value)
         else:
+            # This happens when submitted value contains non-empty delete_files
             value = json.dumps(value)
 
         context = {
@@ -143,8 +144,6 @@ class GalleryWidget(forms.MultiWidget):
             "upload_handler_url": self.upload_handler_url,
             "accepted_mime_types": self.options["accepted_mime_types"],
         }
-
-        # print(self.get_context(name, value, attrs))
 
         def is_value_empty(_value):
             if not _value:
@@ -168,7 +167,8 @@ class GalleryWidget(forms.MultiWidget):
             context["uploader_disabled"] = True
         context["widget"] = _context["widget"]
 
-        # Set blueimp Jquery upload ui options
+        # Set blueimp/jQuery-File-Upload
+        # https://github.com/blueimp/jQuery-File-Upload/wiki/Options
         from .utils import convert_dict_to_plain_text
         max_number_of_allowed_upload_file = self.ui_options.get("maxNumberOfFiles", 0)
         if not max_number_of_allowed_upload_file:

@@ -2,13 +2,11 @@ import json
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django import forms
 
 from .controller import manage_images
-from .widgets import GalleryWidget
 from . import conf
 
 
@@ -81,12 +79,14 @@ class GalleryFormField(forms.MultiValueField):
         'required': _("The submitted file is empty."),
     }
 
-    def __init__(self, max_length=None, encoder=None, decoder=None, required=True, **kwargs):
+    def __init__(self, max_length=None, encoder=None, decoder=None, **kwargs):
         """
         Note: Here we are actually extending forms.JsonField, so encoder and
         decoder are needed
         """
         from .widgets import GalleryWidget
+
+        required = kwargs.pop("required", True)
 
         kwargs.update(
             {
