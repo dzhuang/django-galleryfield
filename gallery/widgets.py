@@ -58,9 +58,21 @@ class GalleryWidget(forms.MultiWidget):
             jquery_upload_ui_options=None,
             **kwargs):
 
-        widgets = (forms.HiddenInput(attrs={"class": conf.FILES_FIELD_CLASS_NAME}),
-                   forms.HiddenInput(attrs={"class": conf.DELETED_FIELD_CLASS_NAME})
-                   )
+        # If BootStrap is loaded, "hiddeninput" is added by BootStrap.
+        # However, we need that css class to check changes of the form,
+        # so we added it manually.
+        widgets = (
+            forms.HiddenInput(
+                attrs={
+                    "class": " ".join(
+                        [conf.FILES_FIELD_CLASS_NAME, "hiddeninput"])}),
+            forms.HiddenInput(
+                attrs={
+                    "class": " ".join(
+                        [conf.DELETED_FIELD_CLASS_NAME, "hiddeninput"]),
+                    "required": False
+                })
+        )
 
         super(GalleryWidget, self).__init__(widgets, attrs)
 
@@ -108,12 +120,19 @@ class GalleryWidget(forms.MultiWidget):
             return [value, '', '', ]
         return ['', '', '', ]
 
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+
+        # Bug: https://forum.djangoproject.com/t/multivaluefield-subwidgets-required/1196/8  # noqa
+        assert not context["widget"]["subwidgets"][1]["required"]
+        context["widget"]["subwidgets"][1]["attrs"]["required"] = False
+        return context
+
     def render(self, name, value, attrs=None, renderer=None):
         if not isinstance(value, list) or value == "null":
             value, __, ___ = self.decompress(value)
             assert isinstance(value, str), type(value)
         else:
-            pass
             value = json.dumps(value)
 
         context = {
@@ -124,6 +143,8 @@ class GalleryWidget(forms.MultiWidget):
             "upload_handler_url": self.upload_handler_url,
             "accepted_mime_types": self.options["accepted_mime_types"],
         }
+
+        # print(self.get_context(name, value, attrs))
 
         def is_value_empty(_value):
             if not _value:

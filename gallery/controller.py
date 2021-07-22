@@ -22,13 +22,13 @@ def manage_images(sender, instance, **kwargs):
         if not old_images:
             old_images = []
 
-        current_images = (getattr(instance, field.name) or [])
+        current_images = getattr(instance, field.name)
 
         # This happens when delete all images from an instance
         if current_images == "null":
             current_images = []
         else:
-            current_images = json.loads(current_images)
+            current_images = json.loads(current_images) or []
 
         assert isinstance(current_images, list)
 

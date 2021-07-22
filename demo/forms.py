@@ -5,6 +5,7 @@ from crispy_forms.layout import Submit
 # from gallery.widgets import GalleryWidget
 
 from demo.models import DemoGallery
+from django.forms.widgets import Textarea
 
 
 class GalleryForm(forms.ModelForm):
@@ -20,6 +21,7 @@ class GalleryForm(forms.ModelForm):
 
         # self.fields["images"].required = False
 
+        # self.fields["images"].widget = Textarea()
         self.helper = FormHelper(self)
         self.helper.layout.append(
             Submit("Submit", "submit",

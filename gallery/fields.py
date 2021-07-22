@@ -81,7 +81,7 @@ class GalleryFormField(forms.MultiValueField):
         'required': _("The submitted file is empty."),
     }
 
-    def __init__(self, max_length=None, encoder=None, decoder=None, **kwargs):
+    def __init__(self, max_length=None, encoder=None, decoder=None, required=True, **kwargs):
         """
         Note: Here we are actually extending forms.JsonField, so encoder and
         decoder are needed
@@ -92,16 +92,14 @@ class GalleryFormField(forms.MultiValueField):
             {
                 "widget": GalleryWidget(),
                 'fields': (
-                   forms.JSONField(required=kwargs.get("required"),
-                                   encoder=encoder, decoder=decoder),
-                   forms.JSONField(required=False, encoder=encoder,
-                                   decoder=decoder),
-                   forms.JSONField(required=False, encoder=encoder,
-                                   decoder=decoder), ),
-                "require_all_fields": False
+                    forms.JSONField(required=required,
+                                    encoder=encoder, decoder=decoder),
+                    forms.JSONField(required=False, encoder=encoder,
+                                    decoder=decoder), ),
             }
         )
-        super(GalleryFormField, self).__init__(**kwargs)
+        super(GalleryFormField, self).__init__(
+            required=required, require_all_fields=False, **kwargs)
 
     def compress(self, data_list):
         if not data_list:
