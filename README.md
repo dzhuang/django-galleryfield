@@ -1,5 +1,9 @@
-django-gallery-widget
+Django-Gallery-Widget
 ===================
+
+.. image:: https://codecov.io/gh/dzhuang/django-gallery-widget/branch/main/graph/badge.svg
+    :alt: Codecov Coverage Status
+    :target: https://codecov.io/gh/dzhuang/django-gallery-widget/commits
 
 Django AJAX form widgets and model fields for multiple images upload with progress bar.
 Some of the ideas/code are inspired by [Django-files-widget](https://github.com/TND/django-files-widget)
