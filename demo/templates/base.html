@@ -23,6 +23,12 @@
     <div class="container">
         <div class="navbar-header">
             <a class="navbar-brand" href="https://github.com/dzhuang/django-gallery-widget">Django-Gallery-widget</a>
+            <ul class="nav navbar-nav">
+                <li><a  href="/">{% trans "Home" %}</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'admin:index' %}" target="_blank">{% trans "Admin" %}</a></li>
+            </ul>
         </div>
     </div>
 </div>
