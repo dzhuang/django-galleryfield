@@ -6,7 +6,7 @@ GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
     "sequentialUploads": "true",
     "acceptFileTypes": r"/(\.|\/)(png|gif|jpe?g)$/i",
     "imageOrientation": "true",
-    "maxNumberOfFiles": 10,
+    "maxNumberOfFiles": 0,
     "previewMaxWidth": 80,
     "previewMaxHeight": 80,
     "maxFileSize": 1.5 * 1024 ** 2,  # 1.5Mb

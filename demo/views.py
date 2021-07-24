@@ -8,7 +8,6 @@ from demo.forms import GalleryForm
 class GalleryFormView(CreateView):
     form_class = GalleryForm
     template_name = "form.html"
-    success_url = "/gallery"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

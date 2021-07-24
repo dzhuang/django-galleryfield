@@ -20,15 +20,6 @@ class UnicodeWithAttr(str):
     deleted_files = None
 
 
-def save_all_data(self, instance, data):
-    # Save old data to know which images are deleted.
-    # We don't know yet if the form will really be saved.
-
-    old_data = getattr(instance, self.name)
-    setattr(instance, conf.OLD_VALUE_STR % self.name, old_data)
-    setattr(instance, conf.DELETED_VALUE_STR % self.name, data.deleted_files)
-
-
 class GalleryField(models.JSONField):
     description = _('An array JSON object as attributes of (multiple) images')
     default_error_messages = {
@@ -42,7 +33,13 @@ class GalleryField(models.JSONField):
         # setattr(cls, self.name, GalleryDescriptor(self))
 
     def save_form_data(self, instance, data):
-        save_all_data(self, instance, data)
+        # Save old data to know which images are deleted.
+        # We don't know yet if the form will really be saved.
+
+        old_data = getattr(instance, self.name)
+        setattr(instance, conf.OLD_VALUE_STR % self.name, old_data)
+        setattr(instance, conf.DELETED_VALUE_STR % self.name, data.deleted_files)
+
         super(GalleryField, self).save_form_data(instance, data)
 
     def formfield(self, **kwargs):

@@ -17,9 +17,11 @@ class GalleryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields["images"].required = False
+        # self.fields["images"].required = False
 
         # self.fields["images"].widget = Textarea()
+        # self.fields["images"].widget.attrs["readonly"] = True
+
         self.helper = FormHelper(self)
         self.helper.layout.append(
             Submit("Submit", "submit",

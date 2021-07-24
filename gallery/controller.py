@@ -16,15 +16,15 @@ def manage_images(sender, instance, **kwargs):
             continue
 
         old_images = (getattr(instance, old_value_attr) or [])
-        if old_images:
-            if isinstance(old_images, str):
-               old_images = json.loads(old_images)
-        if not old_images:
-            old_images = []
+        if isinstance(old_images, str):
+            old_images = json.loads(old_images) or []
 
-        current_images = getattr(instance, field.name) or []
-        if isinstance(current_images, str):
-            current_images = json.loads(current_images) or []
+        assert isinstance(old_images, list)
+
+        current_images = getattr(instance, field.name)
+        assert isinstance(current_images, str)
+
+        current_images = json.loads(current_images) or []
 
         assert isinstance(current_images, list)
 
@@ -53,5 +53,5 @@ def manage_images(sender, instance, **kwargs):
         delattr(instance, deleted_value_attr)
 
         if changed:
-            setattr(instance, field.name, new_images)
+            setattr(instance, field.name, json.dumps(new_images))
             instance.save()

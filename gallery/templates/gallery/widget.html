@@ -37,7 +37,7 @@
             {% endcomment %}
 
             {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
-            <span class="btn btn-success fileinput-button {% if uploader_disabled %} hidden disabled {% endif %}">
+            <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
                 <i class="glyphicon glyphicon-plus"></i>
                 <span>{% trans "Add files..." %}</span>
 
@@ -64,6 +64,8 @@
                         accept = '{{ accepted_mime_types|join:"," }}'
                     {% endif %}
                     data-action="{{ upload_handler_url }}"
+
+                   {% if uploader_disabled %}disabled{% endif %}
                 >
                 {% endblock %}
                 {% endblock %}
@@ -356,27 +358,7 @@
         });
 </script>
 
-<script>
-    {% if not uploader_disabled %}
-    {% block images_widget_delete_js %}
-        var deletedTemplate =
-            '<div class="deleted-file">' +
-                '<span class="image-holder">' +
-                    '<img class="icon" />' +
-                '</span>' +
-                '<span class="name"></span>' +
-                '<span class="undo">' +
-                    '<a href="javascript:void(0);" class="undo-remove-button">' +
-                    "{% trans 'Undo' %}" +
-                    '</a>' +
-                '</span>' +
-            '</div>';
-    {% endblock %}
-    {% endif %}
-
-</script>
-
-
+{% if not uploader_disabled %}
 <script>
 {# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
 {# https://blog.csdn.net/candy_home/article/details/74440519 #}
@@ -389,7 +371,7 @@ $(document).ready(function () {
       .attr("accept", "image/*");
 })
 </script>
-
+{% endif %}
 
 <!--[if gte IE 8]>
 <script src="{% static 'js/cors/jquery.xdr-transport.js' %}"></script>

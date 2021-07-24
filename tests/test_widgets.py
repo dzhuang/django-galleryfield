@@ -2,20 +2,33 @@ import json
 from django import forms
 from django.forms.renderers import DjangoTemplates
 from django.utils.safestring import mark_safe
-from django.forms import ValidationError
 from django.test import SimpleTestCase
+from django.urls import reverse
 
 from gallery.fields import GalleryFormField
 from gallery.widgets import GalleryWidget
+from gallery import conf
 
 
-class GalleryFormFieldTest(SimpleTestCase):
-    def assertWidgetRendersIn(self, field, needle):
+class GalleryWidgetTest(SimpleTestCase):
+    @staticmethod
+    def _get_rendered_field_html(field, print_output=False):
         class Form(forms.Form):
             f = field
 
-        print(str(Form()['f']))
-        self.assertInHTML(needle, str(Form()['f']))
+        haystack = str(Form()['f'])
+        if print_output:
+            print(haystack)
+        return haystack
+
+    def assertFieldRendersIn(self, field, needle, strict=False, print_output=False):
+        haystack = self._get_rendered_field_html(field, print_output)
+        assert_in = self.assertInHTML if not strict else self.assertIn
+        assert_in(needle, haystack)
+
+    def assertFieldRendersNotIn(self, field, needle, print_output=False):
+        haystack = self._get_rendered_field_html(field, print_output)
+        self.assertNotIn(needle, haystack)
 
     def test_widget(self):
         field = GalleryFormField()
@@ -23,7 +36,7 @@ class GalleryFormFieldTest(SimpleTestCase):
 
     def test_required_widget_render(self):
         f = GalleryFormField(required=True)
-        self.assertWidgetRendersIn(
+        self.assertFieldRendersIn(
             f, '<input type="hidden" name="f_0"'
                ' class="django-gallery-widget-files-field'
                ' hiddeninput" required id="id_f_0">'
@@ -32,7 +45,7 @@ class GalleryFormFieldTest(SimpleTestCase):
                ' hiddeninput" id="id_f_1">')
 
         f = GalleryFormField(required=False)
-        self.assertWidgetRendersIn(
+        self.assertFieldRendersIn(
             f, '<input type="hidden" name="f_0"'
                ' class="django-gallery-widget-files-field'
                ' hiddeninput" id="id_f_0">'
@@ -40,51 +53,28 @@ class GalleryFormFieldTest(SimpleTestCase):
                ' class="django-gallery-widget-deleted-field'
                ' hiddeninput" id="id_f_1">')
 
-    def test_gallery_model_field_clean(self):
-        field = GalleryFormField()
-
-        image_data = [{
-            "url": "/media/images/abcd.jpg",
-            "thumbnailurl": "/media/cache/a6/ee/abcdefg.jpg",
-            "name": "abcd.jpg", "pk": "1", "size": "87700",
-            "deleteurl": "javascript:void(0)"}]
-
-        form_data = [json.dumps(image_data), ['']]
-        cleaned_data = field.clean(form_data)
-        self.assertEqual(str(cleaned_data), str(json.dumps(image_data)))
-
-    def test_gallery_model_field_clean_null_required(self):
-        field = GalleryFormField(required=True)
-
-        inputs = [
-            '',
-            ['', '']
-        ]
-
-        msg = "'The submitted file is empty.'"
-
-        for data in inputs:
-            with self.subTest(data=data):
-                with self.assertRaisesMessage(ValidationError, msg):
-                    field.clean('')
-
-    def test_gallery_model_field_clean_null_not_required(self):
-        field = GalleryFormField(required=False)
-        inputs = [
-            '',
-            ['', '']
-        ]
-
-        for data in inputs:
-            with self.subTest(data=data):
-               self.assertEqual(json.loads(field.clean(data)), '')
-
-    def check_in_html(self, widget, name, value, html='', attrs=None, strict=False, **kwargs):
-        assertIn = self.assertIn if strict else self.assertInHTML
+    def _render_widget(self, widget, name, value, attrs=None, **kwargs):
         django_renderer = DjangoTemplates()
+        print_output = kwargs.pop("print_output", False)
         output = widget.render(name, value, attrs=attrs, renderer=django_renderer, **kwargs)
-        print(output)
-        assertIn(html, output)
+        if print_output:
+            print(output)
+        return output
+
+    def check_in_html(self, widget, name, value, html, attrs=None, strict=False, **kwargs):
+        output = self._render_widget(widget, name, value, attrs=attrs, **kwargs)
+        assert_in = self.assertIn if strict else self.assertInHTML
+        if isinstance(html, str):
+            html = [html]
+        for _html in html:
+            assert_in(_html, output)
+
+    def check_not_in_html(self, widget, name, value, html, attrs=None, **kwargs):
+        output = self._render_widget(widget, name, value, attrs=attrs, **kwargs)
+        if isinstance(html, str):
+            html = [html]
+        for _html in html:
+            self.assertNotIn(_html, output)
 
     def test_gallery_widget_render(self):
         widget = GalleryWidget()
@@ -101,9 +91,10 @@ class GalleryFormFieldTest(SimpleTestCase):
             '"name": "abcd.jpg", "pk": "1", "size": "87700", '
             '"deleteurl": "javascript:void(0)"}]" '
             'class="django-gallery-widget-files-field hiddeninput">')
-        self.check_in_html(widget, "image", value, strict=True, html=expected_result)
+        self.check_in_html(widget, "image", value, strict=True,
+                           html=[expected_result])
 
-    # # This test failed
+    ## This test failed
     # def test_gallery_widget_render_null(self):
     #     widget = GalleryWidget()
     #     image_data = [{
@@ -118,3 +109,59 @@ class GalleryFormFieldTest(SimpleTestCase):
     #         'value="" '
     #         'class="django-gallery-widget-files-field hiddeninput">')
     #     self.check_in_html(widget, "image", value, strict=True, html=expected_result)
+
+    def test_gallery_widget_jquery_upload_options(self):
+        widget = GalleryWidget(
+            jquery_upload_ui_options={"maxNumberOfFiles": 0})
+        self.check_not_in_html(widget, "image", '', html="maxNumberOfFiles")
+
+        from random import randint
+        max_number_of_file = randint(1, 10)
+        widget = GalleryWidget(
+            jquery_upload_ui_options={"maxNumberOfFiles": max_number_of_file})
+        expected_string = "maxNumberOfFiles: %i" % max_number_of_file
+        self.check_in_html(widget, "image", '', strict=True, html=expected_string)
+
+    def test_gallery_widget_preview_size(self):
+        widget = GalleryWidget()
+        expected_string = "previewMaxWidth: %i" % conf.DEFAULT_THUMBNAIL_SIZE
+        self.check_in_html(widget, "image", '', strict=True, html=expected_string)
+
+        widget = GalleryWidget(preview_size=130)
+        expected_string = "previewMaxWidth: %i" % 130
+        self.check_in_html(widget, "image", '', strict=True, html=expected_string)
+
+    def test_gallery_widget_jquery_upload_options_None(self):
+        widget = GalleryWidget()
+        self.check_in_html(widget, "image", '', strict=True, html="disableImageResize")
+
+        widget = GalleryWidget(
+            jquery_upload_ui_options={"disableImageResize": None})
+        self.check_not_in_html(widget, "image", '', html="disableImageResize")
+
+    def test_gallery_widget_disabled(self):
+        widget = GalleryWidget()
+        file_upload_button = (
+            '<input type="file" class="django-gallery-image-input" '
+            'id="%(field_name)s-files" multiple accept="image/*" '
+            'data-action="%(upload_handler_url)s">'
+            % {"field_name": conf.DEFAULT_TARGET_IMAGE_FIELD_NAME,
+               "upload_handler_url": reverse(conf.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
+        )
+        self.check_in_html(
+            widget, "image", '',
+            html=[file_upload_button])
+
+        widget.attrs["readonly"] = True
+        self.check_not_in_html(
+            widget, "image", '',
+            # The css class of file input button
+            html=["django-gallery-image-input"])
+
+    def test_disabled_widget_render(self):
+        f = GalleryFormField()
+        self.assertFieldRendersIn(
+            f, 'django-gallery-image-input', strict=True)
+
+        f = GalleryFormField(disabled=True)
+        self.assertFieldRendersNotIn(f, 'django-gallery-image-input')

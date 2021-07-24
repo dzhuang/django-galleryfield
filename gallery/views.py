@@ -42,7 +42,8 @@ def upload(request, *args, **kwargs):
     creator_field_name = request.POST["creator_field_name"]
 
     model = django_apps.get_model(model_str)
-    save_kwargs = {image_field_name: file, creator_field_name: request.user}
+    save_kwargs = {image_field_name: file,
+                   creator_field_name: request.user}
     instance = model.objects.create(**save_kwargs)
 
     file_dict = {

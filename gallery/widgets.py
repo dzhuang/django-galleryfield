@@ -134,6 +134,7 @@ class GalleryWidget(forms.MultiWidget):
             assert isinstance(value, str), type(value)
         else:
             # This happens when submitted value contains non-empty delete_files
+            # when the field is required
             value = json.dumps(value)
 
         context = {
@@ -145,25 +146,14 @@ class GalleryWidget(forms.MultiWidget):
             "accepted_mime_types": self.options["accepted_mime_types"],
         }
 
-        def is_value_empty(_value):
-            if not _value:
-                return True
-            if isinstance(_value, str):
-                if _value == "[]":
-                    return True
-            if isinstance(_value, list):
-                if _value == ["[]", '', '']:
-                    return True
-            return False
-
         # Do not fill in empty value to hidden inputs
-        if not is_value_empty(value):
+        if value:
             context["files"] = value
 
         _context = self.get_context(name, value, attrs)
 
         if (_context["widget"]["attrs"].get("disabled", False)
-                or _context["widget"]["attrs"].get("readonly") == "readonly"):
+                or _context["widget"]["attrs"].get("readonly")):
             context["uploader_disabled"] = True
         context["widget"] = _context["widget"]
 
