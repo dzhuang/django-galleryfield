@@ -19,6 +19,20 @@ Features
 - Integrates with Django Admin.
 
 
+ScreenShots
+-----------
+- Multiple image upload, sortable
+
+  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen1.png" width="70%">
+
+- Undoable delete before submit
+  
+  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen2.png" width="70%">
+
+- Client side crop
+  
+  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen3.png" width="70%">
+
 Quick Start
 -----------
 
@@ -151,3 +165,7 @@ and override those settings for your apps, especially in terms of permission con
 - Tests
 - More demos
 - Descriptors for rendering the `GalleryField`.
+
+## Known issue
+- Css rendering of buttons in Admin.
+- Customized jQuery-File-Upload option `maxNumberOfFiles` will not work when undoing deleted images.
