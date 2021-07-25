@@ -137,4 +137,9 @@ def crop(request, *args, **kwargs):
         'cropurl': instance.crop_url,
     }
 
-    return JsonResponse({"files": [file_dict], 'message': gettext('Done!')}, status=200)
+    return JsonResponse(
+        {
+            "files": [file_dict],
+            'message': gettext('Done!')
+        },
+        status=200)

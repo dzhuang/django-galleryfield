@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.checks import Critical, Warning, register
+from django.core.checks import Critical, register
 from django.core.exceptions import ImproperlyConfigured, FieldDoesNotExist
 
 try:  # pragma: no cover
@@ -208,7 +208,8 @@ def check_settings(app_configs, **kwargs):
                             app_conf.DEFAULT_TARGET_IMAGE_MODEL)
 
                     try:
-                        image_field = target_model._meta.get_field(target_image_field_name)
+                        image_field = (
+                            target_model._meta.get_field(target_image_field_name))
                     except FieldDoesNotExist as e:
                         errors.append(DJGalleryCriticalCheckMessage(
                             msg=(GENERIC_ERROR_PATTERN
@@ -263,12 +264,14 @@ def check_settings(app_configs, **kwargs):
                             app_conf.DEFAULT_TARGET_IMAGE_MODEL)
 
                     try:
-                        creator_field = target_model._meta.get_field(target_creator_field_name)
+                        creator_field = (
+                            target_model._meta.get_field(target_creator_field_name))
                     except FieldDoesNotExist as e:
                         errors.append(DJGalleryCriticalCheckMessage(
                             msg=(GENERIC_ERROR_PATTERN
                                  % {"location": "'%s' in '%s' in '%s'" % (
-                                        TARGET_CREATOR_FIELD_NAME, DEFAULT_IMAGE_MODEL,
+                                        TARGET_CREATOR_FIELD_NAME,
+                                        DEFAULT_IMAGE_MODEL,
                                         DJANGO_GALLERY_WIDGET_CONFIG),
                                     "error_type": type(e).__name__,
                                     "error_str": str(e)}
@@ -452,7 +455,8 @@ def check_settings(app_configs, **kwargs):
                                         DJANGO_GALLERY_WIDGET_CONFIG),
                                     "error_type": TypeError.__name__,
                                     "error_str":
-                                        "Thumbnail quality should be between 0 and 100"}
+                                        "Thumbnail quality should be "
+                                        "between 0 and 100"}
                                  ),
                             id="django-gallery-widget-thumbnails.E005"
                         ))
@@ -536,9 +540,10 @@ def check_settings(app_configs, **kwargs):
                                     OLD_VALUE_STR, DELETED_VALUE_STR, FIELD_HACK,
                                     DJANGO_GALLERY_WIDGET_CONFIG),
                                 "error_type": "",
-                                "error_str": "'%s' and '%s' should not be the same" % (
+                                "error_str":
+                                    "'%s' and '%s' should not be the same" % (
                                     OLD_VALUE_STR, DELETED_VALUE_STR
-                                )}
+                                    )}
                              ),
                         id="django-gallery-widget-field_hack.E006"
                     ))

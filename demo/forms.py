@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 from demo.models import DemoGallery
-from django.forms.widgets import Textarea
+from django.forms.widgets import Textarea  # noqa
 
 
 class GalleryForm(forms.ModelForm):

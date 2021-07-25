@@ -9,6 +9,7 @@ pytest-django
 pytest-factoryboy
 pytest-cov
 selenium
+flake8
 
 # flake8
 # pep8-naming

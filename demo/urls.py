@@ -21,7 +21,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path(r'', views.GalleryFormView.as_view(), name='gallery'),
-    path('gallery/<int:pk>', views.GalleryUpdateView.as_view(), name='gallery-update'),
+    path('gallery/<int:pk>',
+         views.GalleryUpdateView.as_view(), name='gallery-update'),
     path(r"gallery-handler/", include("gallery.urls")),
     path('admin/', admin.site.urls),
 ]

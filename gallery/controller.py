@@ -1,17 +1,17 @@
 import json
-
-from .conf import *
+from gallery import conf
 
 
 def manage_images(sender, instance, **kwargs):
     # Receiver of Django post_save signal.
     # At this point we know that the model instance has been saved into the db.
     from .fields import GalleryField
-    fields = [field for field in sender._meta.fields if type(field) in [GalleryField]]
+    fields = [field for field in sender._meta.fields
+              if type(field) in [GalleryField]]
 
     for field in fields:
-        old_value_attr = OLD_VALUE_STR % field.name
-        deleted_value_attr = DELETED_VALUE_STR % field.name
+        old_value_attr = conf.OLD_VALUE_STR % field.name
+        deleted_value_attr = conf.DELETED_VALUE_STR % field.name
         if not hasattr(instance, old_value_attr):
             continue
 

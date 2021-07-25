@@ -11,7 +11,8 @@ GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
     "previewMaxHeight": 80,
     "maxFileSize": 1.5 * 1024 ** 2,  # 1.5Mb
     "minFileSize": 0.0001 * 1024 ** 2,  # 0.0001Mb
-    "disableImageResize": "/Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent)",
+    "disableImageResize": "/Android(?!.*Chrome)|Opera/.test(window.navigator "
+                          "&& navigator.userAgent)",
 }
 
 DEFAULT_UPLOAD_HANDLER_URL_NAME = "gallery_image_upload"

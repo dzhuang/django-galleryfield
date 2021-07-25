@@ -160,7 +160,8 @@ class GalleryWidget(forms.MultiWidget):
         # Set blueimp/jQuery-File-Upload
         # https://github.com/blueimp/jQuery-File-Upload/wiki/Options
         from .utils import convert_dict_to_plain_text
-        max_number_of_allowed_upload_file = self.ui_options.get("maxNumberOfFiles", 0)
+        max_number_of_allowed_upload_file = (
+            self.ui_options.get("maxNumberOfFiles", 0))
         if not max_number_of_allowed_upload_file:
             self.ui_options.pop("maxNumberOfFiles", None)
 

@@ -3,7 +3,7 @@ from . import defaults
 
 """
 DJANGO_GALLERY_WIDGET_CONFIG = {
-    "default_urls": 
+    "default_urls":
         {"upload_handler_url_name": "gallery_image_upload",
          "crop_url_name": "gallery_image_crop"},
     "default_image_model":

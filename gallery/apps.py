@@ -8,4 +8,3 @@ class GalleryConfig(AppConfig):
     def ready(self):
         from .checks import register_gallery_widget_settings_checks
         register_gallery_widget_settings_checks()
-
