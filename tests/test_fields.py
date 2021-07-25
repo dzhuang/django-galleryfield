@@ -1,35 +1,12 @@
 import json
-import string
 from django import forms
 from django.forms import ValidationError
 from django.test import SimpleTestCase, TestCase
-import random
 
 from gallery.fields import GalleryFormField
-import factory
 
 from demo.models import DemoGallery
-
-
-def sequenced_image(number, length=5):
-    randgen = random.Random()
-    name = ("".join(["image_"] + [randgen.choice(string.ascii_letters)
-                    for _i in range(length)] + ["%s.jpg" % str(number)]))
-    return json.dumps([{
-        "url": "/media/images/%s" % name,
-        "thumbnailurl": "/media/cache/a6/ee/%s" % name,
-        "name": "%s" % name,
-        "size": (number + 1) * 20000,
-        "deleteurl": "javascript:void(0)",
-        'pk': number + 1
-    }])
-
-
-class DemoGalleryFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = DemoGallery
-
-    images = factory.Sequence(sequenced_image)
+from tests.mixins import DemoGalleryFactory
 
 
 class DemoTestGalleryForm(forms.ModelForm):
