@@ -18,6 +18,7 @@ Features
 - Image gallery widget with drag &amp; drop reordering, client side crop before upload, crop after upload (todo).
 - Integrates with Django Admin.
 
+
 Quick Start
 -----------
 

@@ -1,14 +1,5 @@
-import os
-from datetime import datetime
-
-from django.core.exceptions import ImproperlyConfigured
 from django.test import SimpleTestCase
 from django.test.utils import override_settings
-from django.utils.translation import gettext_lazy as _
-from django.conf import settings
-
-
-from unittest import skipIf
 
 
 class CheckSettingsBase(SimpleTestCase):
@@ -243,7 +234,7 @@ class CheckDefaultImageModel(CheckSettingsBase):
         "default_image_model":
             {"target_image_model": "gallery.BuiltInGalleryImage",
              "target_image_field_name": "image",
-             "target_creator_field_name": "creator",},
+             "target_creator_field_name": "creator"},
     }
 
     VALID_CONF_BOTH_NONE = {

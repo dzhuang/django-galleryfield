@@ -6,7 +6,7 @@ from django.test import SimpleTestCase, TestCase
 from gallery.fields import GalleryFormField
 
 from demo.models import DemoGallery
-from tests.mixins import DemoGalleryFactory
+from tests.factories import DemoGalleryFactory
 
 
 class DemoTestGalleryForm(forms.ModelForm):

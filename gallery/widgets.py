@@ -133,8 +133,8 @@ class GalleryWidget(forms.MultiWidget):
             value, __ = self.decompress(value)
             assert isinstance(value, str), type(value)
         else:
-            # This happens when submitted value contains non-empty delete_files
-            # when the field is required
+            # This happens when the field is required and deleted all images
+            # from a none empty instance
             value = json.dumps(value)
 
         context = {

@@ -23,7 +23,7 @@ urlpatterns = [
     path(r'', views.GalleryFormView.as_view(), name='gallery'),
     path('gallery/<int:pk>', views.GalleryUpdateView.as_view(), name='gallery-update'),
     path(r"gallery-handler/", include("gallery.urls")),
-    path('admin', admin.site.urls),
+    path('admin/', admin.site.urls),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

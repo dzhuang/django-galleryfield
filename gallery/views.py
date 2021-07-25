@@ -1,13 +1,14 @@
-import os
-import json
-
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, Http404
-from django.utils.translation import gettext_lazy as _, gettext
+from django.http import JsonResponse
+from django.utils.translation import gettext
 from django.utils.text import format_lazy
-from django.views.decorators.http import require_POST, require_GET
-from django.apps import apps as django_apps
+from django.views.decorators.http import require_POST
+
+try:  # pragma: no cover
+    from django.apps import apps as django_apps
+except ImportError:  # pragma: no cover
+    from django.apps import django_apps
 
 from PIL import Image
 from io import BytesIO
@@ -137,5 +138,3 @@ def crop(request, *args, **kwargs):
     }
 
     return JsonResponse({"files": [file_dict], 'message': gettext('Done!')}, status=200)
-
-# }}}

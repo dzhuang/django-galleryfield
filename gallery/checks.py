@@ -1,10 +1,14 @@
 from django.conf import settings
 from django.core.checks import Critical, Warning, register
 from django.core.exceptions import ImproperlyConfigured, FieldDoesNotExist
-from django.apps import apps
+
+try:  # pragma: no cover
+    from django.apps import apps
+except ImportError:  # pragma: no cover
+    from django.apps import django_apps as apps
+
 from django.urls import reverse
 from django.db.models import ImageField, ForeignKey
-
 
 from . import conf as app_conf
 

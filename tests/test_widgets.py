@@ -56,12 +56,14 @@ class GalleryWidgetTest(SimpleTestCase):
     def _render_widget(self, widget, name, value, attrs=None, **kwargs):
         django_renderer = DjangoTemplates()
         print_output = kwargs.pop("print_output", False)
-        output = widget.render(name, value, attrs=attrs, renderer=django_renderer, **kwargs)
+        output = widget.render(name, value, attrs=attrs,
+                               renderer=django_renderer, **kwargs)
         if print_output:
             print(output)
         return output
 
-    def check_in_html(self, widget, name, value, html, attrs=None, strict=False, **kwargs):
+    def check_in_html(self, widget, name, value, html, attrs=None,
+                      strict=False, **kwargs):
         output = self._render_widget(widget, name, value, attrs=attrs, **kwargs)
         assert_in = self.assertIn if strict else self.assertInHTML
         if isinstance(html, str):
@@ -93,22 +95,6 @@ class GalleryWidgetTest(SimpleTestCase):
             'class="django-gallery-widget-files-field hiddeninput">')
         self.check_in_html(widget, "image", value, strict=True,
                            html=[expected_result])
-
-    ## This test failed
-    # def test_gallery_widget_render_null(self):
-    #     widget = GalleryWidget()
-    #     image_data = [{
-    #         "url": "/media/images/abcd.jpg",
-    #         "thumbnailurl": "/media/cache/a6/ee/abcdefg.jpg",
-    #         "name": "abcd.jpg", "pk": "1", "size": "87700",
-    #         "deleteurl": "javascript:void(0)"}]
-    #     deleted_files = json.dumps(image_data)
-    #     value = ['', deleted_files]
-    #     expected_result = (
-    #         '<input type="hidden" name="image_0" '
-    #         'value="" '
-    #         'class="django-gallery-widget-files-field hiddeninput">')
-    #     self.check_in_html(widget, "image", value, strict=True, html=expected_result)
 
     def test_gallery_widget_jquery_upload_options(self):
         widget = GalleryWidget(

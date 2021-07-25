@@ -17,20 +17,20 @@ class ImageBaseModel(models.Model):
 
     @property
     def image_field_name(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def creator_field_name(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def has_view_permission(self, request):
-        raise NotImplemented
+        raise NotImplementedError
 
     def has_edit_permission(self, request):
-        raise NotImplemented
+        raise NotImplementedError
 
     def has_delete_permission(self, request):
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def size(self):
