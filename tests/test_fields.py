@@ -121,7 +121,7 @@ class GalleryFormFieldTest(SimpleTestCase):
 
     def test_gallery_model_field_clean(self):
         field = GalleryFormField()
-        form_data = [json.dumps(IMAGE_DATA), ['']]
+        form_data = [json.dumps(IMAGE_DATA), '']
         cleaned_data = field.clean(form_data)
         self.assertEqual(str(cleaned_data), str(json.dumps(IMAGE_DATA)))
 
@@ -161,9 +161,32 @@ class GalleryFormFieldTest(SimpleTestCase):
                 with self.assertRaisesMessage(ValidationError, msg):
                     field.clean(inputs)
 
+    def test_gallery_model_field_clean_invalid_images_json(self):
+        invalid_image_data_list = IMAGE_DATA.copy()
+        invalid_image_data = invalid_image_data_list[0]
+        invalid_image_data.pop("url")
+        invalid_image_data_list[0] = invalid_image_data
+
+        field = GalleryFormField(required=False)
+        inputs = [
+            [json.dumps(invalid_image_data), ''],
+            ['', json.dumps(invalid_image_data)],
+            ['', 'invalid-image-data'],
+            ['', json.dumps(["url", "abcd"])],
+            [json.dumps(["url", "abcd"]), ''],
+            [json.dumps({"url": "abcd"}), ''],  # not a list
+            ['', json.dumps({"url": "abcd"})]
+        ]
+        msg = "The submitted images are invalid."
+
+        for data in inputs:
+            with self.subTest(data=data):
+                with self.assertRaisesMessage(ValidationError, msg):
+                    field.clean(data)
+
     def test_gallery_model_field_clean_not_null_not_list(self):
         input_str = 'invalid-image'
-        msg = "Enter a list of values."
+        msg = "The submitted images are invalid."
 
         for required in [True, False]:
             with self.subTest(required=required):
