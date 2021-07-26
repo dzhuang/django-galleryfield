@@ -92,6 +92,7 @@ class GalleryWidget(forms.MultiWidget):
 
         # https://github.com/blueimp/jQuery-File-Upload/wiki/Options#singlefileuploads
         _jquery_upload_ui_options.pop("singleFileUploads", None)
+        _jquery_upload_ui_options.pop("singleFileUploads", None)
 
         _jquery_upload_ui_options.update(
             {"previewMaxWidth": preview_size,
@@ -159,12 +160,14 @@ class GalleryWidget(forms.MultiWidget):
 
         # Set blueimp/jQuery-File-Upload
         # https://github.com/blueimp/jQuery-File-Upload/wiki/Options
-        from .utils import convert_dict_to_plain_text
-        max_number_of_allowed_upload_file = (
-            self.ui_options.get("maxNumberOfFiles", 0))
-        if not max_number_of_allowed_upload_file:
+        max_number_of_images = (
+            getattr(self, "max_number_of_images", None))
+        if not max_number_of_images:
             self.ui_options.pop("maxNumberOfFiles", None)
+        else:
+            self.ui_options["maxNumberOfFiles"] = max_number_of_images
 
+        from .utils import convert_dict_to_plain_text
         context["jquery_fileupload_ui_options"] = (
             convert_dict_to_plain_text(self.ui_options, 16))
 

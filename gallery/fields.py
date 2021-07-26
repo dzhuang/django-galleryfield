@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -57,7 +58,8 @@ class ImageJsonFormField(forms.JSONField):
         'invalid': _("The submitted images are invalid."),
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, max_number_of_images=None, **kwargs):
+        self.max_number_of_images = max_number_of_images
         super().__init__(encoder=None, decoder=None, **kwargs)
 
     def clean(self, value):
@@ -76,7 +78,7 @@ class ImageJsonFormField(forms.JSONField):
                     params={'value': cleaned_data},
                 )
         else:
-            cleaned_data_copy = cleaned_data.copy()
+            cleaned_data_copy = deepcopy(cleaned_data)
 
         # Make sure the json is a list of dicts, each of which
         # must has least has a 'url' key.
@@ -84,17 +86,23 @@ class ImageJsonFormField(forms.JSONField):
             raise ValidationError(
                 self.error_messages['invalid'],
                 code='invalid',
-                params={'value': cleaned_data_copy},
+                params={'value': cleaned_data},
             )
         for image_dict in cleaned_data_copy:
             if not isinstance(image_dict, dict) or "url" not in image_dict:
                 raise ValidationError(
                     self.error_messages['invalid'],
                     code='invalid',
-                    params={'value': cleaned_data_copy},
+                    params={'value': cleaned_data},
                 )
 
-        return cleaned_data_copy
+        if self.max_number_of_images:
+            if len(cleaned_data_copy) > self.max_number_of_images:
+                raise ValidationError(
+                    _("Number of images exceeded, only %(maxNumberOfFiles)s allowed")
+                    % {"maxNumberOfFiles": self.max_number_of_images}
+                )
+        return cleaned_data
 
 
 class GalleryFormField(forms.MultiValueField):
@@ -105,17 +113,36 @@ class GalleryFormField(forms.MultiValueField):
 
     widget = GalleryWidget
 
-    def __init__(self, **kwargs):
+    def __init__(self, max_number_of_images=None, **kwargs):
         self._required = kwargs.get("required", True)
-
+        self._max_number_of_images = max_number_of_images
         kwargs.update(
             {
                 'fields': (
-                    ImageJsonFormField(required=self._required),
+                    ImageJsonFormField(required=self._required,
+                                       max_number_of_images=max_number_of_images),
                     ImageJsonFormField(required=False))
             }
         )
         super(GalleryFormField, self).__init__(require_all_fields=False, **kwargs)
+        self.widget.max_number_of_images = self.max_number_of_images\
+            = max_number_of_images
+
+    @property
+    def max_number_of_images(self):
+        return self._max_number_of_images
+
+    @max_number_of_images.setter
+    def max_number_of_images(self, value):
+        if value is not None:
+            if not str(value).isdigit():
+                raise TypeError(
+                    "'max_number_of_images' expects a positive integer, "
+                    "got %s." % str(value))
+            value = int(value)
+        self._max_number_of_images = value
+        self.fields[0].max_number_of_images = value
+        self.widget.max_number_of_images = value
 
     @property
     def required(self):

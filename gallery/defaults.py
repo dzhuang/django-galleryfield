@@ -6,9 +6,9 @@ GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
     "sequentialUploads": "true",
     "acceptFileTypes": r"/(\.|\/)(png|gif|bmp|jpe?g)$/i",
     "imageOrientation": "true",
-    "maxNumberOfFiles": 0,
-    "previewMaxWidth": 80,
-    "previewMaxHeight": 80,
+    # "maxNumberOfFiles": 0,  # This will be overridden by GalleryFormField max_number_of_images value  # noqa
+    # "previewMaxWidth": 80,  # This is overridden by DEFAULT_THUMBNAIL_SIZE
+    # "previewMaxHeight": 80,
     "maxFileSize": 1.5 * 1024 ** 2,  # 1.5Mb
     "minFileSize": 0.0001 * 1024 ** 2,  # 0.0001Mb
     "disableImageResize": "/Android(?!.*Chrome)|Opera/.test(window.navigator "
