@@ -1,4 +1,6 @@
 import json
+from copy import deepcopy
+
 from django import forms
 from django.forms import ValidationError
 from django.test import SimpleTestCase, TestCase
@@ -119,13 +121,13 @@ class GalleryFieldTest(TestCase):
 
 class GalleryFormFieldTest(SimpleTestCase):
 
-    def test_gallery_model_field_clean(self):
+    def test_gallery_form_field_clean(self):
         field = GalleryFormField()
         form_data = [json.dumps(IMAGE_DATA), '']
         cleaned_data = field.clean(form_data)
         self.assertEqual(str(cleaned_data), str(json.dumps(IMAGE_DATA)))
 
-    def test_gallery_model_field_clean_null_required(self):
+    def test_gallery_form_field_clean_null_required(self):
         field = GalleryFormField(required=True)
         inputs = [
             '',
@@ -140,7 +142,7 @@ class GalleryFormFieldTest(SimpleTestCase):
                 with self.assertRaisesMessage(ValidationError, msg):
                     field.clean(data)
 
-    def test_gallery_model_field_clean_null_not_required(self):
+    def test_gallery_form_field_clean_null_not_required(self):
         field = GalleryFormField(required=False)
         inputs = [
             '',
@@ -151,7 +153,7 @@ class GalleryFormFieldTest(SimpleTestCase):
             with self.subTest(data=data):
                self.assertEqual(json.loads(field.clean(data)), '')
 
-    def test_gallery_model_field_clean_invalid_image_json(self):
+    def test_gallery_form_field_clean_invalid_image_json(self):
         inputs = ['invalid-image']
         msg = "The submitted images are invalid."
 
@@ -161,18 +163,16 @@ class GalleryFormFieldTest(SimpleTestCase):
                 with self.assertRaisesMessage(ValidationError, msg):
                     field.clean(inputs)
 
-    def test_gallery_model_field_clean_invalid_images_json(self):
-        invalid_image_data_list = IMAGE_DATA.copy()
-        invalid_image_data = invalid_image_data_list[0]
+    def test_gallery_form_field_clean_invalid_images_json(self):
+        invalid_image_data = IMAGE_DATA[0].copy()
         invalid_image_data.pop("url")
-        invalid_image_data_list[0] = invalid_image_data
 
         field = GalleryFormField(required=False)
         inputs = [
 
             # No url in each dict
-            [json.dumps(invalid_image_data), ''],
-            ['', json.dumps(invalid_image_data)],
+            [json.dumps([invalid_image_data]), ''],
+            ['', json.dumps([invalid_image_data])],
 
             # JSONDecodeError
             ['', 'invalid-image-data'],
@@ -192,7 +192,7 @@ class GalleryFormFieldTest(SimpleTestCase):
                 with self.assertRaisesMessage(ValidationError, msg):
                     field.clean(data)
 
-    def test_gallery_model_field_clean_not_null_not_list(self):
+    def test_gallery_form_field_clean_not_null_not_list(self):
         input_str = 'invalid-image'
         msg = "The submitted images are invalid."
 
@@ -202,7 +202,7 @@ class GalleryFormFieldTest(SimpleTestCase):
                 with self.assertRaisesMessage(ValidationError, msg):
                     field.clean(input_str)
 
-    def test_gallery_model_field_clean_disabled_invalid(self):
+    def test_gallery_form_field_clean_disabled_invalid(self):
         field = GalleryFormField(disabled=True)
         input_str = 'invalid-image'
         msg = "The submitted images are invalid."
@@ -210,8 +210,67 @@ class GalleryFormFieldTest(SimpleTestCase):
         with self.assertRaisesMessage(ValidationError, msg):
             field.clean(input_str)
 
-    def test_gallery_model_field_clean_disabled(self):
+    def test_gallery_form_field_clean_disabled(self):
         field = GalleryFormField(disabled=True)
-        self.assertEqual(
-            json.loads(field.clean(json.dumps(IMAGE_DATA))),
-            IMAGE_DATA)
+        inputs = json.dumps(IMAGE_DATA)
+        self.assertEqual(json.loads(field.clean(inputs)), inputs)
+
+    def test_gallery_form_field_assign_max_number_of_images(self):
+        field = GalleryFormField(required=False)
+        max_number_of_images_list = [
+            0,
+            "1",
+            "123",
+            1234,
+            None
+        ]
+
+        for n in max_number_of_images_list:
+            with self.subTest(max_number_of_images=n):
+                field.max_number_of_images = n
+                if n is not None:
+                    self.assertEqual(field.max_number_of_images, int(n))
+                    self.assertEqual(field.widget.max_number_of_images, int(n))
+                else:
+                    self.assertIsNone(field.max_number_of_images)
+                    self.assertIsNone(field.widget.max_number_of_images)
+
+    def test_gallery_form_field_assign_max_number_of_images_invalid(self):
+        field = GalleryFormField(required=False)
+        max_number_of_images_list = [
+            -1,
+            "-1",
+            "abc",
+            object,
+        ]
+
+        for n in max_number_of_images_list:
+            with self.subTest(max_number_of_images=n):
+                with self.assertRaises(TypeError):
+                    field.max_number_of_images = n
+
+    def test_gallery_form_field_clean_max_number_of_images_exceeded(self):
+        field = GalleryFormField()
+        n = 1
+        field.max_number_of_images = n
+
+        second_image_info = {
+            "url": "/media/images/cdef.jpg",
+            "thumbnailurl": "/media/cache/a6/ee/cdef.jpg",
+            "name": "cdef.jpg", "size": "20000", "pk": 2,
+            "deleteurl": "javascript:void(0)"}
+        image_data_with_2_images = deepcopy(IMAGE_DATA)
+        image_data_with_2_images.append(second_image_info)
+
+        msg = "Number of images exceeded, only %i allowed" % n
+
+        with self.assertRaisesMessage(ValidationError, msg):
+            field.clean([json.dumps(image_data_with_2_images), ''])
+
+    def test_gallery_form_field_clean_max_number_of_images_not_exceeded(self):
+        field = GalleryFormField()
+        field.max_number_of_images = 1
+
+        form_data = [json.dumps(IMAGE_DATA), '']
+        cleaned_data = field.clean(form_data)
+        self.assertEqual(str(cleaned_data), str(json.dumps(IMAGE_DATA)))

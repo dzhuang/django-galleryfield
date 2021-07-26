@@ -168,7 +168,7 @@ and override those settings for your apps, especially in terms of permission con
 - Server side crop implementation.
 - Descriptors for rendering the `GalleryField`.
 
-## Known issue
+## Known issues
 - Css rendering of buttons in Admin.
-- jQuery-File-Upload option `maxNumberOfFiles` will not work when undoing deleted images. (A work round might be 
-a validation in `GalleryField.clean()`.)
+- jQuery-File-Upload option `maxNumberOfFiles` will not work when undoing deleted images in UI,
+ it is validate until `GalleryField.clean()`.

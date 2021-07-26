@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-20 14:41+0800\n"
+"POT-Creation-Date: 2021-07-26 17:33+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Dong Zhuang <dzhuang.scut@gmail.com>\n"
 "Language: \n"
@@ -25,6 +25,13 @@ msgstr ""
 
 msgid "The submitted file is empty."
 msgstr ""
+
+msgid "The submitted images are invalid."
+msgstr ""
+
+#, python-format
+msgid "Number of images exceeded, only %(maxNumberOfFiles)s allowed"
+msgstr "超出了允许的图片数，只允许上传%(maxNumberOfFiles)s个文件"
 
 msgid "Image"
 msgstr "图片"
@@ -90,10 +97,6 @@ msgstr "文件太小"
 
 msgid "Filetype not allowed"
 msgstr "不允许的文件类型"
-
-#, python-format
-msgid "Max number of files exceeded, only %(maxNumberOfFiles)s allowed"
-msgstr "超出了允许的文件数，只允许上传%(maxNumberOfFiles)s个文件"
 
 msgid "Uploaded bytes exceed file size"
 msgstr "上传的文件超出了允许的大小"
