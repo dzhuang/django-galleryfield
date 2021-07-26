@@ -43,11 +43,58 @@ class GalleryField(models.JSONField):
         super(GalleryField, self).save_form_data(instance, data)
 
     def formfield(self, **kwargs):
-        kwargs.update({"required": True})
+        defaults = ({"required": True})
+        defaults.update(kwargs)
         return super(models.JSONField, self).formfield(**{
             'form_class': GalleryFormField,
-            **kwargs,
+            **defaults,
         })
+
+
+class ImageJsonFormField(forms.JSONField):
+    default_error_messages = {
+        'required': _("The submitted file is empty."),
+        'invalid': _("The submitted images are invalid."),
+    }
+
+    def __init__(self, **kwargs):
+        super().__init__(encoder=None, decoder=None, **kwargs)
+
+    def clean(self, value):
+        cleaned_data = super().clean(value)
+
+        if cleaned_data in self.empty_values:
+            return cleaned_data
+
+        if isinstance(cleaned_data, str):
+            try:
+                cleaned_data_copy = json.loads(cleaned_data, cls=self.decoder)
+            except json.JSONDecodeError:
+                raise ValidationError(
+                    self.error_messages['invalid'],
+                    code='invalid',
+                    params={'value': cleaned_data},
+                )
+        else:
+            cleaned_data_copy = cleaned_data.copy()
+
+        # Make sure the json is a list of dicts, each of which
+        # must has least has a 'url' key.
+        if not isinstance(cleaned_data_copy, list):
+            raise ValidationError(
+                self.error_messages['invalid'],
+                code='invalid',
+                params={'value': cleaned_data_copy},
+            )
+        for image_dict in cleaned_data_copy:
+            if not isinstance(image_dict, dict) or "url" not in image_dict:
+                raise ValidationError(
+                    self.error_messages['invalid'],
+                    code='invalid',
+                    params={'value': cleaned_data_copy},
+                )
+
+        return cleaned_data_copy
 
 
 class GalleryFormField(forms.MultiValueField):
@@ -58,71 +105,45 @@ class GalleryFormField(forms.MultiValueField):
 
     widget = GalleryWidget
 
-    def __init__(self, max_length=None, encoder=None, decoder=None, **kwargs):
-        """
-        Note: Here we are actually extending forms.JsonField, so encoder and
-        decoder are needed
-        """
-
-        required = kwargs.get("required", True)
-        self.decoder = decoder
-        self.encoder = encoder
+    def __init__(self, **kwargs):
+        self._required = kwargs.get("required", True)
 
         kwargs.update(
             {
                 'fields': (
-                    forms.JSONField(required=required),
-                    forms.JSONField(required=False))
+                    ImageJsonFormField(required=self._required),
+                    ImageJsonFormField(required=False))
             }
         )
         super(GalleryFormField, self).__init__(require_all_fields=False, **kwargs)
+
+    @property
+    def required(self):
+        return self._required
+
+    @required.setter
+    def required(self, value):
+        # In this way, changes in field required will be synced to
+        # required attributes of subfield(fields[0])
+        assert isinstance(value, bool)
+        self._required = value
+
+        # Prevent failing in super().__init__
+        try:
+            self.fields[0].required = value
+        except AttributeError:
+            pass
 
     def compress(self, data_list):
         if not data_list:
             data_list = ['', '']
 
+        if data_list[0] is None:
+            data_list[0] = ''
+
         files = UnicodeWithAttr(json.dumps(data_list[0]))
         setattr(files, "deleted_files", data_list[1])
         return files
-
-    def _validate_json_list_of_image_dict(self, json_list_str):
-        try:
-            assert isinstance(json_list_str, str)
-            images_list = json.loads(json_list_str)
-        except (AssertionError, json.JSONDecodeError):
-            raise ValidationError(
-                self.error_messages['invalid'],
-                code='invalid',
-                params={'value': json_list_str},
-            )
-        else:
-            # Make sure the json is a list of dicts, each of which
-            # must has least has a 'url' key.
-            if not isinstance(images_list, list):
-                raise ValidationError(
-                    self.error_messages['invalid'],
-                    code='invalid',
-                    params={'value': json_list_str},
-                )
-            for image_dict in images_list:
-                if not isinstance(image_dict, dict) or "url" not in image_dict:
-                    raise ValidationError(
-                        self.error_messages['invalid'],
-                        code='invalid',
-                        params={'value': json_list_str},
-                    )
-
-    def _pre_compress_value_list_validate(self, value):
-        assert isinstance(value, (list, tuple))
-        for v in value:
-            if v in self.empty_values:
-                continue
-            self._validate_json_list_of_image_dict(v)
-
-    def _post_clean_field_value_validate(self, value):
-        if value in self.empty_values:
-            return
-        self._validate_json_list_of_image_dict(value)
 
     def clean(self, value):
         clean_data = []
@@ -138,13 +159,7 @@ class GalleryFormField(forms.MultiValueField):
                 else:
                     if not value:
                         return self.compress([])
-                    else:
-                        # This happens when not required, files value is empty and
-                        # deleted files value is not necessary empty.
-                        self._pre_compress_value_list_validate(value)
-                        clean_data = self.compress(value)
-                        self.validate(clean_data)
-                        return clean_data
+
         else:
             raise ValidationError(self.error_messages['invalid'], code='invalid')
         for i, field in enumerate(self.fields):
@@ -155,7 +170,6 @@ class GalleryFormField(forms.MultiValueField):
 
             try:
                 clean_data.append(field.clean(field_value))
-                self._post_clean_field_value_validate(field_value)
             except ValidationError as e:
                 # Collect all validation errors in a single list, which we'll
                 # raise at the end of clean(), rather than raising a single

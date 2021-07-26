@@ -95,7 +95,7 @@ class GalleryFieldTest(TestCase):
         )
         form.fields["images"].required = False
 
-        self.assertTrue(form.is_valid())
+        self.assertTrue(form.is_valid(), form.errors)
         form.save()
 
         self.assertEqual(DemoGallery.objects.count(), 1)
@@ -151,9 +151,9 @@ class GalleryFormFieldTest(SimpleTestCase):
             with self.subTest(data=data):
                self.assertEqual(json.loads(field.clean(data)), '')
 
-    def test_gallery_model_field_clean_invalid_json(self):
+    def test_gallery_model_field_clean_invalid_image_json(self):
         inputs = ['invalid-image']
-        msg = "Enter a valid JSON."
+        msg = "The submitted images are invalid."
 
         for required in [True, False]:
             with self.subTest(required=required):
@@ -169,12 +169,20 @@ class GalleryFormFieldTest(SimpleTestCase):
 
         field = GalleryFormField(required=False)
         inputs = [
+
+            # No url in each dict
             [json.dumps(invalid_image_data), ''],
             ['', json.dumps(invalid_image_data)],
+
+            # JSONDecodeError
             ['', 'invalid-image-data'],
+
+            # list element not dicts
             ['', json.dumps(["url", "abcd"])],
             [json.dumps(["url", "abcd"]), ''],
-            [json.dumps({"url": "abcd"}), ''],  # not a list
+
+            # data not list
+            [json.dumps({"url": "abcd"}), ''],
             ['', json.dumps({"url": "abcd"})]
         ]
         msg = "The submitted images are invalid."
@@ -194,7 +202,16 @@ class GalleryFormFieldTest(SimpleTestCase):
                 with self.assertRaisesMessage(ValidationError, msg):
                     field.clean(input_str)
 
+    def test_gallery_model_field_clean_disabled_invalid(self):
+        field = GalleryFormField(disabled=True)
+        input_str = 'invalid-image'
+        msg = "The submitted images are invalid."
+
+        with self.assertRaisesMessage(ValidationError, msg):
+            field.clean(input_str)
+
     def test_gallery_model_field_clean_disabled(self):
         field = GalleryFormField(disabled=True)
-        inputs = json.dumps(IMAGE_DATA)
-        self.assertEqual(json.loads(field.clean(inputs)), inputs)
+        self.assertEqual(
+            json.loads(field.clean(json.dumps(IMAGE_DATA))),
+            IMAGE_DATA)
