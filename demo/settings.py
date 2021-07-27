@@ -129,3 +129,5 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # DJANGO_GALLERY_WIDGET_CONFIG = {
 #
 # }
+
+LOGIN_URL = "/admin/login/"

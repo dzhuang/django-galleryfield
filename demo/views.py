@@ -1,11 +1,12 @@
 from django.urls import reverse
 from django.views.generic.edit import UpdateView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from demo.models import DemoGallery
 from demo.forms import GalleryForm
 
 
-class GalleryFormView(CreateView):
+class GalleryFormView(LoginRequiredMixin, CreateView):
     form_class = GalleryForm
     template_name = "form.html"
 
@@ -14,11 +15,14 @@ class GalleryFormView(CreateView):
         context["form_description"] = "Create new gallery"
         return context
 
+    # def form_valid(self, form):
+
+
     def get_success_url(self):
         return reverse("gallery-update", kwargs={"pk": self.object.pk})
 
 
-class GalleryUpdateView(UpdateView):
+class GalleryUpdateView(LoginRequiredMixin, UpdateView):
     model = DemoGallery
     form_class = GalleryForm
     template_name = "form.html"
