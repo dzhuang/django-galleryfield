@@ -96,7 +96,7 @@ class ImageJsonFormField(forms.JSONField):
                     params={'value': cleaned_data},
                 )
 
-        if self.max_number_of_images is not None:
+        if self.max_number_of_images:
             if len(cleaned_data_copy) > self.max_number_of_images:
                 raise ValidationError(
                     _("Number of images exceeded, only %(maxNumberOfFiles)s allowed")

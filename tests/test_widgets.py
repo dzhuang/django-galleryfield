@@ -105,6 +105,12 @@ class GalleryWidgetTest(SimpleTestCase):
         setattr(widget, "max_number_of_images", None)
         self.check_not_in_html(widget, "image", '', html="maxNumberOfFiles")
 
+        widget = GalleryWidget(
+            jquery_upload_ui_options={
+                "maxNumberOfFiles": max_number_of_file_ui_options_value})
+        setattr(widget, "max_number_of_images", 0)
+        self.check_not_in_html(widget, "image", '', html="maxNumberOfFiles")
+
         max_number_of_file = randint(1, 10)
         widget = GalleryWidget(
             jquery_upload_ui_options={"maxNumberOfFiles": 0})

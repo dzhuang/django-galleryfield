@@ -15,9 +15,6 @@ class GalleryFormView(LoginRequiredMixin, CreateView):
         context["form_description"] = "Create new gallery"
         return context
 
-    # def form_valid(self, form):
-
-
     def get_success_url(self):
         return reverse("gallery-update", kwargs={"pk": self.object.pk})
 

@@ -274,3 +274,12 @@ class GalleryFormFieldTest(SimpleTestCase):
         form_data = [json.dumps(IMAGE_DATA), '']
         cleaned_data = field.clean(form_data)
         self.assertEqual(str(cleaned_data), str(json.dumps(IMAGE_DATA)))
+
+    def test_gallery_form_field_clean_max_number_of_images_zero(self):
+        # zero means not limited
+        field = GalleryFormField()
+        field.max_number_of_images = 0
+
+        form_data = [json.dumps(IMAGE_DATA), '']
+        cleaned_data = field.clean(form_data)
+        self.assertEqual(str(cleaned_data), str(json.dumps(IMAGE_DATA)))
