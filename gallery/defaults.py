@@ -18,10 +18,6 @@ GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
 DEFAULT_UPLOAD_HANDLER_URL_NAME = "gallery_image_upload"
 DEFAULT_CROP_URL_NAME = "gallery_image_crop"
 
-DEFAULT_TARGET_IMAGE_MODEL = "gallery.BuiltInGalleryImage"
-DEFAULT_TARGET_IMAGE_FIELD_NAME = "image"
-DEFAULT_CREATOR_FIELD_NAME = "creator"
-
 BOOTSTRAP_JS_PATH = 'vendor/bootstrap/dist/js/bootstrap.min.js'
 BOOTSTRAP_CSS_PATH = 'vendor/bootstrap/dist/css/bootstrap.min.css'
 JQUERY_JS_PATH = "vendor/jquery.min.js"

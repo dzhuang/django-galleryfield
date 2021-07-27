@@ -42,13 +42,6 @@ DEFAULT_CROP_URL_NAME = _APP_CONFIG_URLS.get(
 
 
 _APP_CONFIG_IMAGE_MODEL = _APP_CONFIG.get("default_image_model", {})
-DEFAULT_TARGET_IMAGE_MODEL = _APP_CONFIG_IMAGE_MODEL.get(
-    "default_target_image_model", defaults.DEFAULT_TARGET_IMAGE_MODEL)
-DEFAULT_TARGET_IMAGE_FIELD_NAME = _APP_CONFIG_IMAGE_MODEL.get(
-    "target_image_field_name", defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME)
-DEFAULT_CREATOR_FIELD_NAME = _APP_CONFIG_IMAGE_MODEL.get(
-    "target_creator_field_name", defaults.DEFAULT_CREATOR_FIELD_NAME
-)
 
 
 _APP_CONFIG_ASSETS = _APP_CONFIG.get("assets", {})

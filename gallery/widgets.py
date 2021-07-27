@@ -41,13 +41,9 @@ css = [
 ] + conf.EXTRA_CSS
 
 
-class GalleryWidget(forms.MultiWidget):
+class GalleryWidget(forms.TextInput):
     def __init__(
             self,
-            target_image_model=conf.DEFAULT_TARGET_IMAGE_MODEL,
-            image_field_name=conf.DEFAULT_TARGET_IMAGE_FIELD_NAME,
-            creator_field_name=conf.DEFAULT_CREATOR_FIELD_NAME,
-
             upload_handler_url_name=conf.DEFAULT_UPLOAD_HANDLER_URL_NAME,
             upload_handler_url_args=None, upload_handler_url_kwargs=None,
 
@@ -58,26 +54,8 @@ class GalleryWidget(forms.MultiWidget):
             jquery_upload_ui_options=None,
             **kwargs):
 
-        # If BootStrap is loaded, "hiddeninput" is added by BootStrap.
-        # However, we need that css class to check changes of the form,
-        # so we added it manually.
-        widgets = (
-            forms.HiddenInput(
-                attrs={
-                    "class": " ".join(
-                        [conf.FILES_FIELD_CLASS_NAME, "hiddeninput"])}),
-            forms.HiddenInput(
-                attrs={
-                    "class": " ".join(
-                        [conf.DELETED_FIELD_CLASS_NAME, "hiddeninput"]),
-                    "required": False
-                })
-        )
+        super(GalleryWidget, self).__init__(attrs)
 
-        super(GalleryWidget, self).__init__(widgets, attrs)
-
-        self.target_image_model = target_image_model
-        self.image_field_name = image_field_name
         self.multiple = multiple
         self.preview_size = preview_size
         self.template = template
@@ -98,10 +76,6 @@ class GalleryWidget(forms.MultiWidget):
             {"previewMaxWidth": preview_size,
              "previewMaxHeight": preview_size,
              "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
-             "hiddenDeletedInput": "'.%s'" % conf.DELETED_FIELD_CLASS_NAME,
-             "target_image_model": "'%s'" % target_image_model,
-             "image_field_name": "'%s'" % image_field_name,
-             "creator_field_name": "'%s'" % creator_field_name,
              })
 
         self.ui_options = _jquery_upload_ui_options
@@ -116,11 +90,6 @@ class GalleryWidget(forms.MultiWidget):
     def is_hidden(self):
         return False
 
-    def decompress(self, value):
-        if value:
-            return [value, '']
-        return ['', '']
-
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
 
@@ -130,13 +99,6 @@ class GalleryWidget(forms.MultiWidget):
         return context
 
     def render(self, name, value, attrs=None, renderer=None):
-        if not isinstance(value, list):
-            value, __ = self.decompress(value)
-            assert isinstance(value, str), type(value)
-        else:
-            # This happens when the field is required and deleted all images
-            # from a none empty instance
-            value = json.dumps(value)
 
         context = {
             'input_string': super().render(name, value, attrs, renderer),
@@ -175,3 +137,42 @@ class GalleryWidget(forms.MultiWidget):
             conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED)
 
         return renderer.render(self.template, context)
+
+
+class GalleryWidget(forms.TextInput):
+    gallery_template_name = "gallery/widget.html"
+
+    class Media:
+        js = tuple(_js for _js in js if _js)
+        css = {'all': tuple(_css for _css in css if _css)}
+
+    def __init__(self, upload_handler_url_name=None, attrs=None, options=None,
+                 upload_handler_url_args=None, upload_handler_url_kwargs=None):
+        super(GalleryWidget, self).__init__(attrs)
+
+        upload_handler_url_name = (
+                upload_handler_url_name or GALLERY_UPLOAD_HANDLER_URL_NAME)
+
+        self.upload_handler_url = reverse_lazy(
+            upload_handler_url_name, args=upload_handler_url_args or (),
+            kwargs=upload_handler_url_kwargs or {})
+        self.options = options and options.copy() or {}
+        self.options.setdefault("accepted_mime_types", ['image/*'])
+
+    def render(self, name, value, attrs=None, renderer=None):
+        context = self.get_context(name, value, attrs)
+
+        if (context["widget"]["attrs"].get("disabled", False)
+                or context["widget"]["attrs"].get("readonly") == "readonly"):
+            context["uploader_disabled"] = True
+
+        context.update({
+            "upload_handler_url": self.upload_handler_url,
+            "accepted_mime_types": self.options["accepted_mime_types"],
+        })
+
+        uploader_html = super().render(name, value, attrs, renderer)
+
+        input_html = forms.HiddenInput().render(name, value, attrs, renderer)
+
+        return mark_safe(force_text(uploader_html + input_html))

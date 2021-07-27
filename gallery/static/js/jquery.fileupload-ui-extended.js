@@ -15,9 +15,6 @@
     $.blueimp.fileupload.prototype._specialOptions.push(
         'mediaUrl',
         'hiddenFileInput',
-        'hiddenDeletedInput',
-        'deletedTemplateId',
-        'deletedFilesContainer',
         'editModalId',
         'editModalImgId',
         'sortableHandleSelector',
@@ -35,7 +32,6 @@
 
             options: {
                 hiddenFileInput: undefined,
-                hiddenDeletedInput: undefined,
                 mediaUrl: undefined,
                 editModalId: undefined,
                 editModalImgId: undefined,
@@ -47,8 +43,6 @@
                 sortableHandleSelector: undefined,
                 sortableOptions:undefined,
                 statusDataName: undefined,
-                deletedTemplateId: "template-deleted",
-                deletedFilesContainer: undefined,
 
                 getNumberOfUploadedFiles: function () {
                     return this.filesContainer.children('.template-download')
@@ -116,63 +110,6 @@
                     that._fillInHiddenInputs(data);
                 },
 
-                destroyed: function (e, data) {
-                    if (e.isDefaultPrevented()) {
-                        return false;
-                    }
-                    var that = $(this).data('blueimp-fileupload') ||
-                            $(this).data('fileupload'),
-                        files,
-                        template, deferred;
-
-                    files = [that.options.getFilesDataFromDataContext(data)];
-
-                    if(files){
-                        template = that._renderDeleted(files).appendTo(that.options.deletedFilesContainer);
-                        that._forceReflow(template);
-                        deferred = that._addFinishedDeferreds();
-                        that._transition(template).done(
-                            function () {
-                                data.context = $(this);
-                                that._trigger('completed', e, data);
-                                that._trigger('finished', e, data);
-                                that._trigger('post-destroy', e, data);
-                                deferred.resolve();
-                            }
-                        );
-                    }
-
-                    that.toggleFileuploadSortableHandle()
-                        ._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
-                },
-
-                // fixme: bug when undelete
-                undelete: function (e, data) {
-                    if (e.isDefaultPrevented()) {
-                        return false;
-                    }
-
-                    var that = $(this).data('blueimp-fileupload') ||
-                            $(this).data('fileupload'),
-                        files = [that.options.getFilesDataFromDataContext(data)],
-                        removeNode = function () {
-                            that._transition(data.context).done(
-                                function () {
-                                    $(this).remove();
-                                        that._trigger('done', e, {
-                                            "result": {
-                                                "success": "true",
-                                                "files": files
-                                            }});
-                                });
-                        };
-                    removeNode();
-                    data.context = $(this);
-                    that._trigger('completed', e, data);
-                    that._trigger('finished', e, data);
-                    that._trigger('post-destroy', e, data);
-                },
-
                 sortableUpdate: function (e, data) {
                     var that = $(this).data('blueimp-fileupload') ||
                             $(this).data('fileupload');
@@ -194,8 +131,7 @@
             },
             _fillInHiddenInputs: function (data) {
                 var filesInput = this.options.hiddenFileInput,
-                    deletedInput = this.options.hiddenDeletedInput,
-                    files_data = [], deleted_data = [];
+                    files_data = [];
 
                 // get input files_data
                 this.options.filesContainer.children('.template-download')
@@ -204,40 +140,17 @@
                         });
 
                 this._fillIn(filesInput, files_data);
-
-                // get deleted files_data
-                this.options.deletedFilesContainer
-                    .children('.template-deleted')
-                    .not('.processing')
-                    .find('.preview')
-                    .each(function () {
-                            deleted_data.push($(this).dataCollection());
-                        });
-                this._fillIn(deletedInput, deleted_data);
-
                 },
 
             _initEventHandlers: function () {
                 this._super();
-                var filesContainer = this.options.filesContainer,
-                    deletedFilesContainer = this.options.deletedFilesContainer;
+                var filesContainer = this.options.filesContainer;
                 this._on(filesContainer, {
                     'click .edit': this._editHandler
-                });
-                this._on(deletedFilesContainer, {
-                    'click .undelete': this._undeleteHandler
                 });
                 this._on(this.element, {
                     'change .toggle': this._toggleFileuploadButtonBarDeleteDisable
                 });
-            },
-
-            _undeleteHandler: function (e) {
-                e.preventDefault();
-                var button = $(e.currentTarget);
-                this._trigger('undelete', e, $.extend({
-                    context: button.closest('.template-deleted'),
-                }, button.data()));
             },
 
             _toggleFileuploadButtonBarDeleteDisable: function(e) {
@@ -653,7 +566,6 @@
             },
 
             _initSpecialOptions: function () {
-                this._initDeletedFilesContainer();
                 this._super();
                 this._initStatusDataName();
                 this._initSortable();
@@ -662,44 +574,12 @@
                 this._initFilesDataToInputDataFunction();
             },
 
-            _initTemplates: function () {
-                this._super();
-                var options = this.options;
-                options.templatesContainer = this.document[0].createElement(
-                    options.deletedFilesContainer.prop('nodeName')
-                );
-
-                if (tmpl) {
-                    if (options.deletedTemplateId) {
-                        options.deletedTemplate = tmpl(options.deletedTemplateId);
-                    }
-                }
-            },
-            _renderDeleted: function (files) {
-                return this._renderTemplate(
-                    this.options.deletedTemplate,
-                    files
-                );
-            },
-            _initDeletedFilesContainer: function () {
-                var options = this.options;
-                if (options.deletedFilesContainer === undefined) {
-                    options.deletedFilesContainer = this.element.find('.deleted-file');
-                } else if (!(options.deletedFilesContainer instanceof $)) {
-                    options.deletedFilesContainer = $(options.deletedFilesContainer);
-                }
-            },
             _initWidgetHiddenInput: function () {
                 var options = this.options;
                 if (options.hiddenFileInput === undefined) {
-                    options.hiddenFileInput = this.element.find("input[id$='_0'][name$='_0']");
+                    // todo: how to find the input?
                 } else if (!(options.hiddenFileInput instanceof $)) {
                     options.hiddenFileInput = $(options.hiddenFileInput);
-                }
-                if (options.hiddenDeletedInput === undefined) {
-                    options.hiddenDeletedInput = this.element.find("input[id$='_1'][name$='_1']");
-                } else if (!(options.hiddenDeletedInput instanceof $)) {
-                    options.hiddenDeletedInput = $(options.hiddenDeletedInput);
                 }
             },
         }

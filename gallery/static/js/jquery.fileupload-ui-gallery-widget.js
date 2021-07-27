@@ -21,10 +21,6 @@
         'blueimp.fileupload', $.blueimp.fileupload, {
 
             options: {
-                target_image_model: undefined,
-                image_field_name: undefined,
-                creator_field_name: undefined,
-
                 before_submit: function (e, data) {
                     var $this = $(this),
                         that = $this.data('blueimp-fileupload') ||
@@ -33,9 +29,6 @@
 
                     data.formData = {
                         "preview_size": options.previewMaxWidth,
-                        "target_image_model": options.target_image_model,
-                        "image_field_name": options.image_field_name,
-                        "creator_field_name": options.creator_field_name,
                         "csrfmiddlewaretoken": get_cookie("csrftoken")
                     };
                 },
