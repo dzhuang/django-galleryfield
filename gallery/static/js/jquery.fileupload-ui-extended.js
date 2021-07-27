@@ -1,17 +1,6 @@
 (function ($, window, document, undefined) {
     'use strict';
 
-    $.fn.dataCollection = function () {
-        var data = {};
-        [].forEach.call(this.get(0).attributes, function (attr) {
-            if (/^data-/.test(attr.name)) {
-                var name = attr.name.substr(5);
-                data[name] = attr.value;
-            }
-        });
-        return data;
-    };
-
     $.blueimp.fileupload.prototype._specialOptions.push(
         'mediaUrl',
         'hiddenFileInput',
@@ -47,13 +36,6 @@
                 getNumberOfUploadedFiles: function () {
                     return this.filesContainer.children('.template-download')
                         .not('.processing').length;
-                },
-
-                getFilesDataFromDataContext: function (data) {
-                    if (!data.context) return [];
-                    var file = data.context.find('.preview').dataCollection();
-                    if (! file) return [];
-                    return file;
                 },
 
                 added: function (e, data) {
@@ -110,6 +92,20 @@
                     that._fillInHiddenInputs(data);
                 },
 
+                destroyed: function (e, data) {
+                    if (e.isDefaultPrevented()) {
+                        return false;
+                    }
+                    var that = $(this).data('blueimp-fileupload') ||
+                            $(this).data('fileupload');
+                    that._trigger('completed', e, data);
+                    that._trigger('finished', e, data);
+                    that._trigger('post-destroy', e, data);
+
+                    that.toggleFileuploadSortableHandle()
+                        ._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
+                },
+
                 sortableUpdate: function (e, data) {
                     var that = $(this).data('blueimp-fileupload') ||
                             $(this).data('fileupload');
@@ -136,7 +132,7 @@
                 // get input files_data
                 this.options.filesContainer.children('.template-download')
                         .not('.processing').find('.preview').each(function () {
-                            files_data.push($(this).dataCollection());
+                            files_data.push($(this).data("pk"));
                         });
 
                 this._fillIn(filesInput, files_data);

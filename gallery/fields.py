@@ -3,12 +3,9 @@ from copy import deepcopy
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .controller import manage_images
 from . import conf
 from .widgets import GalleryWidget
 
@@ -61,6 +58,7 @@ class GalleryFormField(forms.JSONField):
         }
 
     def clean(self, value):
+        print("clean!!!")
         cleaned_data = super().clean(value)
 
         if cleaned_data in self.empty_values:

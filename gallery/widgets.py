@@ -4,6 +4,7 @@ import json
 from django import forms
 from django.urls import reverse_lazy
 
+
 from . import conf
 from .defaults import GALLERY_WIDGET_UI_DEFAULT_OPTIONS
 
@@ -41,12 +42,15 @@ css = [
 ] + conf.EXTRA_CSS
 
 
-class GalleryWidget(forms.TextInput):
+class GalleryWidget(forms.HiddenInput):
     def __init__(
             self,
             upload_handler_url_name=conf.DEFAULT_UPLOAD_HANDLER_URL_NAME,
-            upload_handler_url_args=None, upload_handler_url_kwargs=None,
-
+            upload_handler_args=None,
+            upload_handler_kwargs=None,
+            fetch_request_url_name=conf.DEFAULT_FETCH_URL_NAME,
+            fetch_request_args=None,
+            fetch_request_kwargs=None,
             multiple=True,
             preview_size=conf.DEFAULT_THUMBNAIL_SIZE,
             template="gallery/widget.html",
@@ -61,8 +65,14 @@ class GalleryWidget(forms.TextInput):
         self.template = template
 
         self.upload_handler_url = reverse_lazy(
-            upload_handler_url_name, args=upload_handler_url_args or (),
-            kwargs=upload_handler_url_kwargs or {})
+            upload_handler_url_name, args=upload_handler_args or (),
+            kwargs=upload_handler_kwargs or {})
+
+        self.fetch_request_url = None
+        if fetch_request_url_name:
+            self.fetch_request_url = reverse_lazy(
+                fetch_request_url_name, args=fetch_request_args or (),
+                kwargs=fetch_request_kwargs or {})
 
         jquery_upload_ui_options = jquery_upload_ui_options or {}
         _jquery_upload_ui_options = GALLERY_WIDGET_UI_DEFAULT_OPTIONS.copy()
@@ -90,18 +100,14 @@ class GalleryWidget(forms.TextInput):
     def is_hidden(self):
         return False
 
-    def get_context(self, name, value, attrs):
-        context = super().get_context(name, value, attrs)
-
-        # Bug: https://forum.djangoproject.com/t/multivaluefield-subwidgets-required/1196/8  # noqa
-        assert not context["widget"]["subwidgets"][1]["required"]
-        context["widget"]["subwidgets"][1]["attrs"]["required"] = False
-        return context
-
     def render(self, name, value, attrs=None, renderer=None):
+        print(value)
+        extra_attrs = {"style": "display:none"}
+        # extra_attrs = {}
+        extra_attrs.update(attrs)
 
         context = {
-            'input_string': super().render(name, value, attrs, renderer),
+            'input_string': super().render(name, value, extra_attrs, renderer),
             'name': name,
             'multiple': self.multiple and 1 or 0,
             'preview_size': str(self.preview_size),
@@ -111,7 +117,8 @@ class GalleryWidget(forms.TextInput):
 
         # Do not fill in empty value to hidden inputs
         if value:
-            context["files"] = value
+            context["pks"] = json.loads(value)
+            context["fetch_request_url"] = self.fetch_request_url
 
         _context = self.get_context(name, value, attrs)
 
@@ -137,42 +144,3 @@ class GalleryWidget(forms.TextInput):
             conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED)
 
         return renderer.render(self.template, context)
-
-
-class GalleryWidget(forms.TextInput):
-    gallery_template_name = "gallery/widget.html"
-
-    class Media:
-        js = tuple(_js for _js in js if _js)
-        css = {'all': tuple(_css for _css in css if _css)}
-
-    def __init__(self, upload_handler_url_name=None, attrs=None, options=None,
-                 upload_handler_url_args=None, upload_handler_url_kwargs=None):
-        super(GalleryWidget, self).__init__(attrs)
-
-        upload_handler_url_name = (
-                upload_handler_url_name or GALLERY_UPLOAD_HANDLER_URL_NAME)
-
-        self.upload_handler_url = reverse_lazy(
-            upload_handler_url_name, args=upload_handler_url_args or (),
-            kwargs=upload_handler_url_kwargs or {})
-        self.options = options and options.copy() or {}
-        self.options.setdefault("accepted_mime_types", ['image/*'])
-
-    def render(self, name, value, attrs=None, renderer=None):
-        context = self.get_context(name, value, attrs)
-
-        if (context["widget"]["attrs"].get("disabled", False)
-                or context["widget"]["attrs"].get("readonly") == "readonly"):
-            context["uploader_disabled"] = True
-
-        context.update({
-            "upload_handler_url": self.upload_handler_url,
-            "accepted_mime_types": self.options["accepted_mime_types"],
-        })
-
-        uploader_html = super().render(name, value, attrs, renderer)
-
-        input_html = forms.HiddenInput().render(name, value, attrs, renderer)
-
-        return mark_safe(force_text(uploader_html + input_html))

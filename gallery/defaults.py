@@ -17,6 +17,7 @@ GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
 
 DEFAULT_UPLOAD_HANDLER_URL_NAME = "gallery_image_upload"
 DEFAULT_CROP_URL_NAME = "gallery_image_crop"
+DEFAULT_FETCH_URL_NAME = "gallery_images_fetch"
 
 BOOTSTRAP_JS_PATH = 'vendor/bootstrap/dist/js/bootstrap.min.js'
 BOOTSTRAP_CSS_PATH = 'vendor/bootstrap/dist/css/bootstrap.min.css'

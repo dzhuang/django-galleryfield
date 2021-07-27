@@ -14,10 +14,10 @@ def sequenced_image(number, length=5):
                     for _i in range(length)] + ["%s.jpg" % str(number)]))
     return json.dumps([{
         "url": "/media/images/%s" % name,
-        "thumbnailurl": "/media/cache/a6/ee/%s" % name,
+        "thumbnailUrl": "/media/cache/a6/ee/%s" % name,
         "name": "%s" % name,
         "size": (number + 1) * 20000,
-        "deleteurl": "javascript:void(0)",
+        "deleteUrl": "javascript:void(0)",
         'pk': number + 1
     }])
 

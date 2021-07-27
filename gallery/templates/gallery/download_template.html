@@ -4,19 +4,19 @@
     <tr class="template-download fade">
 
         {% block JS_DOWNLOAD_TEMPLATE_PREVIEW %}
-        {% templatetag openbrace %}% if (file.thumbnailurl) { %{% templatetag closebrace %}
+        {% templatetag openbrace %}% if (file.thumbnailUrl) { %{% templatetag closebrace %}
         <td>
             <span class="preview"
                     data-url="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
-                    data-thumbnailurl="{% templatetag openbrace %}%=file.thumbnailurl%{% templatetag closebrace %}"
+                    data-thumbnailUrl="{% templatetag openbrace %}%=file.thumbnailUrl%{% templatetag closebrace %}"
                     data-name="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
                     data-pk="{% templatetag openbrace %}%=file.pk%{% templatetag closebrace %}"
                     data-size="{% templatetag openbrace %}%=file.size%{% templatetag closebrace %}"
-                    data-deleteurl="javascript:void(0)">
+                    data-deleteUrl="javascript:void(0)">
                     <a href="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
                      title="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
                      data-gallery>
-                        <img src="{% templatetag openbrace %}%=file.thumbnailurl%{% templatetag closebrace %}">
+                        <img src="{% templatetag openbrace %}%=file.thumbnailUrl%{% templatetag closebrace %}">
                     </a>
             </span>
         </td>
@@ -29,7 +29,7 @@
                 {% templatetag openbrace %}% if (file.url) { %{% templatetag closebrace %}
                     <a href="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
                      download="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
-                     {% templatetag openbrace %}%=file.thumbnailurl?'data-gallery':''%{% templatetag closebrace %}>
+                     {% templatetag openbrace %}%=file.thumbnailUrl?'data-gallery':''%{% templatetag closebrace %}>
                      {% templatetag openbrace %}%=file.name%{% templatetag closebrace %}
                     </a>
                 {% templatetag openbrace %}% } else { %{% templatetag closebrace %}
@@ -54,9 +54,9 @@
 
         {% block JS_DOWNLOAD_TEMPLATE_DELETE %}
         <td>
-            {% templatetag openbrace %}% if (file.deleteurl) { %{% templatetag closebrace %}
+            {% templatetag openbrace %}% if (file.deleteUrl) { %{% templatetag closebrace %}
                 <a type="button" class="btn btn-danger delete fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}"
-                        href="{% templatetag openbrace %}%=file.deleteurl%{% templatetag closebrace %}">
+                        href="{% templatetag openbrace %}%=file.deleteUrl%{% templatetag closebrace %}">
                     <i class="glyphicon glyphicon-trash"></i>
                     <span>{% trans "Delete" %}</span>
                 </a>

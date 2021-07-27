@@ -1,9 +1,13 @@
+import json
+
+from urllib.parse import unquote
+
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils.translation import gettext
 from django.utils.text import format_lazy
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 
 try:  # pragma: no cover
     from django.apps import apps as django_apps
@@ -12,7 +16,8 @@ except ImportError:  # pragma: no cover
 
 from PIL import Image
 from io import BytesIO
-
+from gallery.models import BuiltInGalleryImage
+from gallery import conf
 
 def string_concat(*strings):
     return format_lazy("{}" * len(strings), *strings)
@@ -38,28 +43,38 @@ def upload(request, *args, **kwargs):
         raise RuntimeError()
 
     preview_size = request.POST['preview_size']
-    model_str = request.POST['target_image_model']
-    image_field_name = request.POST['image_field_name']
-    creator_field_name = request.POST["creator_field_name"]
 
-    model = django_apps.get_model(model_str)
-    save_kwargs = {image_field_name: file,
-                   creator_field_name: request.user}
-    instance = model.objects.create(**save_kwargs)
+    instance = BuiltInGalleryImage.objects.create(
+        image=file,
+        creator=request.user
+    )
 
-    file_dict = {
-        'pk': instance.pk,
-        'name': instance.name,
-        'size': instance.size,
-        'url': instance.url,
-        'thumbnailurl': instance.get_thumbnail_url(preview_size),
+    return JsonResponse(
+        {"files": [instance.serialized(preview_size=preview_size)]}, status=200)
 
-        'deleteurl': instance.delete_url,
 
-        # todo: not implemented
-        # 'cropurl': file_wrapper.crop_url,
-    }
-    return JsonResponse({"files": [file_dict]}, status=200)
+@login_required
+@require_GET
+def fetch(request):
+    preview_size = request.GET.get('preview_size', conf.DEFAULT_THUMBNAIL_SIZE)
+    pks = request.GET.get("pks", None)
+
+    files = []
+
+    pks = json.loads(unquote(pks))
+
+    assert isinstance(pks, list)
+
+    for pk in pks:
+        instances = BuiltInGalleryImage.objects.filter(
+            creator=request.user,
+            id=pk
+        )
+        if instances.count():
+            files.append(instances[0].serialized(preview_size=preview_size))
+
+    return JsonResponse(
+        {"files": files}, status=200)
 
 
 class CropImageError(Exception):
@@ -129,9 +144,9 @@ def crop(request, *args, **kwargs):
         'name': instance.name,
         'size': instance.size,
         'url': instance.url,
-        'thumbnailurl': instance.get_thumbnail_url(preview_size),
+        'thumbnailUrl': instance.get_thumbnail_url(preview_size),
 
-        'deleteurl': instance.delete_url,
+        'deleteUrl': instance.delete_url,
 
         # todo: not implemented
         'cropurl': instance.crop_url,

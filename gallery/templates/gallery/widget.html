@@ -345,10 +345,21 @@
                 },
             });
 
-            {% if files %}
+            {% if pks %}
                 $fileupload.find(".hiddeninput").addClass("initializing");
-                $fileupload.fileupload('option', 'done').call(
-                        this, $.Event('done'), {"result": {files: {{ files|safe}}}});
+                $.ajax({
+                    url: "{{ fetch_request_url }}",
+                    dataType: 'json',
+                    data: {"pks": encodeURIComponent(JSON.stringify({{pks}}))},
+                    context: $fileupload[0]
+                }).always(function () {
+                    $(this).removeClass('fileupload-processing');
+                    $(".fileupload-loading").remove();
+                }).done(function (result) {
+                    $(this).fileupload('option', 'done')
+                        .call(this, $.Event('done'), {result: result});
+                });
+
             {% endif %}
 
             // disable change alert when submit form.

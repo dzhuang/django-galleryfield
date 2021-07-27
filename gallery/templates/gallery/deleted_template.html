@@ -5,17 +5,17 @@
 
     <tr class="template-deleted fade">
 
-        {% templatetag openbrace %}% if (file.thumbnailurl) { %{% templatetag closebrace %}
+        {% templatetag openbrace %}% if (file.thumbnailUrl) { %{% templatetag closebrace %}
         <td>
             <span class="preview"
                     data-url="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
-                    data-thumbnailurl="{% templatetag openbrace %}%=file.thumbnailurl%{% templatetag closebrace %}"
+                    data-thumbnailUrl="{% templatetag openbrace %}%=file.thumbnailUrl%{% templatetag closebrace %}"
                     data-pk="{% templatetag openbrace %}%=file.pk%{% templatetag closebrace %}"
                     data-name="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
                     data-size="{% templatetag openbrace %}%=file.size%{% templatetag closebrace %}"
-                    data-deleteurl="javascript:void(0)"
+                    data-deleteUrl="javascript:void(0)"
             >
-                <img src="{% templatetag openbrace %}%=file.thumbnailurl%{% templatetag closebrace %}"
+                <img src="{% templatetag openbrace %}%=file.thumbnailUrl%{% templatetag closebrace %}"
                      style="max-width: 30%; text-decoration: line-through" title="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
                      data-file_path="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}">
             </span>

@@ -11,46 +11,30 @@ from gallery.conf import (
     DEFAULT_CROP_URL_NAME, DEFAULT_THUMBNAIL_QUALITY, DEFAULT_THUMBNAIL_SIZE)
 
 
-class ImageBaseModel(models.Model):
-    class Meta:
-        abstract = True
-
-    @property
-    def image_field_name(self):
-        raise NotImplementedError
-
-    @property
-    def creator_field_name(self):
-        raise NotImplementedError
-
-    def has_view_permission(self, request):
-        raise NotImplementedError
-
-    def has_edit_permission(self, request):
-        raise NotImplementedError
-
-    def has_delete_permission(self, request):
-        raise NotImplementedError
+class BuiltInGalleryImage(models.Model):
+    image = models.ImageField(
+        upload_to="images", storage=default_storage, verbose_name=_("Image"))
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=False, blank=False,
+        verbose_name=_('Creator'), on_delete=models.CASCADE)
 
     @property
     def size(self):
-        return getattr(self, self.image_field_name).size
+        return self.image.size
 
     @property
     def url(self):
-        return getattr(self, self.image_field_name).url
+        return self.image.url
 
     @property
     def name(self):
-        return os.path.basename(
-            getattr(self, self.image_field_name).path)
+        return os.path.basename(self.image.path)
 
     def get_thumbnail_url(self, preview_size=None):
         preview_size = preview_size or DEFAULT_THUMBNAIL_SIZE
-        return get_thumbnail(
-            getattr(self, self.image_field_name),
-            "%sx%s" % (preview_size, preview_size),
-            crop="center", quality=DEFAULT_THUMBNAIL_QUALITY).url
+        return get_thumbnail(self.image,
+                             "%sx%s" % (preview_size, preview_size),
+                             crop="center", quality=DEFAULT_THUMBNAIL_QUALITY).url
 
     @property
     def delete_url(self):
@@ -61,22 +45,6 @@ class ImageBaseModel(models.Model):
         return reverse(
             DEFAULT_CROP_URL_NAME, kwargs={'pk': self.pk})
 
-
-class BuiltInGalleryImage(ImageBaseModel):
-    image = models.ImageField(
-        upload_to="images", storage=default_storage, verbose_name=_("Image"))
-    creator = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=False, blank=False,
-        verbose_name=_('Creator'), on_delete=models.CASCADE)
-
-    @property
-    def image_field_name(self):
-        return "image"
-
-    @property
-    def creator_field_name(self):
-        return "creator"
-
     def has_view_permission(self, request):
         return True
 
@@ -85,3 +53,16 @@ class BuiltInGalleryImage(ImageBaseModel):
 
     def has_delete_permission(self, request):
         return self.creator == request.user or request.user.is_superuser
+
+    def serialized(self, preview_size=None):
+        return {
+            'pk': self.pk,
+            'name': self.name,
+            'size': self.size,
+            'url': self.url,
+            'thumbnailUrl': self.get_thumbnail_url(preview_size),
+            'deleteUrl': self.delete_url,
+
+            # todo: not implemented
+            # 'cropurl': file_wrapper.crop_url,
+        }

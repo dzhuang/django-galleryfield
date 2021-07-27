@@ -19,9 +19,9 @@ class DemoTestGalleryForm(forms.ModelForm):
 
 IMAGE_DATA = [{
     "url": "/media/images/abcd.jpg",
-    "thumbnailurl": "/media/cache/a6/ee/abcdefg.jpg",
+    "thumbnailUrl": "/media/cache/a6/ee/abcdefg.jpg",
     "name": "abcd.jpg", "size": "87700", "pk": 1,
-    "deleteurl": "javascript:void(0)"}]
+    "deleteUrl": "javascript:void(0)"}]
 
 
 class GalleryFieldTest(TestCase):
@@ -256,9 +256,9 @@ class GalleryFormFieldTest(SimpleTestCase):
 
         second_image_info = {
             "url": "/media/images/cdef.jpg",
-            "thumbnailurl": "/media/cache/a6/ee/cdef.jpg",
+            "thumbnailUrl": "/media/cache/a6/ee/cdef.jpg",
             "name": "cdef.jpg", "size": "20000", "pk": 2,
-            "deleteurl": "javascript:void(0)"}
+            "deleteUrl": "javascript:void(0)"}
         image_data_with_2_images = deepcopy(IMAGE_DATA)
         image_data_with_2_images.append(second_image_info)
 

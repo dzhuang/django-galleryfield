@@ -39,6 +39,9 @@ DEFAULT_UPLOAD_HANDLER_URL_NAME = _APP_CONFIG_URLS.get(
     "upload_handler_url_name", defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)
 DEFAULT_CROP_URL_NAME = _APP_CONFIG_URLS.get(
     "crop_url_name", defaults.DEFAULT_CROP_URL_NAME)
+DEFAULT_FETCH_URL_NAME = _APP_CONFIG_URLS.get(
+    "fetch_image_url_name", defaults.DEFAULT_FETCH_URL_NAME
+)
 
 
 _APP_CONFIG_IMAGE_MODEL = _APP_CONFIG.get("default_image_model", {})

@@ -82,16 +82,16 @@ class GalleryWidgetTest(SimpleTestCase):
         widget = GalleryWidget()
         image_data = [{
             "url": "/media/images/abcd.jpg",
-            "thumbnailurl": "/media/cache/a6/ee/abcdefg.jpg",
+            "thumbnailUrl": "/media/cache/a6/ee/abcdefg.jpg",
             "name": "abcd.jpg", "pk": "1", "size": "87700",
-            "deleteurl": "javascript:void(0)"}]
+            "deleteUrl": "javascript:void(0)"}]
         value = mark_safe(json.dumps(image_data))
         expected_result = (
             '<input type="hidden" name="image_0" '
             'value="[{"url": "/media/images/abcd.jpg", '
-            '"thumbnailurl": "/media/cache/a6/ee/abcdefg.jpg", '
+            '"thumbnailUrl": "/media/cache/a6/ee/abcdefg.jpg", '
             '"name": "abcd.jpg", "pk": "1", "size": "87700", '
-            '"deleteurl": "javascript:void(0)"}]" '
+            '"deleteUrl": "javascript:void(0)"}]" '
             'class="django-gallery-widget-files-field hiddeninput">')
         self.check_in_html(widget, "image", value, strict=True,
                            html=[expected_result])
