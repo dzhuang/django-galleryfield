@@ -15,6 +15,10 @@ class GalleryFormView(LoginRequiredMixin, CreateView):
         context["form_description"] = "Create new gallery"
         return context
 
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        return result
+
     def get_success_url(self):
         return reverse("gallery-update", kwargs={"pk": self.object.pk})
 
@@ -23,6 +27,10 @@ class GalleryUpdateView(LoginRequiredMixin, UpdateView):
     model = DemoGallery
     form_class = GalleryForm
     template_name = "form.html"
+
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        return result
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

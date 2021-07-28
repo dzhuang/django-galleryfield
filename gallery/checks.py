@@ -2,15 +2,13 @@ from django.conf import settings
 from django.core.checks import Critical, register
 from django.core.exceptions import ImproperlyConfigured, FieldDoesNotExist
 
-try:  # pragma: no cover
-    from django.apps import apps
-except ImportError:  # pragma: no cover
-    from django.apps import django_apps as apps
-
 from django.urls import reverse
-from django.db.models import ImageField, ForeignKey
+from django.db.models import ImageField
 
 from . import conf as app_conf
+from . import defaults
+from .utils import apps
+
 
 REQUIRED_CONF_ERROR_PATTERN = (
     "You must configure %(location)s for RELATE to run properly.")
@@ -20,11 +18,10 @@ GENERIC_ERROR_PATTERN = "Error in %(location)s: %(error_type)s: %(error_str)s"
 DJANGO_GALLERY_WIDGET_CONFIG = "DJANGO_GALLERY_WIDGET_CONFIG"
 DEFAULT_URLS = "default_urls"
 UPLOAD_HANDLER_URL_NAME = "upload_handler_url_name"
+FETCH_URL_NAME = "fetch_url_name"
 CROP_URL_NAME = "crop_url_name"
-DEFAULT_IMAGE_MODEL = "default_image_model"
-TARGET_IMAGE_MODEL = "target_image_model"
-TARGET_IMAGE_FIELD_NAME = "target_image_field_name"
-TARGET_CREATOR_FIELD_NAME = "target_creator_field_name"
+
+DEFAULT_TARGET_IMAGE_MODEL = "target_image_model"
 
 ASSETS = "assets"
 BOOTSTRAP_JS_PATH = "bootstrap_js_path"
@@ -133,6 +130,130 @@ def check_settings(app_configs, **kwargs):
                                     "error_str": str(e)}),
                             id="django-gallery-widget-default_urls.E005"
                         ))
+
+            fetch_url_name = default_urls.get(FETCH_URL_NAME, None)
+            if fetch_url_name is not None:
+                if not isinstance(fetch_url_name, str):
+                    errors.append(DJGalleryCriticalCheckMessage(
+                        msg=(INSTANCE_ERROR_PATTERN
+                             % {"location": "'%s' in '%s' in '%s'" % (
+                                    FETCH_URL_NAME, DEFAULT_URLS,
+                                    DJANGO_GALLERY_WIDGET_CONFIG),
+                                "types": "str"}),
+                        id="django-gallery-widget-default_urls.E006"
+                    ))
+                else:
+                    try:
+                        reverse(fetch_url_name)
+                    except Exception as e:
+                        errors.append(DJGalleryCriticalCheckMessage(
+                            msg=(GENERIC_ERROR_PATTERN
+                                 % {"location": "'%s' in '%s' in '%s'" % (
+                                        FETCH_URL_NAME, DEFAULT_URLS,
+                                        DJANGO_GALLERY_WIDGET_CONFIG),
+                                    "error_type": type(e).__name__,
+                                    "error_str": str(e)}),
+                            id="django-gallery-widget-default_urls.E007"
+                        ))
+
+    default_target_image_model = conf.get(
+        DEFAULT_TARGET_IMAGE_MODEL, None)
+    target_model = None
+    will_proceed_checking_target_model_image_fields = True
+    if default_target_image_model is not None:
+        if not isinstance(default_target_image_model, str):
+            errors.append(DJGalleryCriticalCheckMessage(
+                msg=(INSTANCE_ERROR_PATTERN
+                     % {"location": "'%s' in '%s'" % (
+                            DEFAULT_TARGET_IMAGE_MODEL,
+                            DJANGO_GALLERY_WIDGET_CONFIG),
+                        "types": "str"}),
+                id="django-gallery-widget-default_image_model.E001"
+            ))
+            will_proceed_checking_target_model_image_fields = False
+        else:
+            try:
+                target_model = apps.get_model(default_target_image_model)
+            except Exception as e:
+                errors.append(DJGalleryCriticalCheckMessage(
+                    msg=(GENERIC_ERROR_PATTERN
+                         % {"location": "'%s' in '%s'" % (
+                                DEFAULT_TARGET_IMAGE_MODEL,
+                                DJANGO_GALLERY_WIDGET_CONFIG),
+                            "error_type": type(e).__name__,
+                            "error_str": str(e)}
+                         + "\n See "
+                           "https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.get_model"  # noqa
+                           " for more information."
+                         ),
+                    id="django-gallery-widget-default_image_model.E002"
+                ))
+                will_proceed_checking_target_model_image_fields = False
+
+        if will_proceed_checking_target_model_image_fields:
+            if target_model is None:
+                default_target_image_model = defaults.DEFAULT_TARGET_IMAGE_MODEL
+                target_model = apps.get_model(default_target_image_model)
+
+            get_image_field_class_method = None
+            try:
+                image_field = (
+                    target_model._meta.get_field(
+                        defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME))
+            except FieldDoesNotExist:
+                image_field = None
+                get_image_field_class_method = getattr(target_model,
+                                                       "get_image_field", None)
+                if get_image_field_class_method is not None:
+                    get_image_field_method_valid = True
+                    if callable(get_image_field_class_method):
+                        try:
+                            image_field = get_image_field_class_method()
+                        except TypeError:
+                            get_image_field_method_valid = False
+
+                    if not get_image_field_method_valid:
+                        errors.append(Critical(
+                            msg=('Error in %(location)s: model %(model)s defined '
+                                 '"get_image_field" method is not a classmethod'
+                                 % {"location": "'%s' in '%s'" % (
+                                        DEFAULT_TARGET_IMAGE_MODEL,
+                                        DJANGO_GALLERY_WIDGET_CONFIG),
+                                    "model": default_target_image_model
+                                 }),
+                            id="django-gallery-widget-default_image_model.E003"
+                        ))
+
+            if image_field is not None:
+                if type(image_field) is not ImageField:
+                    image_field = None
+
+            if image_field is None:
+                if get_image_field_class_method is None:
+                    errors.append(Critical(
+                        msg=('Error in %(location)s: model %(model)s must '
+                             'either have a field named "image" '
+                             'or has a classmethod named "get_image_field", '
+                             'which returns the image field of the model'
+                             % {"location": "'%s' in '%s'" % (
+                                    DEFAULT_TARGET_IMAGE_MODEL,
+                                    DJANGO_GALLERY_WIDGET_CONFIG),
+                                "model": default_target_image_model
+                                }),
+                        id="django-gallery-widget-default_image_model.E004"
+                    ))
+                else:
+                    errors.append(Critical(
+                        msg=('Error in %(location)s: model %(model)s defined '
+                             '"get_image_field" class method '
+                             'did not return a ImageField type'
+                             % {"location": "'%s' in '%s'" % (
+                                    DEFAULT_TARGET_IMAGE_MODEL,
+                                    DJANGO_GALLERY_WIDGET_CONFIG),
+                                "model": default_target_image_model
+                                }),
+                        id="django-gallery-widget-default_image_model.E005"
+                    ))
 
     assets = conf.get(ASSETS, None)
     if assets is not None:

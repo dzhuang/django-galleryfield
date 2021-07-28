@@ -18,6 +18,17 @@ class BuiltInGalleryImage(models.Model):
         settings.AUTH_USER_MODEL, null=False, blank=False,
         verbose_name=_('Creator'), on_delete=models.CASCADE)
 
+    @classmethod
+    def get_image_field(cls):
+        return cls._meta.get_field("image")
+
+    def get_owner(self):
+        return self.creator
+
+    @property
+    def owner(self):
+        return self.creator
+
     @property
     def size(self):
         return self.image.size

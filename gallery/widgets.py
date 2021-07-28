@@ -4,9 +4,8 @@ import json
 from django import forms
 from django.urls import reverse_lazy
 
-
-from . import conf
-from .defaults import GALLERY_WIDGET_UI_DEFAULT_OPTIONS
+from gallery import conf
+from gallery import defaults
 
 
 js = [
@@ -64,6 +63,9 @@ class GalleryWidget(forms.HiddenInput):
         self.preview_size = preview_size
         self.template = template
 
+        self._upload_handler_url_name = upload_handler_url_name
+        self._fetch_request_url_name = fetch_request_url_name
+
         self.upload_handler_url = reverse_lazy(
             upload_handler_url_name, args=upload_handler_args or (),
             kwargs=upload_handler_kwargs or {})
@@ -75,7 +77,7 @@ class GalleryWidget(forms.HiddenInput):
                 kwargs=fetch_request_kwargs or {})
 
         jquery_upload_ui_options = jquery_upload_ui_options or {}
-        _jquery_upload_ui_options = GALLERY_WIDGET_UI_DEFAULT_OPTIONS.copy()
+        _jquery_upload_ui_options = defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS.copy()
         _jquery_upload_ui_options.update(jquery_upload_ui_options)
 
         # https://github.com/blueimp/jQuery-File-Upload/wiki/Options#singlefileuploads
@@ -92,6 +94,55 @@ class GalleryWidget(forms.HiddenInput):
         self.options = options and options.copy() or {}
         self.options.setdefault("accepted_mime_types", ['image/*'])
 
+        try:
+            print(getattr(self, "image_model"))
+        except AttributeError:
+            pass
+
+    def defaults_checks(self):
+        image_model_str = getattr(self, "image_model")
+
+        image_model_is_default = (
+                image_model_str == defaults.DEFAULT_TARGET_IMAGE_MODEL)
+        upload_handler_url_name_is_default = (
+            self._upload_handler_url_name == defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME
+        )
+        fetch_request_url_name_is_default = (
+            self._fetch_request_url_name == defaults.DEFAULT_FETCH_URL_NAME
+        )
+        conflict_config = []
+        if not image_model_is_default:
+            if upload_handler_url_name_is_default:
+                conflict_config.append(
+                    {"param": "upload_handler_url_name",
+                     "value": self._upload_handler_url_name})
+            if fetch_request_url_name_is_default:
+                conflict_config.append(
+                    {"param": "fetch_request_url_name",
+                     "value": self._fetch_request_url_name})
+
+        if conflict_config:
+            widget_belong = getattr(self, "widget_belong")
+            msgs = ["'%(obj)s' is using '%(used_model)s' "
+                    "instead of built-in '%(default_model)s', while "
+                    % {"obj": widget_belong,
+                       "used_model": image_model_str,
+                       "default_model": defaults.DEFAULT_TARGET_IMAGE_MODEL}
+                    ]
+
+            for cc in conflict_config:
+                msgs.append("'%(param)s' is using built-in value '%(value)s', " % cc)
+
+            msgs.append(
+                "which use built-in '%(default_model)s'. You need to write "
+                "your own views for your image model." % {
+                    "default_model": defaults.DEFAULT_TARGET_IMAGE_MODEL
+                })
+
+            msg = "".join(msgs)
+            if msg:
+                raise RuntimeError(msg)
+
     class Media:
         js = tuple(_js for _js in js if _js)
         css = {'all': tuple(_css for _css in css if _css)}
@@ -101,6 +152,8 @@ class GalleryWidget(forms.HiddenInput):
         return False
 
     def render(self, name, value, attrs=None, renderer=None):
+        self.defaults_checks()
+
         print(value)
         extra_attrs = {"style": "display:none"}
         # extra_attrs = {}
@@ -130,7 +183,7 @@ class GalleryWidget(forms.HiddenInput):
         # Set blueimp/jQuery-File-Upload
         # https://github.com/blueimp/jQuery-File-Upload/wiki/Options
         max_number_of_images = (
-            getattr(self, "max_number_of_images", None))
+            getattr(self, "max_number_of_images"))
         if not max_number_of_images:
             self.ui_options.pop("maxNumberOfFiles", None)
         else:

@@ -6,7 +6,7 @@ GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
     "sequentialUploads": "true",
     "acceptFileTypes": r"/(\.|\/)(png|gif|bmp|jpe?g)$/i",
     "imageOrientation": "true",
-    # "maxNumberOfFiles": 0,  # This will be overridden by GalleryFormField max_number_of_images value  # noqa
+    # "maxNumberOfFiles": 0,  # This is overridden by GalleryFormField max_number_of_images value  # noqa
     # "previewMaxWidth": 80,  # This is overridden by DEFAULT_THUMBNAIL_SIZE
     # "previewMaxHeight": 80,
     "maxFileSize": 1.5 * 1024 ** 2,  # 1.5Mb
@@ -18,6 +18,10 @@ GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
 DEFAULT_UPLOAD_HANDLER_URL_NAME = "gallery_image_upload"
 DEFAULT_CROP_URL_NAME = "gallery_image_crop"
 DEFAULT_FETCH_URL_NAME = "gallery_images_fetch"
+
+DEFAULT_TARGET_IMAGE_MODEL = "gallery.BuiltInGalleryImage"
+DEFAULT_TARGET_IMAGE_FIELD_NAME = "image"
+DEFAULT_CREATOR_FIELD_NAME = "creator"
 
 BOOTSTRAP_JS_PATH = 'vendor/bootstrap/dist/js/bootstrap.min.js'
 BOOTSTRAP_CSS_PATH = 'vendor/bootstrap/dist/css/bootstrap.min.css'
