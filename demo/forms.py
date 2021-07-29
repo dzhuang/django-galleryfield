@@ -19,6 +19,7 @@ class GalleryForm(forms.ModelForm):
 
         # self.fields["images"].required = False
 
+        # self.fields["images"].max_number_of_images = 2
         # self.fields["images"].widget = Textarea()
         # self.fields["images"].widget.attrs["readonly"] = True
 
