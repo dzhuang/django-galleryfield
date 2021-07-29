@@ -1,6 +1,8 @@
 import json
 from copy import deepcopy
 
+import pytest
+
 from django import forms
 from django.forms import ValidationError
 from django.test import SimpleTestCase, TestCase
@@ -9,12 +11,14 @@ from gallery.fields import GalleryFormField
 
 from demo.models import DemoGallery
 from tests.factories import DemoGalleryFactory
+from tests import factories
 
 
 class DemoTestGalleryForm(forms.ModelForm):
     class Meta:
         model = DemoGallery
         fields = ["images"]
+
 
 
 IMAGE_DATA = [{
@@ -25,56 +29,58 @@ IMAGE_DATA = [{
 
 
 class GalleryFieldTest(TestCase):
+    def setUp(self) -> None:
+        factories.UserFactory.reset_sequence()
+        factories.BuiltInGalleryImageFactory.reset_sequence()
+        factories.DemoGalleryFactory.reset_sequence()
+        self.user = factories.UserFactory()
+        super().setUp()
+
     def test_form_save(self):
+        image = factories.BuiltInGalleryImageFactory(creator=self.user)
         form = DemoTestGalleryForm(
-            data={"images_0": json.dumps(IMAGE_DATA),
-                  "images_1": ''})
+            data={"images": [image.pk]})
         self.assertTrue(form.is_valid())
         form.save()
         self.assertEqual(DemoGallery.objects.count(), 1)
-        self.assertEqual(
-            json.loads(DemoGallery.objects.first().images)[0]["url"],
-            IMAGE_DATA[0]["url"])
 
     def test_form_add_images(self):
-        instance = DemoGalleryFactory.create()
+        instance = factories.DemoGalleryFactory.create(creator=self.user)
+        image2 = factories.BuiltInGalleryImageFactory(creator=self.user)
         self.assertEqual(DemoGallery.objects.count(), 1)
-        self.assertEqual(len(json.loads(DemoGallery.objects.first().images)), 1)
+        self.assertEqual(len(DemoGallery.objects.first().images), 1)
 
         form = DemoTestGalleryForm(
-            data={"images_0": json.dumps(IMAGE_DATA), "images_1": ''},
+            data={"images": instance.images + [image2.pk]},
             instance=instance
         )
         self.assertTrue(form.is_valid())
         form.save()
 
         self.assertEqual(DemoGallery.objects.count(), 1)
-        new_images = json.loads(DemoGallery.objects.first().images)
+        new_images = DemoGallery.objects.first().images
         self.assertEqual(len(new_images), 2)
-        self.assertEqual(new_images[0]["url"], IMAGE_DATA[0]["url"])
 
     def test_form_change_images(self):
-        instance = DemoGalleryFactory.create()
+        instance = DemoGalleryFactory.create(creator=self.user)
         self.assertEqual(DemoGallery.objects.count(), 1)
-        self.assertEqual(len(json.loads(DemoGallery.objects.first().images)), 1)
+        self.assertEqual(len(DemoGallery.objects.first().images), 1)
+        image2 = factories.BuiltInGalleryImageFactory(creator=self.user)
 
         form = DemoTestGalleryForm(
-            data={"images_0": json.dumps(IMAGE_DATA),
-                  "images_1": instance.images},
+            data={"images": [image2.pk]},
             instance=instance
         )
         self.assertTrue(form.is_valid())
         form.save()
 
         self.assertEqual(DemoGallery.objects.count(), 1)
-        new_images = json.loads(DemoGallery.objects.first().images)
+        new_images = DemoGallery.objects.first().images
         self.assertEqual(len(new_images), 1)
-        self.assertEqual(new_images[0]["url"], IMAGE_DATA[0]["url"])
 
     def test_form_save_null(self):
         form = DemoTestGalleryForm(
-            data={"images_0": '',
-                  "images_1": ''},
+            data={"images": ''},
         )
         form.fields["images"].required = False
 
@@ -82,17 +88,16 @@ class GalleryFieldTest(TestCase):
         form.save()
 
         self.assertEqual(DemoGallery.objects.count(), 1)
-        new_images = json.loads(DemoGallery.objects.first().images)
-        self.assertEqual(len(new_images), 0)
+        new_images = DemoGallery.objects.first().images
+        self.assertIsNone(new_images)
 
     def test_form_replace_null(self):
-        instance = DemoGalleryFactory.create()
+        instance = DemoGalleryFactory.create(creator=self.user)
         self.assertEqual(DemoGallery.objects.count(), 1)
-        self.assertEqual(len(json.loads(DemoGallery.objects.first().images)), 1)
+        self.assertEqual(len(DemoGallery.objects.first().images), 1)
 
         form = DemoTestGalleryForm(
-            data={"images_0": '',
-                  "images_1": instance.images},
+            data={"images": ''},
             instance=instance
         )
         form.fields["images"].required = False
@@ -101,17 +106,16 @@ class GalleryFieldTest(TestCase):
         form.save()
 
         self.assertEqual(DemoGallery.objects.count(), 1)
-        new_images = json.loads(DemoGallery.objects.first().images)
-        self.assertEqual(len(new_images), 0)
+        new_images = DemoGallery.objects.first().images
+        self.assertIsNone(new_images)
 
     def test_form_invalid(self):
-        instance = DemoGalleryFactory.create()
+        instance = DemoGalleryFactory.create(creator=self.user)
         self.assertEqual(DemoGallery.objects.count(), 1)
-        self.assertEqual(len(json.loads(DemoGallery.objects.first().images)), 1)
+        self.assertEqual(len(DemoGallery.objects.first().images), 1)
 
         form = DemoTestGalleryForm(
-            data={"images_0": '',
-                  "images_1": instance.images},
+            data={"images": ''},
             instance=instance
         )
         form.fields["images"].required = True
@@ -119,20 +123,35 @@ class GalleryFieldTest(TestCase):
         self.assertFalse(form.is_valid())
 
 
-class GalleryFormFieldTest(SimpleTestCase):
+class GalleryFormFieldTest(TestCase):
+    def setUp(self) -> None:
+        factories.UserFactory.reset_sequence()
+        factories.BuiltInGalleryImageFactory.reset_sequence()
+        factories.DemoGalleryFactory.reset_sequence()
+        self.user = factories.UserFactory()
+        super().setUp()
+
+    def test_gallery_form_field_clean_image_not_exist(self):
+        field = GalleryFormField()
+        form_data = [100]
+
+        msg = "'The submitted file is empty.'"
+
+        with self.assertRaisesMessage(ValidationError, msg):
+            field.clean(form_data)
 
     def test_gallery_form_field_clean(self):
+        image = factories.BuiltInGalleryImageFactory(creator=self.user)
         field = GalleryFormField()
-        form_data = [json.dumps(IMAGE_DATA), '']
+        form_data = [image.pk]
         cleaned_data = field.clean(form_data)
-        self.assertEqual(str(cleaned_data), str(json.dumps(IMAGE_DATA)))
+        self.assertEqual(cleaned_data, form_data)
 
     def test_gallery_form_field_clean_null_required(self):
         field = GalleryFormField(required=True)
         inputs = [
             '',
-            ['', ''],
-            ['', str(json.dumps(IMAGE_DATA))]
+            [],
         ]
 
         msg = "'The submitted file is empty.'"
@@ -146,12 +165,14 @@ class GalleryFormFieldTest(SimpleTestCase):
         field = GalleryFormField(required=False)
         inputs = [
             '',
-            ['', '']
+            None,
+            'null',
+            []
         ]
 
         for data in inputs:
             with self.subTest(data=data):
-               self.assertEqual(json.loads(field.clean(data)), '')
+               self.assertIsNone(field.clean(data))
 
     def test_gallery_form_field_clean_invalid_image_json(self):
         inputs = ['invalid-image']
@@ -163,34 +184,34 @@ class GalleryFormFieldTest(SimpleTestCase):
                 with self.assertRaisesMessage(ValidationError, msg):
                     field.clean(inputs)
 
-    def test_gallery_form_field_clean_invalid_images_json(self):
-        invalid_image_data = IMAGE_DATA[0].copy()
-        invalid_image_data.pop("url")
-
-        field = GalleryFormField(required=False)
-        inputs = [
-
-            # No url in each dict
-            [json.dumps([invalid_image_data]), ''],
-            ['', json.dumps([invalid_image_data])],
-
-            # JSONDecodeError
-            ['', 'invalid-image-data'],
-
-            # list element not dicts
-            ['', json.dumps(["url", "abcd"])],
-            [json.dumps(["url", "abcd"]), ''],
-
-            # data not list
-            [json.dumps({"url": "abcd"}), ''],
-            ['', json.dumps({"url": "abcd"})]
-        ]
-        msg = "The submitted images are invalid."
-
-        for data in inputs:
-            with self.subTest(data=data):
-                with self.assertRaisesMessage(ValidationError, msg):
-                    field.clean(data)
+    # def test_gallery_form_field_clean_invalid_images_json(self):
+    #     invalid_image_data = IMAGE_DATA[0].copy()
+    #     invalid_image_data.pop("url")
+    #
+    #     field = GalleryFormField(required=False)
+    #     inputs = [
+    #
+    #         # No url in each dict
+    #         [json.dumps([invalid_image_data]), ''],
+    #         ['', json.dumps([invalid_image_data])],
+    #
+    #         # JSONDecodeError
+    #         ['', 'invalid-image-data'],
+    #
+    #         # list element not dicts
+    #         ['', json.dumps(["url", "abcd"])],
+    #         [json.dumps(["url", "abcd"]), ''],
+    #
+    #         # data not list
+    #         [json.dumps({"url": "abcd"}), ''],
+    #         ['', json.dumps({"url": "abcd"})]
+    #     ]
+    #     msg = "The submitted images are invalid."
+    #
+    #     for data in inputs:
+    #         with self.subTest(data=data):
+    #             with self.assertRaisesMessage(ValidationError, msg):
+    #                 field.clean(data)
 
     def test_gallery_form_field_clean_not_null_not_list(self):
         input_str = 'invalid-image'
@@ -209,11 +230,6 @@ class GalleryFormFieldTest(SimpleTestCase):
 
         with self.assertRaisesMessage(ValidationError, msg):
             field.clean(input_str)
-
-    def test_gallery_form_field_clean_disabled(self):
-        field = GalleryFormField(disabled=True)
-        inputs = json.dumps(IMAGE_DATA)
-        self.assertEqual(json.loads(field.clean(inputs)), inputs)
 
     def test_gallery_form_field_assign_max_number_of_images(self):
         field = GalleryFormField(required=False)
@@ -254,32 +270,31 @@ class GalleryFormFieldTest(SimpleTestCase):
         n = 1
         field.max_number_of_images = n
 
-        second_image_info = {
-            "url": "/media/images/cdef.jpg",
-            "thumbnailUrl": "/media/cache/a6/ee/cdef.jpg",
-            "name": "cdef.jpg", "size": "20000", "pk": 2,
-            "deleteUrl": "javascript:void(0)"}
-        image_data_with_2_images = deepcopy(IMAGE_DATA)
-        image_data_with_2_images.append(second_image_info)
+        images = factories.BuiltInGalleryImageFactory.create_batch(
+            size=2, creator=self.user)
 
         msg = "Number of images exceeded, only %i allowed" % n
 
         with self.assertRaisesMessage(ValidationError, msg):
-            field.clean([json.dumps(image_data_with_2_images), ''])
+            field.clean([images[0].pk, images[1].pk])
 
     def test_gallery_form_field_clean_max_number_of_images_not_exceeded(self):
         field = GalleryFormField()
         field.max_number_of_images = 1
 
-        form_data = [json.dumps(IMAGE_DATA), '']
-        cleaned_data = field.clean(form_data)
-        self.assertEqual(str(cleaned_data), str(json.dumps(IMAGE_DATA)))
+        image = factories.BuiltInGalleryImageFactory(creator=self.user)
+
+        self.assertEqual(field.clean([image.pk]), [image.pk])
 
     def test_gallery_form_field_clean_max_number_of_images_zero(self):
         # zero means not limited
         field = GalleryFormField()
         field.max_number_of_images = 0
 
-        form_data = [json.dumps(IMAGE_DATA), '']
-        cleaned_data = field.clean(form_data)
-        self.assertEqual(str(cleaned_data), str(json.dumps(IMAGE_DATA)))
+        images = factories.BuiltInGalleryImageFactory.create_batch(
+            size=2, creator=self.user)
+
+        data = [images[0].pk, images[1].pk]
+
+        cleaned_data = field.clean(data)
+        self.assertEqual(cleaned_data, data)

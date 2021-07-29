@@ -36,16 +36,8 @@ DEFAULT_FETCH_URL_NAME = _APP_CONFIG_URLS.get(
     "fetch_image_url_name", defaults.DEFAULT_FETCH_URL_NAME
 )
 
-
-_APP_CONFIG_IMAGE_MODEL = _APP_CONFIG.get("default_image_model", {})
-DEFAULT_TARGET_IMAGE_MODEL = _APP_CONFIG_IMAGE_MODEL.get(
+DEFAULT_TARGET_IMAGE_MODEL = _APP_CONFIG.get(
     "default_target_image_model", defaults.DEFAULT_TARGET_IMAGE_MODEL)
-DEFAULT_TARGET_IMAGE_FIELD_NAME = _APP_CONFIG_IMAGE_MODEL.get(
-    "target_image_field_name", defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME)
-DEFAULT_CREATOR_FIELD_NAME = _APP_CONFIG_IMAGE_MODEL.get(
-    "target_creator_field_name", defaults.DEFAULT_CREATOR_FIELD_NAME
-)
-
 
 _APP_CONFIG_ASSETS = _APP_CONFIG.get("assets", {})
 BOOTSTRAP_JS_PATH = _APP_CONFIG_ASSETS.get(

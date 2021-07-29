@@ -30,8 +30,8 @@ class TestAdminPanelWidget(UserCreateMixin, StaticLiveServerTestCase):
     def setUpClass(cls):
         if SELENIUM_BROWSER == CHROMIUM:
             options = webdriver.ChromeOptions()
-            # options.add_argument("--headless")
-            # options.add_argument("--disable-gpu")
+            options.add_argument("--headless")
+            options.add_argument("--disable-gpu")
             cls.selenium = webdriver.Chrome(options=options)
         elif SELENIUM_BROWSER == FIREFOX:
             cls.selenium = webdriver.Firefox()

@@ -7,8 +7,7 @@ from django.core.exceptions import ValidationError, FieldDoesNotExist
 from django.core.validators import BaseValidator
 from django.core import checks
 
-
-from gallery.utils import logger, apps
+from gallery.utils import apps
 from gallery import conf, defaults as gallery_widget_defaults
 from gallery.widgets import GalleryWidget
 
@@ -16,8 +15,8 @@ from gallery.widgets import GalleryWidget
 @deconstructible
 class MaxNumberOfImageValidator(BaseValidator):
     message = ngettext_lazy(
-        'Ensure this value has at most %(limit_value)d image (it has %(show_value)d).',
-        'Ensure this value has at most %(limit_value)d images (it has %(show_value)d).',
+        'Number of images exceeded, only %(limit_value)d allowed',
+        'Number of images exceeded, only %(limit_value)d allowed',
         'limit_value')
     code = 'max_number_of_images'
 
@@ -53,8 +52,10 @@ class GalleryField(models.JSONField):
 
         if self._is_using_default_target_image_model:
             errors.append(checks.Warning(
-                msg=('"target_model" is set to None, "%(default)s" is used as default.'
-                     % {"default": gallery_widget_defaults.DEFAULT_TARGET_IMAGE_MODEL}
+                msg=('"target_model" is set to None, '
+                     '"%(default)s" is used as default.'
+                     % {"default":
+                            gallery_widget_defaults.DEFAULT_TARGET_IMAGE_MODEL}
                      ),
                 id="gallery_field.W001",
                 obj=self
@@ -185,10 +186,6 @@ class GalleryFormField(forms.JSONField):
         self.widget.image_model = self.image_model
         self.widget.widget_belong = widget_belong
 
-        if self.max_number_of_images is not None:
-            self.validators.append(
-                MaxNumberOfImageValidator(int(self.max_number_of_images)))
-
     widget = GalleryWidget
 
     @property
@@ -206,6 +203,10 @@ class GalleryFormField(forms.JSONField):
         self._max_number_of_images = value
         self.widget.max_number_of_images = value
 
+        if value:
+            self.validators.append(
+                MaxNumberOfImageValidator(int(value)))
+
     def widget_attrs(self, widget):
         # If BootStrap is loaded, "hiddeninput" is added by BootStrap.
         # However, we need that css class to check changes of the form,
@@ -216,7 +217,7 @@ class GalleryFormField(forms.JSONField):
         }
 
     def to_python(self, value):
-        converted =  super().to_python(value)
+        converted = super().to_python(value)
 
         if converted in self.empty_values:
             return converted

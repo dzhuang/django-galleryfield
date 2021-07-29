@@ -1,8 +1,6 @@
 from django.db import models
 from django.urls import reverse
 from gallery.fields import GalleryField
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 
 
 class DemoGallery(models.Model):

@@ -5,28 +5,8 @@ import string
 import factory
 from django.contrib.auth import get_user_model
 
+from gallery.models import BuiltInGalleryImage
 from demo.models import DemoGallery
-
-
-def sequenced_image(number, length=5):
-    randgen = random.Random()
-    name = ("".join(["image_"] + [randgen.choice(string.ascii_letters)
-                    for _i in range(length)] + ["%s.jpg" % str(number)]))
-    return json.dumps([{
-        "url": "/media/images/%s" % name,
-        "thumbnailUrl": "/media/cache/a6/ee/%s" % name,
-        "name": "%s" % name,
-        "size": (number + 1) * 20000,
-        "deleteUrl": "javascript:void(0)",
-        'pk': number + 1
-    }])
-
-
-class DemoGalleryFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = DemoGallery
-
-    images = factory.Sequence(sequenced_image)
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -60,5 +40,45 @@ class UserFactory(factory.django.DjangoModelFactory):
         obj = super(UserFactory, cls)._create(model_class, *args, **kwargs)
         # ensure the raw password gets set after the initial save
         obj.set_password(password)
+        obj.save()
+        return obj
+
+
+class BuiltInGalleryImageFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = BuiltInGalleryImage
+
+    image = factory.django.ImageField(color='blue')
+
+
+class JSONFactory(factory.ListFactory):
+    """
+    Use with factory.List to make JSON strings.
+    """
+    @classmethod
+    def _generate(cls, create, attrs):
+        obj = super()._generate(create, attrs)
+        return json.dumps(obj)
+
+
+class DemoGalleryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = DemoGallery
+
+    images = factory.List([], list_factory=JSONFactory)
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        creator = kwargs.pop("creator", None)
+        _kwargs = {}
+        if creator is not None:
+            _kwargs = {"creator": creator}
+        image = BuiltInGalleryImageFactory(**_kwargs)
+
+        obj = super()._create(model_class, *args, **kwargs)
+        image_list = obj.images
+        assert isinstance(image_list, list)
+        image_list.append(image.pk)
+        obj.images = image_list
         obj.save()
         return obj

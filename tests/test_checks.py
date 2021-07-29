@@ -98,14 +98,11 @@ class CheckConfigs(CheckSettingsBase):
 
 """
 DJANGO_GALLERY_WIDGET_CONFIG = {
-    "default_urls": 
+    "default_urls":
         {"upload_handler_url_name": "gallery_image_upload",
+         "fetch_url_name": "gallery_images_fetch",
          "crop_url_name": "gallery_image_crop"},
-    "default_image_model":
-        {"target_image_model": "gallery.BuiltInGalleryImage",
-         "target_image_field_name": "image",
-         "target_creator_field_name": "creator",
-         },
+    "default_target_image_model": "gallery.BuiltInGalleryImage",
     "assets": {
         "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
         "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
@@ -116,10 +113,6 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
     "thumbnails": {
         "size": 120,
         "quality": 80
-    },
-    "field_hack": {
-        "old_value_str": 'old_%s_value',
-        "deleted_value_str": 'deleted_%s_value',
     },
     "widget_hidden_input_css_class": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,
@@ -213,150 +206,57 @@ class CheckDefaultUrls(CheckSettingsBase):
 
 
 """
-    "default_image_model":
-        {"target_image_model": "gallery.BuiltInGalleryImage",
-         "target_image_field_name": "image",
-         "target_creator_field_name": "creator",
-         },
+    "default_target_image_model": "gallery.BuiltInGalleryImage",
 """
 
 
-class CheckDefaultImageModel(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget-default_image_model"
+class CheckDefaultTargetImageModel(CheckSettingsBase):
+    msg_id_prefix = "django-gallery-widget-default_target_image_model"
 
     VALID_CONF_None = {
-        "default_image_model": None}
-
-    VALID_CONF_Dict = {
-        "default_image_model": dict()}
+        "default_target_image_model": None}
 
     VALID_CONF = {
-        "default_image_model":
-            {"target_image_model": "gallery.BuiltInGalleryImage",
-             "target_image_field_name": "image",
-             "target_creator_field_name": "creator"},
-    }
-
-    VALID_CONF_BOTH_NONE = {
-        "default_image_model":
-            {"target_image_model": None,
-             "target_image_field_name": None,
-             "target_creator_field_name": None},
-    }
-
-    VALID_CONF_MODEL_NONE = {
-        "default_image_model":
-            {
-             "target_image_field_name": "image"},
-    }
+        "default_target_image_model": "gallery.BuiltInGalleryImage"}
 
     INVALID_CONF_list = {
-        "default_image_model": []}
+        "default_target_image_model": []}
 
     INVALID_CONF_MODEL_NOT_str = {
-        "default_image_model":
-            {"target_image_model": object,
-             "target_image_field_name": "image"},
+        "default_target_image_model": object,
     }
 
     INVALID_CONF_MODEL_NOT_EXIST = {
-        "default_image_model":
-            {"target_image_model": "model.not.exist",
-             "target_image_field_name": "image"},
+        "default_target_image_model": "model.not.exist"
     }
 
-    INVALID_CONF_MODEL_IMAGE_FIELD_NOT_str = {
-        "default_image_model":
-            {
-             "target_image_field_name": object},
-    }
-
-    INVALID_CONF_MODEL_CREATOR_FIELD_NOT_str = {
-        "default_image_model":
-            {
-             "target_creator_field_name": object},
-    }
-
-    INVALID_CONF_MODEL_IMAGE_FIELD_NOT_EXIST = {
-        "default_image_model":
-            {"target_image_model": "gallery.BuiltInGalleryImage",
-             "target_image_field_name": "non_exist_field"},
-    }
-
-    INVALID_CONF_MODEL_CREATOR_FIELD_NOT_EXIST = {
-        "default_image_model":
-            {"target_image_model": "gallery.BuiltInGalleryImage",
-             "target_creator_field_name": "non_exist_field"},
-    }
-
-    INVALID_CONF_MODEL_IMAGE_FIELD_NOT_IMAGEFIELD = {
-        "default_image_model":
-            {"target_image_model": "gallery.BuiltInGalleryImage",
-             "target_image_field_name": "creator"},
-    }
-
-    INVALID_CONF_MODEL_CREATOR_FIELD_NOT_FOREIGNKEY = {
-        "default_image_model":
-            {"target_image_model": "gallery.BuiltInGalleryImage",
-             "target_creator_field_name": "image"},
+    INVALID_CONF_MODEL_IMAGE_FIELD_NO_IMAGEFIELD = {
+        "default_target_image_model": "demo.DemoGallery"
     }
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
     def test_valid_config1(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_Dict)
-    def test_valid_config2(self):
-        self.assertCheckMessages([])
-
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF)
-    def test_valid_config3(self):
-        self.assertCheckMessages([])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_BOTH_NONE)
-    def test_valid_config4(self):
-        self.assertCheckMessages([])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_MODEL_NONE)
-    def test_valid_config5(self):
+    def test_valid_config2(self):
         self.assertCheckMessages([])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_list)
     def test_invalid_config1(self):
-        self.assertCheckMessages(["django-gallery-widget-default_image_model.E001"])
+        self.assertCheckMessages(["django-gallery-widget-default_target_image_model.E001"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_NOT_str)
     def test_invalid_config2(self):
-        self.assertCheckMessages(["django-gallery-widget-default_image_model.E002"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_IMAGE_FIELD_NOT_str)
-    def test_invalid_config3(self):
-        self.assertCheckMessages(["django-gallery-widget-default_image_model.E004"])
+        self.assertCheckMessages(["django-gallery-widget-default_target_image_model.E001"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_NOT_EXIST)
+    def test_invalid_config3(self):
+        self.assertCheckMessages(["django-gallery-widget-default_target_image_model.E002"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_IMAGE_FIELD_NO_IMAGEFIELD)
     def test_invalid_config4(self):
-        self.assertCheckMessages(["django-gallery-widget-default_image_model.E003"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_IMAGE_FIELD_NOT_EXIST)
-    def test_invalid_config5(self):
-        self.assertCheckMessages(["django-gallery-widget-default_image_model.E005"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_IMAGE_FIELD_NOT_IMAGEFIELD)
-    def test_invalid_config6(self):
-        self.assertCheckMessages(["django-gallery-widget-default_image_model.E006"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_CREATOR_FIELD_NOT_str)
-    def test_invalid_config7(self):
-        self.assertCheckMessages(["django-gallery-widget-default_image_model.E007"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_CREATOR_FIELD_NOT_EXIST)
-    def test_invalid_config9(self):
-        self.assertCheckMessages(["django-gallery-widget-default_image_model.E008"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_CREATOR_FIELD_NOT_FOREIGNKEY)
-    def test_invalid_config19(self):
-        self.assertCheckMessages(["django-gallery-widget-default_image_model.E009"])
-
+        self.assertCheckMessages(["django-gallery-widget-default_target_image_model.E004"])
 
 """
     "assets": {
@@ -617,6 +517,7 @@ class CheckMultifieldCssClassBasename(CheckSettingsBase):
     "prompt_alert_if_changed_on_window_reload": True,
 """
 
+
 class CheckPromptAlert(CheckSettingsBase):
     msg_id_prefix = "django-gallery-widget-prompt_alert_if_changed_on_window_reload"
 
@@ -638,98 +539,3 @@ class CheckPromptAlert(CheckSettingsBase):
     def test_invalid_config1(self):
         self.assertCheckMessages([
             "django-gallery-widget-prompt_alert_if_changed_on_window_reload.E001"])
-
-
-"""
-    "field_hack": {
-        "old_value_str": 'old_%s_value',
-        "deleted_value_str": 'deleted_%s_value',
-    },
-"""
-
-
-class CheckFieldHack(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget-field_hack"
-
-    VALID_CONF_None = {
-        "field_hack": None,
-    }
-
-    VALID_CONF_Dict = {
-        "field_hack": {},
-    }
-
-    VALID_CONF = {
-        "field_hack": {
-            "old_value_str": 'the_old_%s_value',
-            "deleted_value_str": 'the_deleted_%s_value',
-        },
-    }
-
-    VALID_CONF_ALL_None = {
-        "field_hack": {
-            "old_value_str": None,
-            "deleted_value_str": None,
-        },
-    }
-
-    INVALID_CONF_NOT_Dict = {
-        "field_hack": object
-    }
-
-    INVALID_CONF_ELE_NOT_str = {
-        "field_hack": {
-            "old_value_str": object,
-            "deleted_value_str": object,
-        },
-    }
-
-    INVALID_CONF_ELE_PATTERN_ERROR = {
-        "field_hack": {
-            "old_value_str": 'the_old_field_value',
-            "deleted_value_str": 'the_deleted_field_value',
-        },
-    }
-
-    INVALID_CONF_ELE_SAME = {
-        "field_hack": {
-            "old_value_str": 'the_%s_value',
-            "deleted_value_str": 'the_%s_value',
-        },
-    }
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
-    def test_valid_config1(self):
-        self.assertCheckMessages([])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_Dict)
-    def test_valid_config2(self):
-        self.assertCheckMessages([])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF)
-    def test_valid_config3(self):
-        self.assertCheckMessages([])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_ALL_None)
-    def test_valid_config4(self):
-        self.assertCheckMessages([])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_Dict)
-    def test_invalid_config1(self):
-        self.assertCheckMessages(["django-gallery-widget-field_hack.E001"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_ELE_NOT_str)
-    def test_invalid_config2(self):
-        self.assertCheckMessages([
-            "django-gallery-widget-field_hack.E002",
-            "django-gallery-widget-field_hack.E004"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_ELE_PATTERN_ERROR)
-    def test_invalid_config3(self):
-        self.assertCheckMessages([
-            "django-gallery-widget-field_hack.E003",
-            "django-gallery-widget-field_hack.E005"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_ELE_SAME)
-    def test_invalid_config4(self):
-        self.assertCheckMessages(["django-gallery-widget-field_hack.E006"])

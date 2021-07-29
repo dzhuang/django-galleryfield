@@ -5,7 +5,6 @@ from django.core.exceptions import ImproperlyConfigured, FieldDoesNotExist
 from django.urls import reverse
 from django.db.models import ImageField
 
-from . import conf as app_conf
 from . import defaults
 from .utils import apps
 
@@ -21,7 +20,7 @@ UPLOAD_HANDLER_URL_NAME = "upload_handler_url_name"
 FETCH_URL_NAME = "fetch_url_name"
 CROP_URL_NAME = "crop_url_name"
 
-DEFAULT_TARGET_IMAGE_MODEL = "target_image_model"
+DEFAULT_TARGET_IMAGE_MODEL = "default_target_image_model"
 
 ASSETS = "assets"
 BOOTSTRAP_JS_PATH = "bootstrap_js_path"
@@ -164,7 +163,7 @@ def check_settings(app_configs, **kwargs):
                             DEFAULT_TARGET_IMAGE_MODEL,
                             DJANGO_GALLERY_WIDGET_CONFIG),
                         "types": "str"}),
-                id="django-gallery-widget-default_image_model.E001"
+                id="django-gallery-widget-default_target_image_model.E001"
             ))
             will_proceed_checking_target_model_image_fields = False
         else:
@@ -182,7 +181,7 @@ def check_settings(app_configs, **kwargs):
                            "https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.get_model"  # noqa
                            " for more information."
                          ),
-                    id="django-gallery-widget-default_image_model.E002"
+                    id="django-gallery-widget-default_target_image_model.E002"
                 ))
                 will_proceed_checking_target_model_image_fields = False
 
@@ -216,8 +215,8 @@ def check_settings(app_configs, **kwargs):
                                         DEFAULT_TARGET_IMAGE_MODEL,
                                         DJANGO_GALLERY_WIDGET_CONFIG),
                                     "model": default_target_image_model
-                                 }),
-                            id="django-gallery-widget-default_image_model.E003"
+                                    }),
+                            id="django-gallery-widget-default_target_image_model.E003"  # noqa
                         ))
 
             if image_field is not None:
@@ -236,7 +235,7 @@ def check_settings(app_configs, **kwargs):
                                     DJANGO_GALLERY_WIDGET_CONFIG),
                                 "model": default_target_image_model
                                 }),
-                        id="django-gallery-widget-default_image_model.E004"
+                        id="django-gallery-widget-default_target_image_model.E004"
                     ))
                 else:
                     errors.append(Critical(
@@ -248,7 +247,7 @@ def check_settings(app_configs, **kwargs):
                                     DJANGO_GALLERY_WIDGET_CONFIG),
                                 "model": default_target_image_model
                                 }),
-                        id="django-gallery-widget-default_image_model.E005"
+                        id="django-gallery-widget-default_target_image_model.E005"
                     ))
 
     assets = conf.get(ASSETS, None)

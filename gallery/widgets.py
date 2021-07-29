@@ -103,7 +103,9 @@ class GalleryWidget(forms.HiddenInput):
         self.options.setdefault("accepted_mime_types", ['image/*'])
 
     def defaults_checks(self):
-        image_model_str = getattr(self, "image_model")
+        image_model_str = getattr(self, "image_model", None)
+        if not image_model_str:
+            return
 
         image_model_is_default = (
                 image_model_str == defaults.DEFAULT_TARGET_IMAGE_MODEL)
@@ -165,12 +167,12 @@ class GalleryWidget(forms.HiddenInput):
     def render(self, name, value, attrs=None, renderer=None):
         self.defaults_checks()
 
-        extra_attrs = {"style": "display:none"}
-        # extra_attrs = {}
-        extra_attrs.update(attrs)
+        # extra_attrs = {"style": "display:none"}
+        # # extra_attrs = {}
+        # extra_attrs.update(attrs)
 
         context = {
-            'input_string': super().render(name, value, extra_attrs, renderer),
+            'input_string': super().render(name, value, attrs, renderer),
             'name': name,
             'multiple': self.multiple and 1 or 0,
             'preview_size': str(self.preview_size),

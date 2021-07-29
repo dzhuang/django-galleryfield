@@ -36,22 +36,18 @@ class GalleryWidgetTest(SimpleTestCase):
 
     def test_required_widget_render(self):
         f = GalleryFormField(required=True)
+
+        # fixme, why no "gallerywidget" in class?
         self.assertFieldRendersIn(
-            f, '<input type="hidden" name="f_0"'
-               ' class="django-gallery-widget-files-field'
-               ' hiddeninput" required id="id_f_0">'
-               '<input type="hidden" name="f_1"'
-               ' class="django-gallery-widget-deleted-field'
-               ' hiddeninput" id="id_f_1">')
+            f, '<input type="hidden" name="f" value="null"'
+               ' class="django-gallery-widget-files-field '
+               ' hiddeninput" required id="id_f">')
 
         f = GalleryFormField(required=False)
         self.assertFieldRendersIn(
-            f, '<input type="hidden" name="f_0"'
-               ' class="django-gallery-widget-files-field'
-               ' hiddeninput" id="id_f_0">'
-               '<input type="hidden" name="f_1"'
-               ' class="django-gallery-widget-deleted-field'
-               ' hiddeninput" id="id_f_1">')
+            f, '<input type="hidden" name="f" value="null"'
+               ' class="django-gallery-widget-files-field '
+               ' hiddeninput" id="id_f">')
 
     def _render_widget(self, widget, name, value, attrs=None, **kwargs):
         django_renderer = DjangoTemplates()
@@ -63,9 +59,13 @@ class GalleryWidgetTest(SimpleTestCase):
         return output
 
     def check_in_html(self, widget, name, value, html, attrs=None,
-                      strict=False, **kwargs):
+                      strict=False, print_output=False, **kwargs):
         output = self._render_widget(widget, name, value, attrs=attrs, **kwargs)
         assert_in = self.assertIn if strict else self.assertInHTML
+
+        if print_output:
+            print(output)
+
         if isinstance(html, str):
             html = [html]
         for _html in html:
@@ -80,21 +80,11 @@ class GalleryWidgetTest(SimpleTestCase):
 
     def test_gallery_widget_render(self):
         widget = GalleryWidget()
-        image_data = [{
-            "url": "/media/images/abcd.jpg",
-            "thumbnailUrl": "/media/cache/a6/ee/abcdefg.jpg",
-            "name": "abcd.jpg", "pk": "1", "size": "87700",
-            "deleteUrl": "javascript:void(0)"}]
-        value = mark_safe(json.dumps(image_data))
+        image_data = [1]
+        value = json.dumps(image_data)
         expected_result = (
-            '<input type="hidden" name="image_0" '
-            'value="[{"url": "/media/images/abcd.jpg", '
-            '"thumbnailUrl": "/media/cache/a6/ee/abcdefg.jpg", '
-            '"name": "abcd.jpg", "pk": "1", "size": "87700", '
-            '"deleteUrl": "javascript:void(0)"}]" '
-            'class="django-gallery-widget-files-field hiddeninput">')
-        self.check_in_html(widget, "image", value, strict=True,
-                           html=[expected_result])
+            '<input type="hidden" name="image" value="[1]"')
+        self.check_in_html(widget, "image", value, strict=True,  html=[expected_result])
 
     def test_gallery_widget_jquery_upload_options_max_number_of_files_overridden(self):  # noqa
         from random import randint
@@ -142,7 +132,7 @@ class GalleryWidgetTest(SimpleTestCase):
             '<input type="file" class="django-gallery-image-input" '
             'id="%(field_name)s-files" multiple accept="image/*" '
             'data-action="%(upload_handler_url)s">'
-            % {"field_name": conf.DEFAULT_TARGET_IMAGE_FIELD_NAME,
+            % {"field_name": "image",
                "upload_handler_url": reverse(conf.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
         )
         self.check_in_html(
