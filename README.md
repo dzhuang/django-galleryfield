@@ -23,11 +23,11 @@ ScreenShots
 -----------
 - Multiple image upload, sortable
 
-  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen_crop.png" width="70%">
+  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen_upload.png" width="70%">
 
 - Client/Server side crop
   
-  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen_upload.png" width="70%">
+  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen_crop.png" width="70%">
 
 Quick Start
 -----------
