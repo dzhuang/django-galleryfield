@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 
 from django import forms
@@ -6,7 +5,7 @@ from django.urls import reverse_lazy
 
 from gallery import conf
 from gallery import defaults
-
+from .utils import convert_dict_to_plain_text
 
 js = [
     conf.JQUERY_JS_PATH,
@@ -49,6 +48,9 @@ class GalleryWidget(forms.HiddenInput):
             fetch_request_url_name=conf.DEFAULT_FETCH_URL_NAME,
             fetch_request_args=None,
             fetch_request_kwargs=None,
+            crop_request_url_name=conf.DEFAULT_CROP_URL_NAME,
+            crop_request_args=None,
+            crop_request_kwargs=None,
             multiple=True,
             preview_size=conf.DEFAULT_THUMBNAIL_SIZE,
             template="gallery/widget.html",
@@ -64,6 +66,7 @@ class GalleryWidget(forms.HiddenInput):
 
         self._upload_handler_url_name = upload_handler_url_name
         self._fetch_request_url_name = fetch_request_url_name
+        self._crop_request_url_name = crop_request_url_name
 
         self.upload_handler_url = reverse_lazy(
             upload_handler_url_name, args=upload_handler_args or (),
@@ -74,6 +77,12 @@ class GalleryWidget(forms.HiddenInput):
             self.fetch_request_url = reverse_lazy(
                 fetch_request_url_name, args=fetch_request_args or (),
                 kwargs=fetch_request_kwargs or {})
+
+        self.crop_request_url = None
+        if crop_request_url_name:
+            self.crop_request_url = reverse_lazy(
+                crop_request_url_name, args=crop_request_args or (),
+                kwargs=crop_request_kwargs or {})
 
         jquery_upload_ui_options = jquery_upload_ui_options or {}
         _jquery_upload_ui_options = defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS.copy()
@@ -93,11 +102,6 @@ class GalleryWidget(forms.HiddenInput):
         self.options = options and options.copy() or {}
         self.options.setdefault("accepted_mime_types", ['image/*'])
 
-        try:
-            print(getattr(self, "image_model"))
-        except AttributeError:
-            pass
-
     def defaults_checks(self):
         image_model_str = getattr(self, "image_model")
 
@@ -109,6 +113,9 @@ class GalleryWidget(forms.HiddenInput):
         fetch_request_url_name_is_default = (
             self._fetch_request_url_name == defaults.DEFAULT_FETCH_URL_NAME
         )
+        crop_request_url_name_is_default = (
+            self._crop_request_url_name == defaults.DEFAULT_CROP_URL_NAME
+        )
         conflict_config = []
         if not image_model_is_default:
             if upload_handler_url_name_is_default:
@@ -119,6 +126,10 @@ class GalleryWidget(forms.HiddenInput):
                 conflict_config.append(
                     {"param": "fetch_request_url_name",
                      "value": self._fetch_request_url_name})
+            if crop_request_url_name_is_default:
+                conflict_config.append(
+                    {"param": "crop_request_url_name",
+                     "value": self._crop_request_url_name})
 
         if conflict_config:
             widget_belong = getattr(self, "widget_belong")
@@ -130,7 +141,8 @@ class GalleryWidget(forms.HiddenInput):
                     ]
 
             for cc in conflict_config:
-                msgs.append("'%(param)s' is using built-in value '%(value)s', " % cc)
+                msgs.append(
+                    "'%(param)s' is using built-in value '%(value)s', " % cc)
 
             msgs.append(
                 "which use built-in '%(default_model)s'. You need to write "
@@ -153,7 +165,6 @@ class GalleryWidget(forms.HiddenInput):
     def render(self, name, value, attrs=None, renderer=None):
         self.defaults_checks()
 
-        print(value)
         extra_attrs = {"style": "display:none"}
         # extra_attrs = {}
         extra_attrs.update(attrs)
@@ -163,8 +174,8 @@ class GalleryWidget(forms.HiddenInput):
             'name': name,
             'multiple': self.multiple and 1 or 0,
             'preview_size': str(self.preview_size),
-            "upload_handler_url": self.upload_handler_url,
-            "accepted_mime_types": self.options["accepted_mime_types"],
+            'prompt_alert_on_window_reload_if_changed':
+                conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED
         }
 
         # Do not fill in empty value to hidden inputs
@@ -177,6 +188,12 @@ class GalleryWidget(forms.HiddenInput):
         if (_context["widget"]["attrs"].get("disabled", False)
                 or _context["widget"]["attrs"].get("readonly")):
             context["uploader_disabled"] = True
+        else:
+            context.update({
+                "upload_handler_url": self.upload_handler_url,
+                "accepted_mime_types": self.options["accepted_mime_types"],
+                "crop_request_url": self.crop_request_url
+            })
         context["widget"] = _context["widget"]
 
         # Set blueimp/jQuery-File-Upload
@@ -188,11 +205,7 @@ class GalleryWidget(forms.HiddenInput):
         else:
             self.ui_options["maxNumberOfFiles"] = max_number_of_images
 
-        from .utils import convert_dict_to_plain_text
         context["jquery_fileupload_ui_options"] = (
             convert_dict_to_plain_text(self.ui_options, 16))
-
-        context["prompt_alert_on_window_reload_if_changed"] = (
-            conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED)
 
         return renderer.render(self.template, context)

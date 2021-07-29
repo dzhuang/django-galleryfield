@@ -6,7 +6,7 @@
         {% block JS_DOWNLOAD_TEMPLATE_PREVIEW %}
         {% templatetag openbrace %}% if (file.thumbnailUrl) { %{% templatetag closebrace %}
         <td>
-            <span class="preview">
+            <span class="preview" data-pk="{% templatetag openbrace %}%=file.pk%{% templatetag closebrace %}">
                     <a href="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
                      title="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
                      data-gallery>
@@ -49,29 +49,29 @@
             {% endblock %}
 
             {% block JS_DOWNLOAD_TEMPLATE_DELETE %}
+            {% if not uploader_disabled %}
             <td>
-                {% templatetag openbrace %}% if (file.deleteUrl) { %{% templatetag closebrace %}
                     <a type="button" class="btn btn-danger delete fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}"
-                            href="{% templatetag openbrace %}%=file.deleteUrl%{% templatetag closebrace %}">
+                            href="javascript(void(0))">
                         <i class="glyphicon glyphicon-trash"></i>
                         <span>{% trans "Delete" %}</span>
                     </a>
                     <input type="checkbox" value="1" class="toggle fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}">
-                {% templatetag openbrace %}% } %{% templatetag closebrace %}
+                {% if crop_request_url %}
                 <button
                         class="btn btn-info btn-control edit"
                         type="button"
                         data-toggle="modal"
-                        data-action="{% templatetag openbrace %}%=file.cropUrl%{% templatetag closebrace %}"
+                        data-action="{{ crop_request_url }}"
                         data-pk="{% templatetag openbrace %}%=file.pk%{% templatetag closebrace %}"
                 >
                     <i class="glyphicon glyphicon-edit"></i>
                         <span>{% trans "Edit" %}</span>
                 </button>
+                {% endif %}
             </td>
-            {% if not uploader_disabled %}
             <td class="sortableHandle hidden col-lg-1 col-md-1 col-sm-1 col-xs-1"
-                 style="vertical-align: middle;text-align: center">
+                 style="vertical-align: middle; text-align: center">
                     <span title="{% trans 'Drag to order' %}">
                         <i class="fa fa-sort fa-3" aria-hidden="true"></i>
                     </span>
