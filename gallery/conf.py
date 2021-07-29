@@ -19,11 +19,7 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
         "size": 120,
         "quality": 80
     },
-    "field_hack": {
-        "old_value_str": 'old_%s_value',
-        "deleted_value_str": 'deleted_%s_value',
-    },
-    "multifield_css_class_basename": "django-gallery-widget",
+    "widget_hidden_input_css_class": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,
 }
 """
@@ -77,7 +73,7 @@ DELETED_VALUE_STR = _APP_CONFIG_FIELD_VALUE_NAME_HACK.get(
 
 
 _APP_CONFIG_WIDGET_INPUT_CSS_CLASS = _APP_CONFIG.get(
-    "multifield_css_class_basename", defaults.WIDGET_HIDDEN_INPUT_CSS_CLASS)
+    "widget_hidden_input_css_class", defaults.WIDGET_HIDDEN_INPUT_CSS_CLASS)
 FILES_FIELD_CLASS_NAME = _APP_CONFIG_WIDGET_INPUT_CSS_CLASS + "-files-field"
 DELETED_FIELD_CLASS_NAME = _APP_CONFIG_WIDGET_INPUT_CSS_CLASS + "-deleted-field"
 

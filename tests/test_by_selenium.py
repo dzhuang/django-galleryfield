@@ -30,8 +30,8 @@ class TestAdminPanelWidget(UserCreateMixin, StaticLiveServerTestCase):
     def setUpClass(cls):
         if SELENIUM_BROWSER == CHROMIUM:
             options = webdriver.ChromeOptions()
-            options.add_argument("--headless")
-            options.add_argument("--disable-gpu")
+            # options.add_argument("--headless")
+            # options.add_argument("--disable-gpu")
             cls.selenium = webdriver.Chrome(options=options)
         elif SELENIUM_BROWSER == FIREFOX:
             cls.selenium = webdriver.Firefox()
@@ -100,8 +100,7 @@ class TestAdminPanelWidget(UserCreateMixin, StaticLiveServerTestCase):
 
     @staticmethod
     def _get_number_of_images(instance):
-        image_info_list = json.loads(instance.images)
-        return len(image_info_list)
+        return len(instance.images)
 
     def test_upload_image(self):
         self.assertEqual(DemoGallery.objects.count(), 0)
@@ -115,7 +114,7 @@ class TestAdminPanelWidget(UserCreateMixin, StaticLiveServerTestCase):
         self.assertEqual(BuiltInGalleryImage.objects.count(), 2)
         self._submit_page()
         self.assertEqual(DemoGallery.objects.count(), 1)
-        # self.assertEqual(self._get_number_of_images(DemoGallery.objects.first()), 2)
+        self.assertEqual(self._get_number_of_images(DemoGallery.objects.first()), 2)
 
     def test_delete_image(self):
         self.assertEqual(DemoGallery.objects.count(), 0)
@@ -128,11 +127,11 @@ class TestAdminPanelWidget(UserCreateMixin, StaticLiveServerTestCase):
         self._delete_one_image()
         self._submit_page()
         self.assertEqual(DemoGallery.objects.count(), 1)
-        # self.assertEqual(self._get_number_of_images(DemoGallery.objects.first()), 1)
+        self.assertEqual(self._get_number_of_images(DemoGallery.objects.first()), 1)
 
         self._delete_one_image()
         self._submit_page()
         self.assertEqual(DemoGallery.objects.count(), 1)
         # Because this is the last image, delete is not allowed
         # because this field is required
-        # self.assertEqual(self._get_number_of_images(DemoGallery.objects.first()), 1)
+        self.assertEqual(self._get_number_of_images(DemoGallery.objects.first()), 1)

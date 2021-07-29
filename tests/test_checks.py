@@ -121,7 +121,7 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
         "old_value_str": 'old_%s_value',
         "deleted_value_str": 'deleted_%s_value',
     },
-    "multifield_css_class_basename": "django-gallery-widget",
+    "widget_hidden_input_css_class": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,
 }
 """
@@ -586,18 +586,18 @@ class CheckThumbnails(CheckSettingsBase):
 
 
 """
-    "multifield_css_class_basename": "django-gallery-widget",
+    "widget_hidden_input_css_class": "django-gallery-widget",
 """
 
 
 class CheckMultifieldCssClassBasename(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget-multifield_css_class_basename"
+    msg_id_prefix = "django-gallery-widget-widget_hidden_input_css_class"
 
-    VALID_CONF_None = {"multifield_css_class_basename": None}
+    VALID_CONF_None = {"widget_hidden_input_css_class": None}
 
-    VALID_CONF_str = {"multifield_css_class_basename": "some-class-name"}
+    VALID_CONF_str = {"widget_hidden_input_css_class": "some-class-name"}
 
-    INVALID_CONF_NOT_str = {"multifield_css_class_basename": object}
+    INVALID_CONF_NOT_str = {"widget_hidden_input_css_class": object}
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
     def test_valid_config1(self):
@@ -610,7 +610,7 @@ class CheckMultifieldCssClassBasename(CheckSettingsBase):
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_str)
     def test_invalid_config1(self):
         self.assertCheckMessages([
-            "django-gallery-widget-multifield_css_class_basename.E001"])
+            "django-gallery-widget-widget_hidden_input_css_class.E001"])
 
 
 """

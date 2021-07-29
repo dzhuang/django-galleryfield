@@ -34,11 +34,7 @@ THUMBNAILS = "thumbnails"
 THUMBNAIL_SIZE = "size"
 THUMBNAIL_QUALITY = "quality"
 
-FIELD_HACK = "field_hack"
-OLD_VALUE_STR = "old_value_str"
-DELETED_VALUE_STR = "deleted_value_str"
-
-MULTIFIELD_CSS_CLASS_BASENAME = "multifield_css_class_basename"
+WIDGET_HIDDEN_INPUT_CSS_CLASS = "widget_hidden_input_css_class"
 
 PROMPT_ALERT_IF_CHANGED_ON_WINDOW_RELOAD = (
     "prompt_alert_if_changed_on_window_reload")
@@ -422,105 +418,18 @@ def check_settings(app_configs, **kwargs):
                             id="django-gallery-widget-thumbnails.E005"
                         ))
 
-    field_hack = conf.get(FIELD_HACK, None)
-    field_hack_has_error = False
-    if field_hack is not None:
-        if not isinstance(field_hack, dict):
-            errors.append(DJGalleryCriticalCheckMessage(
-                msg=(FIELD_HACK
-                     % {"location": "'%s' in '%s'" % (
-                            FIELD_HACK, DJANGO_GALLERY_WIDGET_CONFIG),
-                        "types": "dict"}),
-                id="django-gallery-widget-field_hack.E001"
-            ))
-            field_hack_has_error = True
-        else:
-            old_value_str = field_hack.get(OLD_VALUE_STR, None)
-            if old_value_str is not None:
-                if not isinstance(old_value_str, str):
-                    errors.append(DJGalleryCriticalCheckMessage(
-                        msg=(INSTANCE_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
-                                    OLD_VALUE_STR, FIELD_HACK,
-                                    DJANGO_GALLERY_WIDGET_CONFIG),
-                                "types": "str"}),
-                        id="django-gallery-widget-field_hack.E002"
-                    ))
-                    field_hack_has_error = True
-                else:
-                    try:
-                        old_value_str % "image_field_name"
-                    except Exception as e:
-                        errors.append(DJGalleryCriticalCheckMessage(
-                            msg=(GENERIC_ERROR_PATTERN
-                                 % {"location": "'%s' in '%s' in '%s'" % (
-                                        OLD_VALUE_STR, FIELD_HACK,
-                                        DJANGO_GALLERY_WIDGET_CONFIG),
-                                    "error_type": type(e).__name__,
-                                    "error_str": str(e)}
-                                 ),
-                            id="django-gallery-widget-field_hack.E003"
-                        ))
-                        field_hack_has_error = True
+    widget_hidden_input_css_class = conf.get(
+        WIDGET_HIDDEN_INPUT_CSS_CLASS, None)
 
-            deleted_value_str = field_hack.get(DELETED_VALUE_STR, None)
-            if deleted_value_str is not None:
-                if not isinstance(deleted_value_str, str):
-                    errors.append(DJGalleryCriticalCheckMessage(
-                        msg=(INSTANCE_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
-                                    DELETED_VALUE_STR, FIELD_HACK,
-                                    DJANGO_GALLERY_WIDGET_CONFIG),
-                                "types": "str"}),
-                        id="django-gallery-widget-field_hack.E004"
-                    ))
-                    field_hack_has_error = True
-                else:
-                    try:
-                        deleted_value_str % "image_field_name"
-                    except Exception as e:
-                        errors.append(DJGalleryCriticalCheckMessage(
-                            msg=(GENERIC_ERROR_PATTERN
-                                 % {"location": "'%s' in '%s' in '%s'" % (
-                                        DELETED_VALUE_STR, FIELD_HACK,
-                                        DJANGO_GALLERY_WIDGET_CONFIG),
-                                    "error_type": type(e).__name__,
-                                    "error_str": str(e)}
-                                 ),
-                            id="django-gallery-widget-field_hack.E005"
-                        ))
-                        field_hack_has_error = True
-
-            if not field_hack_has_error:
-                old_value_str = old_value_str or app_conf.OLD_VALUE_STR
-                deleted_value_str = deleted_value_str or app_conf.DELETED_VALUE_STR
-                if old_value_str == deleted_value_str:
-                    errors.append(DJGalleryCriticalCheckMessage(
-                        msg=(GENERIC_ERROR_PATTERN
-                             % {"location": "'%s' and '%s' in '%s' in '%s'" % (
-                                    OLD_VALUE_STR, DELETED_VALUE_STR, FIELD_HACK,
-                                    DJANGO_GALLERY_WIDGET_CONFIG),
-                                "error_type": "",
-                                "error_str":
-                                    "'%s' and '%s' should not be the same" % (
-                                    OLD_VALUE_STR, DELETED_VALUE_STR
-                                    )}
-                             ),
-                        id="django-gallery-widget-field_hack.E006"
-                    ))
-
-    multifield_css_class_basename = conf.get(
-        MULTIFIELD_CSS_CLASS_BASENAME, None)
-
-    if multifield_css_class_basename is not None:
-        if not isinstance(multifield_css_class_basename, str):
+    if widget_hidden_input_css_class is not None:
+        if not isinstance(widget_hidden_input_css_class, str):
             errors.append(DJGalleryCriticalCheckMessage(
                 msg=(INSTANCE_ERROR_PATTERN
                      % {"location": "'%s' in '%s'" % (
-                            MULTIFIELD_CSS_CLASS_BASENAME,
+                            WIDGET_HIDDEN_INPUT_CSS_CLASS,
                             DJANGO_GALLERY_WIDGET_CONFIG),
                         "types": "str"}),
-                id="django-gallery-widget-multifield_css_class_basename.E001"
+                id="django-gallery-widget-widget_hidden_input_css_class.E001"
             ))
 
     prompt_alert_if_changed_on_window_reload = conf.get(
