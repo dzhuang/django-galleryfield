@@ -4,8 +4,8 @@ Django-Gallery-Widget
 [![codecov](https://codecov.io/gh/dzhuang/django-gallery-widget/branch/main/graph/badge.svg)](https://codecov.io/gh/dzhuang/django-gallery-widget)
 
 Django AJAX form widgets and model fields for multiple images upload with progress bar.
-Some of the ideas/code are inspired by [Django-files-widget](https://github.com/TND/django-files-widget)
-and [Django-jfu](https://github.com/Alem/django-jfu).
+Some of the ideas/code are inspired by [Django-jfu](https://github.com/Alem/django-jfu) and 
+[Django-files-widget](https://github.com/TND/django-files-widget).
 
 __This is currently an alpha release. More tests are on the way.__
 
@@ -15,7 +15,7 @@ Features
 - Drag &amp; drop file uploading via AJAX
 - Uploading multiple images with progress bar
 - A model fields with corresponding form fields and widgets: `gallery.fields.GalleryField`
-- Image gallery widget with drag &amp; drop reordering, client side crop before upload, crop after upload (todo).
+- Image gallery widget with drag &amp; drop reordering, client side crop before/after upload.
 - Integrates with Django Admin.
 
 
@@ -23,15 +23,11 @@ ScreenShots
 -----------
 - Multiple image upload, sortable
 
-  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen1.png" width="70%">
+  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen_crop.png" width="70%">
 
-- Undoable delete before submit
+- Client/Server side crop
   
-  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen2.png" width="70%">
-
-- Client side crop
-  
-  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen3.png" width="70%">
+  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen_upload.png" width="70%">
 
 Quick Start
 -----------
@@ -104,15 +100,13 @@ Navigation
 Django Gallery Widget related settings is a dict as shown below with default value.   
 
 ```Python
+
 DJANGO_GALLERY_WIDGET_CONFIG = {
-    "default_urls": 
+    "default_urls":
         {"upload_handler_url_name": "gallery_image_upload",
+         "fetch_url_name": "gallery_images_fetch",
          "crop_url_name": "gallery_image_crop"},
-    "default_image_model":
-        {"target_image_model": "gallery.BuiltInGalleryImage",
-         "target_image_field_name": "image",
-         "target_creator_field_name": "creator",
-        },
+    "default_target_image_model": "gallery.BuiltInGalleryImage",
     "assets": {
         "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
         "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
@@ -124,20 +118,16 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
         "size": 120,
         "quality": 80
     },
-    "field_hack": {
-        "old_value_str": 'old_%s_value',
-        "deleted_value_str": 'deleted_%s_value',
-    },
-    "multifield_css_class_basename": "django-gallery-widget",
+    "widget_hidden_input_css_class": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,
 }
 
 ```
 #### Model related default_values
 Django-Gallery-Widget has a built-in image Model `gallery.models.BuiltInGalleryImage`,
- in which `image` is the target field of the gallery model. User can use these two models 
- without modifying in their apps. See the demo app for details. With that built-in model,
- default views are applied with default urls (i.e, `upload_handler_url_name` 
+ in which `image` is the target field of the gallery model. User can use this models 
+ without much modifying in their apps. See the demo app for details. With that built-in model,
+ default views are applied with default urls (i.e, `upload_handler_url_name`, `fetch_url_name` 
  and `crop_url_name`).
 
 However, it is heavily suggested for developers to write your own image models, views, urls,
@@ -164,11 +154,7 @@ and override those settings for your apps, especially in terms of permission con
 - Detailed Documentation
 - Tests
 - More demos
-- Validation of image info dict in `GalleryField.clean()`.
-- Server side crop implementation.
 - Descriptors for rendering the `GalleryField`.
 
 ## Known issues
 - Css rendering of buttons in Admin.
-- jQuery-File-Upload option `maxNumberOfFiles` will not work when undoing deleted images in UI,
- it is validate until `GalleryField.clean()`.
