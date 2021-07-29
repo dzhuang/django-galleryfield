@@ -8,18 +8,15 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils.translation import gettext
-from django.utils.text import format_lazy
 from django.views.decorators.http import require_POST, require_GET
 from django.db.models import Case, Value, When, IntegerField
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, BadRequest
+from django.urls import reverse
+from django.core.files.base import ContentFile
 
 from sorl.thumbnail import get_thumbnail
 from gallery.models import BuiltInGalleryImage
 from gallery import conf
-
-
-def string_concat(*strings):
-    return format_lazy("{}" * len(strings), *strings)
 
 
 def get_serialized_image(instance, image_field_name="image",
@@ -40,7 +37,7 @@ def get_serialized_image(instance, image_field_name="image",
         'deleteUrl': "javascript:void(0)",
 
         # todo: not implemented
-        'cropUrl': None,
+        'cropUrl': reverse(conf.DEFAULT_CROP_URL_NAME),
     }
 
 
@@ -88,7 +85,7 @@ def upload(request, *args, **kwargs):
     if not is_image(file):
         raise RuntimeError()
 
-    preview_size = request.POST['preview_size']
+    preview_size = request.POST.get('preview_size', conf.DEFAULT_THUMBNAIL_SIZE)
 
     instance = BuiltInGalleryImage.objects.create(
         image=file,
@@ -108,8 +105,11 @@ def fetch(request):
     if not request.is_ajax():
         raise PermissionDenied(gettext('Only Ajax Post is allowed.'))
 
-    preview_size = request.GET.get('preview_size', conf.DEFAULT_THUMBNAIL_SIZE)
     pks = request.GET.get("pks", None)
+    if not pks:
+        raise BadRequest()
+
+    preview_size = request.GET.get('preview_size', conf.DEFAULT_THUMBNAIL_SIZE)
 
     pks = json.loads(unquote(pks))
 
@@ -168,35 +168,57 @@ def get_cropped_file(request, pk, cropped_result, image_model_class,
     new_image_io = BytesIO()
     new_image.save(new_image_io, format=image_format)
 
-    save_kwargs = {image_field_name: new_image, user_field_name: request.user}
-    new_instance = image_model_class.objects.create(**save_kwargs)
+    new_instance = old_instance
+    new_instance.pk = None
+    setattr(new_instance, user_field_name, request.user)
 
+    new_instance_image_field = getattr(new_instance, image_field_name)
+    new_instance_image_field.save(
+        name=os.path.basename(getattr(old_instance, image_field_name).name),
+        content=ContentFile(new_image_io.getvalue()),
+        save=False
+    )
+    new_instance.save()
     return get_serialized_image(
         new_instance, image_field_name=image_field_name, preview_size=preview_size)
 
 
-# todo: not implemented yet
 @login_required
 @require_POST
 def crop(request, *args, **kwargs):
     if not request.is_ajax():
         raise PermissionDenied(gettext('Only Ajax Post is allowed.'))
 
-    pk = request.POST("pk")
-    preview_size = request.POST['preview_size']
-    cropped_result = json.loads(request.POST.get("croppedResult"))
+    try:
+        pk = request.POST["pk"]
+        cropped_result = json.loads(request.POST.get("croppedResult"))
+    except KeyError:
+        return JsonResponse(
+            {
+                'message': gettext('Bad Request')
+            },
+            status=400)
+
+    preview_size = request.POST.get('preview_size')
 
     image_model_class = BuiltInGalleryImage
     image_field_name = "image"
     user_field_name = "creator"
 
-    file = get_cropped_file(
-        request, pk, cropped_result, image_model_class,
-        image_field_name, user_field_name, preview_size)
+    try:
+        file = get_cropped_file(
+            request, pk, cropped_result, image_model_class,
+            image_field_name, user_field_name, preview_size)
+    except Exception as e:
+        return JsonResponse({
+            'message': "%(type_e)s: %(str_e)s" % {
+                "type_e": type(e).__name__,
+                "str_e": str(e)}},
+            status=400)
 
     return JsonResponse(
         {
-            "files": [file],
+            "file": file,
             'message': gettext('Done!')
         },
         status=200)

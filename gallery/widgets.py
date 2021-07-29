@@ -26,7 +26,6 @@ js = [
     'vendor/blueimp-file-upload/js/jquery.fileupload-ui.js',
     'vendor/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
     "vendor/cropper/dist/cropper.min.js",
-    "js/jquery.fileupload-ui-extended.js",
     "js/jquery.fileupload-ui-gallery-widget.js",
 ] + conf.EXTRA_JS
 
