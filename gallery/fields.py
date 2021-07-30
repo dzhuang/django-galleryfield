@@ -6,8 +6,13 @@ from django import forms
 from django.core.exceptions import ValidationError, FieldDoesNotExist
 from django.core.validators import BaseValidator
 from django.core import checks
+from django.db.models.query_utils import DeferredAttribute
+from django.db.models import Case, Value, When, IntegerField
+try:
+    from django.apps import apps  # noqa
+except ImportError:
+    from django.apps import django_apps as apps  # noqa
 
-from gallery.utils import apps
 from gallery import conf, defaults as gallery_widget_defaults
 from gallery.widgets import GalleryWidget
 
@@ -27,11 +32,57 @@ class MaxNumberOfImageValidator(BaseValidator):
         return len(x)
 
 
+class GalleryDescriptor(DeferredAttribute):
+    """
+    Used django.db.models.fields.files.FileDescriptor as an example.
+    """
+
+    def __set__(self, instance, value):
+        instance.__dict__[self.field.attname] = value
+
+    def __get__(self, instance, cls=None):
+        image_list = super().__get__(instance, cls)
+
+        if (isinstance(image_list, list)
+                and not isinstance(image_list, GalleryImageList)):
+            attr = self.field.attr_class(instance, self.field, image_list)
+            instance.__dict__[self.field.name] = attr
+
+        return instance.__dict__[self.field.name]
+
+
+class GalleryImageList(list):
+    def __init__(self, instance, field, field_value):
+        super().__init__(field_value)
+        self._field = field
+        self.instance = instance
+        self._value = field_value
+
+    @property
+    def objects(self):
+        model = apps.get_model(self._field.target_model)
+
+        # Preserving the order of image using id__in=pks
+        # https://stackoverflow.com/a/37146498/3437454
+        cases = [When(id=x, then=Value(i)) for i, x in enumerate(self._value)]
+        case = Case(*cases, output_field=IntegerField())
+        filter_kwargs = {"id__in": self._value}
+        queryset = model.objects.filter(**filter_kwargs)
+        queryset = queryset.annotate(_order=case).order_by('_order')
+        return queryset
+
+
 class GalleryField(models.JSONField):
     description = _('An array JSON object as attributes of (multiple) images')
     default_error_messages = {
         'invalid': _('Value must be valid JSON.'),
     }
+    attr_class = GalleryImageList
+    descriptor_class = GalleryDescriptor
+
+    def contribute_to_class(self, cls, name, private_only=False):
+        super().contribute_to_class(cls, name, private_only)
+        setattr(cls, self.attname, self.descriptor_class(self))
 
     def get_internal_type(self):
         return 'JSONField'
