@@ -151,8 +151,7 @@ def check_settings(app_configs, **kwargs):
                             id="django-gallery-widget-default_urls.E007"
                         ))
 
-    default_target_image_model = conf.get(
-        DEFAULT_TARGET_IMAGE_MODEL, None)
+    default_target_image_model = conf.get(DEFAULT_TARGET_IMAGE_MODEL, None)
     target_model = None
     will_proceed_checking_target_model_image_fields = True
     if default_target_image_model is not None:
@@ -185,70 +184,77 @@ def check_settings(app_configs, **kwargs):
                 ))
                 will_proceed_checking_target_model_image_fields = False
 
-        if will_proceed_checking_target_model_image_fields:
-            if target_model is None:
-                default_target_image_model = defaults.DEFAULT_TARGET_IMAGE_MODEL
-                target_model = apps.get_model(default_target_image_model)
+    if will_proceed_checking_target_model_image_fields:
+        if target_model is None:
+            # DEFAULT_TARGET_IMAGE_MODEL not configured
+            # so we will used defaults.DEFAULT_TARGET_IMAGE_MODEL
+            default_target_image_model = defaults.DEFAULT_TARGET_IMAGE_MODEL
+            target_model = apps.get_model(default_target_image_model)
 
-            get_image_field_class_method = None
-            try:
-                image_field = (
-                    target_model._meta.get_field(
-                        defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME))
-            except FieldDoesNotExist:
-                image_field = None
-                get_image_field_class_method = getattr(target_model,
-                                                       "get_image_field", None)
-                if get_image_field_class_method is not None:
-                    get_image_field_method_valid = True
-                    if callable(get_image_field_class_method):
-                        try:
-                            image_field = get_image_field_class_method()
-                        except TypeError:
-                            get_image_field_method_valid = False
-
-                    if not get_image_field_method_valid:
+        get_image_field_class_method = None
+        get_image_field_class_method_raised_error = False
+        try:
+            image_field = (
+                target_model._meta.get_field(
+                    defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME))
+            if type(image_field) is not ImageField:
+                raise FieldDoesNotExist()
+        except FieldDoesNotExist:
+            image_field = None
+            get_image_field_class_method = getattr(target_model,
+                                                   "get_image_field", None)
+            if get_image_field_class_method is not None:
+                if callable(get_image_field_class_method):
+                    try:
+                        image_field = get_image_field_class_method()
+                    except Exception as e:
                         errors.append(Critical(
                             msg=('Error in %(location)s: model %(model)s defined '
-                                 '"get_image_field" method is not a classmethod'
+                                 '"get_image_field" method failed with'
+                                 ' %(exception)s: %(str_e)s'
                                  % {"location": "'%s' in '%s'" % (
                                         DEFAULT_TARGET_IMAGE_MODEL,
                                         DJANGO_GALLERY_WIDGET_CONFIG),
-                                    "model": default_target_image_model
+                                    "model": default_target_image_model,
+                                    "exception": type(e).__name__,
+                                    "str_e": str(e)
                                     }),
                             id="django-gallery-widget-default_target_image_model.E003"  # noqa
                         ))
-
-            if image_field is not None:
-                if type(image_field) is not ImageField:
-                    image_field = None
-
-            if image_field is None:
-                if get_image_field_class_method is None:
-                    errors.append(Critical(
-                        msg=('Error in %(location)s: model %(model)s must '
-                             'either have a field named "image" '
-                             'or has a classmethod named "get_image_field", '
-                             'which returns the image field of the model'
-                             % {"location": "'%s' in '%s'" % (
-                                    DEFAULT_TARGET_IMAGE_MODEL,
-                                    DJANGO_GALLERY_WIDGET_CONFIG),
-                                "model": default_target_image_model
-                                }),
-                        id="django-gallery-widget-default_target_image_model.E004"
-                    ))
+                        get_image_field_class_method_raised_error = True
                 else:
-                    errors.append(Critical(
-                        msg=('Error in %(location)s: model %(model)s defined '
-                             '"get_image_field" class method '
-                             'did not return a ImageField type'
-                             % {"location": "'%s' in '%s'" % (
-                                    DEFAULT_TARGET_IMAGE_MODEL,
-                                    DJANGO_GALLERY_WIDGET_CONFIG),
-                                "model": default_target_image_model
-                                }),
-                        id="django-gallery-widget-default_target_image_model.E005"
-                    ))
+                    image_field = get_image_field_class_method
+
+        if image_field is not None:
+            if type(image_field) is not ImageField:
+                image_field = None
+
+        if image_field is None:
+            if get_image_field_class_method is None:
+                errors.append(Critical(
+                    msg=('Error in %(location)s: model %(model)s must '
+                         'either have a field named "image" '
+                         'or has a classmethod named "get_image_field", '
+                         'which returns the image field of the model'
+                         % {"location": "'%s' in '%s'" % (
+                                DEFAULT_TARGET_IMAGE_MODEL,
+                                DJANGO_GALLERY_WIDGET_CONFIG),
+                            "model": default_target_image_model
+                            }),
+                    id="django-gallery-widget-default_target_image_model.E004"
+                ))
+            elif not get_image_field_class_method_raised_error:
+                errors.append(Critical(
+                    msg=('Error in %(location)s: model %(model)s defined '
+                         '"get_image_field" class method '
+                         'did not return a ImageField type'
+                         % {"location": "'%s' in '%s'" % (
+                                DEFAULT_TARGET_IMAGE_MODEL,
+                                DJANGO_GALLERY_WIDGET_CONFIG),
+                            "model": default_target_image_model
+                            }),
+                    id="django-gallery-widget-default_target_image_model.E005"
+                ))
 
     assets = conf.get(ASSETS, None)
     if assets is not None:

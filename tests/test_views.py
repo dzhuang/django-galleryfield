@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from django.test import SimpleTestCase, TestCase
+from django.test import TestCase
 from tests.mixins import UserCreateMixin
 
 

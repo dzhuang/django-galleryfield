@@ -1,7 +1,6 @@
 import json
 from django import forms
 from django.forms.renderers import DjangoTemplates
-from django.utils.safestring import mark_safe
 from django.test import SimpleTestCase
 from django.urls import reverse
 
@@ -84,7 +83,8 @@ class GalleryWidgetTest(SimpleTestCase):
         value = json.dumps(image_data)
         expected_result = (
             '<input type="hidden" name="image" value="[1]"')
-        self.check_in_html(widget, "image", value, strict=True,  html=[expected_result])
+        self.check_in_html(
+            widget, "image", value, strict=True,  html=[expected_result])
 
     def test_gallery_widget_jquery_upload_options_max_number_of_files_overridden(self):  # noqa
         from random import randint
@@ -120,7 +120,8 @@ class GalleryWidgetTest(SimpleTestCase):
 
     def test_gallery_widget_jquery_upload_options_None(self):
         widget = GalleryWidget()
-        self.check_in_html(widget, "image", '', strict=True, html="disableImageResize")
+        self.check_in_html(
+            widget, "image", '', strict=True, html="disableImageResize")
 
         widget = GalleryWidget(
             jquery_upload_ui_options={"disableImageResize": None})

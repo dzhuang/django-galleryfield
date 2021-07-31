@@ -129,6 +129,7 @@ class CheckDefaultUrls(CheckSettingsBase):
     VALID_CONF = {
         "default_urls":
             {"upload_handler_url_name": "gallery_image_upload",
+             "fetch_url_name": "gallery_images_fetch",
              "crop_url_name": "gallery_image_crop"}}
 
     INVALID_CONF_EMPTY_LIST = {"default_urls": []}
@@ -148,6 +149,10 @@ class CheckDefaultUrls(CheckSettingsBase):
         "default_urls":
             {"upload_handler_url_name": object}}
 
+    INVALID_CONF_FETCH_NOT_STR = {
+        "default_urls":
+            {"fetch_url_name": object}}
+
     INVALID_CONF_CROP_NOT_STR = {
         "default_urls":
             {"crop_url_name": object}}
@@ -159,6 +164,10 @@ class CheckDefaultUrls(CheckSettingsBase):
     INVALID_CONF_CROP_URL_INVALID = {
         "default_urls":
             {"crop_url_name": "not-exist"}}
+
+    INVALID_CONF_FETCH_URL_INVALID = {
+        "default_urls":
+            {"fetch_url_name": "not-exist"}}
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
     def test_valid_config1(self):
@@ -192,17 +201,25 @@ class CheckDefaultUrls(CheckSettingsBase):
     def test_invalid_config3(self):
         self.assertCheckMessages(["django-gallery-widget-default_urls.E002"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_CROP_NOT_STR)
-    def test_invalid_config4(self):
-        self.assertCheckMessages(["django-gallery-widget-default_urls.E004"])
-
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_UPLOAD_URL_INVALID)
-    def test_invalid_config5(self):
+    def test_invalid_config4(self):
         self.assertCheckMessages(["django-gallery-widget-default_urls.E003"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_CROP_NOT_STR)
+    def test_invalid_config5(self):
+        self.assertCheckMessages(["django-gallery-widget-default_urls.E004"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_CROP_URL_INVALID)
     def test_invalid_config6(self):
         self.assertCheckMessages(["django-gallery-widget-default_urls.E005"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_FETCH_NOT_STR)
+    def test_invalid_config7(self):
+        self.assertCheckMessages(["django-gallery-widget-default_urls.E006"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_FETCH_URL_INVALID)
+    def test_invalid_config8(self):
+        self.assertCheckMessages(["django-gallery-widget-default_urls.E007"])
 
 
 """
@@ -230,8 +247,28 @@ class CheckDefaultTargetImageModel(CheckSettingsBase):
         "default_target_image_model": "model.not.exist"
     }
 
-    INVALID_CONF_MODEL_IMAGE_FIELD_NO_IMAGEFIELD = {
+    INVALID_CONF_NO_IMAGEFIELD = {
         "default_target_image_model": "demo.DemoGallery"
+    }
+
+    VALID_CONF_WITH_GET_IMAGEFIELD_CLASS_METHOD = {
+        "default_target_image_model": "demo.MyImageModel"
+    }
+
+    INVALID_CONF_IMAGE_NOT_IMAGEFIELD = {
+        "default_target_image_model": "tests.FakeInvalidImageModel1"
+    }
+
+    INVALID_CONF_NOT_GETTING_IMAGEFIELD = {
+        "default_target_image_model": "tests.FakeInvalidImageModel3"
+    }
+
+    INVALID_CONF_METHOD_NOT_CALLABLE = {
+        "default_target_image_model": "tests.FakeInvalidImageModel4"
+    }
+
+    INVALID_CONF_METHOD_FAIL = {
+        "default_target_image_model": "tests.FakeInvalidImageModel5"
     }
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
@@ -242,21 +279,53 @@ class CheckDefaultTargetImageModel(CheckSettingsBase):
     def test_valid_config2(self):
         self.assertCheckMessages([])
 
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_WITH_GET_IMAGEFIELD_CLASS_METHOD)
+    def test_valid_config3(self):
+        self.assertCheckMessages([])
+
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_list)
     def test_invalid_config1(self):
-        self.assertCheckMessages(["django-gallery-widget-default_target_image_model.E001"])
+        self.assertCheckMessages(
+            ["django-gallery-widget-default_target_image_model.E001"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_NOT_str)
     def test_invalid_config2(self):
-        self.assertCheckMessages(["django-gallery-widget-default_target_image_model.E001"])
+        self.assertCheckMessages(
+            ["django-gallery-widget-default_target_image_model.E001"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_NOT_EXIST)
     def test_invalid_config3(self):
-        self.assertCheckMessages(["django-gallery-widget-default_target_image_model.E002"])
+        self.assertCheckMessages(
+            ["django-gallery-widget-default_target_image_model.E002"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_MODEL_IMAGE_FIELD_NO_IMAGEFIELD)
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NO_IMAGEFIELD)
     def test_invalid_config4(self):
-        self.assertCheckMessages(["django-gallery-widget-default_target_image_model.E004"])
+        self.assertCheckMessages(
+            ["django-gallery-widget-default_target_image_model.E004"])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_IMAGE_NOT_IMAGEFIELD)
+    def test_invalid_config5(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-default_target_image_model.E004"])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_GETTING_IMAGEFIELD)
+    def test_invalid_config6(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-default_target_image_model.E005"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_METHOD_NOT_CALLABLE)
+    def test_invalid_config7(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-default_target_image_model.E005"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_METHOD_FAIL)
+    def test_invalid_config8(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-default_target_image_model.E003"])
+
 
 """
     "assets": {

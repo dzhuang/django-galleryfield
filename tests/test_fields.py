@@ -1,11 +1,6 @@
-import json
-from copy import deepcopy
-
-import pytest
-
 from django import forms
 from django.forms import ValidationError
-from django.test import SimpleTestCase, TestCase
+from django.test import TestCase
 
 from gallery.fields import GalleryFormField
 
@@ -18,7 +13,6 @@ class DemoTestGalleryForm(forms.ModelForm):
     class Meta:
         model = DemoGallery
         fields = ["images"]
-
 
 
 IMAGE_DATA = [{
@@ -172,7 +166,7 @@ class GalleryFormFieldTest(TestCase):
 
         for data in inputs:
             with self.subTest(data=data):
-               self.assertIsNone(field.clean(data))
+                self.assertIsNone(field.clean(data))
 
     def test_gallery_form_field_clean_invalid_image_json(self):
         inputs = ['invalid-image']

@@ -1,6 +1,4 @@
 import json
-import random
-import string
 
 import factory
 from django.contrib.auth import get_user_model
