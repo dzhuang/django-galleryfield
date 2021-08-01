@@ -1,11 +1,11 @@
 from django.conf import settings
-from django.core.checks import register
+from django.core import checks
 from django.urls import reverse
 
 from gallery.utils import (
     DJGalleryCriticalCheckMessage, INSTANCE_ERROR_PATTERN,
     GENERIC_ERROR_PATTERN,
-    get_or_check_image_field
+    get_or_check_image_field, apps
 )
 
 
@@ -35,11 +35,19 @@ PROMPT_ALERT_IF_CHANGED_ON_WINDOW_RELOAD = (
 
 
 def register_gallery_widget_settings_checks():
-    register(check_settings, "django_gallery_widget_checks")
+    checks.register(check_settings, "django_gallery_widget_checks")
 
 
 def check_settings(app_configs, **kwargs):
     errors = []
+
+    if not apps.is_installed('sorl.thumbnail'):
+        missing_app = checks.Error(
+            "'sorl.thumbnail' must be in INSTALLED_APPS in order "
+            "to generate thumbnail for gallery images.",
+            id="django-gallery-widget.E001",
+        )
+        errors.append(missing_app)
 
     conf = getattr(settings, "DJANGO_GALLERY_WIDGET_CONFIG", None)
     if conf is None:
@@ -49,7 +57,7 @@ def check_settings(app_configs, **kwargs):
         errors.append(DJGalleryCriticalCheckMessage(
             msg=(INSTANCE_ERROR_PATTERN
                  % {"location": DJANGO_GALLERY_WIDGET_CONFIG, "types": "dict"}),
-            id="django-gallery-widget.E001"
+            id="django-gallery-widget.E002"
         ))
         return errors
 

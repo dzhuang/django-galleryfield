@@ -87,13 +87,17 @@ class CheckConfigs(CheckSettingsBase):
     def test_valid_config2(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EMPTY_LIST)
+    @override_settings(INSTALLED_APPS=['gallery', 'demo'])
     def test_invalid_config1(self):
         self.assertCheckMessages(["django-gallery-widget.E001"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_SPACES)
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EMPTY_LIST)
     def test_invalid_config2(self):
-        self.assertCheckMessages(["django-gallery-widget.E001"])
+        self.assertCheckMessages(["django-gallery-widget.E002"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_SPACES)
+    def test_invalid_config3(self):
+        self.assertCheckMessages(["django-gallery-widget.E002"])
 
 
 """

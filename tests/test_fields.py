@@ -1,8 +1,10 @@
 from django import forms
+from django.db import models
 from django.forms import ValidationError
 from django.test import TestCase
+from django.test.utils import isolate_apps
 
-from gallery.fields import GalleryFormField
+from gallery.fields import GalleryField, GalleryFormField
 
 from demo.models import DemoGallery
 from tests.factories import DemoGalleryFactory
@@ -292,3 +294,15 @@ class GalleryFormFieldTest(TestCase):
 
         cleaned_data = field.clean(data)
         self.assertEqual(cleaned_data, data)
+
+
+class GalleryFieldCheckTest(TestCase):
+    def test_field_checks(self):
+
+        class MyModel(models.Model):
+            field = GalleryField(target_model="tests.FakeInvalidImageModel1")
+
+        model = MyModel()
+        errors = model.check()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].id, "gallery_field.E004")
