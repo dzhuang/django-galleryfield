@@ -131,3 +131,20 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
         # Because this is the last image, delete is not allowed
         # because this field is required
         self.assertEqual(DemoGallery.objects.first().images.objects.count(), 1)
+
+    def test_delete_one_before_saving(self):
+        self.assertEqual(DemoGallery.objects.count(), 0)
+        self._login_to_admin()
+        self._go_to_new_gallery()
+        self._assert_widget_loaded()
+        self._add_and_upload_image("demo/screen_upload.png")
+        self._add_and_upload_image("demo/screen_crop.png")
+
+        # Delete the first uploaded image
+        self.assertEqual(BuiltInGalleryImage.objects.count(), 2)
+        BuiltInGalleryImage.objects.first().delete()
+        self.assertEqual(BuiltInGalleryImage.objects.count(), 1)
+
+        self._submit_page()
+        self.assertEqual(DemoGallery.objects.count(), 1)
+        self.assertEqual(DemoGallery.objects.first().images.objects.count(), 1)

@@ -138,20 +138,27 @@ class GalleryFormField(forms.JSONField):
     def __init__(self, max_number_of_images=None, **kwargs):
         self.image_model = kwargs.pop("image_model", conf.DEFAULT_TARGET_IMAGE_MODEL)
         widget_belong = kwargs.pop("model_field", None)
-        self.max_number_of_images = max_number_of_images
-        super().__init__(**kwargs)
 
         if widget_belong is None:
             # No model field is used
             widget_belong = str(self)
-
+        self.widget_belong = widget_belong
         self._max_number_of_images = max_number_of_images
 
+        super().__init__(**kwargs)
+
+    _widget = GalleryWidget
+
+    @property
+    def widget(self):
+        return self._widget
+
+    @widget.setter
+    def widget(self, value):
+        self._widget = value
         self.widget.max_number_of_images = self.max_number_of_images
         self.widget.image_model = self.image_model
-        self.widget.widget_belong = widget_belong
-
-    widget = GalleryWidget
+        self.widget.widget_belong = self.widget_belong
 
     @property
     def max_number_of_images(self):
