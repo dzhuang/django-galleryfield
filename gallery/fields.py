@@ -144,8 +144,10 @@ class GalleryFormField(forms.JSONField):
             widget_belong = str(self)
         self.widget_belong = widget_belong
         self._max_number_of_images = max_number_of_images
-
         super().__init__(**kwargs)
+
+        self._widget.image_model = self.image_model
+        self._widget.widget_belong = widget_belong
 
     _widget = GalleryWidget
 
@@ -155,10 +157,19 @@ class GalleryFormField(forms.JSONField):
 
     @widget.setter
     def widget(self, value):
+        setattr(value, "max_number_of_images", self.max_number_of_images)
+        setattr(value, "image_model", self.image_model)
+        setattr(value, "widget_belong", self.widget_belong)
+
+        # Re-initialize the widget
+        # todo: test widget instance change in form
+        value.is_localized = bool(self.localize)
+        value.is_required = self.required
+        extra_attrs = self.widget_attrs(value) or {}
+        value.attrs.update(extra_attrs)
         self._widget = value
-        self.widget.max_number_of_images = self.max_number_of_images
-        self.widget.image_model = self.image_model
-        self.widget.widget_belong = self.widget_belong
+
+        assert self.widget.max_number_of_images == self.max_number_of_images
 
     @property
     def max_number_of_images(self):
@@ -173,7 +184,7 @@ class GalleryFormField(forms.JSONField):
                     "got %s." % str(value))
             value = int(value)
         self._max_number_of_images = value
-        self.widget.max_number_of_images = value
+        self._widget.max_number_of_images = value
 
         if value:
             self.validators.append(

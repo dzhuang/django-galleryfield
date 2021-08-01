@@ -201,7 +201,7 @@ class GalleryWidget(forms.HiddenInput):
         # Set blueimp/jQuery-File-Upload
         # https://github.com/blueimp/jQuery-File-Upload/wiki/Options
         max_number_of_images = (
-            getattr(self, "max_number_of_images"))
+            getattr(self, "max_number_of_images", None))
         if not max_number_of_images:
             self.ui_options.pop("maxNumberOfFiles", None)
         else:
