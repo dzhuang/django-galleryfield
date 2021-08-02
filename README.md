@@ -7,7 +7,7 @@ Django AJAX form widgets and model fields for multiple images upload with progre
 Some of the ideas/code are inspired by [Django-jfu](https://github.com/Alem/django-jfu) and 
 [Django-files-widget](https://github.com/TND/django-files-widget).
 
-__This is currently an alpha release. More tests are on the way.__
+__This is currently an alpha release.__
 
 Features
 --------
@@ -152,7 +152,6 @@ and override those settings for your apps, especially in terms of permission con
 
 ## TODOs
 - Detailed Documentation
-- Tests
 - More demos
 - Descriptors for rendering the `GalleryField`.
 
