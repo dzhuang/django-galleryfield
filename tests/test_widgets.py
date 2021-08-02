@@ -3,6 +3,7 @@ from django import forms
 from django.forms.renderers import DjangoTemplates
 from django.test import SimpleTestCase
 from django.urls import reverse
+from django.core.exceptions import ImproperlyConfigured
 
 from gallery.fields import GalleryFormField
 from gallery.widgets import GalleryWidget
@@ -153,3 +154,59 @@ class GalleryWidgetTest(SimpleTestCase):
 
         f = GalleryFormField(disabled=True)
         self.assertFieldRendersNotIn(f, 'django-gallery-image-input')
+
+    def test_widget_conflict(self):
+        # the target image model is not the default
+        field = GalleryFormField(image_model="tests.FakeValidImageModel")
+        self.assertIsInstance(field.widget, GalleryWidget)
+        with self.assertRaises(ImproperlyConfigured) as cm:
+            self._render_widget(field.widget, "field", "")
+
+        for msg in ['You need to write your own views for your image model',
+                    'gallery_image_upload',
+                    'gallery_images_fetch',
+                    'gallery_image_crop']:
+            self.assertIn(
+                msg,
+                cm.exception.args[0])
+
+    def test_widget_conflict2(self):
+        # the target image model is not the default,
+        # some of the urls are default urls
+        field = GalleryFormField(image_model="tests.FakeValidImageModel")
+
+        test_case = {
+            "gallery_image_upload":
+                {"upload_handler_url_name": "test_image_upload"},
+            "gallery_images_crop":
+                {"crop_request_url_name": "test_image_crop"},
+            "gallery_image_fetch":
+                {"fetch_request_url_name": "test_image_fetch"}
+        }
+
+        for default, kwargs in test_case.items():
+            with self.subTest(default=default, kwargs=kwargs):
+                field.widget = GalleryWidget(**kwargs)
+                with self.assertRaises(ImproperlyConfigured) as cm:
+                    self._render_widget(field.widget, "field", "")
+
+                self.assertIn(
+                    'You need to write your own views for your image model',
+                    cm.exception.args[0], cm.exception)
+                self.assertNotIn(
+                    default,
+                    cm.exception.args[0]
+                )
+
+    def test_widget_no_conflict(self):
+        # the target image model and all urls are not using the default,
+        field = GalleryFormField(image_model="tests.FakeValidImageModel")
+
+        kwargs = {
+            "upload_handler_url_name": "test_image_upload",
+            "crop_request_url_name": "test_image_crop",
+            "fetch_request_url_name": "test_image_fetch"
+        }
+
+        field.widget = GalleryWidget(**kwargs)
+        self._render_widget(field.widget, "field", "")

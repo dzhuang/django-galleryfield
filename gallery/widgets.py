@@ -2,6 +2,7 @@ import json
 
 from django import forms
 from django.urls import reverse_lazy
+from django.core.exceptions import ImproperlyConfigured
 
 from gallery import conf
 from gallery import defaults
@@ -60,6 +61,13 @@ class GalleryWidget(forms.HiddenInput):
 
         super(GalleryWidget, self).__init__(attrs)
 
+        assert upload_handler_url_name is not None, (
+            "'upload_handler_url_name' must not be None")
+        assert fetch_request_url_name is not None, (
+            "'fetch_request_url_name' must not be None")
+        assert crop_request_url_name is not None, (
+            "'crop_request_url_name' must not be None")
+
         self.multiple = multiple
         self.preview_size = preview_size
         self.template = template
@@ -73,16 +81,14 @@ class GalleryWidget(forms.HiddenInput):
             kwargs=upload_handler_kwargs or {})
 
         self.fetch_request_url = None
-        if fetch_request_url_name:
-            self.fetch_request_url = reverse_lazy(
-                fetch_request_url_name, args=fetch_request_args or (),
-                kwargs=fetch_request_kwargs or {})
+        self.fetch_request_url = reverse_lazy(
+            fetch_request_url_name, args=fetch_request_args or (),
+            kwargs=fetch_request_kwargs or {})
 
         self.crop_request_url = None
-        if crop_request_url_name:
-            self.crop_request_url = reverse_lazy(
-                crop_request_url_name, args=crop_request_args or (),
-                kwargs=crop_request_kwargs or {})
+        self.crop_request_url = reverse_lazy(
+            crop_request_url_name, args=crop_request_args or (),
+            kwargs=crop_request_kwargs or {})
 
         jquery_upload_ui_options = jquery_upload_ui_options or {}
         _jquery_upload_ui_options = defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS.copy()
@@ -103,6 +109,14 @@ class GalleryWidget(forms.HiddenInput):
         self.options.setdefault("accepted_mime_types", ['image/*'])
 
     def defaults_checks(self):
+        # Here we check the potential conflicts of init params of the widget
+        # with the target image_model set to the widget.
+        # The logic is: if the target image_model is not using the built-in
+        # model, i.e., defaults.DEFAULT_TARGET_IMAGE_MODEL, then the
+        # upload, crop and fetch views should not use the built-in ones.
+        # Because those views are using defaults.DEFAULT_TARGET_IMAGE_MODEL
+        # as the target image model.
+
         image_model_str = getattr(self, "image_model", None)
         if not image_model_str:
             return
@@ -134,10 +148,10 @@ class GalleryWidget(forms.HiddenInput):
                      "value": self._crop_request_url_name})
 
         if conflict_config:
-            widget_belong = getattr(self, "widget_belong")
+            widget_belongs_to = getattr(self, "widget_belongs_to")
             msgs = ["'%(obj)s' is using '%(used_model)s' "
                     "instead of built-in '%(default_model)s', while "
-                    % {"obj": widget_belong,
+                    % {"obj": widget_belongs_to,
                        "used_model": image_model_str,
                        "default_model": defaults.DEFAULT_TARGET_IMAGE_MODEL}
                     ]
@@ -153,8 +167,7 @@ class GalleryWidget(forms.HiddenInput):
                 })
 
             msg = "".join(msgs)
-            if msg:
-                raise RuntimeError(msg)
+            raise ImproperlyConfigured(msg)
 
     class Media:
         js = tuple(_js for _js in js if _js)

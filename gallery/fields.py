@@ -137,17 +137,17 @@ class GalleryFormField(forms.JSONField):
 
     def __init__(self, max_number_of_images=None, **kwargs):
         self.image_model = kwargs.pop("image_model", conf.DEFAULT_TARGET_IMAGE_MODEL)
-        widget_belong = kwargs.pop("model_field", None)
+        widget_belongs_to = kwargs.pop("model_field", None)
 
-        if widget_belong is None:
+        if widget_belongs_to is None:
             # No model field is used
-            widget_belong = str(self)
-        self.widget_belong = widget_belong
+            widget_belongs_to = str(self)
+        self.widget_belong = widget_belongs_to
         self._max_number_of_images = max_number_of_images
         super().__init__(**kwargs)
 
         self._widget.image_model = self.image_model
-        self._widget.widget_belong = widget_belong
+        self._widget.widget_belong = widget_belongs_to
 
     _widget = GalleryWidget
 
@@ -159,7 +159,7 @@ class GalleryFormField(forms.JSONField):
     def widget(self, value):
         setattr(value, "max_number_of_images", self.max_number_of_images)
         setattr(value, "image_model", self.image_model)
-        setattr(value, "widget_belong", self.widget_belong)
+        setattr(value, "widget_belongs_to", self.widget_belong)
 
         # Re-initialize the widget
         # todo: test widget instance change in form
