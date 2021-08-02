@@ -50,6 +50,10 @@ def get_serialized_image(instance, image_field_name="image",
 def get_ordered_serialized_images(
         request, pks, image_model_class, image_field_name,
         user_field_name, preview_size):
+    # We don't permit non-owner user to fetch images of other users
+    # Viewing other users' image should be handled via model view
+    # instead of form view.
+
     assert isinstance(pks, list)
 
     # Preserving the order of image using id__in=pks
@@ -64,8 +68,9 @@ def get_ordered_serialized_images(
     queryset = image_model_class.objects.filter(**filter_kwargs)
     queryset = queryset.annotate(my_order=case).order_by('my_order')
 
-    files = [get_serialized_image(instance, image_field_name, preview_size
-                                  ) for instance in queryset]
+    files = [get_serialized_image(
+        instance, image_field_name, preview_size)
+        for instance in queryset]
 
     return files
 
@@ -83,7 +88,7 @@ def get_cropped_file(request, instance, cropped_result,
         width = int(float(cropped_result['width']))
         height = int(float(cropped_result['height']))
         rotate = int(float(cropped_result['rotate']))
-    except KeyError:
+    except Exception:
         raise CropImageError(
             gettext('There are errors, please refresh the page '
                     'or try again later'))
@@ -132,8 +137,8 @@ def get_cropped_file(request, instance, cropped_result,
 @login_required
 def upload(request, *args, **kwargs):
     file = request.FILES['files[]'] if request.FILES else None
-    if not is_image(file):
-        raise RuntimeError()
+    if not file or not is_image(file):
+        raise BadRequest(gettext("Only images are allowed to be uploaded"))
 
     preview_size = request.POST.get('preview_size', conf.DEFAULT_THUMBNAIL_SIZE)
 
@@ -176,11 +181,12 @@ def crop(request, *args, **kwargs):
     try:
         pk = request.POST["pk"]
         cropped_result = json.loads(request.POST.get("croppedResult"))
-    except KeyError:
+    except Exception as e:
         return JsonResponse(
             {
-                'message': gettext('Bad Request')
-            },
+                'message':
+                    (gettext('Bad Request:')
+                     + '%s: %s' % (type(e).__name__, str(e)))},
             status=400)
 
     preview_size = request.POST.get('preview_size')
@@ -193,8 +199,9 @@ def crop(request, *args, **kwargs):
     creator = getattr(instance, user_field_name)
 
     # Basic permission check
-    if creator != request.user or not request.user.is_superuser:
-        raise PermissionDenied("Only owner or superuser may crop the image")
+    if creator != request.user and not request.user.is_superuser:
+        raise PermissionDenied(
+            gettext("Only owner or superuser may crop the image"))
 
     try:
         file = get_cropped_file(

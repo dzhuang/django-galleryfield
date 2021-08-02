@@ -1,4 +1,3 @@
-import os.path
 import re
 from time import sleep
 from urllib.parse import urljoin
@@ -8,9 +7,9 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from django.test.utils import override_settings
 from selenium import webdriver
-import tempfile
 
-from tests.utils import remove_upload_directory
+
+from tests.utils import remove_upload_directory, test_media_root
 from tests.mixins import UserCreateMixin
 from gallery.models import BuiltInGalleryImage
 from demo.models import DemoGallery
@@ -22,9 +21,6 @@ SELENIUM_BROWSER = CHROMIUM
 
 
 GALLERY_IMAGE_OBJ_PATTERN = re.compile("BuiltInGalleryImage: BuiltInGalleryImage")
-
-
-test_media_root = os.path.join(tempfile.gettempdir(), "gallery_widget_media")
 
 
 @override_settings(MEDIA_ROOT=test_media_root)

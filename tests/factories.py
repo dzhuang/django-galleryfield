@@ -68,15 +68,30 @@ class DemoGalleryFactory(factory.django.DjangoModelFactory):
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
         creator = kwargs.pop("creator", None)
-        _kwargs = {}
-        if creator is not None:
-            _kwargs = {"creator": creator}
-        image = BuiltInGalleryImageFactory(**_kwargs)
-
+        images = kwargs.pop("images", None)
+        number = kwargs.pop("number_of_images", 1)
+        shuffle = kwargs.pop("shuffle", False)
         obj = super()._create(model_class, *args, **kwargs)
-        image_list = obj.images
-        assert isinstance(image_list, list)
-        image_list.append(image.pk)
+        if not images:
+            _kwargs = {}
+            if creator is not None:
+                _kwargs = {"creator": creator}
+            _kwargs["size"] = number
+            images = BuiltInGalleryImageFactory.create_batch(**_kwargs)
+            image_list = [image.pk for image in images]
+            shuffle = shuffle and number > 1
+        else:
+            from collections.abc import Iterable
+            assert isinstance(images, Iterable)
+            for image in images:
+                assert isinstance(image, BuiltInGalleryImage)
+            image_list = [image.pk for image in images]
+            shuffle = shuffle and len(images) > 1
+
+        if shuffle:
+            import random
+            random.shuffle(image_list)
+
         obj.images = image_list
         obj.save()
         return obj
