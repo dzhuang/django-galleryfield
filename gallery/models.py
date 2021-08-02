@@ -11,6 +11,7 @@ class BuiltInGalleryImage(models.Model):
         settings.AUTH_USER_MODEL, null=False, blank=False,
         verbose_name=_('Creator'), on_delete=models.CASCADE)
 
-    @classmethod
-    def get_image_field(cls):
-        return cls._meta.get_field("image")
+    # This snippet will not run because we already have the ImageField named 'image'
+    # @classmethod
+    # def get_image_field(cls):
+    #     return cls._meta.get_field("image")

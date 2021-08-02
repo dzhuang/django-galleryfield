@@ -2,6 +2,7 @@ from django import forms
 from django.db import models
 from django.forms import ValidationError
 from django.test import TestCase
+from django.test.utils import isolate_apps, override_settings
 
 from gallery.fields import GalleryField, GalleryFormField
 
@@ -179,35 +180,6 @@ class GalleryFormFieldTest(TestCase):
                 with self.assertRaisesMessage(ValidationError, msg):
                     field.clean(inputs)
 
-    # def test_gallery_form_field_clean_invalid_images_json(self):
-    #     invalid_image_data = IMAGE_DATA[0].copy()
-    #     invalid_image_data.pop("url")
-    #
-    #     field = GalleryFormField(required=False)
-    #     inputs = [
-    #
-    #         # No url in each dict
-    #         [json.dumps([invalid_image_data]), ''],
-    #         ['', json.dumps([invalid_image_data])],
-    #
-    #         # JSONDecodeError
-    #         ['', 'invalid-image-data'],
-    #
-    #         # list element not dicts
-    #         ['', json.dumps(["url", "abcd"])],
-    #         [json.dumps(["url", "abcd"]), ''],
-    #
-    #         # data not list
-    #         [json.dumps({"url": "abcd"}), ''],
-    #         ['', json.dumps({"url": "abcd"})]
-    #     ]
-    #     msg = "The submitted images are invalid."
-    #
-    #     for data in inputs:
-    #         with self.subTest(data=data):
-    #             with self.assertRaisesMessage(ValidationError, msg):
-    #                 field.clean(data)
-
     def test_gallery_form_field_clean_not_null_not_list(self):
         input_str = 'invalid-image'
         msg = "The submitted images are invalid."
@@ -296,7 +268,7 @@ class GalleryFormFieldTest(TestCase):
 
 
 class GalleryFieldCheckTest(TestCase):
-    def test_field_checks(self):
+    def test_field_checks_valid(self):
 
         class MyModel(models.Model):
             field = GalleryField(target_model="tests.FakeInvalidImageModel1")
@@ -305,3 +277,51 @@ class GalleryFieldCheckTest(TestCase):
         errors = model.check()
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0].id, "gallery_field.E004")
+
+    @isolate_apps("tests")
+    def test_field_checks_use_default_target(self):
+
+        class MyModel(models.Model):
+            field = GalleryField()
+
+        model = MyModel()
+        errors = model.check()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].id, "gallery_field.I001")
+
+    @isolate_apps("tests")
+    def test_field_checks_use_invalid_target(self):
+
+        class MyModel(models.Model):
+            field = GalleryField(target_model="non-exist.model")
+
+        model = MyModel()
+        errors = model.check()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].id, "gallery_field.E002")
+
+    @isolate_apps("tests")
+    def test_field_checks_use_invalid_get_image_field_method(self):
+
+        class MyModel(models.Model):
+            field = GalleryField(target_model="tests.FakeInvalidImageModel5")
+
+        model = MyModel()
+        errors = model.check()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].id, "gallery_field.E003")
+
+    @isolate_apps("tests")
+    # Here we are not loading "demo", while use MyImageModel
+    @override_settings(INSTALLED_APPS=['gallery', 'tests'])
+    def test_field_checks_app_not_in_installed_apps(self):
+        class MyModel(models.Model):
+            field = GalleryField("demo.MyImageModel")
+
+        # We want to make sure it won't raise error when initializing.
+        model = MyModel()
+
+        errors = model.check()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].id, "gallery_field.E002")
+        self.assertIn("LookupError", errors[0].msg)

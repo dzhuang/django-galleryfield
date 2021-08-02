@@ -1,4 +1,13 @@
 from django.db import models
+from gallery.fields import GalleryField
+
+
+class FakeValidImageModel(models.Model):
+    image = models.ImageField()
+
+
+class DemoGalleryForTest(models.Model):
+    images = GalleryField(target_model="tests.FakeValidImageModel")
 
 
 class FakeInvalidImageModel1(models.Model):

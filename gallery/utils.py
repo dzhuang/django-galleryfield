@@ -39,6 +39,24 @@ def convert_dict_to_plain_text(d, indent=4):
 def get_or_check_image_field(
         target_app_model_str, check_id_prefix, location=None, obj=None,
         is_checking=False, log_if_using_default_in_checks=False):
+    """
+    Get the image field from target image model, or check if the params will work
+    in the model during model.check().
+    :param target_app_model_str: a string or ``None``. If ``None``,
+      ``defaults.DEFAULT_TARGET_IMAGE_MODEL`` will be used.
+    :param check_id_prefix: This function will be used both in system checks and
+      model checks. They will use different check message id.
+    :param location:  Where the check error is detected, used for system checks.
+    :param obj: Where the check error is detected, used for model checks.
+    :param is_checking: whether this function is used in checks.
+    :param log_if_using_default_in_checks:  Whether log the Information that the
+      ``defaults.DEFAULT_TARGET_IMAGE_MODEL`` is used as ``target_app_model_str`` is
+      set to ``None``. This will only be ``True`` for model checks.
+    :return: when ``is_checking`` is ``False``, we were getting the image field from
+      the target image model. if any errors this will return ``None``, and the errors
+      will be raised in model checks, i.e., when ``is_checking`` is ``True``.
+    """
+
     assert location or obj
     errors = []
     target_model = None
@@ -56,10 +74,12 @@ def get_or_check_image_field(
         else:
             try:
                 target_model = apps.get_model(target_app_model_str)
+            except AppRegistryNotReady:
+                # Preventing from failing in field initialization
+                # We will raise that in field check
+                assert not is_checking
+                return None
             except Exception as e:
-                if isinstance(e, AppRegistryNotReady):
-                    if not is_checking:
-                        return None
                 if not is_checking:
                     return None
                 errors.append(DJGalleryCriticalCheckMessage(
@@ -83,7 +103,10 @@ def get_or_check_image_field(
                 target_model = apps.get_model(target_app_model_str)
             except AppRegistryNotReady:
                 assert not is_checking
+                # Preventing from failing in field initialization
+                # We will raise that in field check
                 return None
+            # Here we assume defaults.DEFAULT_TARGET_IMAGE_MODEL will always work
             else:
                 if log_if_using_default_in_checks:
                     errors.append(Info(
@@ -113,6 +136,8 @@ def get_or_check_image_field(
                         image_field = get_image_field_class_method()
                     except Exception as e:
                         if not is_checking:
+                            # Preventing from failing in field initialization
+                            # We will raise that in field check
                             return None
                         errors.append(Critical(
                             msg=('Error in %(location)s: model %(model)s defined '
@@ -136,6 +161,8 @@ def get_or_check_image_field(
 
         if image_field is None:
             if not is_checking:
+                # Preventing from failing in field initialization
+                # We will raise that in field check
                 return None
             if get_image_field_class_method is None:
                 errors.append(Critical(
