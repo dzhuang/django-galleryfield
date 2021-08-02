@@ -50,7 +50,7 @@ def get_or_check_image_field(
     :param obj: Where the check error is detected, used for model checks.
     :param is_checking: whether this function is used in checks.
     :param log_if_using_default_in_checks:  Whether log the Information that the
-      ``defaults.DEFAULT_TARGET_IMAGE_MODEL`` is used as ``target_app_model_str`` is
+      ``conf.DEFAULT_TARGET_IMAGE_MODEL`` is used as ``target_app_model_str`` is
       set to ``None``. This will only be ``True`` for model checks.
     :return: when ``is_checking`` is ``False``, we were getting the image field from
       the target image model. if any errors this will return ``None``, and the errors

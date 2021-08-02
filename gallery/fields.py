@@ -2,14 +2,14 @@ from django.utils.deconstruct import deconstructible
 from django.db import models
 from django.utils.translation import gettext_lazy as _, ngettext_lazy
 from django import forms
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.validators import BaseValidator
 from django.db.models.query_utils import DeferredAttribute
 from django.db.models import Case, Value, When, IntegerField
 
 from gallery import conf, defaults as gallery_widget_defaults
 from gallery.widgets import GalleryWidget
-from gallery.utils import get_or_check_image_field, apps
+from gallery.utils import get_or_check_image_field, apps, logger
 
 
 @deconstructible
@@ -66,12 +66,11 @@ class GalleryImageList(list):
         queryset = queryset.annotate(_order=case).order_by('_order')
         return queryset
 
+    def __str__(self):
+        return str(self.objects)
+
 
 class GalleryField(models.JSONField):
-    description = _('An array JSON object as attributes of (multiple) images')
-    default_error_messages = {
-        'invalid': _('Value must be valid JSON.'),
-    }
     attr_class = GalleryImageList
     descriptor_class = GalleryDescriptor
 
@@ -79,13 +78,10 @@ class GalleryField(models.JSONField):
         super().contribute_to_class(cls, name, private_only)
         setattr(cls, self.attname, self.descriptor_class(self))
 
-    def get_internal_type(self):
-        return 'JSONField'
-
     def __init__(self, target_model=None, *args, **kwargs):
         self._init_target_model = self.target_model = target_model
         if target_model is None:
-            self.target_model = gallery_widget_defaults.DEFAULT_TARGET_IMAGE_MODEL
+            self.target_model = conf.DEFAULT_TARGET_IMAGE_MODEL
 
         self.target_model_image_field = (
             self._get_image_field_or_test(is_checking=False))
@@ -116,9 +112,9 @@ class GalleryField(models.JSONField):
         _defaults = ({
             "required": True,
 
-            # The following 2 are used to validate GalleryWidget settings
+            # The following 2 are used to validate GalleryWidget params
             # see GalleryWidget.defaults_checks()
-            "image_model": self.target_model,
+            "target_model": self.target_model,
             "model_field": str(self)
         })
         _defaults.update(kwargs)
@@ -136,18 +132,58 @@ class GalleryFormField(forms.JSONField):
     }
 
     def __init__(self, max_number_of_images=None, **kwargs):
-        self.image_model = kwargs.pop("image_model", conf.DEFAULT_TARGET_IMAGE_MODEL)
-        widget_belongs_to = kwargs.pop("model_field", None)
+        """
+        :param max_number_of_images: int.
+        :param kwargs:
+          - target_model: str, a valid target image model which can be loaded by
+           ``apps.get_model``. When this field is used in the model form,
+            it is auto configured by the model instance.
+            However, if this field is used as a non-model form field, when
+            not specified, it will use the built-in default target image
+            model, which can be overridden by
+            ``DJANGO_GALLERY_WIDGET_CONFIG['default_target_image_model']``
+            in settings. Moreover, if not configured, an info will be logged
+            to the console, which can be turned off by
+            adding ``gallery_form_field.I001``
+            in ``settings.SILENCED_SYSTEM_CHECKS``
+          - widget: if not specified, defaults ``GalleryWidget`` with default
+           values.
 
-        if widget_belongs_to is None:
-            # No model field is used
-            widget_belongs_to = str(self)
-        self.widget_belong = widget_belongs_to
+          Overall, You need to make sure all the urls in ``widget`` are
+          handling the ``image_model`` instances.
+        """
+
+        # The following 2 are used to validate GalleryWidget params
+        # see GalleryWidget.defaults_checks()
+        self._image_model = kwargs.pop("target_model", None)
+        image_model_not_configured = False
+        if self._image_model is None:
+            # This happens when the formfield is used in a Non-model form
+            image_model_not_configured = True
+            self._image_model = conf.DEFAULT_TARGET_IMAGE_MODEL
+
+        # Make sure the model is valid target image model
+        if (self._image_model
+                != gallery_widget_defaults.DEFAULT_TARGET_IMAGE_MODEL
+                or image_model_not_configured):
+            errors = get_or_check_image_field(
+                target_app_model_str=(
+                    None if image_model_not_configured else self._image_model),
+                check_id_prefix="gallery_form_field",
+                obj=self, is_checking=True,
+                log_if_using_default_in_checks=True)
+            for error in errors:
+                if error.is_serious():
+                    raise ImproperlyConfigured(str(error))
+                else:
+                    if error.is_silenced():
+                        continue
+                    logger.info(str(error))
+
+        self._widget_belongs_to = kwargs.pop("model_field", None) or str(self)
+
         self._max_number_of_images = max_number_of_images
         super().__init__(**kwargs)
-
-        self._widget.image_model = self.image_model
-        self._widget.widget_belong = widget_belongs_to
 
     _widget = GalleryWidget
 
@@ -157,12 +193,14 @@ class GalleryFormField(forms.JSONField):
 
     @widget.setter
     def widget(self, value):
+        # Property and setter are used to make sure the attributes will
+        # be passed to new widget instance when the widget instance
+        # is changed.
         setattr(value, "max_number_of_images", self.max_number_of_images)
-        setattr(value, "image_model", self.image_model)
-        setattr(value, "widget_belongs_to", self.widget_belong)
+        setattr(value, "image_model", self._image_model)
+        setattr(value, "widget_belongs_to", self._widget_belongs_to)
 
         # Re-initialize the widget
-        # todo: test widget instance change in form
         value.is_localized = bool(self.localize)
         value.is_required = self.required
         extra_attrs = self.widget_attrs(value) or {}
@@ -221,11 +259,8 @@ class GalleryFormField(forms.JSONField):
                     params={'value': converted},
                 )
 
-        if self.image_model is None:
-            return converted
-
         # Make sure all pks exists
-        image_model = apps.get_model(self.image_model)
+        image_model = apps.get_model(self._image_model)
         if (image_model.objects.filter(
                 pk__in=list(map(int, converted))).count()
                 != len(converted)):

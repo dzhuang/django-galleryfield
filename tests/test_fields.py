@@ -3,25 +3,22 @@ from django.db import models
 from django.forms import ValidationError
 from django.test import TestCase
 from django.test.utils import isolate_apps, override_settings
+from django.core.exceptions import ImproperlyConfigured
+
+from unittest import mock
 
 from gallery.fields import GalleryField, GalleryFormField
+from gallery.widgets import GalleryWidget
 
 from demo.models import DemoGallery
 from tests.factories import DemoGalleryFactory
 from tests import factories
 
 
-class DemoTestGalleryForm(forms.ModelForm):
+class DemoTestGalleryModelForm(forms.ModelForm):
     class Meta:
         model = DemoGallery
         fields = ["images"]
-
-
-IMAGE_DATA = [{
-    "url": "/media/images/abcd.jpg",
-    "thumbnailUrl": "/media/cache/a6/ee/abcdefg.jpg",
-    "name": "abcd.jpg", "size": "87700", "pk": 1,
-    "deleteUrl": "javascript:void(0)"}]
 
 
 class GalleryFieldTest(TestCase):
@@ -34,7 +31,7 @@ class GalleryFieldTest(TestCase):
 
     def test_form_save(self):
         image = factories.BuiltInGalleryImageFactory(creator=self.user)
-        form = DemoTestGalleryForm(
+        form = DemoTestGalleryModelForm(
             data={"images": [image.pk]})
         self.assertTrue(form.is_valid())
         form.save()
@@ -46,7 +43,7 @@ class GalleryFieldTest(TestCase):
         self.assertEqual(DemoGallery.objects.count(), 1)
         self.assertEqual(len(DemoGallery.objects.first().images), 1)
 
-        form = DemoTestGalleryForm(
+        form = DemoTestGalleryModelForm(
             data={"images": instance.images + [image2.pk]},
             instance=instance
         )
@@ -63,7 +60,7 @@ class GalleryFieldTest(TestCase):
         self.assertEqual(len(DemoGallery.objects.first().images), 1)
         image2 = factories.BuiltInGalleryImageFactory(creator=self.user)
 
-        form = DemoTestGalleryForm(
+        form = DemoTestGalleryModelForm(
             data={"images": [image2.pk]},
             instance=instance
         )
@@ -75,7 +72,7 @@ class GalleryFieldTest(TestCase):
         self.assertEqual(len(new_images), 1)
 
     def test_form_save_null(self):
-        form = DemoTestGalleryForm(
+        form = DemoTestGalleryModelForm(
             data={"images": ''},
         )
         form.fields["images"].required = False
@@ -92,7 +89,7 @@ class GalleryFieldTest(TestCase):
         self.assertEqual(DemoGallery.objects.count(), 1)
         self.assertEqual(len(DemoGallery.objects.first().images), 1)
 
-        form = DemoTestGalleryForm(
+        form = DemoTestGalleryModelForm(
             data={"images": ''},
             instance=instance
         )
@@ -110,7 +107,7 @@ class GalleryFieldTest(TestCase):
         self.assertEqual(DemoGallery.objects.count(), 1)
         self.assertEqual(len(DemoGallery.objects.first().images), 1)
 
-        form = DemoTestGalleryForm(
+        form = DemoTestGalleryModelForm(
             data={"images": ''},
             instance=instance
         )
@@ -265,6 +262,47 @@ class GalleryFormFieldTest(TestCase):
 
         cleaned_data = field.clean(data)
         self.assertEqual(cleaned_data, data)
+
+    def test_gallery_form_field_target_image_model_valid(self):
+        GalleryFormField(target_model="tests.FakeValidImageModel")
+
+    def test_gallery_form_field_target_image_model_invalid(self):
+        with self.assertRaises(ImproperlyConfigured):
+            GalleryFormField(target_model="tests.FakeInvalidImageModel1")
+
+    @mock.patch('gallery.fields.logger.info')
+    def test_gallery_form_field_target_image_model_configured_none(self, mock_log):
+        GalleryFormField()
+        self.assertEqual(mock_log.call_count, 1)
+
+    @mock.patch('gallery.fields.logger.info')
+    @override_settings(SILENCED_SYSTEM_CHECKS=["gallery_form_field.I001"])
+    def test_gallery_form_field_target_image_model_configured_none_log_suppressed(self, mock_log):  # noqa
+        GalleryFormField()
+        self.assertEqual(mock_log.call_count, 0)
+
+    def test_gallery_form_field_changed_widget(self):
+        max_number_of_images = 5
+        field = GalleryFormField(
+            target_model="tests.FakeValidImageModel",
+            max_number_of_images=max_number_of_images,
+            required=False)
+        old_widget = field.widget
+        self.assertEqual(old_widget.max_number_of_images, max_number_of_images)
+
+        # Before assigning to the formfield
+        new_widget = GalleryWidget()
+        self.assertNotEqual(new_widget.attrs, old_widget.attrs)
+        self.assertFalse(hasattr(new_widget, "image_model"))
+        self.assertFalse(hasattr(new_widget, "max_number_of_images"))
+
+        # New widget will get updated
+        field.widget = new_widget
+        self.assertEqual(field.widget.max_number_of_images, max_number_of_images)
+        self.assertEqual(field.widget.image_model, old_widget.image_model)
+        self.assertEqual(field.widget.widget_belongs_to, str(field))
+        self.assertEqual(field.widget.attrs, old_widget.attrs)
+        self.assertEqual(field.widget.is_required, False)
 
 
 class GalleryFieldCheckTest(TestCase):

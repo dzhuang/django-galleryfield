@@ -110,19 +110,27 @@ class GalleryWidget(forms.HiddenInput):
 
     def defaults_checks(self):
         # Here we check the potential conflicts of init params of the widget
-        # with the target image_model set to the widget.
-        # The logic is: if the target image_model is not using the built-in
+        # with the target_image_model set to the widget.
+        # The logic is: if the target_image_model is not using the built-in
         # model, i.e., defaults.DEFAULT_TARGET_IMAGE_MODEL, then the
         # upload, crop and fetch views should not use the built-in ones.
         # Because those views are using defaults.DEFAULT_TARGET_IMAGE_MODEL
         # as the target image model.
+        # BTW, this check can't be done at the model/field check stage or formfield
+        # init stage, because we should allow the widget be changed after the form
+        # is initialized. So, we have to do this before rendering the widget,
+        # and throw the error if any.
 
-        image_model_str = getattr(self, "image_model", None)
-        if not image_model_str:
+        target_image_model = getattr(self, "image_model", None)
+        if not target_image_model:
             return
 
         image_model_is_default = (
-                image_model_str == defaults.DEFAULT_TARGET_IMAGE_MODEL)
+                target_image_model == defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        if image_model_is_default:
+            return
+
         upload_handler_url_name_is_default = (
             self._upload_handler_url_name == defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME
         )
@@ -133,41 +141,42 @@ class GalleryWidget(forms.HiddenInput):
             self._crop_request_url_name == defaults.DEFAULT_CROP_URL_NAME
         )
         conflict_config = []
-        if not image_model_is_default:
-            if upload_handler_url_name_is_default:
-                conflict_config.append(
-                    {"param": "upload_handler_url_name",
-                     "value": self._upload_handler_url_name})
-            if fetch_request_url_name_is_default:
-                conflict_config.append(
-                    {"param": "fetch_request_url_name",
-                     "value": self._fetch_request_url_name})
-            if crop_request_url_name_is_default:
-                conflict_config.append(
-                    {"param": "crop_request_url_name",
-                     "value": self._crop_request_url_name})
+        if upload_handler_url_name_is_default:
+            conflict_config.append(
+                {"param": "upload_handler_url_name",
+                 "value": self._upload_handler_url_name})
+        if fetch_request_url_name_is_default:
+            conflict_config.append(
+                {"param": "fetch_request_url_name",
+                 "value": self._fetch_request_url_name})
+        if crop_request_url_name_is_default:
+            conflict_config.append(
+                {"param": "crop_request_url_name",
+                 "value": self._crop_request_url_name})
 
-        if conflict_config:
-            widget_belongs_to = getattr(self, "widget_belongs_to")
-            msgs = ["'%(obj)s' is using '%(used_model)s' "
-                    "instead of built-in '%(default_model)s', while "
-                    % {"obj": widget_belongs_to,
-                       "used_model": image_model_str,
-                       "default_model": defaults.DEFAULT_TARGET_IMAGE_MODEL}
-                    ]
+        if not conflict_config:
+            return
 
-            for cc in conflict_config:
-                msgs.append(
-                    "'%(param)s' is using built-in value '%(value)s', " % cc)
+        widget_belongs_to = getattr(self, "widget_belongs_to")
+        msgs = ["'%(obj)s' is using '%(used_model)s' "
+                "instead of built-in '%(default_model)s', while "
+                % {"obj": widget_belongs_to,
+                   "used_model": target_image_model,
+                   "default_model": defaults.DEFAULT_TARGET_IMAGE_MODEL}
+                ]
 
+        for cc in conflict_config:
             msgs.append(
-                "which use built-in '%(default_model)s'. You need to write "
-                "your own views for your image model." % {
-                    "default_model": defaults.DEFAULT_TARGET_IMAGE_MODEL
-                })
+                "'%(param)s' is using built-in value '%(value)s', " % cc)
 
-            msg = "".join(msgs)
-            raise ImproperlyConfigured(msg)
+        msgs.append(
+            "which use built-in '%(default_model)s'. You need to write "
+            "your own views for your image model." % {
+                "default_model": defaults.DEFAULT_TARGET_IMAGE_MODEL
+            })
+
+        msg = "".join(msgs)
+        raise ImproperlyConfigured(msg)
 
     class Media:
         js = tuple(_js for _js in js if _js)

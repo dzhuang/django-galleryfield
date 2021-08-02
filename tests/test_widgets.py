@@ -37,7 +37,6 @@ class GalleryWidgetTest(SimpleTestCase):
     def test_required_widget_render(self):
         f = GalleryFormField(required=True)
 
-        # fixme, why no "gallerywidget" in class?
         self.assertFieldRendersIn(
             f, '<input type="hidden" name="f" value="null"'
                ' class="django-gallery-widget-files-field '
@@ -157,7 +156,7 @@ class GalleryWidgetTest(SimpleTestCase):
 
     def test_widget_conflict(self):
         # the target image model is not the default
-        field = GalleryFormField(image_model="tests.FakeValidImageModel")
+        field = GalleryFormField(target_model="tests.FakeValidImageModel")
         self.assertIsInstance(field.widget, GalleryWidget)
         with self.assertRaises(ImproperlyConfigured) as cm:
             self._render_widget(field.widget, "field", "")
@@ -173,7 +172,7 @@ class GalleryWidgetTest(SimpleTestCase):
     def test_widget_conflict2(self):
         # the target image model is not the default,
         # some of the urls are default urls
-        field = GalleryFormField(image_model="tests.FakeValidImageModel")
+        field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         test_case = {
             "gallery_image_upload":
@@ -200,7 +199,7 @@ class GalleryWidgetTest(SimpleTestCase):
 
     def test_widget_no_conflict(self):
         # the target image model and all urls are not using the default,
-        field = GalleryFormField(image_model="tests.FakeValidImageModel")
+        field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         kwargs = {
             "upload_handler_url_name": "test_image_upload",
@@ -209,4 +208,5 @@ class GalleryWidgetTest(SimpleTestCase):
         }
 
         field.widget = GalleryWidget(**kwargs)
+        # No error thrown
         self._render_widget(field.widget, "field", "")
