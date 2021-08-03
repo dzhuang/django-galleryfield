@@ -11,8 +11,8 @@ class GalleryForm(forms.ModelForm):
         model = DemoGallery
         fields = ["images"]
 
-        # Uncomment to remove label
-        # labels = {'images': ""}
+        # Remove label
+        labels = {'images': ""}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

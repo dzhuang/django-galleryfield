@@ -29,6 +29,10 @@ ScreenShots
   
   <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen_crop.png" width="70%">
 
+- Easy Gallery render
+
+  <img class="img-responsive" src="https://github.com/dzhuang/django-gallery-widget/raw/main/demo/static/demo/screen_detail.png" width="70%">
+
 Quick Start
 -----------
 

@@ -6,14 +6,17 @@
     <title>Django Gallery</title>
     <meta charset="utf-8">
 
-    <link rel="stylesheet" href="{% static 'vendor/bootstrap/dist/css/bootstrap.min.css'%}">
-    <script src="{% static 'vendor/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.min.js' %}"></script>
-    <style>
-        body {
-            padding-top: 100px;
-        }
-    </style>
+    {% block header %}
+        <link rel="stylesheet" href="{% static 'vendor/bootstrap/dist/css/bootstrap.min.css'%}">
+        <script src="{% static 'vendor/jquery.min.js' %}"></script>
+        <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+        <style>
+            body {
+                padding-top: 100px;
+            }
+        </style>
+   {% endblock %}
+
 </head>
 
 <body>
@@ -23,11 +26,29 @@
     <div class="container">
         <div class="navbar-header">
             <a class="navbar-brand" href="https://github.com/dzhuang/django-gallery-widget" target="_blank">Django-Gallery-widget</a>
+        </div>
+        <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a  href="/">{% trans "Home" %}</a></li>
+                <li><a  href="/">{% trans "Create New" %}</a></li>
             </ul>
+            {% if update_view_url %}
+            <ul class="nav navbar-nav">
+                <li><a  href="{{ update_view_url }}">{% trans "Update" %}</a></li>
+            </ul>
+            {% endif %}
+            {% if detail_view_url %}
+            <ul class="nav navbar-nav">
+                <li><a  href="{{ detail_view_url }}">{% trans "Detail" %}</a></li>
+            </ul>
+            {% endif %}
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{% url 'admin:index' %}" target="_blank">{% trans "Admin" %}</a></li>
+                <li><a href="{% url 'admin:index' %}" target="_blank" style="float: right !important;">
+                    {% if not user.is_authenticated %}
+                    {% trans "Sign in" %}
+                    {% else %}
+                    {% trans "Admin" %}
+                    {% endif %}
+                </a></li>
             </ul>
         </div>
     </div>
@@ -41,5 +62,9 @@
     </div>
 
 </div>
+
+{% block back_staff %}
+{% endblock %}
+
 </body>
 </html>

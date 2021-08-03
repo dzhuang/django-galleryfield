@@ -57,6 +57,9 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
     def new_gallery_url(self):
         return self.get_full_url(reverse("gallery"))
 
+    def get_gallery_detail_url(self, pk):
+        return self.get_full_url(reverse("gallery-detail", kwargs={"pk": pk}))
+
     def _login_to_admin(self):
         # We do this because we need to login
         self.selenium.get(self.admin_url)
@@ -69,6 +72,10 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
 
     def _go_to_new_gallery(self):
         self.selenium.get(self.new_gallery_url)
+
+    def _go_to_gallery_detail(self, pk):
+        self.selenium.get(self.get_gallery_detail_url(pk))
+        sleep(1)
 
     def _assert_widget_loaded(self):
         sleep(1)
@@ -116,6 +123,7 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
                 GALLERY_IMAGE_OBJ_PATTERN,
                 str(DemoGallery.objects.first().images))),
             2)
+        self._go_to_gallery_detail(DemoGallery.objects.first().pk)
 
     def test_delete_image(self):
         self.assertEqual(DemoGallery.objects.count(), 0)
