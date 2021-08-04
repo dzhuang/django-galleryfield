@@ -1,1 +1,6 @@
-recursive-include gallery *
+include LICENSE
+include README.md
+recursive-include gallery/locale *
+recursive-include gallery/static *
+recursive-include gallery/templates *
+recursive-include docs *

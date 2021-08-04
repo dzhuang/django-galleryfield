@@ -1,11 +1,13 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.0'
+version = '1.0.0'
+
 
 def read(fname):
     # file read function copied from sorl.django-documents project
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 
 install_requires = [
     'sorl-thumbnail',
@@ -19,19 +21,24 @@ setup(
     long_description=read('README.md'),
     classifiers=[
         # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 1 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
+        'Framework :: Django :: 3.2',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Operating System :: POSIX',
-        'Operating System :: Unix',
+        'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     keywords='django ajax html5 upload widget images gallery sorting crop progress'
-             'thumbnails multiple galleryfield admin forms field',
+             'thumbnails multiple GalleryField admin forms field',
     author='Dong Zhuang',
     author_email='dzhuang.scut@gmail.com',
     url='https://github.com/dzhuang/django-gallery-widget',
