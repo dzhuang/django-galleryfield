@@ -4,6 +4,8 @@ from django.core.checks import Critical, Info
 from django.core.exceptions import (
     ImproperlyConfigured, FieldDoesNotExist, AppRegistryNotReady)
 from django.db.models import ImageField
+from django.urls import (
+    resolve, Resolver404, reverse_lazy, reverse, NoReverseMatch)
 
 from gallery import defaults
 
@@ -192,3 +194,30 @@ def get_or_check_image_field(
                 return image_field
 
     return errors
+
+
+def get_url_from_str(url_str, require_urlconf_ready=False):
+    """
+
+    :param url_str:
+    :param require_urlconf_ready: During the system loading stage,
+     We had to use ``reverse_lazy``, or else it will result in
+     circular import.
+     Ref: https://docs.djangoproject.com/en/dev/ref/urlresolvers/#reverse-lazy
+     And that means wen url_str will only be evaluated and validate
+     before requests.
+    :return: an url string or a lazy reverse object
+    """
+    if not url_str:
+        return None
+    try:
+        resolve(url_str)
+    except Resolver404:
+        if not require_urlconf_ready:
+            return reverse_lazy(url_str)
+        try:
+            return reverse(url_str)
+        except NoReverseMatch:
+            raise ImproperlyConfigured(
+                "'%s' is neither a valid url nor a valid url name" % url_str)
+    return url_str

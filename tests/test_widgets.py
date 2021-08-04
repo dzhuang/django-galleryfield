@@ -78,57 +78,60 @@ class GalleryWidgetTest(SimpleTestCase):
             self.assertNotIn(_html, output)
 
     def test_gallery_widget_render(self):
-        widget = GalleryWidget()
+        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
         image_data = [1]
         value = json.dumps(image_data)
         expected_result = (
             '<input type="hidden" name="image" value="[1]"')
         self.check_in_html(
-            widget, "image", value, strict=True,  html=[expected_result])
+            f.widget, "image", value, strict=True,  html=[expected_result])
 
     def test_gallery_widget_jquery_upload_options_max_number_of_files_overridden(self):  # noqa
         from random import randint
         max_number_of_file_ui_options_value = randint(1, 10)
-        widget = GalleryWidget(
+        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f.widget = GalleryWidget(
             jquery_upload_ui_options={
                 "maxNumberOfFiles": max_number_of_file_ui_options_value})
-        setattr(widget, "max_number_of_images", None)
-        self.check_not_in_html(widget, "image", '', html="maxNumberOfFiles")
+        setattr(f.widget, "max_number_of_images", None)
+        self.check_not_in_html(f.widget, "image", '', html="maxNumberOfFiles")
 
-        widget = GalleryWidget(
+        f.widget = GalleryWidget(
             jquery_upload_ui_options={
                 "maxNumberOfFiles": max_number_of_file_ui_options_value})
-        setattr(widget, "max_number_of_images", 0)
-        self.check_not_in_html(widget, "image", '', html="maxNumberOfFiles")
+        setattr(f.widget, "max_number_of_images", 0)
+        self.check_not_in_html(f.widget, "image", '', html="maxNumberOfFiles")
 
         max_number_of_file = randint(1, 10)
-        widget = GalleryWidget(
+        f.widget = GalleryWidget(
             jquery_upload_ui_options={"maxNumberOfFiles": 0})
 
-        setattr(widget, "max_number_of_images", max_number_of_file)
+        setattr(f.widget, "max_number_of_images", max_number_of_file)
         expected_string = "maxNumberOfFiles: %i" % max_number_of_file
-        self.check_in_html(widget, "image", '', strict=True, html=expected_string)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
 
     def test_gallery_widget_preview_size(self):
-        widget = GalleryWidget()
+        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f.widget = GalleryWidget()
         expected_string = "previewMaxWidth: %i" % conf.DEFAULT_THUMBNAIL_SIZE
-        self.check_in_html(widget, "image", '', strict=True, html=expected_string)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
 
-        widget = GalleryWidget(preview_size=130)
+        f.widget = GalleryWidget(preview_size=130)
         expected_string = "previewMaxWidth: %i" % 130
-        self.check_in_html(widget, "image", '', strict=True, html=expected_string)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
 
     def test_gallery_widget_jquery_upload_options_None(self):
-        widget = GalleryWidget()
+        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
         self.check_in_html(
-            widget, "image", '', strict=True, html="disableImageResize")
+            f.widget, "image", '', strict=True, html="disableImageResize")
 
-        widget = GalleryWidget(
+        f.widget = GalleryWidget(
             jquery_upload_ui_options={"disableImageResize": None})
-        self.check_not_in_html(widget, "image", '', html="disableImageResize")
+        self.check_not_in_html(f.widget, "image", '', html="disableImageResize")
 
     def test_gallery_widget_disabled(self):
-        widget = GalleryWidget()
+        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f.widget = GalleryWidget()
         file_upload_button = (
             '<input type="file" class="django-gallery-image-input" '
             'id="%(field_name)s-files" multiple accept="image/*" '
@@ -137,12 +140,12 @@ class GalleryWidgetTest(SimpleTestCase):
                "upload_handler_url": reverse(conf.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
         )
         self.check_in_html(
-            widget, "image", '',
+            f.widget, "image", '',
             html=[file_upload_button])
 
-        widget.attrs["readonly"] = True
+        f.widget.attrs["readonly"] = True
         self.check_not_in_html(
-            widget, "image", '',
+            f.widget, "image", '',
             # The css class of file input button
             html=["django-gallery-image-input"])
 
@@ -154,38 +157,32 @@ class GalleryWidgetTest(SimpleTestCase):
         f = GalleryFormField(disabled=True)
         self.assertFieldRendersNotIn(f, 'django-gallery-image-input')
 
-    def test_widget_conflict(self):
-        # the target image model is not the default
-        field = GalleryFormField(target_model="tests.FakeValidImageModel")
-        self.assertIsInstance(field.widget, GalleryWidget)
-        with self.assertRaises(ImproperlyConfigured) as cm:
-            self._render_widget(field.widget, "field", "")
-
-        for msg in ['You need to write your own views for your image model',
-                    'gallery_image_upload',
-                    'gallery_images_fetch',
-                    'gallery_image_crop']:
-            self.assertIn(
-                msg,
-                cm.exception.args[0])
-
-    def test_widget_conflict2(self):
+    def test_widget_render_conflict(self):
         # the target image model is not the default,
         # some of the urls are default urls
         field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         test_case = {
             "gallery_image_upload":
-                {"upload_handler_url_name": "test_image_upload"},
-            "gallery_images_crop":
-                {"crop_request_url_name": "test_image_crop"},
-            "gallery_image_fetch":
-                {"fetch_request_url_name": "test_image_fetch"}
+                {"upload_handler_url": "test_image_upload"},
+            "gallery_image_crop":
+                {"crop_request_url": "test_image_crop"},
+            "gallery_images_fetch":
+                {"fetch_request_url": "test_images_fetch"}
+        }
+
+        default_urls = {
+            "upload_handler_url": "gallery_image_upload",
+            "crop_request_url": "gallery_image_crop",
+            "fetch_request_url": "gallery_images_fetch"
         }
 
         for default, kwargs in test_case.items():
-            with self.subTest(default=default, kwargs=kwargs):
-                field.widget = GalleryWidget(**kwargs)
+            with self.subTest(default=default, url_kwargs=kwargs):
+                test_kwargs = default_urls.copy()
+                test_kwargs.update(kwargs)
+
+                field.widget = GalleryWidget(**test_kwargs)
                 with self.assertRaises(ImproperlyConfigured) as cm:
                     self._render_widget(field.widget, "field", "")
 
@@ -197,16 +194,72 @@ class GalleryWidgetTest(SimpleTestCase):
                     cm.exception.args[0]
                 )
 
+    def test_widget_disable_fetch_no_conflict(self):
+        field = GalleryFormField(target_model="tests.FakeValidImageModel")
+
+        kwargs = {
+            "upload_handler_url": "test_image_upload",
+            "crop_request_url": "gallery_image_crop",  # a conflict url
+            "fetch_request_url": "test_images_fetch",
+            "disable_server_side_crop": True
+        }
+
+        field.widget = GalleryWidget(**kwargs)
+        self._render_widget(field.widget, "field", "")
+
+    def test_widget_disable_server_side_crop_no_conflict(self):
+        field = GalleryFormField(target_model="tests.FakeValidImageModel")
+
+        kwargs = {
+            "upload_handler_url": "test_image_upload",
+            "crop_request_url": "test_image_crop",
+            "fetch_request_url": "gallery_images_fetch",  # a conflict url
+            "disable_fetch": True
+        }
+
+        field.widget = GalleryWidget(**kwargs)
+        self._render_widget(field.widget, "field", "")
+
     def test_widget_no_conflict(self):
         # the target image model and all urls are not using the default,
         field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         kwargs = {
-            "upload_handler_url_name": "test_image_upload",
-            "crop_request_url_name": "test_image_crop",
-            "fetch_request_url_name": "test_image_fetch"
+            "upload_handler_url": "test_image_upload",
+            "crop_request_url": "test_image_crop",
+            "fetch_request_url": "test_images_fetch"
         }
 
         field.widget = GalleryWidget(**kwargs)
         # No error thrown
         self._render_widget(field.widget, "field", "")
+
+    def test_widget_invalid_url(self):
+        # the target image model and all urls are not using the default,
+        field = GalleryFormField(target_model="tests.FakeValidImageModel")
+
+        kwargs = {
+            "upload_handler_url": "test_image_upload",
+            "crop_request_url": "test_image_crop",
+            "fetch_request_url": "test_images_fetch"
+        }
+
+        invalid_url_name = "invalid-url-name"
+
+        for k, v in kwargs.items():
+            with self.subTest(key=k, value=v):
+                test_kwargs = kwargs.copy()
+                test_kwargs.update({k: invalid_url_name})
+
+                field.widget = GalleryWidget(**test_kwargs)
+                with self.assertRaises(ImproperlyConfigured) as cm:
+                    self._render_widget(field.widget, "field", "")
+
+                expected_error_str = (
+                        "'%s' is invalid: %s is neither a valid url "
+                        "nor a valid url name." % (k, invalid_url_name)
+                )
+
+                self.assertIn(
+                    expected_error_str,
+                    cm.exception.args[0], cm.exception)

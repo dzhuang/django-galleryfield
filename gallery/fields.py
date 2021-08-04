@@ -9,7 +9,8 @@ from django.db.models import Case, Value, When, IntegerField
 
 from gallery import conf, defaults as gallery_widget_defaults
 from gallery.widgets import GalleryWidget
-from gallery.utils import get_or_check_image_field, apps, logger
+from gallery.utils import (
+    get_or_check_image_field, apps, logger)
 
 
 @deconstructible
@@ -206,6 +207,18 @@ class GalleryFormField(forms.JSONField):
         extra_attrs = self.widget_attrs(value) or {}
         value.attrs.update(extra_attrs)
         self._widget = value
+
+        if self.widget.upload_handler_url is None:
+            if self._image_model == conf.DEFAULT_TARGET_IMAGE_MODEL:
+                self.widget.upload_handler_url = (
+                    conf.DEFAULT_UPLOAD_HANDLER_URL_NAME)
+        if self._image_model == conf.DEFAULT_TARGET_IMAGE_MODEL:
+            if (not self.widget.disable_fetch
+                    and self.widget.fetch_request_url is None):
+                self.widget.fetch_request_url = conf.DEFAULT_FETCH_URL_NAME
+            if (not self.widget.disable_server_side_crop
+                    and self.widget.crop_request_url is None):
+                self.widget.crop_request_url = conf.DEFAULT_CROP_URL_NAME
 
         assert self.widget.max_number_of_images == self.max_number_of_images
 
