@@ -1,13 +1,16 @@
 import json
 from django import forms
 from django.forms.renderers import DjangoTemplates
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
 
 from gallery.fields import GalleryFormField
 from gallery.widgets import GalleryWidget
 from gallery import conf
+
+from tests import factories
+from tests.test_fields import DemoTestGalleryModelForm
 
 
 class GalleryWidgetTest(SimpleTestCase):
@@ -149,6 +152,26 @@ class GalleryWidgetTest(SimpleTestCase):
             # The css class of file input button
             html=["django-gallery-image-input"])
 
+    def test_gallery_widget_upload_handler_url_none(self):
+        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f.widget = GalleryWidget()
+        file_upload_button = (
+            '<input type="file" class="django-gallery-image-input" '
+            'id="%(field_name)s-files" multiple accept="image/*" '
+            'data-action="%(upload_handler_url)s">'
+            % {"field_name": "image",
+               "upload_handler_url": reverse(conf.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
+        )
+        self.check_in_html(
+            f.widget, "image", '',
+            html=[file_upload_button])
+
+        f.widget.upload_handler_url = None
+        self.check_not_in_html(
+            f.widget, "image", '',
+            # The css class of file input button
+            html=["django-gallery-image-input"])
+
     def test_disabled_widget_render(self):
         f = GalleryFormField()
         self.assertFieldRendersIn(
@@ -263,3 +286,45 @@ class GalleryWidgetTest(SimpleTestCase):
                 self.assertIn(
                     expected_error_str,
                     cm.exception.args[0], cm.exception)
+
+
+class GalleryWidgetTestExtra(TestCase):
+    # This test cases need db support
+    def setUp(self) -> None:
+        factories.UserFactory.reset_sequence()
+        factories.BuiltInGalleryImageFactory.reset_sequence()
+        factories.DemoGalleryFactory.reset_sequence()
+        self.user = factories.UserFactory()
+        super().setUp()
+
+    def test_no_fetch_request_url(self):
+        gallery_obj = factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5, shuffle=True)
+        pks = list(gallery_obj.images)
+
+        form = DemoTestGalleryModelForm(instance=gallery_obj)
+
+        rendered_js_content = "// fetching existing images"
+        rendered_js_instance_data = "(%s)" % str(pks)
+        self.assertIn(rendered_js_content, form.as_table())
+        self.assertIn(rendered_js_instance_data, form.as_table())
+
+        # now we set fetch_request_url=None to the widget
+        form.fields["images"].widget.fetch_request_url = None
+
+        self.assertNotIn(rendered_js_content, form.as_table())
+        self.assertNotIn(rendered_js_instance_data, form.as_table())
+
+    def test_no_crop_request_url(self):
+        gallery_obj = factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5, shuffle=True)
+
+        form = DemoTestGalleryModelForm(instance=gallery_obj)
+
+        # This data attribute only exists in Edit buttons
+        rendered_button_data_toggle = 'data-toggle="modal"'
+        self.assertIn(rendered_button_data_toggle, form.as_table())
+
+        # # now we set crop_request_url=None to the widget
+        form.fields["images"].widget.crop_request_url = None
+        self.assertNotIn(rendered_button_data_toggle, form.as_table())

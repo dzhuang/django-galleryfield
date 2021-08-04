@@ -56,7 +56,9 @@
                         <i class="glyphicon glyphicon-trash"></i>
                         <span>{% trans "Delete" %}</span>
                     </a>
+                    {% if upload_handler_url %}
                     <input type="checkbox" value="1" class="toggle fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}">
+                    {% endif %}
                 {% if crop_request_url %}
                 <button
                         class="btn btn-info btn-control edit"

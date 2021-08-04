@@ -22,7 +22,7 @@
 
     {{ input_string }}
 
-    {% if not uploader_disabled %}
+    {% if not uploader_disabled and upload_handler_url %}
     {% block UPLOAD_FORM_BUTTON_BAR %}
     <div class="row fileupload-buttonbar">
     {% comment %}
@@ -35,6 +35,7 @@
             {% comment %}
              The fileinput-button span is used to style the file input field as button
             {% endcomment %}
+
 
             {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
             <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
@@ -124,7 +125,6 @@
 
     </div>
     {% endblock %}
-    {% endif %}
 
     {% comment %}
      The loading indicator is shown during file processing
@@ -134,6 +134,7 @@
     <div class="fileupload-loading"></div>
     <br>
     {% endblock %}
+    {% endif %}
 
     {% block UPLOAD_FORM_LISTING %}
     {% comment %}
@@ -160,7 +161,6 @@
     <ol class="indicator"></ol>
 </div>
 {% endblock %}
-
 
 
 {% block JS_TEMPLATES %}
@@ -335,7 +335,9 @@
                 },
             });
 
-            {% if pks %}
+            {% if pks and fetch_request_url %}
+                {# Do not remove the comment below, we are using it for tests. #}
+                // fetching existing images
                 $fileupload.find(".hiddeninput").addClass("initializing");
                 $.ajax({
                     url: "{{ fetch_request_url }}",
@@ -359,7 +361,7 @@
         });
 </script>
 
-{% if not uploader_disabled %}
+{% if not uploader_disabled and upload_handler_url %}
 <script>
 {# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
 {# https://blog.csdn.net/candy_home/article/details/74440519 #}
