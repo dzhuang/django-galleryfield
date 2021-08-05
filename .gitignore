@@ -1,4 +1,13 @@
-/db.sqlite3
+*.sqlite3
 /.idea
 /.env
+/.venv
 *.pyc
+/media
+/htmlcov
+/gallery_widget
+*.egg-info
+/dist
+/build
+/.pytest_cache
+/.coverage
