@@ -43,6 +43,96 @@ css = [
 
 
 class GalleryWidget(forms.HiddenInput):
+    """This is the default widget used by :class:`gallery.fields.GalleryFormField`.
+
+    :param upload_handler_url: An URL name or an url of the upload handler
+           view used by the widget instance, defaults to `None`. If `None`, 
+           upload ui won't show upload buttons.
+    :type upload_handler_url: str, optional
+    :param fetch_request_url: An URL name or an url for fetching the existing
+           images in the gallery instance, defaults to `None`. If `None`, 
+           upload ui won't load existing images.
+    :type fetch_request_url: str, optional
+    :param crop_request_url: An URL name or an url for handling server side
+           cropping of uploaded images, defaults to None. If `None`, upload 
+           ui won't show `Edit` buttons for uploaded images.
+    :type crop_request_url: str, optional
+    :param multiple: Whether allow to select multiple image files in the 
+           file picker.
+    :type multiple: bool, optional
+    :param preview_size: The thumbnail size (both width and height), defaults 
+           to ``defaults.DEFAULT_THUMBNAIL_SIZE``, which can be overridden by
+           ``settings.DJANGO_GALLERY_WIDGET_CONFIG["thumbnails"]["size"]``.
+    :type preview_size: int, optional
+    :param template: The path of template which is used to render the widget.
+           defaults to ``gallery/widget.html``, which support template 
+           inheritance.
+    :type template: str, optional     
+    :param attrs: Html attribute when rendering the field (Which is a 
+           :class:`django.forms.HiddenInput`), defaults to `None`. See 
+           `Django docs <https://docs.djangoproject.com/en/dev/ref/forms/widgets/#django.forms.Widget.attrs>`_.
+    :type attrs: dict, optional
+    :param options: Other options when rendering the widget. Implemented options:
+
+           * **accepted_mime_types** (`list`, `optional`) - A list of MIME types
+             used to filter files when picking files with file picker, defaults to ``['image/*']``
+    :type options: dict, optional
+    :param jquery_upload_ui_options: The default template is using 
+           blueimp/jQuery-File-Upload package to render the ui and dealing with
+           AJAX upload. This param can be used to set the options. See
+           `jQuery-File-Upload Wiki <https://github.com/blueimp/jQuery-File-Upload/wiki/Options#singlefileuploads>`_
+           for all the available options. The default options can be 
+           seen in ``defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS``. Notice that
+           ``maxNumberOfFiles`` is overridden by the ``max_number_of_images`` param
+           when initializing :class:`gallery.fields.GalleryFormField`, and
+           ``previewMaxWidth`` and ``previewMaxHeight`` are overridden by
+           param ``preview_size``.
+    :type jquery_upload_ui_options: dict, optional
+    :param disable_fetch: Whether disable fetching existing images of the
+           form instance (if any), defaults to `False`. If True, the validity of
+           ``fetch_request_url`` will not be checked.
+    :type disable_fetch: bool, optional
+    :param disable_server_side_crop: Whether disable server side cropping of 
+           uploaded images, defaults to `False`. If True, the validity of
+           ``crop_request_url`` will not be checked.
+    :type disable_server_side_crop: bool, optional
+    
+    .. note:: When a :class:`gallery.fields.GalleryField` instance is initialized 
+       with `gallery.BuiltInGalleryImage`, the widget instance will 
+       automatically use URL names ``gallery_image_upload``
+       ``gallery_images_fetch`` and ``gallery_image_crop`` for 
+       ``upload_handler_url``, ``fetch_request_url`` and ``crop_request_url``,
+       respectively.
+        
+    The url params can be assigned after the formfield is initialized. For example:
+
+    .. code-block:: python
+        
+        class MyGalleryForm(forms.ModelForm):
+            class Meta:
+                model = MyGallery
+                fields = ["images"]
+        
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.fields["images"].widget.upload_handler_url = "my-upload-handler"
+    
+    The validity of the url params will be checked during rendering.
+    
+    .. warning:: You NEED to make sure all the urls in the widget are
+       handling the corresponding ``target_model`` instances before put into
+       production. As a minimal precaution, 
+       when a :class:`gallery.fields.GalleryField` instance (
+       or a :class:`gallery.fields.GalleryFormField` instance) is
+       **NOT** initialized with `gallery.BuiltInGalleryImage`, assigning 
+       built-in urls (
+       i.e., ``gallery_image_upload``, ``gallery_images_fetch`` and 
+       ``gallery_image_crop``) widget url params will raise `ImproperlyConfigured`
+       errors when rendering. The reason is, those built-in views are dealing with
+       built-in ``gallery.models.BuiltInGalleryImage`` instances.
+    
+    """  # noqa
+
     def __init__(
             self,
             upload_handler_url=None,
