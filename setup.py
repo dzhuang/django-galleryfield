@@ -18,8 +18,8 @@ setup(
     name='django-gallery-widget',
     version=version,
     description="Django AJAX upload widget and model field for multiple images, featuring drag & drop uploading, upload progress bar, sortable and croppable image gallery",
-    long_description_content_type="text/markdown",
-    long_description=read('README.md'),
+    long_description_content_type="text/x-rst",
+    long_description=read('README.rst'),
     classifiers=[
         # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Development Status :: 4 - Beta',
