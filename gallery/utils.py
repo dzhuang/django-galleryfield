@@ -1,5 +1,6 @@
 import logging
 
+from django.apps import apps
 from django.core.checks import Critical, Info
 from django.core.exceptions import (
     ImproperlyConfigured, FieldDoesNotExist, AppRegistryNotReady)
@@ -8,11 +9,6 @@ from django.urls import (
     resolve, Resolver404, reverse_lazy, reverse, NoReverseMatch)
 
 from gallery import defaults
-
-try:
-    from django.apps import apps  # noqa
-except ImportError:
-    from django.apps import django_apps as apps  # noqa
 
 
 logger = logging.getLogger('django-gallery-widget')
