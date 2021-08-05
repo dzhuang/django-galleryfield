@@ -118,8 +118,13 @@ def get_cropped_file(request, instance, cropped_result,
     new_image_io = BytesIO()
     new_image.save(new_image_io, format=image_format)
 
+    # Notice: we don't change the user_field to request.user, or else
+    # superuser cropping will take the ownership of the image, and
+    # result in permission error for the actual owner to visit
+    # the image.
     new_instance = instance
     new_instance.pk = None
+
     setattr(new_instance, user_field_name, request.user)
 
     new_instance_image_field = getattr(new_instance, image_field_name)
