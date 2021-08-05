@@ -10,9 +10,9 @@ from django.urls import (
 from gallery import defaults
 
 try:
-    from django.apps import apps  # noqa pragma: no cover
-except ImportError:  # noqa pragma: no cover
-    from django.apps import django_apps as apps  # noqa pragma: no cover
+    from django.apps import apps  # noqa
+except ImportError:
+    from django.apps import django_apps as apps  # noqa
 
 
 logger = logging.getLogger('django-gallery-widget')
