@@ -37,19 +37,25 @@ def convert_dict_to_plain_text(d, indent=4):
 def get_or_check_image_field(
         target_app_model_str, check_id_prefix, location=None, obj=None,
         is_checking=False, log_if_using_default_in_checks=False):
-    """
-    Get the image field from target image model, or check if the params will work
+    """Get the image field from target image model, or check if the params will work
     in the model during model.check().
+
     :param target_app_model_str: a string or ``None``. If ``None``,
       ``defaults.DEFAULT_TARGET_IMAGE_MODEL`` will be used.
+    :type target_app_model_str: str
     :param check_id_prefix: This function will be used both in system checks and
       model checks. They will use different check message id.
+    :type check_id_prefix: str
     :param location:  Where the check error is detected, used for system checks.
+    :type location: str, optional
     :param obj: Where the check error is detected, used for model checks.
-    :param is_checking: whether this function is used in checks.
-    :param log_if_using_default_in_checks:  Whether log the Information that the
+    :type obj: object, optional
+    :param is_checking: whether this function is used in checks, defaults to False
+    :type is_checking: bool, optional.
+    :param log_if_using_default_in_checks: Whether log the Information that the
       ``conf.DEFAULT_TARGET_IMAGE_MODEL`` is used as ``target_app_model_str`` is
       set to ``None``. This will only be ``True`` for model checks.
+    :type log_if_using_default_in_checks: bool, optional
     :return: when ``is_checking`` is ``False``, we were getting the image field from
       the target image model. if any errors this will return ``None``, and the errors
       will be raised in model checks, i.e., when ``is_checking`` is ``True``.
