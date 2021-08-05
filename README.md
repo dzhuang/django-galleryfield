@@ -1,5 +1,5 @@
-Django-Gallery-Widget
-===================
+django-gallery-widget
+======================
 
 [![codecov](https://codecov.io/gh/dzhuang/django-gallery-widget/branch/main/graph/badge.svg)](https://codecov.io/gh/dzhuang/django-gallery-widget)
 
@@ -50,7 +50,7 @@ Quick Start
 
 ### Install ###
 
-    pip install git+git://github.com/dzhuang/django-gallery-widget.git
+    pip install django-gallery-widget.git
 
 ### In `settings.py` ###
 
