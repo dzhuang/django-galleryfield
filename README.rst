@@ -44,7 +44,7 @@ Quick Start
 Requirements
 ~~~~~~~~~~~~
 
--  Django 3.2 or later
+-  Django 3.1 or later
 -  `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`__
 -  `pillow <https://github.com/python-imaging/Pillow>`__ (or PIL)
 -  Bootstrap 3 or later (included)

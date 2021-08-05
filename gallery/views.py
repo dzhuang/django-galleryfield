@@ -6,11 +6,11 @@ from urllib.parse import unquote
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.utils.translation import gettext
 from django.views.decorators.http import require_POST, require_GET
 from django.db.models import Case, Value, When, IntegerField
-from django.core.exceptions import PermissionDenied, BadRequest
+from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 
 from sorl.thumbnail import get_thumbnail
@@ -143,7 +143,8 @@ def get_cropped_file(request, instance, cropped_result,
 def upload(request, *args, **kwargs):
     file = request.FILES['files[]'] if request.FILES else None
     if not file or not is_image(file):
-        raise BadRequest(gettext("Only images are allowed to be uploaded"))
+        return HttpResponseBadRequest(
+            gettext("Only images are allowed to be uploaded"))
 
     preview_size = request.POST.get('preview_size', conf.DEFAULT_THUMBNAIL_SIZE)
 
@@ -164,7 +165,7 @@ def upload(request, *args, **kwargs):
 def fetch(request):
     pks = request.GET.get("pks", None)
     if not pks:
-        raise BadRequest()
+        return HttpResponseBadRequest()
 
     preview_size = request.GET.get('preview_size', conf.DEFAULT_THUMBNAIL_SIZE)
 
