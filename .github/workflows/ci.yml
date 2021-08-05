@@ -43,6 +43,12 @@ jobs:
       - uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('tests/requirements_test.txt') }}-${{ matrix.django-version }}
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
