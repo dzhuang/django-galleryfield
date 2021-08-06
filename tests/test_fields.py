@@ -1,9 +1,12 @@
+import random
+
 from django import forms
 from django.db import models
 from django.forms import ValidationError
+from django.core.exceptions import ImproperlyConfigured
+from django.forms.widgets import Textarea
 from django.test import TestCase
 from django.test.utils import isolate_apps, override_settings
-from django.core.exceptions import ImproperlyConfigured
 
 from unittest import mock
 
@@ -82,7 +85,7 @@ class GalleryFieldTest(TestCase):
 
         self.assertEqual(DemoGallery.objects.count(), 1)
         new_images = DemoGallery.objects.first().images
-        self.assertIsNone(new_images)
+        self.assertEqual(new_images, [])
 
     def test_form_replace_null(self):
         instance = DemoGalleryFactory.create(creator=self.user)
@@ -100,7 +103,7 @@ class GalleryFieldTest(TestCase):
 
         self.assertEqual(DemoGallery.objects.count(), 1)
         new_images = DemoGallery.objects.first().images
-        self.assertIsNone(new_images)
+        self.assertEqual(new_images, [])
 
     def test_form_invalid(self):
         instance = DemoGalleryFactory.create(creator=self.user)
@@ -303,6 +306,62 @@ class GalleryFormFieldTest(TestCase):
         self.assertEqual(field.widget.widget_belongs_to, str(field))
         self.assertEqual(field.widget.attrs, old_widget.attrs)
         self.assertEqual(field.widget.is_required, False)
+
+    def test_gallery_form_field_textarea_widget_attribute_updated(self):
+        form = DemoTestGalleryModelForm()
+
+        max_n_of_images = random.randint(6, 10)
+
+        # We set the max_number_of_images before change the widget,
+        # to test after widget change, the attribute also exists
+        form.fields["images"].max_number_of_images = max_n_of_images
+
+        form.fields["images"].widget = Textarea()
+
+        self.assertEqual(
+            form.fields["images"].widget.max_number_of_images, max_n_of_images)
+
+    def test_gallery_form_field_textarea_widget_max_number_of_images_validate(self):
+        # create a gallery with 5 images pk randomized
+        my_gallery = factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5, shuffle=True)
+
+        form = DemoTestGalleryModelForm(data={"images": my_gallery.images})
+
+        max_n_of_images = 2
+        form.fields["images"].max_number_of_images = max_n_of_images
+        form.fields["images"].widget = Textarea()
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("Number of images exceeded, only 2 allowed", str(form.errors))
+
+    def test_gallery_form_field_textarea_widget_value_render(self):
+        # create a gallery with 5 images pk randomized
+        my_gallery = factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5, shuffle=True)
+
+        form = DemoTestGalleryModelForm(instance=my_gallery)
+
+        image_pks = my_gallery.images
+        self.assertIn(str(image_pks), form.as_table())
+
+    def test_gallery_form_field_textarea_widget_value_sequence(self):
+        # create a gallery with 5 images pk randomized
+        my_gallery = factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5, shuffle=True)
+
+        image_pks = my_gallery.images
+        original_image_pks = image_pks[:]
+
+        # Here we shuffle the image_pk, and submit it as the form data
+        while True:
+            random.shuffle(image_pks)
+            if image_pks != original_image_pks:
+                break
+
+        form = DemoTestGalleryModelForm(data={"images": image_pks})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["images"], image_pks)
 
 
 class GalleryFieldCheckTest(TestCase):

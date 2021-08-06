@@ -39,8 +39,7 @@ class GalleryDescriptor(DeferredAttribute):
     def __get__(self, instance, cls=None):
         image_list = super().__get__(instance, cls)
 
-        if (isinstance(image_list, list)
-                and not isinstance(image_list, GalleryImageList)):
+        if not isinstance(image_list, GalleryImageList):
             attr = self.field.attr_class(instance, self.field, image_list)
             instance.__dict__[self.field.name] = attr
 
@@ -49,10 +48,13 @@ class GalleryDescriptor(DeferredAttribute):
 
 class GalleryImageList(list):
     def __init__(self, instance, field, field_value):
+        # When field_value is None,
+        # (This happens when the GalleryField was saved as null)
+        field_value = field_value or []
         super().__init__(field_value)
         self._field = field
         self.instance = instance
-        self._value = field_value
+        self._value = field_value or []
 
     @property
     def objects(self):
@@ -205,6 +207,9 @@ class GalleryFormField(forms.JSONField):
         value.attrs.update(extra_attrs)
         self._widget = value
 
+        if not isinstance(self.widget, GalleryWidget):
+            return
+
         if self.widget.upload_handler_url is None:
             if self._image_model == conf.DEFAULT_TARGET_IMAGE_MODEL:
                 self.widget.upload_handler_url = (
@@ -216,8 +221,6 @@ class GalleryFormField(forms.JSONField):
             if (not self.widget.disable_server_side_crop
                     and self.widget.crop_request_url is None):
                 self.widget.crop_request_url = conf.DEFAULT_CROP_URL_NAME
-
-        assert self.widget.max_number_of_images == self.max_number_of_images
 
     @property
     def max_number_of_images(self):
