@@ -3,11 +3,6 @@ from . import defaults
 
 """
 DJANGO_GALLERY_WIDGET_CONFIG = {
-    "default_urls":
-        {"upload_handler_url_name": "gallery_image_upload",
-         "fetch_url_name": "gallery_images_fetch",
-         "crop_url_name": "gallery_image_crop"},
-    "default_target_image_model": "gallery.BuiltInGalleryImage",
     "assets": {
         "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
         "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
@@ -26,18 +21,6 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
 
 
 _APP_CONFIG = getattr(settings, "DJANGO_GALLERY_WIDGET_CONFIG", {})
-
-_APP_CONFIG_URLS = _APP_CONFIG.get("default_urls", {})
-DEFAULT_UPLOAD_HANDLER_URL_NAME = _APP_CONFIG_URLS.get(
-    "upload_handler_url_name", defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)
-DEFAULT_CROP_URL_NAME = _APP_CONFIG_URLS.get(
-    "crop_url_name", defaults.DEFAULT_CROP_URL_NAME)
-DEFAULT_FETCH_URL_NAME = _APP_CONFIG_URLS.get(
-    "fetch_image_url_name", defaults.DEFAULT_FETCH_URL_NAME
-)
-
-DEFAULT_TARGET_IMAGE_MODEL = _APP_CONFIG.get(
-    "default_target_image_model", defaults.DEFAULT_TARGET_IMAGE_MODEL)
 
 _APP_CONFIG_ASSETS = _APP_CONFIG.get("assets", {})
 BOOTSTRAP_JS_PATH = _APP_CONFIG_ASSETS.get(

@@ -1,21 +1,13 @@
 from django.conf import settings
 from django.core import checks
-from django.urls import reverse
 
 from gallery.utils import (
     DJGalleryCriticalCheckMessage, INSTANCE_ERROR_PATTERN,
-    GENERIC_ERROR_PATTERN,
-    get_or_check_image_field, apps
+    GENERIC_ERROR_PATTERN, apps
 )
 
 
 DJANGO_GALLERY_WIDGET_CONFIG = "DJANGO_GALLERY_WIDGET_CONFIG"
-DEFAULT_URLS = "default_urls"
-UPLOAD_HANDLER_URL_NAME = "upload_handler_url_name"
-FETCH_URL_NAME = "fetch_url_name"
-CROP_URL_NAME = "crop_url_name"
-
-DEFAULT_TARGET_IMAGE_MODEL = "default_target_image_model"
 
 ASSETS = "assets"
 BOOTSTRAP_JS_PATH = "bootstrap_js_path"
@@ -60,104 +52,6 @@ def check_settings(app_configs, **kwargs):
             id="django-gallery-widget.E002"
         ))
         return errors
-
-    default_urls = conf.get(DEFAULT_URLS, None)
-    if default_urls is not None:
-        if not isinstance(default_urls, dict):
-            errors.append(DJGalleryCriticalCheckMessage(
-                msg=(INSTANCE_ERROR_PATTERN
-                     % {"location": "'%s' in '%s'" % (
-                            DEFAULT_URLS, DJANGO_GALLERY_WIDGET_CONFIG),
-                        "types": "dict"}),
-                id="django-gallery-widget-default_urls.E001"
-            ))
-        else:
-            upload_handler_url_name = default_urls.get(UPLOAD_HANDLER_URL_NAME,
-                                                       None)
-            if upload_handler_url_name is not None:
-                if not isinstance(upload_handler_url_name, str):
-                    errors.append(DJGalleryCriticalCheckMessage(
-                        msg=(INSTANCE_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
-                                    UPLOAD_HANDLER_URL_NAME, DEFAULT_URLS,
-                                    DJANGO_GALLERY_WIDGET_CONFIG),
-                                "types": "str"}),
-                        id="django-gallery-widget-default_urls.E002"
-                    ))
-                else:
-                    try:
-                        reverse(upload_handler_url_name)
-                    except Exception as e:
-                        errors.append(DJGalleryCriticalCheckMessage(
-                            msg=(GENERIC_ERROR_PATTERN
-                                 % {"location": "'%s' in '%s' in '%s'" % (
-                                        UPLOAD_HANDLER_URL_NAME, DEFAULT_URLS,
-                                        DJANGO_GALLERY_WIDGET_CONFIG),
-                                    "error_type": type(e).__name__,
-                                    "error_str": str(e)}),
-                            id="django-gallery-widget-default_urls.E003"
-                        ))
-
-            crop_url_name = default_urls.get(CROP_URL_NAME, None)
-            if crop_url_name is not None:
-                if not isinstance(crop_url_name, str):
-                    errors.append(DJGalleryCriticalCheckMessage(
-                        msg=(INSTANCE_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
-                                    CROP_URL_NAME, DEFAULT_URLS,
-                                    DJANGO_GALLERY_WIDGET_CONFIG),
-                                "types": "str"}),
-                        id="django-gallery-widget-default_urls.E004"
-                    ))
-                else:
-                    try:
-                        reverse(crop_url_name)
-                    except Exception as e:
-                        errors.append(DJGalleryCriticalCheckMessage(
-                            msg=(GENERIC_ERROR_PATTERN
-                                 % {"location": "'%s' in '%s' in '%s'" % (
-                                        CROP_URL_NAME, DEFAULT_URLS,
-                                        DJANGO_GALLERY_WIDGET_CONFIG),
-                                    "error_type": type(e).__name__,
-                                    "error_str": str(e)}),
-                            id="django-gallery-widget-default_urls.E005"
-                        ))
-
-            fetch_url_name = default_urls.get(FETCH_URL_NAME, None)
-            if fetch_url_name is not None:
-                if not isinstance(fetch_url_name, str):
-                    errors.append(DJGalleryCriticalCheckMessage(
-                        msg=(INSTANCE_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
-                                    FETCH_URL_NAME, DEFAULT_URLS,
-                                    DJANGO_GALLERY_WIDGET_CONFIG),
-                                "types": "str"}),
-                        id="django-gallery-widget-default_urls.E006"
-                    ))
-                else:
-                    try:
-                        reverse(fetch_url_name)
-                    except Exception as e:
-                        errors.append(DJGalleryCriticalCheckMessage(
-                            msg=(GENERIC_ERROR_PATTERN
-                                 % {"location": "'%s' in '%s' in '%s'" % (
-                                        FETCH_URL_NAME, DEFAULT_URLS,
-                                        DJANGO_GALLERY_WIDGET_CONFIG),
-                                    "error_type": type(e).__name__,
-                                    "error_str": str(e)}),
-                            id="django-gallery-widget-default_urls.E007"
-                        ))
-
-    default_target_image_model = conf.get(DEFAULT_TARGET_IMAGE_MODEL, None)
-    location = "'%s' in '%s'" % (
-        DEFAULT_TARGET_IMAGE_MODEL, DJANGO_GALLERY_WIDGET_CONFIG)
-
-    errors.extend(get_or_check_image_field(
-        target_app_model_str=default_target_image_model,
-        location=location,
-        check_id_prefix="django-gallery-widget-default_target_image_model",
-        is_checking=True
-    ))
 
     assets = conf.get(ASSETS, None)
     if assets is not None:
