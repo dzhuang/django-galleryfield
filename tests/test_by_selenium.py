@@ -1,4 +1,3 @@
-import re
 from time import sleep
 from urllib.parse import urljoin
 
@@ -18,9 +17,6 @@ from demo.models import DemoGallery
 CHROMIUM = "chromium"
 FIREFOX = "firefox"
 SELENIUM_BROWSER = CHROMIUM
-
-
-GALLERY_IMAGE_OBJ_PATTERN = re.compile("BuiltInGalleryImage: BuiltInGalleryImage")
 
 
 @override_settings(MEDIA_ROOT=test_media_root)
@@ -118,11 +114,6 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
         self._submit_page()
         self.assertEqual(DemoGallery.objects.count(), 1)
         self.assertEqual(DemoGallery.objects.first().images.objects.count(), 2)
-        self.assertEqual(
-            len(re.findall(
-                GALLERY_IMAGE_OBJ_PATTERN,
-                str(DemoGallery.objects.first().images))),
-            2)
         self._go_to_gallery_detail(DemoGallery.objects.first().pk)
 
     def test_delete_image(self):
@@ -144,11 +135,6 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
         # Because this is the last image, delete is not allowed
         # because this field is required
         self.assertEqual(DemoGallery.objects.first().images.objects.count(), 1)
-        self.assertEqual(
-            len(re.findall(
-                GALLERY_IMAGE_OBJ_PATTERN,
-                str(DemoGallery.objects.first().images))),
-            1)
 
     def test_delete_one_before_saving(self):
         self.assertEqual(DemoGallery.objects.count(), 0)

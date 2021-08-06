@@ -67,9 +67,6 @@ class GalleryImageList(list):
         queryset = queryset.annotate(_order=case).order_by('_order')
         return queryset
 
-    def __str__(self):
-        return str(self.objects)
-
 
 class GalleryField(models.JSONField):
     attr_class = GalleryImageList
