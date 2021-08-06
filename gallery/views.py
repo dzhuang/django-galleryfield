@@ -31,6 +31,21 @@ def is_image(file_obj):
 
 def get_serialized_image(instance, image_field_name="image",
                          preview_size=conf.DEFAULT_THUMBNAIL_SIZE):
+    """
+    This is a method to get a serialized dict of a image instance.
+    :param instance: an image model instance.
+    :type instance: object
+    :param image_field_name: the field name of the imageField,
+           defaults to "image"
+    :type image_field_name: str, optional
+    :param preview_size: the thumbnail size, defaults to
+           ``defaults.DEFAULT_THUMBNAIL_SIZE``, which can be
+           overridden by
+           ``settings.DJANGO_GALLERY_WIDGET_CONFIG["thumbnails"]["size"]``
+    :type preview_size: int, optional
+    :return: a dict, the serialized dict of a image instance
+    """  # noqa
+
     image = getattr(instance, image_field_name)
 
     return {
@@ -81,6 +96,16 @@ class CropImageError(Exception):
 
 def get_cropped_file(request, instance, cropped_result,
                      image_field_name, user_field_name, preview_size):
+    """
+
+    :param request:
+    :param instance:
+    :param cropped_result:
+    :param image_field_name:
+    :param user_field_name:
+    :param preview_size:
+    :return:
+    """
 
     try:
         x = int(float(cropped_result['x']))
