@@ -13,6 +13,7 @@ Welcome to django-gallery-widget's documentation!
    intro
    fields
    widget
+   settings
 
 
 Indices and tables

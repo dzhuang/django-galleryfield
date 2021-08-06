@@ -32,7 +32,8 @@ def is_image(file_obj):
 def get_serialized_image(instance, image_field_name="image",
                          preview_size=conf.DEFAULT_THUMBNAIL_SIZE):
     """
-    This is a method to get a serialized dict of a image instance.
+    A handy method to get a serialized dict of a image instance.
+
     :param instance: an image model instance.
     :type instance: object
     :param image_field_name: the field name of the imageField,

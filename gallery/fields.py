@@ -39,14 +39,14 @@ class GalleryDescriptor(DeferredAttribute):
     def __get__(self, instance, cls=None):
         image_list = super().__get__(instance, cls)
 
-        if not isinstance(image_list, GalleryImageList):
+        if not isinstance(image_list, GalleryImages):
             attr = self.field.attr_class(instance, self.field, image_list)
             instance.__dict__[self.field.name] = attr
 
         return instance.__dict__[self.field.name]
 
 
-class GalleryImageList(list):
+class GalleryImages(list):
     def __init__(self, instance, field, field_value):
         # When field_value is None,
         # (This happens when the GalleryField was saved as null)
@@ -73,7 +73,7 @@ class GalleryImageList(list):
 class GalleryField(models.JSONField):
     """This is a model field which saves the id of images.
 
-    :param target_model: A string in the form of ``app_label.model_name``,
+    :param target_model: A string in the form of ``"app_label.model_name"``,
            which can be loaded by :meth:`django.apps.get_model` (see 
            `Django docs <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_),
            defaults to `None`. If `None`, ``gallery.BuiltInGalleryImage``,
@@ -85,10 +85,10 @@ class GalleryField(models.JSONField):
 
     A valid ``target_model`` need to meet one of the following 2 requirements:
 
-    1. It has a :class:`django.db.models.ImageField` named `"image"` 
+    1. It has a :class:`django.db.models.ImageField` named ``image`` 
 
-    2. It has a :class:`django.db.models.ImageField` which not named `"image"`
-       but the field can be accessed by a classmethod named `"get_image_field"`,
+    2. It has a :class:`django.db.models.ImageField` which not named ``image``
+       but the field can be accessed by a `classmethod` :meth:`get_image_field`,
        for example:
 
     .. code-block:: python
@@ -104,9 +104,15 @@ class GalleryField(models.JSONField):
             def get_image_field(cls):
                 return cls._meta.get_field("photo")
 
+    .. note:: As demonstrated in above example, when defining the :meth:`get_image_field`,
+       we can't simply ``return cls.photo`` because it
+       returns a :class:`django.db.models.fields.files.ImageFieldFile`
+       object instead of a :class:`django.db.models.ImageField` object.
+ 
+
     """  # noqa
 
-    attr_class = GalleryImageList
+    attr_class = GalleryImages
     descriptor_class = GalleryDescriptor
 
     def contribute_to_class(self, cls, name, private_only=False):
@@ -167,7 +173,7 @@ class GalleryFormField(forms.JSONField):
            to `None`, which means unlimited.
     :type max_number_of_images: int, optional.
 
-    :param kwargs: Besides the kwargs from parent class, the following were added:
+    :param kwargs: Besides the options from parent class, the following were added:
 
            * target_model: str, a valid target image model which can be loaded by
              ``apps.get_model``. When this field is used in the model form,
