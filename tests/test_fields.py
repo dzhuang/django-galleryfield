@@ -398,6 +398,18 @@ class GalleryFieldCheckTest(TestCase):
         self.assertEqual(errors[0].id, "gallery_field.E002")
 
     @isolate_apps("tests")
+    def test_field_checks_use_invalid_target_object(self):
+        from tests.models import FakeValidImageModel
+
+        class MyModel(models.Model):
+            field = GalleryField(target_model=FakeValidImageModel)
+
+        model = MyModel()
+        errors = model.check()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].id, "gallery_field.E001")
+
+    @isolate_apps("tests")
     def test_field_checks_use_invalid_get_image_field_method(self):
 
         class MyModel(models.Model):
@@ -407,6 +419,28 @@ class GalleryFieldCheckTest(TestCase):
         errors = model.check()
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0].id, "gallery_field.E003")
+
+    @isolate_apps("tests")
+    def test_field_checks_use_get_image_field_method_not_callable(self):
+
+        class MyModel(models.Model):
+            field = GalleryField(target_model="tests.FakeInvalidImageModel4")
+
+        model = MyModel()
+        errors = model.check()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].id, "gallery_field.E005")
+
+    @isolate_apps("tests")
+    def test_field_checks_use_get_image_field_method_not_imagefield(self):
+
+        class MyModel(models.Model):
+            field = GalleryField(target_model="tests.FakeInvalidImageModel3")
+
+        model = MyModel()
+        errors = model.check()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].id, "gallery_field.E005")
 
     @isolate_apps("tests")
     # Here we are not loading "demo", while use MyImageModel

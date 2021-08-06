@@ -7,7 +7,7 @@ from django.core.validators import BaseValidator
 from django.db.models.query_utils import DeferredAttribute
 from django.db.models import Case, Value, When, IntegerField
 
-from gallery import conf, defaults as gallery_widget_defaults
+from gallery import conf, defaults as _defaults
 from gallery.widgets import GalleryWidget
 from gallery.utils import (
     get_or_check_image_field, apps, logger)
@@ -122,7 +122,7 @@ class GalleryField(models.JSONField):
     def __init__(self, target_model=None, *args, **kwargs):
         self._init_target_model = self.target_model = target_model
         if target_model is None:
-            self.target_model = conf.DEFAULT_TARGET_IMAGE_MODEL
+            self.target_model = _defaults.DEFAULT_TARGET_IMAGE_MODEL
 
         self.target_model_image_field = (
             self._get_image_field_or_test(is_checking=False))
@@ -131,10 +131,10 @@ class GalleryField(models.JSONField):
 
     def _get_image_field_or_test(self, is_checking=False):
         return get_or_check_image_field(
-            target_app_model_str=self._init_target_model,
+            obj=self,
+            target_model=self._init_target_model,
             check_id_prefix="gallery_field",
-            obj=self, is_checking=is_checking,
-            log_if_using_default_in_checks=True)
+            is_checking=is_checking)
 
     def check(self, **kwargs):
         errors = super().check(**kwargs)
@@ -150,7 +150,7 @@ class GalleryField(models.JSONField):
         return name, path, args, kwargs
 
     def formfield(self, **kwargs):
-        _defaults = ({
+        defaults = ({
             "required": True,
 
             # The following 2 are used to validate GalleryWidget params
@@ -158,10 +158,10 @@ class GalleryField(models.JSONField):
             "target_model": self.target_model,
             "model_field": str(self)
         })
-        _defaults.update(kwargs)
+        defaults.update(kwargs)
         formfield = super().formfield(**{
             'form_class': GalleryFormField,
-            **_defaults,
+            **defaults,
         })
         return formfield
 
@@ -208,18 +208,17 @@ class GalleryFormField(forms.JSONField):
         if self._image_model is None:
             # This happens when the formfield is used in a Non-model form
             image_model_not_configured = True
-            self._image_model = conf.DEFAULT_TARGET_IMAGE_MODEL
+            self._image_model = _defaults.DEFAULT_TARGET_IMAGE_MODEL
 
         # Make sure the model is valid target image model
-        if (self._image_model
-                != gallery_widget_defaults.DEFAULT_TARGET_IMAGE_MODEL
+        if (self._image_model != _defaults.DEFAULT_TARGET_IMAGE_MODEL
                 or image_model_not_configured):
             errors = get_or_check_image_field(
-                target_app_model_str=(
+                obj=self,
+                target_model=(
                     None if image_model_not_configured else self._image_model),
                 check_id_prefix="gallery_form_field",
-                obj=self, is_checking=True,
-                log_if_using_default_in_checks=True)
+                is_checking=True)
             for error in errors:
                 if error.is_serious():
                     raise ImproperlyConfigured(str(error))
@@ -259,16 +258,16 @@ class GalleryFormField(forms.JSONField):
             return
 
         if self.widget.upload_handler_url is None:
-            if self._image_model == conf.DEFAULT_TARGET_IMAGE_MODEL:
+            if self._image_model == _defaults.DEFAULT_TARGET_IMAGE_MODEL:
                 self.widget.upload_handler_url = (
-                    conf.DEFAULT_UPLOAD_HANDLER_URL_NAME)
-        if self._image_model == conf.DEFAULT_TARGET_IMAGE_MODEL:
+                    _defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)
+        if self._image_model == _defaults.DEFAULT_TARGET_IMAGE_MODEL:
             if (not self.widget.disable_fetch
                     and self.widget.fetch_request_url is None):
-                self.widget.fetch_request_url = conf.DEFAULT_FETCH_URL_NAME
+                self.widget.fetch_request_url = _defaults.DEFAULT_FETCH_URL_NAME
             if (not self.widget.disable_server_side_crop
                     and self.widget.crop_request_url is None):
-                self.widget.crop_request_url = conf.DEFAULT_CROP_URL_NAME
+                self.widget.crop_request_url = _defaults.DEFAULT_CROP_URL_NAME
 
     @property
     def max_number_of_images(self):

@@ -34,42 +34,30 @@ def convert_dict_to_plain_text(d, indent=4):
     return "\n".join(result)
 
 
-def get_or_check_image_field(
-        target_app_model_str, check_id_prefix, location=None, obj=None,
-        is_checking=False, log_if_using_default_in_checks=False):
+def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=False):
     """Get the image field from target image model, or check if the params will work
     in the model during model.check().
 
-    :param target_app_model_str: a string or ``None``. If ``None``,
-      ``defaults.DEFAULT_TARGET_IMAGE_MODEL`` will be used.
-    :type target_app_model_str: str
-    :param check_id_prefix: This function will be used both in system checks and
-      model checks. They will use different check message id.
-    :type check_id_prefix: str
-    :param location:  Where the check error is detected, used for system checks.
-    :type location: str, optional
+    :param target_model: a string or ``None``. If ``None``,
+           ``defaults.DEFAULT_TARGET_IMAGE_MODEL`` will be used.
+    :type target_model: str
+    :param check_id_prefix: The function will be used in model checks and formfield
+           checks . They will use different check message id.
     :param obj: Where the check error is detected, used for model checks.
-    :type obj: object, optional
-    :param is_checking: whether this function is used in checks, defaults to False
-    :type is_checking: bool, optional.
-    :param log_if_using_default_in_checks: Whether log the Information that the
-      ``conf.DEFAULT_TARGET_IMAGE_MODEL`` is used as ``target_app_model_str`` is
-      set to ``None``. This will only be ``True`` for model checks.
-    :type log_if_using_default_in_checks: bool, optional
+    :param is_checking: whether this function is used in checks.
     :return: when ``is_checking`` is ``False``, we were getting the image field from
       the target image model. if any errors this will return ``None``, and the errors
       will be raised in model checks, i.e., when ``is_checking`` is ``True``.
     """
 
-    assert location or obj
     errors = []
-    target_model = None
+    target_model_klass = None
     will_proceed_checking_target_model_image_fields = True
-    if target_app_model_str is not None:
-        if not isinstance(target_app_model_str, str):
+    if target_model is not None:
+        if not isinstance(target_model, str):
             errors.append(DJGalleryCriticalCheckMessage(
                 msg=(INSTANCE_ERROR_PATTERN
-                     % {"location": location or str(obj),
+                     % {"location": str(obj),
                         "types": "str"}),
                 id="%s.E001" % check_id_prefix,
                 obj=obj
@@ -77,7 +65,7 @@ def get_or_check_image_field(
             will_proceed_checking_target_model_image_fields = False
         else:
             try:
-                target_model = apps.get_model(target_app_model_str)
+                target_model_klass = apps.get_model(target_model)
             except AppRegistryNotReady:
                 # Preventing from failing in field initialization
                 # We will raise that in field check
@@ -86,9 +74,11 @@ def get_or_check_image_field(
             except Exception as e:
                 if not is_checking:
                     return None
+
+                # todo: add doc ref in the error
                 errors.append(DJGalleryCriticalCheckMessage(
                     msg=(GENERIC_ERROR_PATTERN
-                         % {"location": location or str(obj),
+                         % {"location": str(obj),
                             "error_type": type(e).__name__,
                             "error_str": str(e)}
                          + "\n See "
@@ -101,10 +91,10 @@ def get_or_check_image_field(
                 will_proceed_checking_target_model_image_fields = False
 
     if will_proceed_checking_target_model_image_fields:
-        if target_model is None:
-            target_app_model_str = defaults.DEFAULT_TARGET_IMAGE_MODEL
+        if target_model_klass is None:
+            target_model = defaults.DEFAULT_TARGET_IMAGE_MODEL
             try:
-                target_model = apps.get_model(target_app_model_str)
+                target_model_klass = apps.get_model(target_model)
             except AppRegistryNotReady:
                 assert not is_checking
                 # Preventing from failing in field initialization
@@ -112,28 +102,27 @@ def get_or_check_image_field(
                 return None
             # Here we assume defaults.DEFAULT_TARGET_IMAGE_MODEL will always work
             else:
-                if log_if_using_default_in_checks:
-                    errors.append(Info(
-                        msg=('"target_model" is set to None, '
-                             '"%(default)s" is used as default.'
-                             % {"default": defaults.DEFAULT_TARGET_IMAGE_MODEL}
-                             ),
-                        id="%s.I001" % check_id_prefix,
-                        obj=obj
-                    ))
+                errors.append(Info(
+                    msg=('"target_model" is set to None, '
+                         '"%(default)s" is used as default.'
+                         % {"default": defaults.DEFAULT_TARGET_IMAGE_MODEL}
+                         ),
+                    id="%s.I001" % check_id_prefix,
+                    obj=obj
+                ))
 
         get_image_field_class_method = None
         get_image_field_class_method_raised_error = False
         try:
             image_field = (
-                target_model._meta.get_field(
+                target_model_klass._meta.get_field(
                     defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME))
             if type(image_field) is not ImageField:
                 raise FieldDoesNotExist()
         except FieldDoesNotExist:
             image_field = None
-            get_image_field_class_method = getattr(target_model,
-                                                   "get_image_field", None)
+            get_image_field_class_method = (
+                getattr(target_model_klass, "get_image_field", None))
             if get_image_field_class_method is not None:
                 if callable(get_image_field_class_method):
                     try:
@@ -147,8 +136,8 @@ def get_or_check_image_field(
                             msg=('Error in %(location)s: model %(model)s defined '
                                  '"get_image_field" method failed with'
                                  ' %(exception)s: %(str_e)s'
-                                 % {"location": location or str(obj),
-                                    "model": target_app_model_str,
+                                 % {"location": str(obj),
+                                    "model": target_model,
                                     "exception": type(e).__name__,
                                     "str_e": str(e)
                                     }),
@@ -156,8 +145,6 @@ def get_or_check_image_field(
                             obj=obj
                         ))
                         get_image_field_class_method_raised_error = True
-                else:
-                    image_field = get_image_field_class_method
 
         if image_field is not None:
             if type(image_field) is not ImageField:
@@ -174,8 +161,8 @@ def get_or_check_image_field(
                          'either have a field named "image" '
                          'or has a classmethod named "get_image_field", '
                          'which returns the image field of the model'
-                         % {"location": location or str(obj),
-                            "model": target_app_model_str
+                         % {"location": str(obj),
+                            "model": target_model
                             }),
                     id="%s.E004" % check_id_prefix,
                     obj=obj
@@ -185,8 +172,8 @@ def get_or_check_image_field(
                     msg=('Error in %(location)s: model %(model)s defined '
                          '"get_image_field" class method '
                          'did not return a ImageField type'
-                         % {"location": location or str(obj),
-                            "model": target_app_model_str
+                         % {"location": str(obj),
+                            "model": target_model
                             }),
                     id="%s.E005" % check_id_prefix,
                     obj=obj

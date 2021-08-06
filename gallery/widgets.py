@@ -195,7 +195,7 @@ class GalleryWidget(forms.HiddenInput):
         target_image_model = getattr(self, "image_model", None)
 
         image_model_is_default = (
-                target_image_model == conf.DEFAULT_TARGET_IMAGE_MODEL)
+                target_image_model == defaults.DEFAULT_TARGET_IMAGE_MODEL)
 
         if image_model_is_default:
             return

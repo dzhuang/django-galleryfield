@@ -8,6 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 from gallery.fields import GalleryFormField
 from gallery.widgets import GalleryWidget
 from gallery import conf
+from gallery import defaults
 
 from tests import factories
 from tests.test_fields import DemoTestGalleryModelForm
@@ -81,7 +82,7 @@ class GalleryWidgetTest(SimpleTestCase):
             self.assertNotIn(_html, output)
 
     def test_gallery_widget_render(self):
-        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         image_data = [1]
         value = json.dumps(image_data)
         expected_result = (
@@ -92,7 +93,7 @@ class GalleryWidgetTest(SimpleTestCase):
     def test_gallery_widget_jquery_upload_options_max_number_of_files_overridden(self):  # noqa
         from random import randint
         max_number_of_file_ui_options_value = randint(1, 10)
-        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         f.widget = GalleryWidget(
             jquery_upload_ui_options={
                 "maxNumberOfFiles": max_number_of_file_ui_options_value})
@@ -114,7 +115,7 @@ class GalleryWidgetTest(SimpleTestCase):
         self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
 
     def test_gallery_widget_preview_size(self):
-        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         f.widget = GalleryWidget()
         expected_string = "previewMaxWidth: %i" % conf.DEFAULT_THUMBNAIL_SIZE
         self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
@@ -124,7 +125,7 @@ class GalleryWidgetTest(SimpleTestCase):
         self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
 
     def test_gallery_widget_jquery_upload_options_None(self):
-        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         self.check_in_html(
             f.widget, "image", '', strict=True, html="disableImageResize")
 
@@ -133,14 +134,15 @@ class GalleryWidgetTest(SimpleTestCase):
         self.check_not_in_html(f.widget, "image", '', html="disableImageResize")
 
     def test_gallery_widget_disabled(self):
-        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         f.widget = GalleryWidget()
         file_upload_button = (
             '<input type="file" class="django-gallery-image-input" '
             'id="%(field_name)s-files" multiple accept="image/*" '
             'data-action="%(upload_handler_url)s">'
             % {"field_name": "image",
-               "upload_handler_url": reverse(conf.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
+               "upload_handler_url":
+                   reverse(defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
         )
         self.check_in_html(
             f.widget, "image", '',
@@ -153,14 +155,15 @@ class GalleryWidgetTest(SimpleTestCase):
             html=["django-gallery-image-input"])
 
     def test_gallery_widget_upload_handler_url_none(self):
-        f = GalleryFormField(target_model=conf.DEFAULT_TARGET_IMAGE_MODEL)
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         f.widget = GalleryWidget()
         file_upload_button = (
             '<input type="file" class="django-gallery-image-input" '
             'id="%(field_name)s-files" multiple accept="image/*" '
             'data-action="%(upload_handler_url)s">'
             % {"field_name": "image",
-               "upload_handler_url": reverse(conf.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
+               "upload_handler_url":
+                   reverse(defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
         )
         self.check_in_html(
             f.widget, "image", '',
