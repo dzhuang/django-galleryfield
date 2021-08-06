@@ -77,6 +77,7 @@ _js_items = (
     'jquery.fileupload-ui.js',
     'jquery.blueimp-gallery.js',
     'blueimp-gallery-indicator.js',
+    'blueimp-gallery-fullscreen.js',
     'cropper.js')
 
 _css_items = (
