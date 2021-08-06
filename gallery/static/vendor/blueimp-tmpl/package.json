@@ -1,31 +1,32 @@
 {
   "_args": [
     [
-      "blueimp-tmpl@3.17.0",
+      "blueimp-tmpl@3.19.0",
       "F:\\dev\\relate"
     ]
   ],
-  "_from": "blueimp-tmpl@3.17.0",
-  "_id": "blueimp-tmpl@3.17.0",
+  "_from": "blueimp-tmpl@3.19.0",
+  "_id": "blueimp-tmpl@3.19.0",
   "_inBundle": false,
-  "_integrity": "sha512-rqj27a+sA+HFMK+96MXSnhoFhQ+sbI7/6ktcEZ1Z0wXQ6Z9Tr2NJm6W1OUQs20CBxuGeMhWtcHIHS/bHeE0B3Q==",
+  "_integrity": "sha512-v8/Vge6U3uwlAjO9TxeHoYl77C1GJDZBN45pUp+39WyHU/VRzYbnGDhRNYvcT6Lh8jihVsXNZttnDpnYVA4m9w==",
   "_location": "/blueimp-tmpl",
   "_phantomChildren": {},
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "blueimp-tmpl@3.17.0",
+    "raw": "blueimp-tmpl@3.19.0",
     "name": "blueimp-tmpl",
     "escapedName": "blueimp-tmpl",
-    "rawSpec": "3.17.0",
+    "rawSpec": "3.19.0",
     "saveSpec": null,
-    "fetchSpec": "3.17.0"
+    "fetchSpec": "3.19.0"
   },
   "_requiredBy": [
-    "/"
+    "/",
+    "/blueimp-file-upload"
   ],
-  "_resolved": "https://registry.npmjs.org/blueimp-tmpl/-/blueimp-tmpl-3.17.0.tgz",
-  "_spec": "3.17.0",
+  "_resolved": "https://registry.npmjs.org/blueimp-tmpl/-/blueimp-tmpl-3.19.0.tgz",
+  "_spec": "3.19.0",
   "_where": "F:\\dev\\relate",
   "author": {
     "name": "Sebastian Tschan",
@@ -43,9 +44,9 @@
     "eslint": "7",
     "eslint-config-blueimp": "2",
     "eslint-config-prettier": "6",
-    "eslint-plugin-jsdoc": "25",
+    "eslint-plugin-jsdoc": "30",
     "eslint-plugin-prettier": "3",
-    "mocha": "7",
+    "mocha": "8",
     "prettier": "2",
     "uglify-js": "3"
   },
@@ -98,5 +99,5 @@
     "version": "npm run build && git add -A js"
   },
   "title": "JavaScript Templates",
-  "version": "3.17.0"
+  "version": "3.19.0"
 }

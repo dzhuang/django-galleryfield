@@ -32,20 +32,30 @@
     videoLoadingClass: 'video-loading',
     // The class for video when it is playing:
     videoPlayingClass: 'video-playing',
+    // The class for video content displayed in an iframe:
+    videoIframeClass: 'video-iframe',
+    // The class for the video cover element:
+    videoCoverClass: 'video-cover',
+    // The class for the video play control:
+    videoPlayClass: 'video-play',
+    // Play videos inline by default:
+    videoPlaysInline: true,
+    // The list object property (or data attribute) for video preload:
+    videoPreloadProperty: 'preload',
     // The list object property (or data attribute) for the video poster URL:
-    videoPosterProperty: 'poster',
-    // The list object property (or data attribute) for the video sources array:
-    videoSourcesProperty: 'sources'
+    videoPosterProperty: 'poster'
   })
 
   var handleSlide = galleryPrototype.handleSlide
 
   $.extend(galleryPrototype, {
-    handleSlide: function (index) {
-      handleSlide.call(this, index)
-      if (this.playingVideo) {
-        this.playingVideo.pause()
-      }
+    handleSlide: function (oldIndex, newIndex) {
+      handleSlide.call(this, oldIndex, newIndex)
+      this.setTimeout(function () {
+        if (this.activeVideo) {
+          this.activeVideo.pause()
+        }
+      })
     },
 
     videoFactory: function (obj, callback, videoInterface) {
@@ -60,54 +70,54 @@
         }
       ]
       var video = videoInterface || document.createElement('video')
+      var coverElement = this.elementPrototype.cloneNode(false)
+      var playElement = document.createElement('a')
       var url = this.getItemProperty(obj, options.urlProperty)
-      var type = this.getItemProperty(obj, options.typeProperty)
+      var sources = this.getItemProperty(obj, options.sourcesProperty)
       var title = this.getItemProperty(obj, options.titleProperty)
-      var altText =
-        this.getItemProperty(obj, this.options.altTextProperty) || title
       var posterUrl = this.getItemProperty(obj, options.videoPosterProperty)
-      var posterImage
-      var sources = this.getItemProperty(obj, options.videoSourcesProperty)
-      var source
-      var playMediaControl
+      var playControls = [playElement]
+      var hasGalleryControls
       var isLoading
-      var hasControls
+      var i
       videoContainer.addClass(options.videoContentClass)
+      $(playElement).addClass(options.videoPlayClass)
+      if (
+        !$(coverElement)
+          .addClass(options.videoCoverClass)
+          .hasClass(options.toggleClass)
+      ) {
+        playControls.push(coverElement)
+      }
+      coverElement.draggable = false
       if (title) {
         videoContainerNode.title = title
-      }
-      if (video.canPlayType) {
-        if (url && type && video.canPlayType(type)) {
-          video.src = url
-        } else if (sources) {
-          while (sources.length) {
-            source = sources.shift()
-            url = this.getItemProperty(source, options.urlProperty)
-            type = this.getItemProperty(source, options.typeProperty)
-            if (url && type && video.canPlayType(type)) {
-              video.src = url
-              break
-            }
-          }
-        }
+        playElement.setAttribute('aria-label', title)
       }
       if (posterUrl) {
-        video.poster = posterUrl
-        posterImage = this.imagePrototype.cloneNode(false)
-        $(posterImage).addClass(options.toggleClass)
-        posterImage.src = posterUrl
-        posterImage.draggable = false
-        posterImage.alt = altText
-        videoContainerNode.appendChild(posterImage)
+        // Set as background image instead of as poster video element property:
+        // - Is accessible for browsers that do not support the video element
+        // - Is accessible for both video element and iframe video players
+        // - Avoids visual artifacts in IE with the poster property set
+        coverElement.style.backgroundImage = 'url("' + posterUrl + '")'
       }
-      playMediaControl = document.createElement('a')
-      playMediaControl.setAttribute('target', '_blank')
-      if (!videoInterface) {
-        playMediaControl.setAttribute('download', title)
+      if (video.setAttribute) {
+        if (options.videoPlaysInline) video.setAttribute('playsinline', '')
+      } else {
+        videoContainer.addClass(options.videoIframeClass)
       }
-      playMediaControl.href = url
-      if (video.src) {
-        video.controls = true
+      video.preload =
+        this.getItemProperty(obj, options.videoPreloadProperty) || 'none'
+      if (this.support.source && sources) {
+        for (i = 0; i < sources.length; i += 1) {
+          video.appendChild(
+            $.extend(this.sourcePrototype.cloneNode(false), sources[i])
+          )
+        }
+      }
+      if (url) video.src = url
+      playElement.href = url || (sources && sources.length && sources[0].src)
+      if (video.play && video.pause) {
         ;(videoInterface || $(video))
           .on('error', function () {
             that.setTimeout(callback, errorArgs)
@@ -118,34 +128,40 @@
             videoContainer
               .removeClass(that.options.videoLoadingClass)
               .removeClass(that.options.videoPlayingClass)
-            if (hasControls) {
+            if (hasGalleryControls) {
               that.container.addClass(that.options.controlsClass)
             }
-            delete that.playingVideo
+            video.controls = false
+            if (video === that.activeVideo) delete that.activeVideo
             if (that.interval) {
+              // Continue slideshow interval
               that.play()
             }
           })
           .on('playing', function () {
             isLoading = false
+            coverElement.removeAttribute('style')
             videoContainer
               .removeClass(that.options.videoLoadingClass)
               .addClass(that.options.videoPlayingClass)
-            if (that.container.hasClass(that.options.controlsClass)) {
-              hasControls = true
-              that.container.removeClass(that.options.controlsClass)
-            } else {
-              hasControls = false
-            }
           })
           .on('play', function () {
+            // Clear slideshow timeout:
             window.clearTimeout(that.timeout)
             isLoading = true
             videoContainer.addClass(that.options.videoLoadingClass)
-            that.playingVideo = video
+            if (that.container.hasClass(that.options.controlsClass)) {
+              hasGalleryControls = true
+              that.container.removeClass(that.options.controlsClass)
+            } else {
+              hasGalleryControls = false
+            }
+            video.controls = true
+            that.activeVideo = video
           })
-        $(playMediaControl).on('click', function (event) {
+        $(playControls).on('click', function (event) {
           that.preventDefault(event)
+          that.activeVideo = video
           if (isLoading) {
             video.pause()
           } else {
@@ -156,7 +172,8 @@
           (videoInterface && videoInterface.element) || video
         )
       }
-      videoContainerNode.appendChild(playMediaControl)
+      videoContainerNode.appendChild(coverElement)
+      videoContainerNode.appendChild(playElement)
       this.setTimeout(callback, [
         {
           type: 'load',

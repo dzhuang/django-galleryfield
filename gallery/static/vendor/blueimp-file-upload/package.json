@@ -1,31 +1,26 @@
 {
-  "_args": [
-    [
-      "blueimp-file-upload@9.34.0",
-      "F:\\dev\\relate"
-    ]
-  ],
-  "_from": "blueimp-file-upload@9.34.0",
-  "_id": "blueimp-file-upload@9.34.0",
+  "_from": "blueimp-file-upload@^10.31.0",
+  "_id": "blueimp-file-upload@10.31.0",
   "_inBundle": false,
-  "_integrity": "sha512-dXacFmyv6p0n+l5+u1ssYhSpCJdYabl7BZTw5WvB6ygY2ksTB3SdD6huafryEO5DH+XuspHDL6+IJ3m14Va+FQ==",
+  "_integrity": "sha512-dGAxOf9+SsMDvZPTsIUpe0cOk57taMJYE3FocHEUebhn5BnDbu1hcWOmrP8oswIe6V61Qcm9UDuhq/Pv1t/eRw==",
   "_location": "/blueimp-file-upload",
   "_phantomChildren": {},
   "_requested": {
-    "type": "version",
+    "type": "range",
     "registry": true,
-    "raw": "blueimp-file-upload@9.34.0",
+    "raw": "blueimp-file-upload@^10.31.0",
     "name": "blueimp-file-upload",
     "escapedName": "blueimp-file-upload",
-    "rawSpec": "9.34.0",
+    "rawSpec": "^10.31.0",
     "saveSpec": null,
-    "fetchSpec": "9.34.0"
+    "fetchSpec": "^10.31.0"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/blueimp-file-upload/-/blueimp-file-upload-9.34.0.tgz",
-  "_spec": "9.34.0",
+  "_resolved": "https://registry.npmjs.org/blueimp-file-upload/-/blueimp-file-upload-10.31.0.tgz",
+  "_shasum": "46fc4fea4e678b57afbd9008f179e59fc3aa3e84",
+  "_spec": "blueimp-file-upload@^10.31.0",
   "_where": "F:\\dev\\relate",
   "author": {
     "name": "Sebastian Tschan",
@@ -34,16 +29,58 @@
   "bugs": {
     "url": "https://github.com/blueimp/jQuery-File-Upload/issues"
   },
+  "bundleDependencies": false,
   "dependencies": {
-    "blueimp-canvas-to-blob": "3.5.0",
-    "blueimp-load-image": "2.12.2",
-    "blueimp-tmpl": "3.6.0"
+    "blueimp-canvas-to-blob": "3",
+    "blueimp-load-image": "5",
+    "blueimp-tmpl": "3"
   },
+  "deprecated": false,
   "description": "File Upload widget with multiple file selection, drag&drop support, progress bar, validation and preview images, audio and video for jQuery. Supports cross-domain, chunked and resumable file uploads. Works with any server-side platform (Google App Engine, PHP, Python, Ruby on Rails, Java, etc.) that supports standard HTML form file uploads.",
   "devDependencies": {
-    "bower-json": "0.8.1",
-    "jshint": "2.9.3"
+    "eslint": "7",
+    "eslint-config-blueimp": "2",
+    "eslint-config-prettier": "6",
+    "eslint-plugin-jsdoc": "29",
+    "eslint-plugin-prettier": "3",
+    "prettier": "2",
+    "stylelint": "13",
+    "stylelint-config-prettier": "8",
+    "stylelint-config-recommended": "3"
   },
+  "eslintConfig": {
+    "extends": [
+      "blueimp",
+      "plugin:jsdoc/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "env": {
+      "browser": true
+    }
+  },
+  "eslintIgnore": [
+    "js/*.min.js",
+    "test/vendor"
+  ],
+  "files": [
+    "css/jquery.fileupload-noscript.css",
+    "css/jquery.fileupload-ui-noscript.css",
+    "css/jquery.fileupload-ui.css",
+    "css/jquery.fileupload.css",
+    "img/loading.gif",
+    "img/progressbar.gif",
+    "js/cors/jquery.postmessage-transport.js",
+    "js/cors/jquery.xdr-transport.js",
+    "js/vendor/jquery.ui.widget.js",
+    "js/jquery.fileupload-audio.js",
+    "js/jquery.fileupload-image.js",
+    "js/jquery.fileupload-process.js",
+    "js/jquery.fileupload-ui.js",
+    "js/jquery.fileupload-validate.js",
+    "js/jquery.fileupload-video.js",
+    "js/jquery.fileupload.js",
+    "js/jquery.iframe-transport.js"
+  ],
   "homepage": "https://github.com/blueimp/jQuery-File-Upload",
   "keywords": [
     "jquery",
@@ -70,22 +107,43 @@
   "main": "js/jquery.fileupload.js",
   "name": "blueimp-file-upload",
   "optionalDependencies": {
-    "blueimp-canvas-to-blob": "3.5.0",
-    "blueimp-load-image": "2.12.2",
-    "blueimp-tmpl": "3.6.0"
+    "blueimp-canvas-to-blob": "3",
+    "blueimp-load-image": "5",
+    "blueimp-tmpl": "3"
+  },
+  "peerDependencies": {
+    "jquery": ">=1.7"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "proseWrap": "always",
+    "singleQuote": true,
+    "trailingComma": "none"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/blueimp/jQuery-File-Upload.git"
   },
   "scripts": {
-    "bower-version-update": "./bower-version-update.js",
-    "lint": "jshint *.js js/*.js js/cors/*.js",
+    "lint": "stylelint '**/*.css' && eslint .",
+    "posttest": "docker-compose down -v",
     "postversion": "git push --tags origin master && npm publish",
     "preversion": "npm test",
-    "test": "npm run lint",
-    "version": "npm run bower-version-update && git add bower.json"
+    "test": "npm run lint && npm run unit && npm run wdio && npm run wdio -- conf/firefox.js",
+    "unit": "docker-compose run --rm mocha",
+    "wdio": "docker-compose run --rm wdio"
+  },
+  "stylelint": {
+    "extends": [
+      "stylelint-config-recommended",
+      "stylelint-config-prettier"
+    ],
+    "ignoreFiles": [
+      "css/*.min.css",
+      "css/vendor/*",
+      "test/vendor/*"
+    ]
   },
   "title": "jQuery File Upload",
-  "version": "9.34.0"
+  "version": "10.31.0"
 }

@@ -51,6 +51,17 @@
             {% block JS_DOWNLOAD_TEMPLATE_DELETE %}
             {% if not uploader_disabled %}
             <td>
+                {% if crop_request_url %}
+                <a type="button"
+                        class="btn btn-info btn-control edit"
+                        data-toggle="modal"
+                        data-action="{{ crop_request_url }}"
+                        data-pk="{% templatetag openbrace %}%=file.pk%{% templatetag closebrace %}"
+                >
+                    <i class="glyphicon glyphicon-edit"></i>
+                        <span>{% trans "Edit" %}</span>
+                </a>
+                {% endif %}
                     <a type="button" class="btn btn-danger delete fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}"
                             href="javascript(void(0))">
                         <i class="glyphicon glyphicon-trash"></i>
@@ -59,18 +70,6 @@
                     {% if upload_handler_url %}
                     <input type="checkbox" value="1" class="toggle fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}">
                     {% endif %}
-                {% if crop_request_url %}
-                <button
-                        class="btn btn-info btn-control edit"
-                        type="button"
-                        data-toggle="modal"
-                        data-action="{{ crop_request_url }}"
-                        data-pk="{% templatetag openbrace %}%=file.pk%{% templatetag closebrace %}"
-                >
-                    <i class="glyphicon glyphicon-edit"></i>
-                        <span>{% trans "Edit" %}</span>
-                </button>
-                {% endif %}
             </td>
             <td class="sortableHandle hidden col-lg-1 col-md-1 col-sm-1 col-xs-1"
                  style="vertical-align: middle; text-align: center">

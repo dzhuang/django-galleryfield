@@ -68,6 +68,7 @@
       if (title) {
         indicator.title = title
       }
+      indicator.setAttribute('role', 'link')
       return indicator
     },
 
@@ -130,9 +131,9 @@
       }
     },
 
-    handleSlide: function (index) {
-      handleSlide.call(this, index)
-      this.setActiveIndicator(index)
+    handleSlide: function (oldIndex, newIndex) {
+      handleSlide.call(this, oldIndex, newIndex)
+      this.setActiveIndicator(newIndex)
     },
 
     handleClose: function () {

@@ -35,11 +35,11 @@
     // The URL for the Vimeo video player, can be extended with custom parameters:
     // https://developer.vimeo.com/player/embedding
     vimeoPlayerUrl:
-      '//player.vimeo.com/video/VIDEO_ID?api=1&player_id=PLAYER_ID',
+      'https://player.vimeo.com/video/VIDEO_ID?api=1&player_id=PLAYER_ID',
     // The prefix for the Vimeo video player ID:
     vimeoPlayerIdPrefix: 'vimeo-player-',
     // Require a click on the native Vimeo player for the initial playback:
-    vimeoClickToPlay: true
+    vimeoClickToPlay: false
   })
 
   var textFactory =
@@ -55,10 +55,6 @@
   var counter = 0
 
   $.extend(VimeoPlayer.prototype, {
-    canPlayType: function () {
-      return true
-    },
-
     on: function (type, func) {
       this.listeners[type] = func
       return this
@@ -66,7 +62,7 @@
 
     loadAPI: function () {
       var that = this
-      var apiUrl = '//f.vimeocdn.com/js/froogaloop2.min.js'
+      var apiUrl = 'https://f.vimeocdn.com/js/froogaloop2.min.js'
       var scriptTags = document.getElementsByTagName('script')
       var i = scriptTags.length
       var scriptTag
@@ -135,6 +131,7 @@
         .replace('VIDEO_ID', this.videoId)
         .replace('PLAYER_ID', this.playerId)
       iframe.id = this.playerId
+      iframe.allow = 'autoplay'
       this.element.parentNode.replaceChild(iframe, this.element)
       this.element = iframe
     },
@@ -193,7 +190,7 @@
       var videoId = this.getItemProperty(obj, options.vimeoVideoIdProperty)
       if (videoId) {
         if (this.getItemProperty(obj, options.urlProperty) === undefined) {
-          obj[options.urlProperty] = '//vimeo.com/' + videoId
+          obj[options.urlProperty] = 'https://vimeo.com/' + videoId
         }
         counter += 1
         return this.videoFactory(

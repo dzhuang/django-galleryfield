@@ -80,8 +80,18 @@
       rightEdgeClass: 'blueimp-gallery-right',
       // The class to add when the automatic slideshow is active:
       playingClass: 'blueimp-gallery-playing',
+      // The class to add when the browser supports SVG as img (or background):
+      svgasimgClass: 'blueimp-gallery-svgasimg',
+      // The class to add when the browser supports SMIL (animated SVGs):
+      smilClass: 'blueimp-gallery-smil',
       // The class for all slides:
       slideClass: 'slide',
+      // The slide class for the active (current index) slide:
+      slideActiveClass: 'slide-active',
+      // The slide class for the previous (before current index) slide:
+      slidePrevClass: 'slide-prev',
+      // The slide class for the next (after current index) slide:
+      slideNextClass: 'slide-next',
       // The slide class for loading elements:
       slideLoadingClass: 'slide-loading',
       // The slide class for elements that failed to load:
@@ -106,35 +116,33 @@
       altTextProperty: 'alt',
       // The list object property (or data attribute) with the object URL:
       urlProperty: 'href',
-      // The list object property (or data attribute) with the object srcset URL(s):
-      srcsetProperty: 'urlset',
+      // The list object property (or data attribute) with the object srcset:
+      srcsetProperty: 'srcset',
+      // The list object property (or data attribute) with the object sizes:
+      sizesProperty: 'sizes',
+      // The list object property (or data attribute) with the object sources:
+      sourcesProperty: 'sources',
       // The gallery listens for transitionend events before triggering the
       // opened and closed events, unless the following option is set to false:
       displayTransition: true,
       // Defines if the gallery slides are cleared from the gallery modal,
       // or reused for the next gallery initialization:
       clearSlides: true,
-      // Defines if images should be stretched to fill the available space,
-      // while maintaining their aspect ratio (will only be enabled for browsers
-      // supporting background-size="contain", which excludes IE < 9).
-      // Set to "cover", to make images cover all available space (requires
-      // support for background-size="cover", which excludes IE < 9):
-      stretchImages: false,
-      // Toggle the controls on pressing the Return key:
-      toggleControlsOnReturn: true,
+      // Toggle the controls on pressing the Enter key:
+      toggleControlsOnEnter: true,
       // Toggle the controls on slide click:
       toggleControlsOnSlideClick: true,
       // Toggle the automatic slideshow interval on pressing the Space key:
       toggleSlideshowOnSpace: true,
-      // Navigate the gallery by pressing left and right on the keyboard:
+      // Navigate the gallery by pressing the ArrowLeft and ArrowRight keys:
       enableKeyboardNavigation: true,
-      // Close the gallery on pressing the Esc key:
+      // Close the gallery on pressing the Escape key:
       closeOnEscape: true,
       // Close the gallery when clicking on an empty slide area:
       closeOnSlideClick: true,
       // Close the gallery by swiping up or down:
       closeOnSwipeUpOrDown: true,
-      // Close the gallery when URL changes:
+      // Close the gallery when the URL hash changes:
       closeOnHashChange: true,
       // Emulate touch events on mouse-pointer devices such as desktop browsers:
       emulateTouchEvents: true,
@@ -201,12 +209,13 @@
 
     carouselOptions: {
       hidePageScrollbars: false,
-      toggleControlsOnReturn: false,
+      toggleControlsOnEnter: false,
       toggleSlideshowOnSpace: false,
       enableKeyboardNavigation: false,
       closeOnEscape: false,
       closeOnSlideClick: false,
       closeOnSwipeUpOrDown: false,
+      closeOnHashChange: false,
       disableScroll: false,
       startSlideshow: true
     },
@@ -219,6 +228,19 @@
     // Detect touch, transition, transform and background-size support:
     support: (function (element) {
       var support = {
+        source: !!window.HTMLSourceElement,
+        picture: !!window.HTMLPictureElement,
+        svgasimg: document.implementation.hasFeature(
+          'http://www.w3.org/TR/SVG11/feature#Image',
+          '1.1'
+        ),
+        smil:
+          !!document.createElementNS &&
+          /SVGAnimate/.test(
+            document
+              .createElementNS('http://www.w3.org/2000/svg', 'animate')
+              .toString()
+          ),
         touch:
           window.ontouchstart !== undefined ||
           (window.DocumentTouch && document instanceof DocumentTouch)
@@ -274,19 +296,6 @@
               translateZ: !!translateZ && translateZ !== 'none'
             }
           }
-        }
-        if (element.style.backgroundSize !== undefined) {
-          support.backgroundSize = {}
-          element.style.backgroundSize = 'contain'
-          support.backgroundSize.contain =
-            window
-              .getComputedStyle(element)
-              .getPropertyValue('background-size') === 'contain'
-          element.style.backgroundSize = 'cover'
-          support.backgroundSize.cover =
-            window
-              .getComputedStyle(element)
-              .getPropertyValue('background-size') === 'cover'
         }
         document.body.removeChild(element)
       }
@@ -424,6 +433,10 @@
         )
       }
       this.container.addClass(this.options.playingClass)
+      this.slidesContainer[0].setAttribute('aria-live', 'off')
+      if (this.playPauseElement.length) {
+        this.playPauseElement[0].setAttribute('aria-pressed', 'true')
+      }
     },
 
     pause: function () {
@@ -434,6 +447,10 @@
         this.animationFrameId = null
       }
       this.container.removeClass(this.options.playingClass)
+      this.slidesContainer[0].setAttribute('aria-live', 'polite')
+      if (this.playPauseElement.length) {
+        this.playPauseElement[0].setAttribute('aria-pressed', 'false')
+      }
     },
 
     add: function (list) {
@@ -860,16 +877,16 @@
 
     onkeydown: function (event) {
       switch (event.which || event.keyCode) {
-        case 13: // Return
-          if (this.options.toggleControlsOnReturn) {
+        case 13: // Enter
+          if (this.options.toggleControlsOnEnter) {
             this.preventDefault(event)
             this.toggleControls()
           }
           break
-        case 27: // Esc
+        case 27: // Escape
           if (this.options.closeOnEscape) {
             this.close()
-            // prevent Esc from closing other things
+            // prevent Escape from closing other things
             event.stopImmediatePropagation()
           }
           break
@@ -879,13 +896,13 @@
             this.toggleSlideshow()
           }
           break
-        case 37: // Left
+        case 37: // ArrowLeft
           if (this.options.enableKeyboardNavigation) {
             this.preventDefault(event)
             this.prev()
           }
           break
-        case 39: // Right
+        case 39: // ArrowRight
           if (this.options.enableKeyboardNavigation) {
             this.preventDefault(event)
             this.next()
@@ -973,20 +990,53 @@
       }
     },
 
-    handleSlide: function (index) {
+    updateActiveSlide: function (oldIndex, newIndex) {
+      var slides = this.slides
+      var options = this.options
+      var list = [
+        {
+          index: newIndex,
+          method: 'addClass',
+          hidden: false
+        },
+        {
+          index: oldIndex,
+          method: 'removeClass',
+          hidden: true
+        }
+      ]
+      var item, index
+      while (list.length) {
+        item = list.pop()
+        $(slides[item.index])[item.method](options.slideActiveClass)
+        index = this.circle(item.index - 1)
+        if (options.continuous || index < item.index) {
+          $(slides[index])[item.method](options.slidePrevClass)
+        }
+        index = this.circle(item.index + 1)
+        if (options.continuous || index > item.index) {
+          $(slides[index])[item.method](options.slideNextClass)
+        }
+      }
+      this.slides[oldIndex].setAttribute('aria-hidden', 'true')
+      this.slides[newIndex].removeAttribute('aria-hidden')
+    },
+
+    handleSlide: function (oldIndex, newIndex) {
       if (!this.options.continuous) {
-        this.updateEdgeClasses(index)
+        this.updateEdgeClasses(newIndex)
       }
-      this.loadElements(index)
+      this.updateActiveSlide(oldIndex, newIndex)
+      this.loadElements(newIndex)
       if (this.options.unloadElements) {
-        this.unloadElements(index)
+        this.unloadElements(oldIndex, newIndex)
       }
-      this.setTitle(index)
+      this.setTitle(newIndex)
     },
 
     onslide: function (index) {
+      this.handleSlide(this.index, index)
       this.index = index
-      this.handleSlide(index)
       this.setTimeout(this.options.onslide, [index, this.slides[index]])
     },
 
@@ -1013,14 +1063,18 @@
     },
 
     imageFactory: function (obj, callback) {
+      var options = this.options
       var that = this
-      var img = this.imagePrototype.cloneNode(false)
       var url = obj
-      var backgroundSize = this.options.stretchImages
+      var img = this.imagePrototype.cloneNode(false)
+      var picture
       var called
-      var element
+      var sources
+      var srcset
+      var sizes
       var title
       var altText
+      var i
       /**
        * Wraps the callback function for the load/error event
        *
@@ -1031,53 +1085,57 @@
         if (!called) {
           event = {
             type: event.type,
-            target: element
+            target: picture || img
           }
-          if (!element.parentNode) {
-            // Fix for IE7 firing the load event for
+          if (!event.target.parentNode) {
+            // Fix for browsers (e.g. IE7) firing the load event for
             // cached images before the element could
             // be added to the DOM:
             return that.setTimeout(callbackWrapper, [event])
           }
           called = true
           $(img).off('load error', callbackWrapper)
-          if (backgroundSize) {
-            if (event.type === 'load') {
-              element.style.background = 'url("' + url + '") center no-repeat'
-              element.style.backgroundSize = backgroundSize
-            }
-          }
           callback(event)
         }
       }
       if (typeof url !== 'string') {
-        url = this.getItemProperty(obj, this.options.urlProperty)
-        title = this.getItemProperty(obj, this.options.titleProperty)
-        altText =
-          this.getItemProperty(obj, this.options.altTextProperty) || title
+        url = this.getItemProperty(obj, options.urlProperty)
+        sources =
+          this.support.picture &&
+          this.support.source &&
+          this.getItemProperty(obj, options.sourcesProperty)
+        srcset = this.getItemProperty(obj, options.srcsetProperty)
+        sizes = this.getItemProperty(obj, options.sizesProperty)
+        title = this.getItemProperty(obj, options.titleProperty)
+        altText = this.getItemProperty(obj, options.altTextProperty) || title
       }
-      if (backgroundSize === true) {
-        backgroundSize = 'contain'
-      }
-      backgroundSize =
-        this.support.backgroundSize &&
-        this.support.backgroundSize[backgroundSize] &&
-        backgroundSize
-      if (backgroundSize) {
-        element = this.elementPrototype.cloneNode(false)
-      } else {
-        element = img
-        img.draggable = false
-      }
+      img.draggable = false
       if (title) {
-        element.title = title
+        img.title = title
       }
       if (altText) {
-        element.alt = altText
+        img.alt = altText
       }
       $(img).on('load error', callbackWrapper)
+      if (sources && sources.length) {
+        picture = this.picturePrototype.cloneNode(false)
+        for (i = 0; i < sources.length; i += 1) {
+          picture.appendChild(
+            $.extend(this.sourcePrototype.cloneNode(false), sources[i])
+          )
+        }
+        picture.appendChild(img)
+        $(picture).addClass(options.toggleClass)
+      }
+      if (srcset) {
+        if (sizes) {
+          img.sizes = sizes
+        }
+        img.srcset = srcset
+      }
       img.src = url
-      return element
+      if (picture) return picture
+      return img
     },
 
     createElement: function (obj, callback) {
@@ -1085,7 +1143,6 @@
       var factory =
         (type && this[type.split('/')[0] + 'Factory']) || this.imageFactory
       var element = obj && factory.call(this, obj, callback)
-      var srcset = this.getItemProperty(obj, this.options.srcsetProperty)
       if (!element) {
         element = this.elementPrototype.cloneNode(false)
         this.setTimeout(callback, [
@@ -1095,11 +1152,31 @@
           }
         ])
       }
-      if (srcset) {
-        element.setAttribute('srcset', srcset)
-      }
       $(element).addClass(this.options.slideContentClass)
       return element
+    },
+
+    iteratePreloadRange: function (index, func) {
+      var num = this.num
+      var options = this.options
+      var limit = Math.min(num, options.preloadRange * 2 + 1)
+      var j = index
+      var i
+      for (i = 0; i < limit; i += 1) {
+        // First iterate to the current index (0),
+        // then the next one (+1),
+        // then the previous one (-1),
+        // then the next after next (+2),
+        // then the one before the previous one (-2), etc.:
+        j += i * (i % 2 === 0 ? -1 : 1)
+        if (j < 0 || j >= num) {
+          if (!options.continuous) continue
+          // Connect the ends of the list to load slide elements for
+          // continuous iteration:
+          j = this.circle(j)
+        }
+        func.call(this, j)
+      }
     },
 
     loadElement: function (index) {
@@ -1121,41 +1198,24 @@
     },
 
     loadElements: function (index) {
-      var limit = Math.min(this.num, this.options.preloadRange * 2 + 1)
-      var j = index
-      var i
-      for (i = 0; i < limit; i += 1) {
-        // First load the current slide element (0),
-        // then the next one (+1),
-        // then the previous one (-2),
-        // then the next after next (+2), etc.:
-        j += i * (i % 2 === 0 ? -1 : 1)
-        // Connect the ends of the list to load slide elements for
-        // continuous navigation:
-        j = this.circle(j)
-        this.loadElement(j)
-      }
+      this.iteratePreloadRange(index, this.loadElement)
     },
 
-    unloadElements: function (index) {
-      var i, diff
-      for (i in this.elements) {
-        if (Object.prototype.hasOwnProperty.call(this.elements, i)) {
-          diff = Math.abs(index - i)
-          if (
-            diff > this.options.preloadRange &&
-            diff + this.options.preloadRange < this.num
-          ) {
-            this.unloadSlide(i)
-            delete this.elements[i]
-          }
+    unloadElements: function (oldIndex, newIndex) {
+      var preloadRange = this.options.preloadRange
+      this.iteratePreloadRange(oldIndex, function (i) {
+        var diff = Math.abs(i - newIndex)
+        if (diff > preloadRange && diff + preloadRange < this.num) {
+          this.unloadSlide(i)
+          delete this.elements[i]
         }
-      }
+      })
     },
 
     addSlide: function (index) {
       var slide = this.slidePrototype.cloneNode(false)
       slide.setAttribute('data-index', index)
+      slide.setAttribute('aria-hidden', 'true')
       this.slidesContainer[0].appendChild(slide)
       this.slides.push(slide)
     },
@@ -1183,9 +1243,13 @@
         this.positions = []
         this.positions.length = this.num
         this.elements = {}
+        this.picturePrototype =
+          this.support.picture && document.createElement('picture')
+        this.sourcePrototype =
+          this.support.source && document.createElement('source')
         this.imagePrototype = document.createElement('img')
         this.elementPrototype = document.createElement('div')
-        this.slidePrototype = document.createElement('div')
+        this.slidePrototype = this.elementPrototype.cloneNode(false)
         $(this.slidePrototype).addClass(this.options.slideClass)
         this.slides = this.slidesContainer[0].children
         clearSlides =
@@ -1427,8 +1491,17 @@
         return false
       }
       this.titleElement = this.container.find(this.options.titleElement).first()
+      this.playPauseElement = this.container
+        .find('.' + this.options.playPauseClass)
+        .first()
       if (this.num === 1) {
         this.container.addClass(this.options.singleClass)
+      }
+      if (this.support.svgasimg) {
+        this.container.addClass(this.options.svgasimgClass)
+      }
+      if (this.support.smil) {
+        this.container.addClass(this.options.smilClass)
       }
       if (this.options.onopen) {
         this.options.onopen.call(this)
