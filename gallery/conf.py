@@ -56,3 +56,49 @@ PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = _APP_CONFIG.get(
     'prompt_alert_if_changed_on_window_reload',
     defaults.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED
 )
+
+# BE CAUTIOUS: changing the sequence of the assets
+# might result in failure to render the widget
+_js_items = (
+    'jquery.js',
+    'jquery-ui.js',
+    'jquery.ui.widget.min.js',
+    'blueimp-tmpl.js',
+    'load-image.all.min.js',
+    'blueimp-canvas-to-blob.js',
+    'bootstrap.js',
+    'jquery.iframe-transport.js',
+    'jquery.fileupload.js',
+    'jquery.fileupload-process.js',
+    'jquery.fileupload-image.js',
+    'jquery.fileupload-audio.js',
+    'jquery.fileupload-video.js',
+    'jquery.fileupload-validate.js',
+    'jquery.fileupload-ui.js',
+    'jquery.blueimp-gallery.js',
+    'blueimp-gallery-indicator.js',
+    'cropper.js')
+
+_css_items = (
+    'bootstrap.css',
+    'jquery-ui.theme.css',
+    'jquery.fileupload.css',
+    'jquery.fileupload-ui.css',
+    'blueimp-gallery.css',
+    'blueimp-gallery-indicator.css',
+    'font-awesome.css',
+    'cropper.css')
+
+_new_assets = defaults.DEFAULT_ASSETS.copy()
+_app_config_assets_copy = _APP_CONFIG_ASSETS.copy()
+_extra_js = _app_config_assets_copy.pop("extra_js", [])
+_extra_js.append("js/jquery.fileupload-ui-gallery-widget.js")
+_extra_css = _app_config_assets_copy.pop("extra_css", [])
+
+_new_assets.update(_app_config_assets_copy)
+
+_js = [_new_assets.get(v) for v in _js_items] + _extra_js
+JS = [j for j in _js if j]
+
+_css = [_new_assets.get(v) for v in _css_items] + _extra_css
+CSS = [c for c in _css if c]

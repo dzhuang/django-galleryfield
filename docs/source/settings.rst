@@ -14,11 +14,6 @@ Settings
 Default::
 
     {
-        "default_target_image_model": "gallery.BuiltInGalleryImage",
-        "default_urls":
-            {"upload_handler_url_name": "gallery_image_upload",
-             "fetch_url_name": "gallery_images_fetch",
-             "crop_url_name": "gallery_image_crop"},
         "assets": {
             "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
             "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
@@ -34,27 +29,29 @@ Default::
         "prompt_alert_if_changed_on_window_reload": True,
     }
 
-
-A dictionary which contains all the default settings for django-gallery-widget app.
-
-
 .. setting:: default_target_image_model
 
-``default_target_image_model``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+assets
+~~~~~~~
 
-Default: ``"gallery.BuiltInGalleryImage"``
+Default::
 
-A string in the form of ``"app_label.model_name"``, see
-:ref:`a valid target model <customize-valid-image-model>` for more details.
+    {
+        "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
+        "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
+        "jquery_js_path": "vendor/jquery.min.js",
+        "extra_js": [],
+        "extra_css": []
+    }
 
-.. warning:: By customizing this setting, ALL :class:`gallery.fields.GalleryField`
-and :class:`gallery.fields.GalleryFormField` instances, which did not explicitly
-set ``target_model`` params, will use this value as their default
 
-You're also suggest to change the :setting: `default_urls`
-   when customizing :setting: `default_target_image_model`.
+Allow single or part overriding. The paths can be URLs, CDN address or local paths, see
+`configuring-static-files <https://docs.djangoproject.com/en/3.2/howto/static-files/#configuring-static-files>`_
+for reference. ``extra_js`` and ``extra_css`` are useful when you want add extra JS or CSS
+when inheriting :template:`gallery/widget.html`.
 
+
+The ``integrity`` and ``crossorigin`` were unable to be configured except hard coding
 
 .. setting:: default_urls
 

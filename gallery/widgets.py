@@ -10,6 +10,7 @@ from gallery.utils import get_url_from_str, convert_dict_to_plain_text
 
 NoReverseMatch_EXCEPTION_STR_RE = re.compile("Reverse for '(.+)' not found")
 
+
 js = [
     conf.JQUERY_JS_PATH,
     'vendor/jquery-ui-dist/jquery-ui.min.js',
@@ -40,7 +41,6 @@ css = [
           'vendor/font-awesome/css/font-awesome.min.css',
           "vendor/cropper/dist/cropper.min.css",
 ] + conf.EXTRA_CSS
-
 
 class GalleryWidget(forms.HiddenInput):
     """This is the default widget used by :class:`gallery.fields.GalleryFormField`.
@@ -277,8 +277,8 @@ class GalleryWidget(forms.HiddenInput):
         raise ImproperlyConfigured(msg)
 
     class Media:
-        js = tuple(_js for _js in js if _js)
-        css = {'all': tuple(_css for _css in css if _css)}
+        js = tuple(conf.JS)
+        css = {'all': tuple(conf.CSS)}
 
     @property
     def is_hidden(self):

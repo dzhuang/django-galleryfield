@@ -1,5 +1,54 @@
 # Changelog
 
+## 4.1.0 (Oct 12, 2019)
+
+- Upgrade the built-in Cropper.js to v1.5.6.
+
+## 4.0.0 (Apr 1, 2018)
+
+- Upgrade the built-in Cropper.js to v1.3.4.
+
+## 4.0.0-beta (Mar 3, 2018)
+
+- Upgrade the built-in Cropper.js to v1.3.2.
+
+## 4.0.0-alpha (Mar 1, 2018)
+
+- The core code of Cropper is replaced with [Cropper.js](https://github.com/fengyuanchen/cropperjs) now.
+- Migration from Cropper 3.x:
+  - **Before:**
+    ```js
+    $().cropper({
+      crop(event) {
+        console.log(
+          event.x,
+          event.y,
+          event.width,
+          event.height,
+          event.rotate,
+          event.scaleX,
+          event.scaleY,
+        );
+      },
+    });
+    ```
+  - **After:**
+    ```js
+    $().cropper({
+      crop(event) {
+        console.log(
+          event.detail.x,
+          event.detail.y,
+          event.detail.width,
+          event.detail.height,
+          event.detail.rotate,
+          event.detail.scaleX,
+          event.detail.scaleY,
+        );
+      },
+    });
+    ```
+
 ## 3.1.6 (Mar 1, 2018)
 
 - Fixed a bug of incorrect behavior of `viewMode: 2`.
@@ -378,7 +427,7 @@
 ## 0.7.4 (Nov 24, 2014)
 
 - Improve "getDataURL" method, enable to customize the image sizes (#105).
-- Fix the issue of destory (#101).
+- Fix the issue of destroy (#101).
 - Fix the issue of canvas (#106).
 
 ## 0.7.3 (Nov 15, 2014)

@@ -1,10 +1,10 @@
-Customize my GalleryWidget
+Customize GalleryWidget
 ==============================
 
 When talking about customize, there are different level of customization.
 
 
-Model and view customization
+Model and views customization
 ---------------------------------
 
 
@@ -13,13 +13,9 @@ Model and view customization
 What is a valid target image model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A string in the form of ``"app_label.model_name"``, which can be loaded by
-:meth:`django.apps.get_model` (see
-`Django docs <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_),
-defaults to ``None``. If `None`, ``gallery.BuiltInGalleryImage``,
-which can be overridden by
-``settings.DJANGO_GALLERY_WIDGET_CONFIG["default_target_image_model"]``,
-will be used.
+If you want to use an image model instead of the built-in one (i.e.,
+:class:`gallery.models.BuiltInGalleryImage`), then you need to have a
+`valid target image model` in the first place.
 
 A valid target image model need to meet one of the following 2 requirements:
 
@@ -46,4 +42,3 @@ A valid target image model need to meet one of the following 2 requirements:
    we can't simply ``return cls.photo`` because it
    returns a :class:`django.db.models.fields.files.ImageFieldFile`
    object instead of a :class:`django.db.models.ImageField` object.
-

@@ -28,10 +28,42 @@ DEFAULT_CREATOR_FIELD_NAME = "creator"
 
 # }}}
 
+DEFAULT_ASSETS = {
+    # js assets
+    "jquery.js": "vendor/jquery.min.js",
+    "jquery-ui.js": "vendor/jquery-ui-dist/jquery-ui.min.js",
+    "jquery.ui.widget.min.js": "vendor/blueimp-file-upload/js/vendor/jquery.ui.widget.js",
+    "blueimp-tmpl.js": "vendor/blueimp-tmpl/js/tmpl.min.js",
+    "load-image.all.min.js": "vendor/blueimp-load-image/js/load-image.all.min.js",
+    "blueimp-canvas-to-blob.js": "vendor/blueimp-canvas-to-blob/js/canvas-to-blob.js",
+    "bootstrap.js": "vendor/bootstrap/dist/js/bootstrap.min.js",
+    "jquery.iframe-transport.js": "vendor/jquery.iframe-transport/jquery.iframe-transport.js",
+    "jquery.fileupload.js": "vendor/blueimp-file-upload/js/jquery.fileupload.js",
+    "jquery.fileupload-process.js": "vendor/blueimp-file-upload/js/jquery.fileupload-process.js",
+    "jquery.fileupload-image.js": "vendor/blueimp-file-upload/js/jquery.fileupload-image.js",
+    "jquery.fileupload-audio.js": "vendor/blueimp-file-upload/js/jquery.fileupload-audio.js",
+    "jquery.fileupload-video.js": "vendor/blueimp-file-upload/js/jquery.fileupload-video.js",
+    "jquery.fileupload-validate.js": "vendor/blueimp-file-upload/js/jquery.fileupload-validate.js",
+    "jquery.fileupload-ui.js": "vendor/blueimp-file-upload/js/jquery.fileupload-ui.js",
+    "jquery.blueimp-gallery.js": "vendor/blueimp-gallery/js/jquery.blueimp-gallery.min.js",
+    "blueimp-gallery-indicator.js": "vendor/blueimp-gallery/js/blueimp-gallery-indicator.js",
+    "cropper.js": "vendor/cropper/dist/cropper.min.js",
 
-BOOTSTRAP_JS_PATH = 'vendor/bootstrap/dist/js/bootstrap.min.js'
-BOOTSTRAP_CSS_PATH = 'vendor/bootstrap/dist/css/bootstrap.min.css'
-JQUERY_JS_PATH = "vendor/jquery.min.js"
+    # css assets
+    "bootstrap.css": "vendor/bootstrap/dist/css/bootstrap.min.css",
+    "jquery-ui.theme.css": "vendor/jquery-ui-dist/jquery-ui.theme.min.css",
+    "jquery.fileupload.css": "vendor/blueimp-file-upload/css/jquery.fileupload.css",
+    "jquery.fileupload-ui.css": "vendor/blueimp-file-upload/css/jquery.fileupload-ui.css",
+    "blueimp-gallery.css": "vendor/blueimp-gallery/css/blueimp-gallery.min.css",
+    "blueimp-gallery-indicator.css": "vendor/blueimp-gallery/css/blueimp-gallery-indicator.css",
+    "font-awesome.css": "vendor/font-awesome/css/font-awesome.min.css",
+    "cropper.css": "vendor/cropper/dist/cropper.min.css",
+}
+
+BOOTSTRAP_JS_PATH = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+BOOTSTRAP_CSS_PATH = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+JQUERY_JS_PATH = "https://code.jquery.com/jquery-3.6.0.min.js"
+
 EXTRA_JS = []
 EXTRA_CSS = []
 
