@@ -1,5 +1,5 @@
 """
-Copied from Sphinx plugins for Django documentation.
+Copied from Sphinx plugins for Django documentation.-----------------------------------------------
 """
 
 from docutils import nodes
@@ -7,6 +7,9 @@ from docutils.parsers.rst import Directive, directives
 from sphinx import addnodes
 from sphinx.domains.std import Cmdoption
 from sphinx.util.nodes import set_source_info
+from importlib import import_module
+from inspect import getsource
+
 
 
 def setup(app):
@@ -42,6 +45,9 @@ def setup(app):
                  man=(visit_snippet_literal, depart_snippet_literal),
                  text=(visit_snippet_literal, depart_snippet_literal),
                  texinfo=(visit_snippet_literal, depart_snippet_literal))
+
+    app.add_directive('pprint', PrettyPrintIterable)
+
     return {'parallel_read_safe': True}
 
 
@@ -70,8 +76,8 @@ def visit_snippet(self, node):
     """
     HTML document generator visit handler
     """
-    lang = self.highlightlang
-    linenos = node.rawsource.count('\n') >= self.highlightlinenothreshold - 1
+    lang = node["language"]
+    linenos = node.get('linenos', False)
     fname = node['filename']
     highlight_args = node.get('highlight_args', {})
     if 'language' in node:
@@ -123,3 +129,40 @@ def parse_django_admin_node(env, sig, signode):
     title = "django-admin %s" % sig
     signode += addnodes.desc_name(title, title)
     return command
+
+
+#----------------Human readable iterables in Sphinx documentation--------
+# https://stackoverflow.com/a/62253904/3437454
+
+class PrettyPrintIterable(Directive):
+    required_arguments = 1
+
+    def run(self):
+        def _get_iter_source(src, varname):
+            # 1. identifies target iterable by variable name, (cannot be spaced)
+            # 2. determines iter source code start & end by tracking brackets
+            # 3. returns source code between found start & end
+            start = end = None
+            open_brackets = closed_brackets = 0
+            for i, line in enumerate(src):
+                if line.startswith(varname):
+                    if start is None:
+                        start = i
+                if start is not None:
+                    open_brackets   += sum(line.count(b) for b in "([{")
+                    closed_brackets += sum(line.count(b) for b in ")]}")
+
+                if open_brackets > 0 and (open_brackets - closed_brackets == 0):
+                    end = i + 1
+                    break
+            return '\n'.join(src[start:end])
+
+        module_path, member_name = self.arguments[0].rsplit('.', 1)
+        src = getsource(import_module(module_path)).split('\n')
+        code = _get_iter_source(src, member_name)
+
+        literal = nodes.literal_block(code, code)
+        literal['language'] = 'python'
+
+        return [addnodes.desc_name(text=member_name),
+                addnodes.desc_content('', literal)]

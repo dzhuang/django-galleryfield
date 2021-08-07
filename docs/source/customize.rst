@@ -25,7 +25,8 @@ A valid target image model need to meet one of the following 2 requirements:
    but the field can be accessed by a `classmethod` :meth:`get_image_field`,
    for example:
 
-.. code-block:: python
+.. snippet:: python
+   :filename: myapp/models.py
 
    class MyImage(models.Model):
         photo = models.ImageField(

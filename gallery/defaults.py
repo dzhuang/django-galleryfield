@@ -95,6 +95,8 @@ DEFAULT_ASSETS = {
     "font-awesome.css": "font-awesome/css/font-awesome.min.css",
     "cropper.css": "cropper/dist/cropper.min.css",
 }
+"""dict: The default assets used to render the :class:`GalleryWidget` instance.
+"""
 
 BUILT_IN_JS = ["js/jquery.fileupload-ui-gallery-widget.js"]
 BUILT_IN_CSS = []
