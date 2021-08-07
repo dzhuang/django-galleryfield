@@ -21,7 +21,6 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
 
 _APP_CONFIG = getattr(settings, "DJANGO_GALLERY_WIDGET_CONFIG", {})
 
-# todo: check and warn assign none to some item
 # {{{ Generating js and css assets for GalleryWidget
 
 _APP_CONFIG_ASSETS = _APP_CONFIG.get("assets", {})
@@ -35,7 +34,7 @@ _js = [_assets.get(v) for v in defaults.VENDER_JS_NAMES]
 _js.extend(defaults.BUILT_IN_JS + EXTRA_JS)
 JS = [j for j in _js if j]
 
-_css = [_assets.get(v) for v in defaults.VENDER_CSS_NAMEs] + EXTRA_CSS
+_css = [_assets.get(v) for v in defaults.VENDER_CSS_NAMES] + EXTRA_CSS
 _css.extend(defaults.BUILT_IN_CSS + EXTRA_CSS)
 CSS = [c for c in _css if c]
 

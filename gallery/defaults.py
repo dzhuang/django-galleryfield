@@ -52,7 +52,7 @@ VENDER_JS_NAMES = (
     'blueimp-gallery-fullscreen.js',
     'cropper.js')
 
-VENDER_CSS_NAMEs = (
+VENDER_CSS_NAMES = (
     'bootstrap.css',
     'jquery-ui.theme.css',
     'jquery.fileupload.css',
