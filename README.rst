@@ -166,3 +166,4 @@ Known issues
 -------------
 
 -  Css rendering of buttons in Admin.
+-  Gif will be converted to png (to retain gif, you need to set ``disableImageResize`` to ``False` in :attr:`jquery_fileupload_ui_options` when initialize :class:`GalleryWidget`).
