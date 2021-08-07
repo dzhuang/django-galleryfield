@@ -28,6 +28,41 @@ DEFAULT_CREATOR_FIELD_NAME = "creator"
 
 # }}}
 
+# BE CAUTIOUS: changing the sequence of the assets
+# might result in failure to render the widget
+
+VENDER_JS_NAMES = (
+    'jquery.js',
+    'jquery-ui.js',
+    'jquery.ui.widget.min.js',
+    'blueimp-tmpl.js',
+    'load-image.all.min.js',
+    'blueimp-canvas-to-blob.js',
+    'bootstrap.js',
+    'jquery.iframe-transport.js',
+    'jquery.fileupload.js',
+    'jquery.fileupload-process.js',
+    'jquery.fileupload-image.js',
+    'jquery.fileupload-audio.js',
+    'jquery.fileupload-video.js',
+    'jquery.fileupload-validate.js',
+    'jquery.fileupload-ui.js',
+    'jquery.blueimp-gallery.js',
+    'blueimp-gallery-indicator.js',
+    'blueimp-gallery-fullscreen.js',
+    'cropper.js')
+
+VENDER_CSS_NAMEs = (
+    'bootstrap.css',
+    'jquery-ui.theme.css',
+    'jquery.fileupload.css',
+    'jquery.fileupload-ui.css',
+    'blueimp-gallery.css',
+    'blueimp-gallery-indicator.css',
+    'font-awesome.css',
+    'cropper.css')
+
+
 DEFAULT_ASSETS = {
     # js assets
     "jquery.js": "jquery/dist/jquery.min.js",
@@ -61,9 +96,8 @@ DEFAULT_ASSETS = {
     "cropper.css": "cropper/dist/cropper.min.css",
 }
 
-BOOTSTRAP_JS_PATH = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-BOOTSTRAP_CSS_PATH = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-JQUERY_JS_PATH = "https://code.jquery.com/jquery-3.6.0.min.js"
+BUILT_IN_JS = ["js/jquery.fileupload-ui-gallery-widget.js"]
+BUILT_IN_CSS = []
 
 EXTRA_JS = []
 EXTRA_CSS = []

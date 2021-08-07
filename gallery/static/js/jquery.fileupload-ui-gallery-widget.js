@@ -68,6 +68,9 @@
                         if (that._trigger('replace', e, data) !== false)
                         {delete data.replaceChild;}
                     }
+
+                    // todo: check if edit is allowed, for example,
+                    // gif is not allowed in chrome.
                     $(data.context).find('.edit').prop('disabled', false);
                     that.toggleFileuploadSortableHandle();
                     that._toggleFileuploadButtonBarButtonDisplay();

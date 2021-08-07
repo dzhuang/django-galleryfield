@@ -11,37 +11,6 @@ from gallery.utils import get_url_from_str, convert_dict_to_plain_text
 NoReverseMatch_EXCEPTION_STR_RE = re.compile("Reverse for '(.+)' not found")
 
 
-js = [
-    conf.JQUERY_JS_PATH,
-    'vendor/jquery-ui-dist/jquery-ui.min.js',
-    'vendor/blueimp-file-upload/js/vendor/jquery.ui.widget.js',
-    'vendor/blueimp-tmpl/js/tmpl.min.js',
-    "vendor/blueimp-load-image/js/load-image.all.min.js",
-    "vendor/blueimp-canvas-to-blob/js/canvas-to-blob.js",
-    conf.BOOTSTRAP_JS_PATH,
-    "vendor/jquery.iframe-transport/jquery.iframe-transport.js",
-    'vendor/blueimp-file-upload/js/jquery.fileupload.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-process.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-image.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-audio.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-video.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-validate.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-ui.js',
-    'vendor/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
-    "vendor/cropper/dist/cropper.min.js",
-    "js/jquery.fileupload-ui-gallery-widget.js",
-] + conf.EXTRA_JS
-
-css = [
-          conf.BOOTSTRAP_CSS_PATH,
-          'vendor/jquery-ui-dist/jquery-ui.theme.min.css',
-          'vendor/blueimp-gallery/css/blueimp-gallery.min.css',
-          "vendor/blueimp-file-upload/css/jquery.fileupload.css",
-          "vendor/blueimp-file-upload/css/jquery.fileupload-ui.css",
-          'vendor/font-awesome/css/font-awesome.min.css',
-          "vendor/cropper/dist/cropper.min.css",
-] + conf.EXTRA_CSS
-
 class GalleryWidget(forms.HiddenInput):
     """This is the default widget used by :class:`gallery.fields.GalleryFormField`.
 
