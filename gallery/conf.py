@@ -58,3 +58,5 @@ PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = _APP_CONFIG.get(
     'prompt_alert_if_changed_on_window_reload',
     defaults.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED
 )
+
+# todo: allow setting default jquery_fileupload_ui_options in settings.
