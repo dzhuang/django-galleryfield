@@ -48,16 +48,14 @@ class GalleryWidgetViewTest(UserCreateMixin, TestCase):
         return url
 
     @staticmethod
-    def get_crop_url():
-        return reverse(defaults.DEFAULT_CROP_URL_NAME)
+    def get_crop_url(pk):
+        return reverse(defaults.DEFAULT_CROP_URL_NAME, kwargs={"pk": pk})
 
     @staticmethod
     def _get_crop_post_data(
-            pk=None, cropped_result=None,
+            cropped_result=None,
             preview_size=defaults.DEFAULT_THUMBNAIL_SIZE):
         data = {}
-        if pk:
-            data.update({"pk": pk})
         if cropped_result:
             data.update({"croppedResult": cropped_result})
         if preview_size:
@@ -119,7 +117,8 @@ class GalleryWidgetViewTest(UserCreateMixin, TestCase):
 
         def get_fetched_result():
             resp = self.c.get(self.get_fetch_url(
-                params={"pks": list(gallery.images)}))
+                params={"pks": list(gallery.images)}),
+                HTTP_X_REQUESTED_WITH="XMLHttpRequest")
             self.assertEqual(resp.status_code, 200)
             resp_image_list = [file["pk"]
                                for file in json.loads(resp.content)["files"]]
@@ -144,7 +143,41 @@ class GalleryWidgetViewTest(UserCreateMixin, TestCase):
 
         self.c.force_login(self.user)
         resp = self.c.get(self.get_fetch_url(
-            params={"not-pks": list(gallery.images)}))
+            params={"not-pks": list(gallery.images)}),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
+        self.assertEqual(resp.status_code, 400)
+
+    def test_fetch_pk_not_digit(self):
+        self.c.force_login(self.user)
+        resp = self.c.get(self.get_fetch_url(
+            params={"pks": [1.1]}),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
+        self.assertEqual(resp.status_code, 400)
+
+    def test_fetch_pk_decode_error(self):
+        factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5,
+            shuffle=True)
+
+        self.c.force_login(self.user)
+        resp = self.c.get(self.get_fetch_url(
+            params={"pks": "abcd"}),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
+        self.assertEqual(resp.status_code, 400)
+
+    def test_fetch_pk_loaded_but_not_list(self):
+        factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5,
+            shuffle=True)
+
+        self.c.force_login(self.user)
+        resp = self.c.get(self.get_fetch_url(
+            params={"pks": '{"ab": "cd"}'}),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
         self.assertEqual(resp.status_code, 400)
 
     def test_fetch_not_logged_in(self):
@@ -153,37 +186,44 @@ class GalleryWidgetViewTest(UserCreateMixin, TestCase):
             shuffle=True)
 
         resp = self.c.get(self.get_fetch_url(
-            params={"not-pks": list(gallery.images)}))
+            params={"not-pks": list(gallery.images)}),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
         self.assertEqual(resp.status_code, 302)
 
-    def get_crop_post_data(self, pk, **kwargs):
+    def get_crop_post_data(self, **kwargs):
         default_result = {
             "x": 200, "y": 200, "width": 400,
             "height": 810, "rotate": -90}
         kwargs = kwargs or {}
         default_result.update(**kwargs)
         cropped = self.get_cropped_result(**default_result)
-        data = self._get_crop_post_data(pk=pk, cropped_result=cropped)
+        data = self._get_crop_post_data(cropped_result=cropped)
         return data
 
-    def get_default_crop_post_data(self, idx, **kwargs):
+    def get_crop_pk(self, idx):
         gallery = factories.DemoGalleryFactory.create(
             creator=self.user, number_of_images=5, shuffle=True)
         pk = gallery.images[idx]
-        data = self.get_crop_post_data(pk, **kwargs)
+        return pk
+
+    def get_default_crop_post_data(self, **kwargs):
+        data = self.get_crop_post_data(**kwargs)
         return data
 
     def test_crop_success(self):
-        data = self.get_default_crop_post_data(0)
+        pk = self.get_crop_pk(0)
+        data = self.get_default_crop_post_data()
 
         self.c.force_login(self.user)
-        resp = self.c.post(self.get_crop_url(), data=data,
+        resp = self.c.post(self.get_crop_url(pk), data=data,
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(resp.status_code, 200)
 
-        data = self.get_default_crop_post_data(1)
+        pk = self.get_crop_pk(1)
+        data = self.get_default_crop_post_data()
         self.c.force_login(self.superuser)
-        resp = self.c.post(self.get_crop_url(), data=data,
+        resp = self.c.post(self.get_crop_url(pk), data=data,
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(resp.status_code, 200)
 
@@ -191,45 +231,38 @@ class GalleryWidgetViewTest(UserCreateMixin, TestCase):
         self.upload_file(self.user, find("demo/screen_upload.png"))
         factories.DemoGalleryFactory.create(
             creator=self.user, images=[BuiltInGalleryImage.objects.first()])
-        data = self.get_crop_post_data(1)
+        data = self.get_crop_post_data()
 
         self.c.force_login(self.user)
-        resp = self.c.post(self.get_crop_url(), data=data,
+        resp = self.c.post(self.get_crop_url(1), data=data,
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(resp.status_code, 200)
 
     def test_crop_non_exist_image(self):
-        data = self.get_crop_post_data(pk=100)
+        data = self.get_crop_post_data()
 
         self.c.force_login(self.user)
-        resp = self.c.post(self.get_crop_url(), data=data,
+        resp = self.c.post(self.get_crop_url(100), data=data,
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(resp.status_code, 404)
 
     def test_crop_cropResult_invalid(self):
-        data = self.get_default_crop_post_data(idx=1, x=None)
+        data = self.get_default_crop_post_data(x=None)
 
         self.c.force_login(self.user)
-        resp = self.c.post(self.get_crop_url(), data=data,
+        pk = self.get_crop_pk(1)
+        resp = self.c.post(self.get_crop_url(pk), data=data,
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(resp.status_code, 400)
 
     def test_crop_no_rotate(self):
-        data = self.get_default_crop_post_data(idx=1, rotate=0)
+        data = self.get_default_crop_post_data(rotate=0)
 
+        pk = self.get_crop_pk(1)
         self.c.force_login(self.user)
-        resp = self.c.post(self.get_crop_url(), data=data,
+        resp = self.c.post(self.get_crop_url(pk), data=data,
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        self.assertEqual(resp.status_code, 200)
-
-    def test_crop_no_pk(self):
-        data = self.get_default_crop_post_data(idx=1, rotate=0)
-        data.pop("pk")
-
-        self.c.force_login(self.user)
-        resp = self.c.post(self.get_crop_url(), data=data,
-                           HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.status_code, 200, resp.content)
 
     def test_crop_io_error(self):
         # no actual image file
@@ -237,24 +270,27 @@ class GalleryWidgetViewTest(UserCreateMixin, TestCase):
         import os
         os.remove(gallery.images.objects.first().image.path)
 
-        data = self.get_crop_post_data(pk=1)
+        pk = gallery.images.objects.first().pk
+        data = self.get_crop_post_data()
         self.c.force_login(self.user)
-        resp = self.c.post(self.get_crop_url(), data=data,
+        resp = self.c.post(self.get_crop_url(pk), data=data,
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(resp.status_code, 400)
 
     def test_crop_permission_denied(self):
-        data = self.get_default_crop_post_data(0)
+        pk = self.get_crop_pk(0)
+        data = self.get_default_crop_post_data()
 
         another_user = self.create_user()
         self.c.force_login(another_user)
-        resp = self.c.post(self.get_crop_url(), data=data,
+        resp = self.c.post(self.get_crop_url(pk), data=data,
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(resp.status_code, 403)
 
     def test_crop_not_logged_in(self):
-        data = self.get_default_crop_post_data(0)
+        pk = self.get_crop_pk(0)
+        data = self.get_default_crop_post_data()
 
-        resp = self.c.post(self.get_crop_url(), data=data,
+        resp = self.c.post(self.get_crop_url(pk), data=data,
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(resp.status_code, 302)

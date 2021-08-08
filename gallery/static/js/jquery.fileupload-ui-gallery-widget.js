@@ -282,7 +282,6 @@
                             method: "POST",
                             url: $button.data("action"),
                             data: {
-                                "pk": $button.data("pk"),
                                 "croppedResult": JSON.stringify(result),
                                 "preview_size": options.previewMaxWidth,
                                 "csrfmiddlewaretoken": get_cookie("csrftoken")
