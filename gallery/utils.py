@@ -1,15 +1,18 @@
 import logging
+import os
+from io import BytesIO
 
+from PIL import Image
 from django.apps import apps
 from django.core.checks import Critical, Info
 from django.core.exceptions import (
     ImproperlyConfigured, FieldDoesNotExist, AppRegistryNotReady)
-from django.db.models import ImageField
+from django.db.models import ImageField, When, Value, Case, IntegerField
 from django.urls import (
     resolve, Resolver404, reverse_lazy, reverse, NoReverseMatch)
+from sorl.thumbnail import get_thumbnail
 
-from gallery import defaults
-
+from gallery import defaults, conf
 
 logger = logging.getLogger('django-gallery-widget')
 
@@ -210,3 +213,60 @@ def get_url_from_str(url_str, require_urlconf_ready=False):
             raise ImproperlyConfigured(
                 "'%s' is neither a valid url nor a valid url name" % url_str)
     return url_str
+
+
+def is_image(file_obj):
+    # Verify and close the file
+    try:
+        Image.open(BytesIO(file_obj.read())).verify()
+        return True
+    except IOError:
+        return False
+    finally:
+        file_obj.seek(0)
+
+
+def get_serialized_image(instance, image_field_name="image",
+                         preview_size=conf.DEFAULT_THUMBNAIL_SIZE):
+    image = getattr(instance, image_field_name)
+
+    return {
+        'pk': instance.pk,
+        'name': os.path.basename(image.path),
+        'size': image.size,
+        'url': image.url,
+        'thumbnailUrl':
+            get_thumbnail(
+                image,
+                "%sx%s" % (preview_size, preview_size),
+                crop="center",
+                quality=conf.DEFAULT_THUMBNAIL_QUALITY).url,
+    }
+
+
+def get_ordered_serialized_images(
+        request, pks, image_model_class, image_field_name,
+        user_field_name, preview_size):
+    # We don't permit non-owner user to fetch images of other users
+    # Viewing other users' image should be handled via model view
+    # instead of form view.
+
+    assert isinstance(pks, list)
+
+    # Preserving the order of image using id__in=pks
+    # https://stackoverflow.com/a/37146498/3437454
+    cases = [When(id=x, then=Value(i)) for i, x in enumerate(pks)]
+    case = Case(*cases, output_field=IntegerField())
+
+    filter_kwargs = {"id__in": pks}
+    if not request.user.is_superuser:
+        filter_kwargs[user_field_name] = request.user
+
+    queryset = image_model_class.objects.filter(**filter_kwargs)
+    queryset = queryset.annotate(my_order=case).order_by('my_order')
+
+    files = [get_serialized_image(
+        instance, image_field_name, preview_size)
+        for instance in queryset]
+
+    return files

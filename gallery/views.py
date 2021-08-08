@@ -9,74 +9,30 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.utils.translation import gettext
 from django.views.decorators.http import require_POST, require_GET
-from django.db.models import Case, Value, When, IntegerField
+from django.views.generic import CreateView
 from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 
-from sorl.thumbnail import get_thumbnail
 from gallery.models import BuiltInGalleryImage
 from gallery import conf
+from gallery.utils import is_image, get_serialized_image, get_ordered_serialized_images
+from gallery.mixins import ImageCreateMixin
 
 
-def is_image(file_obj):
-    # Verify and close the file
-    try:
-        Image.open(BytesIO(file_obj.read())).verify()
-        return True
-    except IOError:
-        return False
-    finally:
-        file_obj.seek(0)
+class ImageCreateView(ImageCreateMixin, CreateView):
+    target_model = "gallery.BuiltInGalleryImage"
 
-
-def get_serialized_image(instance, image_field_name="image",
-                         preview_size=conf.DEFAULT_THUMBNAIL_SIZE):
-    image = getattr(instance, image_field_name)
-
-    return {
-        'pk': instance.pk,
-        'name': os.path.basename(image.path),
-        'size': image.size,
-        'url': image.url,
-        'thumbnailUrl':
-            get_thumbnail(
-                image,
-                "%sx%s" % (preview_size, preview_size),
-                crop="center",
-                quality=conf.DEFAULT_THUMBNAIL_QUALITY).url,
-    }
-
-
-def get_ordered_serialized_images(
-        request, pks, image_model_class, image_field_name,
-        user_field_name, preview_size):
-    # We don't permit non-owner user to fetch images of other users
-    # Viewing other users' image should be handled via model view
-    # instead of form view.
-
-    assert isinstance(pks, list)
-
-    # Preserving the order of image using id__in=pks
-    # https://stackoverflow.com/a/37146498/3437454
-    cases = [When(id=x, then=Value(i)) for i, x in enumerate(pks)]
-    case = Case(*cases, output_field=IntegerField())
-
-    filter_kwargs = {"id__in": pks}
-    if not request.user.is_superuser:
-        filter_kwargs[user_field_name] = request.user
-
-    queryset = image_model_class.objects.filter(**filter_kwargs)
-    queryset = queryset.annotate(my_order=case).order_by('my_order')
-
-    files = [get_serialized_image(
-        instance, image_field_name, preview_size)
-        for instance in queryset]
-
-    return files
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.creator = self.request.user
+        self.object.save()
+        return super(). form_valid(form)
 
 
 class CropImageError(Exception):
     pass
+
+
 
 
 def get_cropped_file(request, instance, cropped_result,
@@ -140,8 +96,12 @@ def get_cropped_file(request, instance, cropped_result,
 
 @require_POST
 @login_required
-def upload(request, *args, **kwargs):
+def upload(request):
     file = request.FILES['files[]'] if request.FILES else None
+    if request.META.get('HTTP_X_REQUESTED_WITH') != 'XMLHttpRequest':
+        return HttpResponseBadRequest(
+            gettext("Only XMLHttpRequest requests are allowed"))
+
     if not file or not is_image(file):
         return HttpResponseBadRequest(
             gettext("Only images are allowed to be uploaded"))
@@ -163,6 +123,11 @@ def upload(request, *args, **kwargs):
 @login_required
 @require_GET
 def fetch(request):
+
+    if request.META.get('HTTP_X_REQUESTED_WITH') != 'XMLHttpRequest':
+        return HttpResponseBadRequest(
+            gettext("Only XMLHttpRequest requests are allowed"))
+
     pks = request.GET.get("pks", None)
     if not pks:
         return HttpResponseBadRequest()
@@ -184,6 +149,11 @@ def fetch(request):
 @login_required
 @require_POST
 def crop(request, *args, **kwargs):
+
+    if request.META.get('HTTP_X_REQUESTED_WITH') != 'XMLHttpRequest':
+        return HttpResponseBadRequest(
+            gettext("Only XMLHttpRequest requests are allowed"))
+
     try:
         pk = request.POST["pk"]
         cropped_result = json.loads(request.POST.get("croppedResult"))
