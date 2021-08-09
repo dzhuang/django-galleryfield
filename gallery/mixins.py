@@ -6,26 +6,35 @@ from PIL import Image
 from io import BytesIO
 
 from django import forms
-from django.views.generic import CreateView, UpdateView, View
+from django.views.generic import CreateView, UpdateView
 from django.views.generic.list import BaseListView
-from django.http import JsonResponse, HttpResponseBadRequest
-from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
+from django.http import JsonResponse
+from django.core.exceptions import (
+    ImproperlyConfigured, SuspiciousOperation, PermissionDenied)
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.apps import apps
-from django.forms.models import modelform_factory
 from django.utils.translation import gettext
-from django.db.models import When, Case, QuerySet
-from django.core.files.base import ContentFile
+from django.db.models import When, Case
 from django.urls import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 
 from gallery.utils import get_or_check_image_field
-from gallery import conf
+from gallery import conf, defaults
 
 
 class BaseImageModelMixin:
     target_model = None
     crop_url_name = None
+
+    def setup(self, request, *args, **kwargs):
+        # XML request only check
+        if request.META.get('HTTP_X_REQUESTED_WITH') != 'XMLHttpRequest':
+            raise PermissionDenied(
+                gettext("Only XMLHttpRequest requests are allowed"))
+
+        super().setup(request, *args, **kwargs)
+        self.setup_model_and_image_field()
+        self.preview_size = self.get_and_validate_preview_size_from_request()
 
     def setup_model_and_image_field(self):
         if self.target_model is None:
@@ -50,6 +59,11 @@ class BaseImageModelMixin:
                     % (self.__class__.__name__,
                        type(e).__name__,
                        str(e)))
+        if self.target_model != defaults.DEFAULT_TARGET_IMAGE_MODEL:
+            raise ImproperlyConfigured(
+                    "'crop_url_name' in %s is using built-in default, while "
+                    "'target_model' is not using built-in default value. They "
+                    "are handling different image models. this is prohibited.")
 
         self._image_field_name = (get_or_check_image_field(
             obj=self, target_model=self.target_model,
@@ -57,18 +71,8 @@ class BaseImageModelMixin:
             is_checking=False).name)
         self.model = apps.get_model(self.target_model)
 
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.setup_model_and_image_field()
-        self.preview_size = self.get_and_validate_preview_size_from_request()
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.META.get('HTTP_X_REQUESTED_WITH') != 'XMLHttpRequest':
-            return HttpResponseBadRequest(
-                gettext("Only XMLHttpRequest requests are allowed"))
-        return super().dispatch(request, *args, **kwargs)
-
     def get_and_validate_preview_size_from_request(self):
+        # Get preview size from request
         method = self.request.method.lower()
         if method == "get":
             request_dict = self.request.GET
@@ -86,6 +90,8 @@ class BaseImageModelMixin:
             quality=conf.DEFAULT_THUMBNAIL_QUALITY)
 
     def get_serialized_image(self, obj):
+        # This is used to construct return value file dict in
+        # upload list and crop views.
         image = getattr(obj, self._image_field_name)
 
         result = {
@@ -114,12 +120,8 @@ class BaseImageModelMixin:
         return result
 
     def render_to_response(self, context, **response_kwargs):
-        """
-        Return a response, using the `response_class` for this view, with a
-        template rendered with the given context.
-
-        Pass response_kwargs to the constructor of the response class.
-        """
+        # Overriding the method from template view, we don't need
+        # a template in rendering the JsonResponse
         encoder = response_kwargs.pop("encoder", DjangoJSONEncoder)
         safe = response_kwargs.pop("safe", True)
         json_dumps_params = response_kwargs.pop("json_dumps_params", None)
@@ -128,7 +130,36 @@ class BaseImageModelMixin:
 
 
 class ImageFormViewMixin:
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.form_class = self.get_form_class()
+
+    def form_valid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, form):
+        context = {}
+        if form.is_valid():
+            if self.object:
+                context["files"] = [self.get_serialized_image(self.object)]
+                context["message"] = gettext("Done")
+        else:
+            context["errors"] = form.errors
+
+        return context
+
+
+class BaseCreateMixin(ImageFormViewMixin, BaseImageModelMixin):
+    http_method_names = ['post']
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
     def get_form_class(self):
+        # Here we were simulating the request is done through
+        # a form. In this way, we can used ImageField to validate
+        # the file.
+
         this = self
 
         class ImageForm(forms.ModelForm):
@@ -144,49 +175,25 @@ class ImageFormViewMixin:
 
         return ImageForm
 
-    def form_valid(self, form):
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def get_context_data(self, form):
-        context = {}
-        if self.object:
-            context["files"] = [self.get_serialized_image(self.object)]
-        if form.errors:
-            context["errors"] = form.errors
-        return context
-
-
-class BaseCreateMixin(ImageFormViewMixin, BaseImageModelMixin):
-    http_method_names = ['post']
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-
-    def save_form_object(self, form):
-        """This need to be implemented by subclasses
-        for example::
-
-          self.object = form.save(commit=False)
-          self.object.creator = self.request.user
-          self.object.save()
-        """
-        raise NotImplementedError
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.creator = self.request.user
-        self.object.save()
-        return super().form_valid(form)
-
     def form_invalid(self, form):
-        """If the form is invalid, render the invalid form."""
+        """If the form is invalid, render the invalid form error."""
         return self.render_to_response(
             self.get_context_data(form=form), status=400)
 
 
 class ImageCreateView(BaseCreateMixin, CreateView):
-    pass
+    def form_valid(self, form):
+        """User should override this method to save the object,
+        for example, image model usually has a not null user field,
+        that should be handled here.
 
+        See https://docs.djangoproject.com/en/3.2/topics/forms/modelforms/#the-save-method
+        for detail.
+
+        See :class:`gallery.views.BuiltInImageCreateView` for example.
+        """  # noqa
+        self.object.save()
+        return super().form_valid(form)
 
 
 class BaseListViewMixin(BaseImageModelMixin, BaseListView):
@@ -198,6 +205,9 @@ class BaseListViewMixin(BaseImageModelMixin, BaseListView):
         self._pks = self.get_and_validate_pks_from_request()
 
     def get_and_validate_pks_from_request(self):
+        # convert the request data "pks" (which is supposed to
+        # be a stringfied json string) into a list of
+        # image instance "pk".
         pks = self.request.GET.get("pks", None)
         if not pks:
             raise SuspiciousOperation(
@@ -226,19 +236,21 @@ class BaseListViewMixin(BaseImageModelMixin, BaseListView):
         queryset = self.model._default_manager.all()
         ordering = self.get_ordering()
         if ordering:
-            if isinstance(ordering, (str, Case)):
+            if not isinstance(ordering, (list, tuple)):
                 ordering = (ordering,)
             queryset = queryset.order_by(*ordering)
 
-        return queryset
         return queryset.filter(pk__in=self._pks)
 
     def get_ordering(self):
+        # Preserving the sequence while filter by (id__in=pks)
+        # See https://stackoverflow.com/a/37648265/3437454
         preserved = Case(
             *[When(pk=pk, then=pos) for pos, pk in enumerate(self._pks)])
         return preserved
 
     def get_context_data(self, **kwargs):
+        # Return a list of serialized files
         context = {
             "files":  [self.get_serialized_image(obj)
                        for obj in self.get_queryset()]}
@@ -264,39 +276,23 @@ class CropError(Exception):
 class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
     http_method_names = ['post']
 
-    # def get_form_class(self):
-    #     this = self
-    #
-    #     class ImageForm(forms.ModelForm):
-    #         cropped_result = forms.JSONField(required=True)
-    #
-    #         class Meta:
-    #             model = this.model
-    #             fields = (this._image_field_name,)
-    #
-    #         def clean_cropped_result(self):
-    #             data = self.cleaned_data["cropped_result"]
-    #
-    #             for key in ["x", "y", "width", "height", "rotate"]:
-    #                 try:
-    #                     if not str(data[key]).isdigit():
-    #                         raise forms.ValidationError(
-    #                             gettext(
-    #                                 'Invalid cropped_result %s'
-    #                                 ' is expecting an int, while got %s'
-    #                                 % (key, str(data[key]))))
-    #                 except KeyError:
-    #                     raise forms.ValidationError(
-    #                         gettext('Invalid cropped_result: %s is missing' % key))
-    #
-    #     return ImageForm
     def get_form_class(self):
+        # Here we were simulating the request is done through
+        # a form. In this way, we can used ImageField to validate
+        # the file.
         this = self
 
         class ImageForm(forms.ModelForm):
             class Meta:
                 model = this.model
                 fields = (this._image_field_name,)
+
+            def __init__(self, **kwargs):
+                super().__init__(**kwargs)
+
+                new_uploaded_file = this.get_cropped_uploaded_file(self.instance)
+                self.instance.pk = None
+                self.initial = {this._image_field_name: new_uploaded_file}
 
         return ImageForm
 
@@ -306,7 +302,7 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
 
     def get_and_validate_cropped_result_from_request(self):
         try:
-            cropped_result = json.loads(self.request.POST.get("cropped_result"))
+            cropped_result = json.loads(self.request.POST["cropped_result"])
         except Exception as e:
             if isinstance(e, KeyError):
                 raise SuspiciousOperation(
@@ -338,22 +334,17 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
 
         return x, y, width, height, rotate, scale_x, scale_y
 
-    # def post(self, request, *args, **kwargs):
-    #     pass
-    #
-    # def get_form_kwargs(self):
-    #     pass
-
-    def get_cropped_uploaded_file(self):
-        old_image = getattr(self.current_instance, self._image_field_name)
-
-        print("first we had %s " % str(self.object.pk))
+    def get_cropped_uploaded_file(self, old_instance):
+        # This view is put into the init method of self.form_class (i.e., ImageForm)
+        # to simulate we posted a NEW image in the form to create a (cropped) NEW
+        # image
+        old_image = getattr(old_instance, self._image_field_name)
 
         try:
             new_image = Image.open(old_image.path)
         except IOError:
-            raise CropError(
-                gettext('There are errors，please re-upload the image'))
+            raise SuspiciousOperation(
+                gettext('File not found，please re-upload the image'))
 
         image_format = new_image.format
 
@@ -367,16 +358,8 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
         box = (x, y, x + width, y + height)
         new_image = new_image.crop(box)
 
-        # if new_image.mode != "RGB":
-        #     # For example, png images
-        #     new_image = new_image.convert("RGB")
-
         new_image_io = BytesIO()
         new_image.save(new_image_io, format=image_format)
-        # size = new_image_io.tell()
-        # print(size)
-
-        # Image.MIME[image_format]
 
         upload_file = InMemoryUploadedFile(
             file=new_image_io,
@@ -388,114 +371,13 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
         )
         return upload_file
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        self.current_instance = kwargs.pop("instance")
-        kwargs.update({
-            "files": {self._image_field_name: self.get_cropped_uploaded_file()},
-        })
-        return kwargs
-
-    def get_cropped_instance(self, current_instance):
-        old_image = getattr(current_instance, self._image_field_name)
-
-        print("first we had %s " % str(self.object.pk))
-
-        try:
-            new_image = Image.open(old_image.path)
-        except IOError:
-            raise CropError(
-                gettext('There are errors，please re-upload the image'))
-
-        image_format = new_image.format
-
-        x, y, width, height, rotate, scale_x, scale_y = self._cropped_result
-
-        if rotate != 0:
-            # or it will raise "AttributeError: 'NoneType' object has no attribute
-            # 'mode' error in pillow 3.3.0
-            new_image = new_image.rotate(-rotate, expand=True)
-
-        box = (x, y, x + width, y + height)
-        new_image = new_image.crop(box)
-
-        # if new_image.mode != "RGB":
-        #     # For example, png images
-        #     new_image = new_image.convert("RGB")
-
-        new_image_io = BytesIO()
-        new_image.save(new_image_io, format=image_format)
-
-        image_field_name = self._image_field_name
-
-        # We did not actually update the original instance,
-        # instead, we created another instance.
-        new_obj = self.object
-        new_obj.pk = None
-
-        new_instance_image_field = getattr(new_obj, image_field_name)
-        new_instance_image_field.save(
-            name=os.path.basename(getattr(current_instance, image_field_name).name),
-            content=ContentFile(new_image_io.getvalue()),
-            save=False
-        )
-        new_obj.save()
-        print("now we had %s " % str(new_obj.pk))
-        return new_obj
-
-    # def get_form_kwargs(self):
-    #     form_kwargs = super().get_form_kwargs()
-    #     form_kwargs.pop("instance")
-    #
-    #     kwargs.update({
-    #         'data': self.request.POST,
-    #         'files': {
-    #             self._image_field_name: self.get_and_validate_file_from_request()},
-    #     })
-    #     return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = {
-            "files":  [self.get_serialized_image(obj)
-                       for obj in self.get_queryset()]}
-        context.update(kwargs)
-        return context
-
     def form_valid(self, form):
-        print("form is valid")
-        print(form.instance)
-        # super().form_valid(form)
-        print("Now we had %s " % str(self.object.pk))
-        # print(self.object.pk)
-        newobject = form.save(commit=False)
-        self.object = self.current_instance
-        self.object.pk = None
-
-        setattr(self.object, self._image_field_name, getattr(newobject, self._image_field_name))
-        self.object.save()
+        """User should override this method to save the object,
+        if only the model contains dynamic fields like DateTimeField
+        """
+        self.object = form.save()
         return super().form_valid(form)
-        # try:
-        #     self.object = self.get_cropped_instance(self.object)
-        # except Exception as e:
-        #     return JsonResponse({
-        #         'message': "%(type_e)s: %(str_e)s" % {
-        #             "type_e": type(e).__name__,
-        #             "str_e": str(e)}},
-        #         status=400)
-
-        return JsonResponse(
-            {
-                "file": self.get_serialized_image(self.object),
-                'message': gettext('Done!')
-            },
-            status=200)
 
 
 class ImageCropView(BaseCropViewMixin, UpdateView):
-    def get_context_data(self, **kwargs):
-        print("here!!!")
-        return super().get_context_data(**kwargs)
-
-    def form_invalid(self, form):
-        return super().form_valid(form)
-
+    pass

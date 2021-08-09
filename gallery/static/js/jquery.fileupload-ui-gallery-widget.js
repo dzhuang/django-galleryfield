@@ -232,7 +232,8 @@
                     template = $button.closest('.template-upload,.template-download'),
                     editType = template.hasClass("template-download") ? "download" : "upload",
                     $editModal = options.editModalId,
-                    $editImg = options.editModalImgId;
+                    $editImg = options.editModalImgId,
+                    getFilesFromResponse = options.getFilesFromResponse;
 
                 if (editType === "upload") {
                     var data = template.data("data");
@@ -289,21 +290,23 @@
                         })
                             .always(function () {
                             })
-                            .done(function (response) {
+                            .done(function (data) {
                                 options.done.call($fileupload,
                                     $.Event('done'),
                                     {
-                                        result: {files: [response.file]},
+                                        result: data,
                                         context: $button.closest(".template-download")
                                     });
-                                messageBox.html("<span class='alert alert-success'>" + response.message +"</span>");
+                                if (data.message){
+                                    messageBox.html("<span class='alert alert-success'>" + data.message +"</span>")};
                                 $editModal.data("new", false);
                                     setTimeout(function () {
                                         if(!$editModal.data("new")){$editModal.modal('hide')}
                                     }, 1000);
                             })
                             .fail(function (response) {
-                                messageBox.html("<span class='alert alert-danger'>" + response.responseJSON.message + "</span>");
+                                if (response.message)
+                                {messageBox.html("<span class='alert alert-danger'>" + response.responseJSON.message + "</span>");}
                             });
                         return false;
                     };
