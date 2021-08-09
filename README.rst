@@ -1,7 +1,10 @@
 django-gallery-widget
 =====================
 
-.. image:: https://codecov.io/gh/dzhuang/django-gallery-widget/branch/main/graph/badge.svg?token=W9BWM4A4RI :target: https://codecov.io/gh/dzhuang/django-gallery-widget
+.. image:: https://codecov.io/gh/dzhuang/django-gallery-widget/branch/main/graph/badge.svg?token=W9BWM4A4RI
+   :target: https://codecov.io/gh/dzhuang/django-gallery-widget
+.. image:: https://badge.fury.io/py/django-gallery-widget.svg
+   :target: https://badge.fury.io/py/django-gallery-widget
 
 
 Django AJAX form widgets and model fields for multiple images upload with progress bar. Some of the ideas/code are inspired by `Django-jfu <https://github.com/Alem/django-jfu>`__ and `Django-files-widget <https://github.com/TND/django-files-widget>`__.
