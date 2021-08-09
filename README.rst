@@ -127,15 +127,10 @@ default value.
 
 
     DJANGO_GALLERY_WIDGET_CONFIG = {
-        "default_urls":
-            {"upload_handler_url_name": "gallery_image_upload",
-             "fetch_url_name": "gallery_images_fetch",
-             "crop_url_name": "gallery_image_crop"},
-        "default_target_image_model": "gallery.BuiltInGalleryImage",
         "assets": {
-            "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
-            "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
-            "jquery_js_path": "vendor/jquery.min.js",
+            "bootstrap.js": 'vendor/bootstrap/dist/js/bootstrap.min.js',
+            "jquery.js": "vendor/jquery.min.js",
+            ...
             "extra_js": [],
             "extra_css": [],
         },
