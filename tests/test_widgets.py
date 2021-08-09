@@ -266,7 +266,6 @@ class GalleryWidgetTest(SimpleTestCase):
 
         kwargs = {
             "upload_handler_url": "test_image_upload",
-            "crop_request_url": "test_image_crop",
             "fetch_request_url": "test_images_fetch"
         }
 
@@ -318,7 +317,7 @@ class GalleryWidgetTestExtra(TestCase):
         self.assertNotIn(rendered_js_content, form.as_table())
         self.assertNotIn(rendered_js_instance_data, form.as_table())
 
-    def test_no_crop_request_url(self):
+    def test_no_crop_disabled(self):
         gallery_obj = factories.DemoGalleryFactory.create(
             creator=self.user, number_of_images=5, shuffle=True)
 
@@ -329,5 +328,5 @@ class GalleryWidgetTestExtra(TestCase):
         self.assertIn(rendered_button_data_toggle, form.as_table())
 
         # # now we set crop_request_url=None to the widget
-        form.fields["images"].widget.crop_request_url = None
+        form.fields["images"].widget.disable_server_side_crop = True
         self.assertNotIn(rendered_button_data_toggle, form.as_table())

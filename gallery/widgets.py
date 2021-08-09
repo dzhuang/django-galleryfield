@@ -47,7 +47,6 @@ class GalleryWidget(forms.HiddenInput):
             self,
             upload_handler_url=None,
             fetch_request_url=None,
-            crop_request_url=None,
             multiple=True,
             preview_size=conf.DEFAULT_THUMBNAIL_SIZE,
             template="gallery/widget.html",
@@ -70,10 +69,6 @@ class GalleryWidget(forms.HiddenInput):
 
         self._fetch_request_url = (
             None if disable_fetch else get_url_from_str(fetch_request_url))
-
-        self._crop_request_url = (
-            None if disable_server_side_crop
-            else get_url_from_str(crop_request_url))
 
         jquery_upload_ui_options = jquery_upload_ui_options or {}
         _jquery_upload_ui_options = defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS.copy()
@@ -109,16 +104,6 @@ class GalleryWidget(forms.HiddenInput):
     def fetch_request_url(self, url):
         self._fetch_request_url = (
             None if self.disable_fetch else get_url_from_str(url))
-
-    @property
-    def crop_request_url(self):
-        return self._crop_request_url
-
-    @crop_request_url.setter
-    def crop_request_url(self, url):
-        self._crop_request_url = (
-            None if self.disable_server_side_crop
-            else get_url_from_str(url))
 
     def check_urls(self):
         # Here we validate the urls and check the potential conflicts of init params
@@ -179,23 +164,6 @@ class GalleryWidget(forms.HiddenInput):
                     {"param": "fetch_request_url",
                      "value": self.fetch_request_url})
 
-        if not self.disable_server_side_crop:
-            try:
-                crop_request_url_is_default = (
-                    self.crop_request_url
-                    == get_url_from_str(defaults.DEFAULT_CROP_URL_NAME,
-                                        require_urlconf_ready=True))
-            except NoReverseMatch as e:
-                raise ImproperlyConfigured(
-                    "'crop_request_url' is invalid: %s is neither "
-                    "a valid url nor a valid url name."
-                    % re.match(NoReverseMatch_EXCEPTION_STR_RE, str(e)).groups()[0])
-
-            if crop_request_url_is_default:
-                conflict_config.append(
-                    {"param": "crop_request_url",
-                     "value": self.crop_request_url})
-
         if not conflict_config:
             return
 
@@ -254,7 +222,7 @@ class GalleryWidget(forms.HiddenInput):
             context.update({
                 "upload_handler_url": self.upload_handler_url,
                 "accepted_mime_types": self.options["accepted_mime_types"],
-                "crop_request_url": self.crop_request_url
+                "disable_server_side_crop": self.disable_server_side_crop
             })
         context["widget"] = _context["widget"]
 
