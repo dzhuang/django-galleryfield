@@ -1,18 +1,13 @@
 import logging
-import os
-from io import BytesIO
-
-from PIL import Image
 from django.apps import apps
 from django.core.checks import Critical, Info
 from django.core.exceptions import (
     ImproperlyConfigured, FieldDoesNotExist, AppRegistryNotReady)
-from django.db.models import ImageField, When, Value, Case, IntegerField
+from django.db.models import ImageField
 from django.urls import (
     resolve, Resolver404, reverse_lazy, reverse, NoReverseMatch)
-from sorl.thumbnail import get_thumbnail
 
-from gallery import defaults, conf
+from gallery import defaults
 
 logger = logging.getLogger('django-gallery-widget')
 

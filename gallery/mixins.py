@@ -103,7 +103,8 @@ class BaseImageModelMixin:
         try:
             image_size = image.size
         except OSError:
-            result["error"] = gettext("The image was unexpectedly deleted from server")
+            result["error"] = gettext(
+                "The image was unexpectedly deleted from server")
         else:
             result.update({
                 "size": image_size,
@@ -327,10 +328,9 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
                     scale_y = float(cropped_result['scaleY'])
                 except KeyError:
                     scale_y = None
-            except Exception as e:
+            except Exception:
                 raise SuspiciousOperation(
-                    gettext('There are errors, please refresh the page '
-                            'or try again later'))
+                    gettext('Wrong format of crop_result data.'))
 
         return x, y, width, height, rotate, scale_x, scale_y
 
