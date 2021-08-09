@@ -171,3 +171,4 @@ Known issues
 ------------
 
 -  Css rendering of buttons in Admin.
+-  Doesn't support svg because django ImageField can't handle it for now.

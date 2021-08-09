@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 
+
 from gallery.mixins import ImageCreateView, ImageListView, ImageCropView
 
 
@@ -7,10 +8,11 @@ class BuiltInImageCreateView(ImageCreateView):
     target_model = "gallery.BuiltInGalleryImage"
     crop_url_name = "gallery_image_crop"
 
-    def save_form_object(self, form):
+    def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.creator = self.request.user
         self.object.save()
+        return super().form_valid(form)
 
 
 class BuiltInImageListView(ImageListView):

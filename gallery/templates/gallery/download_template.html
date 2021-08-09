@@ -47,6 +47,7 @@
                 <span class="size">{% templatetag openbrace %}%=o.formatFileSize(Number(file.size))%{% templatetag closebrace %}</span>
             </td>
             {% endblock %}
+        {% templatetag openbrace %}% } %{% templatetag closebrace %}
 
             {% block JS_DOWNLOAD_TEMPLATE_DELETE %}
             {% if not uploader_disabled %}
@@ -56,6 +57,8 @@
                         <i class="glyphicon glyphicon-trash"></i>
                         <span>{% trans "Delete" %}</span>
                     </a>
+
+        {% templatetag openbrace %}% if (!file.error) { %{% templatetag closebrace %}
                     {% if upload_handler_url %}
                     <input type="checkbox" value="1" class="toggle fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}">
                     {% endif %}
