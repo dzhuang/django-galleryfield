@@ -77,7 +77,7 @@ In ``settings.py``
     INSTALLED_APPS = (
         ...,
         'sorl.thumbnail',
-        'gallery',
+        'gallery_widget',
         ...,
     )
 
