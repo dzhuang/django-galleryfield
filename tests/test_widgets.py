@@ -5,11 +5,11 @@ from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
 
-from gallery.fields import GalleryFormField
-from gallery.widgets import GalleryWidget
-from gallery import conf
-from gallery import defaults
-from gallery.utils import get_formatted_thumbnail_size
+from gallery_widget.fields import GalleryFormField
+from gallery_widget.widgets import GalleryWidget
+from gallery_widget import conf
+from gallery_widget import defaults
+from gallery_widget.utils import get_formatted_thumbnail_size
 
 from tests import factories
 from tests.test_fields import DemoTestGalleryModelForm
@@ -222,18 +222,18 @@ class GalleryWidgetTest(SimpleTestCase):
         field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         test_case = {
-            "gallery_image_upload":
+            "builtingalleryimage-upload":
                 {"upload_handler_url": "test_image_upload"},
-            "gallery_image_crop":
+            "builtingalleryimage-crop":
                 {"crop_request_url": "test_image_crop"},
-            "gallery_images_fetch":
+            "builtingalleryimage-fetch":
                 {"fetch_request_url": "test_images_fetch"}
         }
 
         default_urls = {
-            "upload_handler_url": "gallery_image_upload",
-            "crop_request_url": "gallery_image_crop",
-            "fetch_request_url": "gallery_images_fetch"
+            "upload_handler_url": "builtingalleryimage-upload",
+            "crop_request_url": "builtingalleryimage-crop",
+            "fetch_request_url": "builtingalleryimage-fetch"
         }
 
         for default, kwargs in test_case.items():
@@ -258,7 +258,7 @@ class GalleryWidgetTest(SimpleTestCase):
 
         kwargs = {
             "upload_handler_url": "test_image_upload",
-            "crop_request_url": "gallery_image_crop",  # a conflict url
+            "crop_request_url": "builtingalleryimage-crop",  # a conflict url
             "fetch_request_url": "test_images_fetch",
             "disable_server_side_crop": True
         }
@@ -272,7 +272,7 @@ class GalleryWidgetTest(SimpleTestCase):
         kwargs = {
             "upload_handler_url": "test_image_upload",
             "crop_request_url": "test_image_crop",
-            "fetch_request_url": "gallery_images_fetch",  # a conflict url
+            "fetch_request_url": "builtingalleryimage-fetch",  # a conflict url
             "disable_fetch": True
         }
 

@@ -1,5 +1,5 @@
 """
-ASGI config for gallery project.
+ASGI config for gallery_widget project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

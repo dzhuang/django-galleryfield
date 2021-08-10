@@ -6,7 +6,6 @@
 *.pyc
 /media
 /htmlcov
-/gallery_widget
 *.egg-info
 /dist
 /build

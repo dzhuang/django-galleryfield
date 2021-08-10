@@ -26,7 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r tests/requirements_test.txt
       - name: "Flake8"
-        run: flake8 gallery demo
+        run: flake8 gallery_widget demo
 
   pytest:
     name: Python ${{ matrix.python-version }} / Django ${{ matrix.django-version }}

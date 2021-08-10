@@ -12,11 +12,11 @@ class GalleryFormView(LoginRequiredMixin, CreateView):
     form_class = GalleryForm
     template_name = "form.html"
     extra_context = {
-        "form_description": "Create new gallery"}
+        "form_description": "Create new gallery_widget"}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form_description"] = "Create new gallery"
+        context["form_description"] = "Create new gallery_widget"
         return context
 
     def form_valid(self, form):
@@ -36,7 +36,7 @@ class GalleryUpdateView(UserPassesTestMixin, LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form_description"] = "Update gallery"
+        context["form_description"] = "Update gallery_widget"
         context["detail_view_url"] = reverse(
             "gallery-detail", kwargs={"pk": self.object.pk})
         return context

@@ -6,7 +6,7 @@ from tests import views_for_tests as fake_views
 
 urlpatterns = [
     path('demo/', include("demo.urls")),
-    path(r"gallery-handler/", include("gallery.urls")),
+    path(r"gallery_widget-handler/", include("gallery_widget.urls")),
     path('test-upload/', fake_views.fake_upload, name="test_image_upload"),
     path('test-crop/', fake_views.fake_crop, name="test_image_crop"),
     path('test-fetch/', fake_views.fake_fetch, name="test_images_fetch"),

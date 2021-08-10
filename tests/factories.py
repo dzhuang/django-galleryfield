@@ -3,7 +3,7 @@ import json
 import factory
 from django.contrib.auth import get_user_model
 
-from gallery.models import BuiltInGalleryImage
+from gallery_widget.models import BuiltInGalleryImage
 from demo.models import DemoGallery
 
 

@@ -7,7 +7,7 @@ from django.db.models import ImageField
 from django.urls import (
     resolve, Resolver404, reverse_lazy, reverse, NoReverseMatch)
 
-from gallery import defaults
+from gallery_widget import defaults
 
 logger = logging.getLogger('django-gallery-widget')
 

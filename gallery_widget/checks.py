@@ -2,13 +2,13 @@ from django.conf import settings
 from django.core import checks
 from django.apps import apps
 
-from gallery.utils import (
+from gallery_widget.utils import (
     DJGalleryCriticalCheckMessage, INSTANCE_ERROR_PATTERN,
     GENERIC_ERROR_PATTERN, get_formatted_thumbnail_size,
     InvalidThumbnailFormat
 )
 
-from gallery import defaults
+from gallery_widget import defaults
 
 
 DJANGO_GALLERY_WIDGET_CONFIG = "DJANGO_GALLERY_WIDGET_CONFIG"

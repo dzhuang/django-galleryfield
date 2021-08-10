@@ -1,5 +1,5 @@
 from django.db import models
-from gallery.fields import GalleryField
+from gallery_widget.fields import GalleryField
 
 
 class FakeValidImageModel(models.Model):
