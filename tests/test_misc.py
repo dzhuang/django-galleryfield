@@ -3,11 +3,11 @@ from django.test import SimpleTestCase
 from django.core.exceptions import ImproperlyConfigured
 
 
-from gallery.utils import get_url_from_str
+from gallery_widget.utils import get_url_from_str
 
 
 class GetUrlFromStrTest(SimpleTestCase):
-    # Test gallery.utils.get_url_from_str
+    # Test gallery_widget.utils.get_url_from_str
 
     def test_None(self):
         self.assertIsNone(get_url_from_str(None))

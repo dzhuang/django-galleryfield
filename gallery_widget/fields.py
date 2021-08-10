@@ -7,9 +7,9 @@ from django.core.validators import BaseValidator
 from django.db.models.query_utils import DeferredAttribute
 from django.db.models import Case, Value, When, IntegerField
 
-from gallery import conf, defaults as _defaults
-from gallery.widgets import GalleryWidget
-from gallery.utils import get_or_check_image_field, apps, logger
+from gallery_widget import conf, defaults as _defaults
+from gallery_widget.widgets import GalleryWidget
+from gallery_widget.utils import get_or_check_image_field, apps, logger
 
 
 @deconstructible
@@ -75,7 +75,7 @@ class GalleryField(models.JSONField):
     :param target_model: A string in the form of ``"app_label.model_name"``,
            which can be loaded by :meth:`django.apps.get_model` (see 
            `Django docs <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_),
-           defaults to `None`. If `None`, ``gallery.BuiltInGalleryImage``,
+           defaults to `None`. If `None`, ``gallery_widget.BuiltInGalleryImage``,
            which can be overridden by 
            ``settings.DJANGO_GALLERY_WIDGET_CONFIG["default_target_image_model"]``,
            will be used.
@@ -166,7 +166,7 @@ class GalleryField(models.JSONField):
 
 
 class GalleryFormField(forms.JSONField):
-    """The default formfield for :class:`gallery.fields.GalleryField`.
+    """The default formfield for :class:`gallery_widget.fields.GalleryField`.
 
     :param max_number_of_images: Max allowed number of images, defaults
            to `None`, which means unlimited.
@@ -180,8 +180,7 @@ class GalleryFormField(forms.JSONField):
 
              However, if this field is used as a non-model form field, when
              not specified, it will use the built-in default target image
-             model ``gallery.BuiltInGalleryImage``, which can be overridden by
-             ``settings.DJANGO_GALLERY_WIDGET_CONFIG['default_target_image_model']``.
+             model ``gallery_widget.BuiltInGalleryImage``.
 
            * widget: if not specified, defaults to ``GalleryWidget`` with default
              values.

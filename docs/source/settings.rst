@@ -67,7 +67,7 @@ Default::
     }
 
 A dictionary which contains all the default URL names which will be used by
-the :class:`gallery.widgets.GalleryWidget` instance when not specified.
+the :class:`gallery_widget.widgets.GalleryWidget` instance when not specified.
 
 
 

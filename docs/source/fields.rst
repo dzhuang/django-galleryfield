@@ -1,14 +1,14 @@
 GalleryField
 ---------------------
 
-.. autoclass:: gallery.fields.GalleryField
+.. autoclass:: gallery_widget.fields.GalleryField
    :show-inheritance:
 
 
 ``GalleryField`` and ``GalleryImages``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. currentmodule:: gallery.fields
+.. currentmodule:: gallery_widget.fields
 
 .. class:: GalleryImages
 
@@ -21,7 +21,7 @@ method such as ``slice``, ``append()`` and ``extend()``.
 
 For example::
 
-   >>> g = DemoGallery.objects.first()
+   >>> g = Demogallery_widget.objects.first()
    >>> g.images
    [2, 1, 3]
    >>> len(g.images)
@@ -66,5 +66,5 @@ where ``object`` is an instance of :class:`demo.models.DemoGallery`.
 GalleryFormField
 ---------------------
 
-.. autoclass:: gallery.fields.GalleryFormField
+.. autoclass:: gallery_widget.fields.GalleryFormField
    :show-inheritance:

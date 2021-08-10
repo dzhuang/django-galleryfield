@@ -5,10 +5,10 @@ GalleryWidget
 The ``GalleryWidget`` class
 ----------------------------
 
-.. autoclass:: gallery.widgets.GalleryWidget
+.. autoclass:: gallery_widget.widgets.GalleryWidget
 
-.. note:: When a :class:`gallery.fields.GalleryField` instance is initialized
-   with ``gallery.BuiltInGalleryImage``, the widget instance will
+.. note:: When a :class:`gallery_widget.fields.GalleryField` instance is initialized
+   with ``gallery_widget.BuiltInGalleryImage``, the widget instance will
    automatically use URL names ``gallery_image_upload``
    ``gallery_images_fetch`` and ``gallery_image_crop`` for
    :attr:`upload_handler_url`, :attr:`fetch_request_url` and :attr:`crop_request_url`,
@@ -32,11 +32,11 @@ The validity of the url params will be checked during rendering.
 .. warning:: You NEED to make sure all the urls in the widget are
    handling the corresponding :attr:`target_model` before put into
    production. As a minimal precaution,
-   when a :class:`gallery.fields.GalleryField` instance (
-   or a :class:`gallery.fields.GalleryFormField` instance) is
-   **NOT** initialized with ``gallery.BuiltInGalleryImage`` as the
+   when a :class:`gallery_widget.fields.GalleryField` instance (
+   or a :class:`gallery_widget.fields.GalleryFormField` instance) is
+   **NOT** initialized with ``gallery_widget.BuiltInGalleryImage`` as the
    :attr:`target_model`, assigning built-in urls (
    i.e., ``gallery_image_upload``, ``gallery_images_fetch`` and
    ``gallery_image_crop``) widget url params will raise :exc:`ImproperlyConfigured`
    errors when rendering. The reason is, those built-in views are dealing with
-   built-in :class:`gallery.models.BuiltInGalleryImage` instances.
+   built-in :class:`gallery_widget.models.BuiltInGalleryImage` instances.

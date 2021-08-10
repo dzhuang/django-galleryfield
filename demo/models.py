@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from gallery.fields import GalleryField
+from gallery_widget.fields import GalleryField
 
 
 class DemoGallery(models.Model):

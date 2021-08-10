@@ -12,9 +12,9 @@ from tests.utils import (
     get_upload_file_path, test_media_root, remove_upload_directory)
 from tests import factories
 
-from gallery import defaults
-from gallery.models import BuiltInGalleryImage
-from gallery.mixins import ImageListView, ImageCreateView, ImageCropView  # noqa
+from gallery_widget import defaults
+from gallery_widget.models import BuiltInGalleryImage
+from gallery_widget.mixins import ImageListView, ImageCreateView, ImageCropView  # noqa
 
 
 class ViewTestMixin(UserCreateMixin):

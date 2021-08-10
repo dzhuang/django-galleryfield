@@ -1,11 +1,11 @@
 from django.core.exceptions import PermissionDenied
 
 
-from gallery.mixins import ImageCreateView, ImageListView, ImageCropView
+from gallery_widget.mixins import ImageCreateView, ImageListView, ImageCropView
 
 
 class BuiltInImageCreateView(ImageCreateView):
-    target_model = "gallery.BuiltInGalleryImage"
+    target_model = "gallery_widget.BuiltInGalleryImage"
     crop_url_name = "builtingalleryimage_crop"
     disable_server_side_crop = False
 
@@ -17,7 +17,7 @@ class BuiltInImageCreateView(ImageCreateView):
 
 
 class BuiltInImageListView(ImageListView):
-    target_model = "gallery.BuiltInGalleryImage"
+    target_model = "gallery_widget.BuiltInGalleryImage"
     crop_url_name = "builtingalleryimage_crop"
     disable_server_side_crop = False
 
@@ -29,7 +29,7 @@ class BuiltInImageListView(ImageListView):
 
 
 class BuiltInImageCropView(ImageCropView):
-    target_model = "gallery.BuiltInGalleryImage"
+    target_model = "gallery_widget.BuiltInGalleryImage"
     crop_url_name = "builtingalleryimage_crop"
     disable_server_side_crop = False
 

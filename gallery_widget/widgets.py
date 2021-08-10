@@ -4,21 +4,21 @@ import re
 from django import forms
 from django.core.exceptions import ImproperlyConfigured
 
-from gallery import conf, defaults
-from gallery.utils import (
+from gallery_widget import conf, defaults
+from gallery_widget.utils import (
     get_url_from_str, convert_dict_to_plain_text, get_formatted_thumbnail_size)
 
 NoReverseMatch_EXCEPTION_STR_RE = re.compile("Reverse for '(.+)' not found")
 
 
 class GalleryWidget(forms.HiddenInput):
-    """This is the default widget used by :class:`gallery.fields.GalleryFormField`.
+    """This is the default widget used by :class:`gallery_widget.fields.GalleryFormField`.
 
     :param upload_handler_url: An URL name or an url of the upload handler
            view used by the widget instance, defaults to `None`. If `None`, 
            upload ui won't show upload buttons. When the parent 
-           :class:`gallery.fields.GalleryFormField` is used by
-           a :class:`gallery.fields.GalleryField`, that url will be auto-configured,
+           :class:`gallery_widget.fields.GalleryFormField` is used by
+           a :class:`gallery_widget.fields.GalleryField`, that url will be auto-configured,
            with the value in the form of ``modelname_upload`` in lower case.
            For example, if ``target_model`` is ``myapp.MyImageModel``, then
            the `upload_handler_url` is auto-configured to ``myimagemodel_upload``.
@@ -26,7 +26,7 @@ class GalleryWidget(forms.HiddenInput):
            related views exists.
     :type upload_handler_url: str, optional
     :param fetch_request_url: An URL name or an url for fetching the existing
-           images in the gallery instance, defaults to `None`. If `None`, 
+           images in the gallery_widget instance, defaults to `None`. If `None`, 
            upload ui won't load existing images. Like ``upload_handler_url``,
            this param will be auto-configured in the form of ``modelname_fetch``.
     :type fetch_request_url: str, optional
@@ -39,7 +39,7 @@ class GalleryWidget(forms.HiddenInput):
            The value can be set after the widget is initialized.
     :type thumbnail_size: int, optional
     :param template: The path of template which is used to render the widget.
-           defaults to ``gallery/widget.html``, which support template 
+           defaults to ``gallery_widget/widget.html``, which support template 
            inheritance.
     :type template: str, optional     
     :param attrs: Html attribute when rendering the field (Which is a 
@@ -58,7 +58,7 @@ class GalleryWidget(forms.HiddenInput):
            for all the available options. The default options can be 
            seen in ``defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS``. Notice that
            ``maxNumberOfFiles`` is overridden by the ``max_number_of_images`` param
-           when initializing :class:`gallery.fields.GalleryFormField`, and
+           when initializing :class:`gallery_widget.fields.GalleryFormField`, and
            ``previewMaxWidth`` and ``previewMaxHeight`` are overridden by
            param ``thumbnail_size``.
     :type jquery_upload_ui_options: dict, optional
@@ -79,7 +79,7 @@ class GalleryWidget(forms.HiddenInput):
             fetch_request_url=None,
             multiple=True,
             thumbnail_size=conf.DEFAULT_THUMBNAIL_SIZE,
-            template="gallery/widget.html",
+            template="gallery_widget/widget.html",
             attrs=None, options=None,
             jquery_upload_ui_options=None,
             disable_fetch=False,

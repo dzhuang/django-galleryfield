@@ -18,9 +18,9 @@ from django.db.models import When, Case
 from django.urls import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 
-from gallery.utils import (
+from gallery_widget.utils import (
     get_or_check_image_field, get_formatted_thumbnail_size)
-from gallery import conf, defaults
+from gallery_widget import conf, defaults
 
 
 class BaseImageModelMixin:
@@ -219,7 +219,7 @@ class ImageCreateView(BaseCreateMixin, CreateView):
         See https://docs.djangoproject.com/en/3.2/topics/forms/modelforms/#the-save-method
         for detail.
 
-        See :class:`gallery.views.BuiltInImageCreateView` for example.
+        See :class:`gallery_widget.views.BuiltInImageCreateView` for example.
         """  # noqa
         self.object.save()
         return super().form_valid(form)
@@ -227,7 +227,7 @@ class ImageCreateView(BaseCreateMixin, CreateView):
 
 class BaseListViewMixin(BaseImageModelMixin, BaseListView):
     # List view doesn't include a form
-    target_model = "gallery.BuiltInGalleryImage"
+    target_model = "gallery_widget.BuiltInGalleryImage"
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)

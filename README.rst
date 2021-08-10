@@ -98,7 +98,7 @@ In ``urls.py``
 
 ::
 
-    path(r"gallery-handler/", include("gallery.urls")),
+    path(r"gallery-handler/", include("gallery_widget.urls")),
 
 Run the demo
 ~~~~~~~~~~~~
@@ -124,11 +124,11 @@ For Advanced users
 Although the demo and built in image processing views might have meet the basic needs, advance user will consider
 more permission control, template inheritance, and Image model customization. The work of customizing include:
 
-- A valid target image model. The ``gallery.models.BuiltInGalleryImage`` is an example.
+- A valid target image model. The ``gallery_widget.models.BuiltInGalleryImage`` is an example.
 - Three views for handling the image model objects (upload, fetch and crop). We have provided 3
   class-based-views for these views to enable the built-in views.
-  - ``gallery.views.BuiltInImageCreateView``
-  - ``gallery.views.BuiltInImageListView``
+  - ``gallery_widget.views.BuiltInImageCreateView``
+  - ``gallery_widget.views.BuiltInImageListView``
   - ``BuiltInImageCropView``
 - URL_CONF configurations.
 - Render the GalleryField.
@@ -180,7 +180,7 @@ default value.
 Model related default\_values
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Django-Gallery-Widget has a built-in image model ``gallery.models.BuiltInGalleryImage``, which contains a ``image`` field. The image model is used as the default ``target_model`` for gallery field. User can use this models without much modifying in their apps. See the demo app for details. With that built-in model, default views are applied with 3 default urls (i.e, ``upload_handler_url_name``, ``fetch_url_name`` and ``crop_url_name``).
+Django-Gallery-Widget has a built-in image model ``gallery_widget.models.BuiltInGalleryImage``, which contains a ``image`` field. The image model is used as the default ``target_model`` for gallery field. User can use this models without much modifying in their apps. See the demo app for details. With that built-in model, default views are applied with 3 default urls (i.e, ``upload_handler_url_name``, ``fetch_url_name`` and ``crop_url_name``).
 
 However, it is heavily suggested for developers to write your own image models, and related views, urls, especially in terms of permission considerations.
 

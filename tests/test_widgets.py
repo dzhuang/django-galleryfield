@@ -5,11 +5,11 @@ from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
 
-from gallery.fields import GalleryFormField
-from gallery.widgets import GalleryWidget
-from gallery import conf
-from gallery import defaults
-from gallery.utils import get_formatted_thumbnail_size
+from gallery_widget.fields import GalleryFormField
+from gallery_widget.widgets import GalleryWidget
+from gallery_widget import conf
+from gallery_widget import defaults
+from gallery_widget.utils import get_formatted_thumbnail_size
 
 from tests import factories
 from tests.test_fields import DemoTestGalleryModelForm

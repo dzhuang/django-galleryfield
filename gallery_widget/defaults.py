@@ -22,7 +22,7 @@ DEFAULT_UPLOAD_HANDLER_URL_NAME = "builtingalleryimage_upload"
 DEFAULT_CROP_URL_NAME = "builtingalleryimage_crop"
 DEFAULT_FETCH_URL_NAME = "builtingalleryimage_fetch"
 
-DEFAULT_TARGET_IMAGE_MODEL = "gallery.BuiltInGalleryImage"
+DEFAULT_TARGET_IMAGE_MODEL = "gallery_widget.BuiltInGalleryImage"
 DEFAULT_TARGET_IMAGE_FIELD_NAME = "image"
 DEFAULT_CREATOR_FIELD_NAME = "creator"
 
