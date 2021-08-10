@@ -16,6 +16,7 @@ from gallery import defaults
 from gallery.models import BuiltInGalleryImage
 from gallery.mixins import ImageListView, ImageCreateView, ImageCropView  # noqa
 
+
 class ViewTestMixin(UserCreateMixin):
     @classmethod
     def setUpTestData(cls):  # noqa
@@ -239,11 +240,6 @@ class GalleryWidgetFetchViewTest(ViewTestMixin, TestCase):
             HTTP_X_REQUESTED_WITH="XMLHttpRequest"
         )
         self.assertEqual(resp.status_code, 302)
-
-    # def test_error_config(self):
-    #     class MyTest(ImageListView):
-    #         crop_url_name = "gallery_image_crop"
-
 
 
 @override_settings(MEDIA_ROOT=test_media_root)
