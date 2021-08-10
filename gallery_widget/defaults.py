@@ -18,9 +18,9 @@ GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
 # {{{ DO NOT change this if you have deployed this app on you production server!
 # Or else it might cause unexpected result!
 
-DEFAULT_UPLOAD_HANDLER_URL_NAME = "builtingalleryimage_upload"
-DEFAULT_CROP_URL_NAME = "builtingalleryimage_crop"
-DEFAULT_FETCH_URL_NAME = "builtingalleryimage_fetch"
+DEFAULT_UPLOAD_HANDLER_URL_NAME = "builtingalleryimage-upload"
+DEFAULT_CROP_URL_NAME = "builtingalleryimage-crop"
+DEFAULT_FETCH_URL_NAME = "builtingalleryimage-fetch"
 
 DEFAULT_TARGET_IMAGE_MODEL = "gallery_widget.BuiltInGalleryImage"
 DEFAULT_TARGET_IMAGE_FIELD_NAME = "image"

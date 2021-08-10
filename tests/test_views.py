@@ -243,7 +243,7 @@ class GalleryWidgetFetchViewTest(ViewTestMixin, TestCase):
 
     # def test_error_config(self):
     #     class MyTest(ImageListView):
-    #         crop_url_name = "builtingalleryimage_crop"
+    #         crop_url_name = "builtingalleryimage-crop"
 
 
 @override_settings(MEDIA_ROOT=test_media_root)

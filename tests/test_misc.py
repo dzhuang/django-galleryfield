@@ -15,8 +15,8 @@ class GetUrlFromStrTest(SimpleTestCase):
 
     def test_valid_url_name(self):
         self.assertEqual(
-            get_url_from_str("builtingalleryimage_upload"),
-            reverse("builtingalleryimage_upload")
+            get_url_from_str("builtingalleryimage-upload"),
+            reverse("builtingalleryimage-upload")
         )
 
     def test_invalid_url_name(self):

@@ -6,7 +6,7 @@ from gallery_widget.mixins import ImageCreateView, ImageListView, ImageCropView
 
 class BuiltInImageCreateView(ImageCreateView):
     target_model = "gallery_widget.BuiltInGalleryImage"
-    crop_url_name = "builtingalleryimage_crop"
+    crop_url_name = "builtingalleryimage-crop"
     disable_server_side_crop = False
 
     def form_valid(self, form):
@@ -18,7 +18,7 @@ class BuiltInImageCreateView(ImageCreateView):
 
 class BuiltInImageListView(ImageListView):
     target_model = "gallery_widget.BuiltInGalleryImage"
-    crop_url_name = "builtingalleryimage_crop"
+    crop_url_name = "builtingalleryimage-crop"
     disable_server_side_crop = False
 
     def get_queryset(self):
@@ -30,7 +30,7 @@ class BuiltInImageListView(ImageListView):
 
 class BuiltInImageCropView(ImageCropView):
     target_model = "gallery_widget.BuiltInGalleryImage"
-    crop_url_name = "builtingalleryimage_crop"
+    crop_url_name = "builtingalleryimage-crop"
     disable_server_side_crop = False
 
     def get_object(self, queryset=None):
