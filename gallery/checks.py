@@ -129,8 +129,8 @@ def check_settings(app_configs, **kwargs):
                                             str(asset_name), ASSETS,
                                             DJANGO_GALLERY_WIDGET_CONFIG)),
                                  "extra_js": EXTRA_JS,
-                                 "extra_css": EXTRA_CSS
-                             }),
+                                 "extra_css": EXTRA_CSS}
+                             ),
                         id="django-gallery-widget-assets.W001"
                     ))
                     continue
@@ -143,8 +143,8 @@ def check_settings(app_configs, **kwargs):
                              % {"location": (
                                         "Asset '%s' in '%s' in '%s'" % (
                                             str(asset_name), ASSETS,
-                                            DJANGO_GALLERY_WIDGET_CONFIG)),
-                             }),
+                                            DJANGO_GALLERY_WIDGET_CONFIG))}
+                             ),
                         id="django-gallery-widget-assets.W002"
                     ))
                     continue
