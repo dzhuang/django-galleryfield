@@ -16,11 +16,13 @@ Django AJAX form widgets and model fields for multiple images upload with progre
 Features
 --------
 
+-  A model field ``GalleryField``, and its formfield ``GalleryFormField`` along with the default widget ``GalleryWidget``.
 -  Drag & drop file uploading via AJAX
 -  Uploading multiple images with progress bar
--  A model fields with corresponding form fields and widgets: ``gallery.fields.GalleryField``
--  Image gallery widget with drag & drop reordering, client side crop before/after upload.
+-  Drag & drop reordering, client / server side crop before/after upload.
 -  Integrates with Django Admin.
+-  Each Image uploaded will required to be saved in an image model. That might be consided, to some user,
+   a draw back. However, it make it possible to delete the unused images from the server, through m2m field and signals.
 
 ScreenShots
 -----------
@@ -108,7 +110,7 @@ Run the demo
     cd demo
     pip install -r requirements.txt
     cd ..
-    npm install  # or yarn
+    npm install  # or yarn, install the CSS and JS modules
     python manage.py migrate
     python manage.py createsuperuser # Create a superuser account so that you can upload images
     python manage.py runserver
@@ -116,6 +118,22 @@ Run the demo
 Then in your browser navigate to http://127.0.0.1:8000/admin and login, then return to http://127.0.0.1:8000/.
 
 **Notice**: You might need to install JSON1 extension for SQLite for this the demo to run properly. See `Enabling JSON1 extension on SQLite <https://code.djangoproject.com/wiki/JSON1Extension>`__.
+
+For Advanced users
+--------------------
+Although the demo and built in image processing views might have meet the basic needs, advance user will consider
+more permission control, template inheritance, and Image model customization. The work of customizing include:
+
+- A valid target image model. The ``gallery.models.BuiltInGalleryImage`` is an example.
+- Three views for handling the image model objects (upload, fetch and crop). We have provided 3
+  class-based-views for these views to enable the built-in views.
+  - ``gallery.views.BuiltInImageCreateView``
+  - ``gallery.views.BuiltInImageListView``
+  - ``BuiltInImageCropView``
+- URL_CONF configurations.
+- Render the GalleryField.
+
+The build-in views code and the demo themselves provide examples of customizing the widget.
 
 License
 -------
@@ -179,10 +197,12 @@ TODOs
 -  Detailed Documentation
 -  More demos
 -  Gif not client side croppable (don't show crop button)
+-  Full tests
 
 Known issues
 -------------
 
+-  Currently, it's hard (although not impossible) to used the widget in a Non-model formfield.
 -  Css rendering of buttons in Admin.
 -  Gif will be converted to png (to retain gif, you need to set ``disableImageResize`` to ``False`` in ``jquery_fileupload_ui_options`` when initializing ``GalleryWidget``).
 -  Doesn't support svg because django ImageField can't handle it for now.

@@ -3,7 +3,6 @@ import re
 
 from django import forms
 from django.core.exceptions import ImproperlyConfigured
-from django.urls import NoReverseMatch
 
 from gallery import conf, defaults
 from gallery.utils import (
@@ -17,16 +16,20 @@ class GalleryWidget(forms.HiddenInput):
 
     :param upload_handler_url: An URL name or an url of the upload handler
            view used by the widget instance, defaults to `None`. If `None`, 
-           upload ui won't show upload buttons.
+           upload ui won't show upload buttons. When the parent 
+           :class:`gallery.fields.GalleryFormField` is used by
+           a :class:`gallery.fields.GalleryField`, that url will be auto-configured,
+           with the value in the form of ``modelname_upload`` in lower case.
+           For example, if ``target_model`` is ``myapp.MyImageModel``, then
+           the `upload_handler_url` is auto-configured to ``myimagemodel_upload``.
+           You need to make sure you had that URL name in your URL_CONF and 
+           related views exists.
     :type upload_handler_url: str, optional
     :param fetch_request_url: An URL name or an url for fetching the existing
            images in the gallery instance, defaults to `None`. If `None`, 
-           upload ui won't load existing images.
+           upload ui won't load existing images. Like ``upload_handler_url``,
+           this param will be auto-configured in the form of ``modelname_fetch``.
     :type fetch_request_url: str, optional
-    :param crop_request_url: An URL name or an url for handling server side
-           cropping of uploaded images, defaults to None. If `None`, upload 
-           ui won't show `Edit` buttons for uploaded images.
-    :type crop_request_url: str, optional
     :param multiple: Whether allow to select multiple image files in the 
            file picker.
     :type multiple: bool, optional
@@ -92,10 +95,10 @@ class GalleryWidget(forms.HiddenInput):
         self.disable_fetch = disable_fetch
         self.disable_server_side_crop = disable_server_side_crop
 
-        self._upload_handler_url = get_url_from_str(upload_handler_url)
+        self._upload_handler_url = upload_handler_url
 
         self._fetch_request_url = (
-            None if disable_fetch else get_url_from_str(fetch_request_url))
+            None if disable_fetch else fetch_request_url)
 
         jquery_upload_ui_options = jquery_upload_ui_options or {}
         _jquery_upload_ui_options = defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS.copy()
@@ -133,8 +136,32 @@ class GalleryWidget(forms.HiddenInput):
         self._fetch_request_url = (
             None if self.disable_fetch else get_url_from_str(url))
 
-    def check_urls(self):
-        # Here we validate the urls and check the potential conflicts of init params
+    def set_and_check_urls(self):
+        # We now then the url names into an actual url, that
+        # can't be down in __init__ because url_conf is not
+        # loaded when doing the system check, and will result
+        # in failure to start.
+        try:
+            self.upload_handler_url = get_url_from_str(
+                    self.upload_handler_url, require_urlconf_ready=True)
+        except Exception:
+            raise ImproperlyConfigured(
+                "'upload_handler_url' is invalid: %s is neither "
+                "a valid url nor a valid url name."
+                % self.upload_handler_url)
+
+        try:
+            self.fetch_request_url = get_url_from_str(
+                    self.fetch_request_url, require_urlconf_ready=True)
+
+        except Exception:
+            raise ImproperlyConfigured(
+                "'fetch_request_url' is invalid: %s is neither "
+                "a valid url nor a valid url name."
+                % self.fetch_request_url)
+
+        # In the following we validate update the urls from url names (if it is
+        # not an url) and check the potential conflicts of init params
         # of the widget with the target_image_model set to the widget.
         # For validation of urls, because those urls are assigned by reverse_lazy,
         # the result of which will only be validated until evaluation, we
@@ -154,21 +181,16 @@ class GalleryWidget(forms.HiddenInput):
         image_model_is_default = (
                 target_image_model == defaults.DEFAULT_TARGET_IMAGE_MODEL)
 
+        # We reverse the url name here
+
         if image_model_is_default:
             return
 
         conflict_config = []
-        try:
-            upload_handler_url_is_default = (
-                self.upload_handler_url
-                == get_url_from_str(defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME,
-                                    require_urlconf_ready=True))
-        except NoReverseMatch as e:
-
-            raise ImproperlyConfigured(
-                "'upload_handler_url' is invalid: %s is neither "
-                "a valid url nor a valid url name."
-                % re.match(NoReverseMatch_EXCEPTION_STR_RE, str(e)).groups()[0])
+        upload_handler_url_is_default = (
+            self.upload_handler_url
+            == get_url_from_str(defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME,
+                                require_urlconf_ready=True))
 
         if upload_handler_url_is_default:
             conflict_config.append(
@@ -176,17 +198,10 @@ class GalleryWidget(forms.HiddenInput):
                  "value": self.upload_handler_url})
 
         if not self.disable_fetch:
-            try:
-                fetch_request_url_is_default = (
-                    self.fetch_request_url
-                    == get_url_from_str(defaults.DEFAULT_FETCH_URL_NAME,
-                                        require_urlconf_ready=True))
-            except NoReverseMatch as e:
-                raise ImproperlyConfigured(
-                    "'fetch_request_url' is invalid: %s is neither "
-                    "a valid url nor a valid url name."
-                    % re.match(NoReverseMatch_EXCEPTION_STR_RE, str(e)).groups()[0])
-
+            fetch_request_url_is_default = (
+                self.fetch_request_url
+                == get_url_from_str(defaults.DEFAULT_FETCH_URL_NAME,
+                                    require_urlconf_ready=True))
             if fetch_request_url_is_default:
                 conflict_config.append(
                     {"param": "fetch_request_url",
@@ -195,10 +210,10 @@ class GalleryWidget(forms.HiddenInput):
         if not conflict_config:
             return
 
-        widget_belongs_to = getattr(self, "widget_belongs_to")
+        widget_is_servicing = getattr(self, "widget_is_servicing")
         msgs = ["'%(obj)s' is using '%(used_model)s' "
                 "instead of built-in '%(default_model)s', while "
-                % {"obj": widget_belongs_to,
+                % {"obj": widget_is_servicing,
                    "used_model": target_image_model,
                    "default_model": defaults.DEFAULT_TARGET_IMAGE_MODEL}
                 ]
@@ -225,7 +240,7 @@ class GalleryWidget(forms.HiddenInput):
         return False
 
     def render(self, name, value, attrs=None, renderer=None):
-        self.check_urls()
+        self.set_and_check_urls()
 
         context = {
             'input_string': super().render(name, value, attrs, renderer),

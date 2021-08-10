@@ -241,7 +241,6 @@ class GalleryWidgetFetchViewTest(ViewTestMixin, TestCase):
         )
         self.assertEqual(resp.status_code, 302)
 
-
     # def test_error_config(self):
     #     class MyTest(ImageListView):
     #         crop_url_name = "builtingalleryimage_crop"

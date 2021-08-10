@@ -303,7 +303,7 @@ class GalleryFormFieldTest(TestCase):
         field.widget = new_widget
         self.assertEqual(field.widget.max_number_of_images, max_number_of_images)
         self.assertEqual(field.widget.image_model, old_widget.image_model)
-        self.assertEqual(field.widget.widget_belongs_to, str(field))
+        self.assertEqual(field.widget.widget_is_servicing, field.__class__.__name__)
         self.assertEqual(field.widget.attrs, old_widget.attrs)
         self.assertEqual(field.widget.is_required, False)
 

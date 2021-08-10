@@ -9,8 +9,7 @@ from django.db.models import Case, Value, When, IntegerField
 
 from gallery import conf, defaults as _defaults
 from gallery.widgets import GalleryWidget
-from gallery.utils import (
-    get_or_check_image_field, apps, logger)
+from gallery.utils import get_or_check_image_field, apps, logger
 
 
 @deconstructible
@@ -156,7 +155,7 @@ class GalleryField(models.JSONField):
             # The following 2 are used to validate GalleryWidget params
             # see GalleryWidget.defaults_checks()
             "target_model": self.target_model,
-            "model_field": str(self)
+            "model_field": self.__class__.__name__
         })
         defaults.update(kwargs)
         formfield = super().formfield(**{
@@ -227,7 +226,10 @@ class GalleryFormField(forms.JSONField):
                         continue
                     logger.info(str(error))
 
-        self._widget_belongs_to = kwargs.pop("model_field", None) or str(self)
+        # This is used for widget to identify which object the widget is servicing.
+        # That information will be used when raising errors.
+        self._widget_is_servicing = (
+                kwargs.pop("model_field", None) or self.__class__.__name__)
 
         self._max_number_of_images = max_number_of_images
         super().__init__(**kwargs)
@@ -245,7 +247,7 @@ class GalleryFormField(forms.JSONField):
         # is changed.
         setattr(value, "max_number_of_images", self.max_number_of_images)
         setattr(value, "image_model", self._image_model)
-        setattr(value, "widget_belongs_to", self._widget_belongs_to)
+        setattr(value, "widget_is_servicing", self._widget_is_servicing)
 
         # Re-initialize the widget
         value.is_localized = bool(self.localize)
@@ -257,14 +259,32 @@ class GalleryFormField(forms.JSONField):
         if not isinstance(self.widget, GalleryWidget):
             return
 
-        if self.widget.upload_handler_url is None:
-            if self._image_model == _defaults.DEFAULT_TARGET_IMAGE_MODEL:
-                self.widget.upload_handler_url = (
-                    _defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)
-        if self._image_model == _defaults.DEFAULT_TARGET_IMAGE_MODEL:
-            if (not self.widget.disable_fetch
-                    and self.widget.fetch_request_url is None):
-                self.widget.fetch_request_url = _defaults.DEFAULT_FETCH_URL_NAME
+        # We set the upload_handler_url and fetch_request_url
+        # when the widget didn't specify them.
+        self._set_widget_upload_handler_url()
+        self._set_widget_fetch_request_url()
+
+    @property
+    def _target_model_name(self):
+        return self._image_model.split(".")[-1]
+
+    def _set_widget_upload_handler_url(self):
+        if self.widget.upload_handler_url:
+            return
+
+        # Here we required a target_model should have a upload_handler_url
+        # name in url_conf in the form of modelname_upload in lower case
+        self.widget.upload_handler_url = (
+                "%s_upload" % self._target_model_name.lower())
+
+    def _set_widget_fetch_request_url(self):
+        if self.widget.disable_fetch or self.widget.fetch_request_url:
+            return
+
+        # Here we required a target_model should have a fetch_request_url
+        # name in url_conf in the form of modelname_fetch in lower case
+        self.widget.fetch_request_url = (
+                "%s_fetch" % self._target_model_name.lower())
 
     @property
     def max_number_of_images(self):
