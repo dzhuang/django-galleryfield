@@ -3,3 +3,5 @@ django>=3.1
 django-crispy-forms
 sorl-thumbnail
 pillow
+sphinx
+sphinx-rtd-theme

@@ -132,3 +132,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # }
 
 LOGIN_URL = "/admin/login/"
+
+from django.conf.global_settings import STATICFILES_FINDERS
+STATICFILES_FINDERS = tuple(STATICFILES_FINDERS) + (
+    "npm.finders.NpmFinder",)

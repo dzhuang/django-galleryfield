@@ -47,20 +47,24 @@
                 <span class="size">{% templatetag openbrace %}%=o.formatFileSize(Number(file.size))%{% templatetag closebrace %}</span>
             </td>
             {% endblock %}
+        {% templatetag openbrace %}% } %{% templatetag closebrace %}
 
             {% block JS_DOWNLOAD_TEMPLATE_DELETE %}
             {% if not uploader_disabled %}
             <td>
-                {% if crop_request_url %}
+
+        {% templatetag openbrace %}% if (!file.error) { %{% templatetag closebrace %}
+                {% if not disable_server_side_crop %}
+                {% templatetag openbrace %}% if (file.cropUrl) { %{% templatetag closebrace %}
                 <a type="button"
                         class="btn btn-info btn-control edit"
                         data-toggle="modal"
-                        data-action="{{ crop_request_url }}"
-                        data-pk="{% templatetag openbrace %}%=file.pk%{% templatetag closebrace %}"
+                        data-action="{% templatetag openbrace %}%=file.cropUrl%{% templatetag closebrace %}"
                 >
                     <i class="glyphicon glyphicon-edit"></i>
                         <span>{% trans "Edit" %}</span>
                 </a>
+                {% templatetag openbrace %}% } %{% templatetag closebrace %}
                 {% endif %}
                     <a type="button" class="btn btn-danger delete fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}"
                             href="javascript(void(0))">

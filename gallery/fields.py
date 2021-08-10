@@ -265,9 +265,6 @@ class GalleryFormField(forms.JSONField):
             if (not self.widget.disable_fetch
                     and self.widget.fetch_request_url is None):
                 self.widget.fetch_request_url = _defaults.DEFAULT_FETCH_URL_NAME
-            if (not self.widget.disable_server_side_crop
-                    and self.widget.crop_request_url is None):
-                self.widget.crop_request_url = _defaults.DEFAULT_CROP_URL_NAME
 
     @property
     def max_number_of_images(self):

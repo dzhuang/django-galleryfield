@@ -1,5 +1,4 @@
 import logging
-
 from django.apps import apps
 from django.core.checks import Critical, Info
 from django.core.exceptions import (
@@ -9,7 +8,6 @@ from django.urls import (
     resolve, Resolver404, reverse_lazy, reverse, NoReverseMatch)
 
 from gallery import defaults
-
 
 logger = logging.getLogger('django-gallery-widget')
 

@@ -11,6 +11,8 @@ from demo.forms import GalleryForm
 class GalleryFormView(LoginRequiredMixin, CreateView):
     form_class = GalleryForm
     template_name = "form.html"
+    extra_context = {
+        "form_description": "Create new gallery"}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
