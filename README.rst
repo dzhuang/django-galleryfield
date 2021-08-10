@@ -21,6 +21,8 @@ Features
 -  A model fields with corresponding form fields and widgets: ``gallery.fields.GalleryField``
 -  Image gallery widget with drag & drop reordering, client side crop before/after upload.
 -  Integrates with Django Admin.
+-  Each Image uploaded will be saved in an image model. That might be considered, by some user,
+   a draw back. However, that makes it possible to delete the unused images from the server, through m2m field and signals.
 
 ScreenShots
 -----------
@@ -162,9 +164,8 @@ default value.
 Model related default\_values
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Django-Gallery-Widget has a built-in image model ``gallery.models.BuiltInGalleryImage``, which contains a ``image`` field. The image model is used as the default ``target_model`` for gallery field. User can use this models without much modifying in their apps. See the demo app for details. With that built-in model, default views are applied with 3 default urls (i.e, ``upload_handler_url_name``, ``fetch_url_name`` and ``crop_url_name``).
+Django-Gallery-Widget has a built-in image model ``gallery_widget.models.BuiltInGalleryImage``, which contains a ``image`` field. The image model is used as the default ``target_model`` for gallery field. User can use this models without much modifying in their apps. See the demo app for details. With that built-in model, default views are applied with 3 default urls to handle impage upload, fetch/list, and crop.
 
-However, it is heavily suggested for developers to write your own image models, and related views, urls, especially in terms of permission considerations.
 
 What are the difference as compared to peer apps
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

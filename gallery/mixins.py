@@ -23,6 +23,20 @@ from gallery import conf, defaults
 
 
 class BaseImageModelMixin:
+    """
+    :attr:`target_model`: A valid target image model used by the view.
+    :attr:`crop_url_name`: str, An URL name or an url for handling server side
+       cropping of uploaded images, if configured None, it will used the value
+       in the form of ``model_name-crop`` in lower case, where the modelname is
+       the second part of ``self.target_model``. For example, if
+       ``self.target_model`` is ``myapp.MyImageModel``, then the `crop_url_name`
+       is auto-configured to ``myimagemodel-crop``. You need to make sure you
+       had that URL name in your URL_CONF and related views exists.
+
+    :attr:`disable_server_side_crop`: bool, determining whether server side crop
+       for this view will be enabled, defaults to True. If False, related widget
+       ui won't show `Edit` buttons for uploaded images.
+    """
     target_model = None
     crop_url_name = None
 

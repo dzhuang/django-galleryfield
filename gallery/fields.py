@@ -267,6 +267,28 @@ class GalleryFormField(forms.JSONField):
                 self.widget.fetch_request_url = _defaults.DEFAULT_FETCH_URL_NAME
 
     @property
+    def _target_model_name(self):
+        return self._image_model.split(".")[-1]
+
+    def _set_widget_upload_handler_url(self):
+        if self.widget.upload_handler_url:
+            return
+
+        # Here we required a target_model should have a upload_handler_url
+        # name in url_conf in the form of model_name-upload in lower case
+        self.widget.upload_handler_url = (
+                "%s-upload" % self._target_model_name.lower())
+
+    def _set_widget_fetch_request_url(self):
+        if self.widget.disable_fetch or self.widget.fetch_request_url:
+            return
+
+        # Here we required a target_model should have a fetch_request_url
+        # name in url_conf in the form of model_name-fetch in lower case
+        self.widget.fetch_request_url = (
+                "%s-fetch" % self._target_model_name.lower())
+
+    @property
     def max_number_of_images(self):
         return self._max_number_of_images
 

@@ -17,11 +17,19 @@ class GalleryWidget(forms.HiddenInput):
 
     :param upload_handler_url: An URL name or an url of the upload handler
            view used by the widget instance, defaults to `None`. If `None`, 
-           upload ui won't show upload buttons.
+           upload ui won't show upload buttons. When the parent 
+           :class:`gallery_widget.fields.GalleryFormField` is used by
+           a :class:`gallery_widget.fields.GalleryField`, that url will be auto-configured,
+           with the value in the form of ``model_name-upload`` in lower case.
+           For example, if ``target_model`` is ``myapp.MyImageModel``, then
+           the `upload_handler_url` is auto-configured to ``myimagemodel-upload``.
+           You need to make sure you had that URL name in your URL_CONF and 
+           related views exists.
     :type upload_handler_url: str, optional
     :param fetch_request_url: An URL name or an url for fetching the existing
-           images in the gallery instance, defaults to `None`. If `None`, 
-           upload ui won't load existing images.
+           images in the gallery_widget instance, defaults to `None`. If `None`, 
+           upload ui won't load existing images. Like ``upload_handler_url``,
+           this param will be auto-configured in the form of ``model_name-fetch``.
     :type fetch_request_url: str, optional
     :param crop_request_url: An URL name or an url for handling server side
            cropping of uploaded images, defaults to None. If `None`, upload 

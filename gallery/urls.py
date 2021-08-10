@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from . import views
 
+# The default view names also follow the form of "model_name-upload".
 
 urlpatterns = [
     path('upload/',
