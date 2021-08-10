@@ -10,7 +10,7 @@ from selenium import webdriver
 
 from tests.utils import remove_upload_directory, test_media_root
 from tests.mixins import UserCreateMixin
-from gallery.models import BuiltInGalleryImage
+from gallery_widget.models import BuiltInGalleryImage
 from demo.models import DemoGallery
 
 

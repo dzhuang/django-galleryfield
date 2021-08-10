@@ -7,10 +7,9 @@ from django.core.validators import BaseValidator
 from django.db.models.query_utils import DeferredAttribute
 from django.db.models import Case, Value, When, IntegerField
 
-from gallery import conf, defaults as _defaults
-from gallery.widgets import GalleryWidget
-from gallery.utils import (
-    get_or_check_image_field, apps, logger)
+from gallery_widget import conf, defaults as _defaults
+from gallery_widget.widgets import GalleryWidget
+from gallery_widget.utils import get_or_check_image_field, apps, logger
 
 
 @deconstructible
@@ -76,7 +75,7 @@ class GalleryField(models.JSONField):
     :param target_model: A string in the form of ``"app_label.model_name"``,
            which can be loaded by :meth:`django.apps.get_model` (see 
            `Django docs <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_),
-           defaults to `None`. If `None`, ``gallery.BuiltInGalleryImage``,
+           defaults to `None`. If `None`, ``gallery_widget.BuiltInGalleryImage``,
            which can be overridden by 
            ``settings.DJANGO_GALLERY_WIDGET_CONFIG["default_target_image_model"]``,
            will be used.
@@ -156,7 +155,7 @@ class GalleryField(models.JSONField):
             # The following 2 are used to validate GalleryWidget params
             # see GalleryWidget.defaults_checks()
             "target_model": self.target_model,
-            "model_field": str(self)
+            "model_field": self.__class__.__name__
         })
         defaults.update(kwargs)
         formfield = super().formfield(**{
@@ -167,7 +166,7 @@ class GalleryField(models.JSONField):
 
 
 class GalleryFormField(forms.JSONField):
-    """The default formfield for :class:`gallery.fields.GalleryField`.
+    """The default formfield for :class:`gallery_widget.fields.GalleryField`.
 
     :param max_number_of_images: Max allowed number of images, defaults
            to `None`, which means unlimited.
@@ -181,8 +180,7 @@ class GalleryFormField(forms.JSONField):
 
              However, if this field is used as a non-model form field, when
              not specified, it will use the built-in default target image
-             model ``gallery.BuiltInGalleryImage``, which can be overridden by
-             ``settings.DJANGO_GALLERY_WIDGET_CONFIG['default_target_image_model']``.
+             model ``gallery_widget.BuiltInGalleryImage``.
 
            * widget: if not specified, defaults to ``GalleryWidget`` with default
              values.
@@ -227,7 +225,10 @@ class GalleryFormField(forms.JSONField):
                         continue
                     logger.info(str(error))
 
-        self._widget_belongs_to = kwargs.pop("model_field", None) or str(self)
+        # This is used for widget to identify which object the widget is servicing.
+        # That information will be used when raising errors.
+        self._widget_is_servicing = (
+                kwargs.pop("model_field", None) or self.__class__.__name__)
 
         self._max_number_of_images = max_number_of_images
         super().__init__(**kwargs)
@@ -245,7 +246,7 @@ class GalleryFormField(forms.JSONField):
         # is changed.
         setattr(value, "max_number_of_images", self.max_number_of_images)
         setattr(value, "image_model", self._image_model)
-        setattr(value, "widget_belongs_to", self._widget_belongs_to)
+        setattr(value, "widget_is_servicing", self._widget_is_servicing)
 
         # Re-initialize the widget
         value.is_localized = bool(self.localize)
@@ -257,14 +258,32 @@ class GalleryFormField(forms.JSONField):
         if not isinstance(self.widget, GalleryWidget):
             return
 
-        if self.widget.upload_handler_url is None:
-            if self._image_model == _defaults.DEFAULT_TARGET_IMAGE_MODEL:
-                self.widget.upload_handler_url = (
-                    _defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)
-        if self._image_model == _defaults.DEFAULT_TARGET_IMAGE_MODEL:
-            if (not self.widget.disable_fetch
-                    and self.widget.fetch_request_url is None):
-                self.widget.fetch_request_url = _defaults.DEFAULT_FETCH_URL_NAME
+        # We set the upload_handler_url and fetch_request_url
+        # when the widget didn't specify them.
+        self._set_widget_upload_handler_url()
+        self._set_widget_fetch_request_url()
+
+    @property
+    def _target_model_name(self):
+        return self._image_model.split(".")[-1]
+
+    def _set_widget_upload_handler_url(self):
+        if self.widget.upload_handler_url:
+            return
+
+        # Here we required a target_model should have a upload_handler_url
+        # name in url_conf in the form of modelname-upload in lower case
+        self.widget.upload_handler_url = (
+                "%s-upload" % self._target_model_name.lower())
+
+    def _set_widget_fetch_request_url(self):
+        if self.widget.disable_fetch or self.widget.fetch_request_url:
+            return
+
+        # Here we required a target_model should have a fetch_request_url
+        # name in url_conf in the form of modelname-fetch in lower case
+        self.widget.fetch_request_url = (
+                "%s-fetch" % self._target_model_name.lower())
 
     @property
     def _target_model_name(self):

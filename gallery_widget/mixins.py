@@ -18,8 +18,9 @@ from django.db.models import When, Case
 from django.urls import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 
-from gallery.utils import get_or_check_image_field, get_formatted_thumbnail_size
-from gallery import conf, defaults
+from gallery_widget.utils import (
+    get_or_check_image_field, get_formatted_thumbnail_size)
+from gallery_widget import conf, defaults
 
 
 class BaseImageModelMixin:
@@ -39,6 +40,7 @@ class BaseImageModelMixin:
     """
     target_model = None
     crop_url_name = None
+    disable_server_side_crop = True
 
     def setup(self, request, *args, **kwargs):
         # XML request only check
@@ -48,6 +50,7 @@ class BaseImageModelMixin:
 
         super().setup(request, *args, **kwargs)
         self.setup_model_and_image_field()
+        self.validate_crop_url()
         self.thumbnail_size = self.get_and_validate_thumbnail_size_from_request()
 
     def setup_model_and_image_field(self):
@@ -57,33 +60,34 @@ class BaseImageModelMixin:
                 "the 'target_model' attribute is prohibited."
                 % self.__class__.__name__
             )
-        if self.crop_url_name is None:
-            raise ImproperlyConfigured(
-                "Using BaseImageModelMixin (base class of %s) without "
-                "the 'crop_url_name' attribute is prohibited."
-                % self.__class__.__name__
-            )
-        else:
-            try:
-                reverse(self.crop_url_name, kwargs={"pk": 1})
-            except Exception as e:
-                raise ImproperlyConfigured(
-                    "'crop_url_name' in %s is invalid. The exception is: "
-                    "%s: %s."
-                    % (self.__class__.__name__,
-                       type(e).__name__,
-                       str(e)))
-        if self.target_model != defaults.DEFAULT_TARGET_IMAGE_MODEL:
-            raise ImproperlyConfigured(
-                    "'crop_url_name' in %s is using built-in default, while "
-                    "'target_model' is not using built-in default value. They "
-                    "are handling different image models. this is prohibited.")
 
         self._image_field_name = (get_or_check_image_field(
             obj=self, target_model=self.target_model,
             check_id_prefix=self.__class__.__name__,
             is_checking=False).name)
         self.model = apps.get_model(self.target_model)
+
+    def validate_crop_url(self):
+        if self.disable_server_side_crop:
+            return
+        if self.crop_url_name is None:
+            model_name = self.target_model.split(".")[-1].lower()
+            self.crop_url_name = "%s-crop" % model_name
+        try:
+            reverse(self.crop_url_name, kwargs={"pk": 1})
+        except Exception as e:
+            raise ImproperlyConfigured(
+                "'crop_url_name' in %s is invalid. The exception is: "
+                "%s: %s."
+                % (self.__class__.__name__,
+                   type(e).__name__,
+                   str(e)))
+        if (self.crop_url_name == defaults.DEFAULT_CROP_URL_NAME
+                and self.target_model != defaults.DEFAULT_TARGET_IMAGE_MODEL):
+            raise ImproperlyConfigured(
+                    "'crop_url_name' in %s is using built-in default, while "
+                    "'target_model' is not using built-in default value. They "
+                    "are handling different image models. This is prohibited.")
 
     def get_and_validate_thumbnail_size_from_request(self):
         # Get preview size from request
@@ -130,8 +134,10 @@ class BaseImageModelMixin:
         else:
             result.update({
                 "size": image_size,
-                "cropUrl": reverse(self.crop_url_name, kwargs={"pk": obj.pk})
             })
+
+        if not self.disable_server_side_crop:
+            result["cropUrl"] = reverse(self.crop_url_name, kwargs={"pk": obj.pk})
 
         try:
             # When the image file is deleted, it's thumbnail could still exist
@@ -213,7 +219,7 @@ class ImageCreateView(BaseCreateMixin, CreateView):
         See https://docs.djangoproject.com/en/3.2/topics/forms/modelforms/#the-save-method
         for detail.
 
-        See :class:`gallery.views.BuiltInImageCreateView` for example.
+        See :class:`gallery_widget.views.BuiltInImageCreateView` for example.
         """  # noqa
         self.object.save()
         return super().form_valid(form)
@@ -221,7 +227,7 @@ class ImageCreateView(BaseCreateMixin, CreateView):
 
 class BaseListViewMixin(BaseImageModelMixin, BaseListView):
     # List view doesn't include a form
-    target_model = "gallery.BuiltInGalleryImage"
+    target_model = "gallery_widget.BuiltInGalleryImage"
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)

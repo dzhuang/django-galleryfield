@@ -2,48 +2,48 @@ Documentation
 ===============
 
 
-gallery.conf module
+gallery_widget.conf module
 -------------------
 
-.. automodule:: gallery.conf
+.. automodule:: gallery_widget.conf
    :members:
    :undoc-members:
    :show-inheritance:
 
-gallery.defaults module
+gallery_widget.defaults module
 -----------------------
-.. autodata:: gallery.defaults.DEFAULT_ASSETS
+.. autodata:: gallery_widget.defaults.DEFAULT_ASSETS
    :annotation:
-.. pprint:: gallery.defaults.DEFAULT_ASSETS
+.. pprint:: gallery_widget.defaults.DEFAULT_ASSETS
 
-gallery.models module
+gallery_widget.models module
 ---------------------
 
-.. automodule:: gallery.models
+.. automodule:: gallery_widget.models
    :members:
    :undoc-members:
    :show-inheritance:
 
-gallery.urls module
+gallery_widget.urls module
 -------------------
 
-.. automodule:: gallery.urls
+.. automodule:: gallery_widget.urls
    :members:
    :undoc-members:
    :show-inheritance:
 
-gallery.utils module
+gallery_widget.utils module
 --------------------
 
-.. automodule:: gallery.utils
+.. automodule:: gallery_widget.utils
    :members:
    :undoc-members:
    :show-inheritance:
 
-gallery.views module
+gallery_widget.views module
 --------------------
 
-.. automodule:: gallery.views
+.. automodule:: gallery_widget.views
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,5 +1,5 @@
 """
-WSGI config for gallery project.
+WSGI config for gallery_widget project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

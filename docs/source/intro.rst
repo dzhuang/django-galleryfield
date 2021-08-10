@@ -1,7 +1,7 @@
 Introduction
 ============
 
-:class:`gallery.widgets.GalleryWidget` is introduced.
+:class:`gallery_widget.widgets.GalleryWidget` is introduced.
 
 
 Motivation

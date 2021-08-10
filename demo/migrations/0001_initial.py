@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import gallery.fields
+import gallery_widget.fields
 
 
 class Migration(migrations.Migration):
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             name='DemoGallery',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('images', gallery.fields.GalleryField(blank=True, null=True, target_model='gallery.BuiltInGalleryImage', verbose_name='Photos')),
+                ('images', gallery_widget.fields.GalleryField(blank=True, null=True, target_model='gallery_widget.BuiltInGalleryImage', verbose_name='Photos')),
                 ('owner', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Owner')),
             ],
         ),

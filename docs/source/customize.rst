@@ -14,7 +14,7 @@ What is a valid target image model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to use an image model instead of the built-in one (i.e.,
-:class:`gallery.models.BuiltInGalleryImage`), then you need to have a
+:class:`gallery_widget.models.BuiltInGalleryImage`), then you need to have a
 `valid target image model` in the first place.
 
 A valid target image model need to meet one of the following 2 requirements:

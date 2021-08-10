@@ -18,11 +18,11 @@ GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
 # {{{ DO NOT change this if you have deployed this app on you production server!
 # Or else it might cause unexpected result!
 
-DEFAULT_UPLOAD_HANDLER_URL_NAME = "gallery_image_upload"
-DEFAULT_CROP_URL_NAME = "gallery_image_crop"
-DEFAULT_FETCH_URL_NAME = "gallery_images_fetch"
+DEFAULT_UPLOAD_HANDLER_URL_NAME = "builtingalleryimage-upload"
+DEFAULT_CROP_URL_NAME = "builtingalleryimage-crop"
+DEFAULT_FETCH_URL_NAME = "builtingalleryimage-fetch"
 
-DEFAULT_TARGET_IMAGE_MODEL = "gallery.BuiltInGalleryImage"
+DEFAULT_TARGET_IMAGE_MODEL = "gallery_widget.BuiltInGalleryImage"
 DEFAULT_TARGET_IMAGE_FIELD_NAME = "image"
 DEFAULT_CREATOR_FIELD_NAME = "creator"
 
@@ -122,9 +122,6 @@ EXTRA_CSS = []
 
 DEFAULT_THUMBNAIL_SIZE = (120, 120)
 DEFAULT_THUMBNAIL_QUALITY = 80
-
-OLD_VALUE_STR = 'old_%s_value'
-DELETED_VALUE_STR = 'deleted_%s_value'
 
 WIDGET_HIDDEN_INPUT_CSS_CLASS = "django-gallery-widget"
 

@@ -10,8 +10,8 @@ from django.test.utils import isolate_apps, override_settings
 
 from unittest import mock
 
-from gallery.fields import GalleryField, GalleryFormField
-from gallery.widgets import GalleryWidget
+from gallery_widget.fields import GalleryField, GalleryFormField
+from gallery_widget.widgets import GalleryWidget
 
 from demo.models import DemoGallery
 from tests.factories import DemoGalleryFactory
@@ -273,12 +273,12 @@ class GalleryFormFieldTest(TestCase):
         with self.assertRaises(ImproperlyConfigured):
             GalleryFormField(target_model="tests.FakeInvalidImageModel1")
 
-    @mock.patch('gallery.fields.logger.info')
+    @mock.patch('gallery_widget.fields.logger.info')
     def test_gallery_form_field_target_image_model_configured_none(self, mock_log):
         GalleryFormField()
         self.assertEqual(mock_log.call_count, 1)
 
-    @mock.patch('gallery.fields.logger.info')
+    @mock.patch('gallery_widget.fields.logger.info')
     @override_settings(SILENCED_SYSTEM_CHECKS=["gallery_form_field.I001"])
     def test_gallery_form_field_target_image_model_configured_none_log_suppressed(self, mock_log):  # noqa
         GalleryFormField()
@@ -303,7 +303,7 @@ class GalleryFormFieldTest(TestCase):
         field.widget = new_widget
         self.assertEqual(field.widget.max_number_of_images, max_number_of_images)
         self.assertEqual(field.widget.image_model, old_widget.image_model)
-        self.assertEqual(field.widget.widget_belongs_to, str(field))
+        self.assertEqual(field.widget.widget_is_servicing, field.__class__.__name__)
         self.assertEqual(field.widget.attrs, old_widget.attrs)
         self.assertEqual(field.widget.is_required, False)
 
@@ -444,7 +444,7 @@ class GalleryFieldCheckTest(TestCase):
 
     @isolate_apps("tests")
     # Here we are not loading "demo", while use MyImageModel
-    @override_settings(INSTALLED_APPS=['gallery', 'tests'])
+    @override_settings(INSTALLED_APPS=['gallery_widget', 'tests'])
     def test_field_checks_app_not_in_installed_apps(self):
         class MyModel(models.Model):
             field = GalleryField("demo.MyImageModel")

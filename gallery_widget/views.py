@@ -1,12 +1,13 @@
 from django.core.exceptions import PermissionDenied
 
 
-from gallery.mixins import ImageCreateView, ImageListView, ImageCropView
+from gallery_widget.mixins import ImageCreateView, ImageListView, ImageCropView
 
 
 class BuiltInImageCreateView(ImageCreateView):
-    target_model = "gallery.BuiltInGalleryImage"
-    crop_url_name = "gallery_image_crop"
+    target_model = "gallery_widget.BuiltInGalleryImage"
+    crop_url_name = "builtingalleryimage-crop"
+    disable_server_side_crop = False
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -16,8 +17,9 @@ class BuiltInImageCreateView(ImageCreateView):
 
 
 class BuiltInImageListView(ImageListView):
-    target_model = "gallery.BuiltInGalleryImage"
-    crop_url_name = "gallery_image_crop"
+    target_model = "gallery_widget.BuiltInGalleryImage"
+    crop_url_name = "builtingalleryimage-crop"
+    disable_server_side_crop = False
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -27,8 +29,9 @@ class BuiltInImageListView(ImageListView):
 
 
 class BuiltInImageCropView(ImageCropView):
-    target_model = "gallery.BuiltInGalleryImage"
-    crop_url_name = "gallery_image_crop"
+    target_model = "gallery_widget.BuiltInGalleryImage"
+    crop_url_name = "builtingalleryimage-crop"
+    disable_server_side_crop = False
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset=None)

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from . import models
-from gallery.models import BuiltInGalleryImage
+from gallery_widget.models import BuiltInGalleryImage
 
 admin.site.register(models.DemoGallery)
 admin.site.register(BuiltInGalleryImage)

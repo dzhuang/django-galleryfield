@@ -5,7 +5,7 @@ from django.test.utils import override_settings
 class CheckSettingsBase(SimpleTestCase):
     @property
     def func(self):
-        from gallery.checks import check_settings
+        from gallery_widget.checks import check_settings
         return check_settings
 
     @property
@@ -87,7 +87,7 @@ class CheckConfigs(CheckSettingsBase):
     def test_valid_config2(self):
         self.assertCheckMessages([])
 
-    @override_settings(INSTALLED_APPS=['gallery', 'demo'])
+    @override_settings(INSTALLED_APPS=['gallery_widget', 'demo'])
     def test_invalid_config1(self):
         self.assertCheckMessages(["django-gallery-widget.E001"])
 
