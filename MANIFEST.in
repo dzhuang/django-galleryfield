@@ -1,6 +1,6 @@
 include LICENSE
-include README.md
-recursive-include gallery/locale *
-recursive-include gallery/static *
-recursive-include gallery/templates *
+include README.rst
+recursive-include gallery_widget/locale *
+recursive-include gallery_widget/static *
+recursive-include gallery_widget/templates *
 recursive-include docs *
