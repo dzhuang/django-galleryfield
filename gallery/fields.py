@@ -39,14 +39,14 @@ class GalleryDescriptor(DeferredAttribute):
     def __get__(self, instance, cls=None):
         image_list = super().__get__(instance, cls)
 
-        if not isinstance(image_list, GalleryImageList):
+        if not isinstance(image_list, GalleryImages):
             attr = self.field.attr_class(instance, self.field, image_list)
             instance.__dict__[self.field.name] = attr
 
         return instance.__dict__[self.field.name]
 
 
-class GalleryImageList(list):
+class GalleryImages(list):
     def __init__(self, instance, field, field_value):
         # When field_value is None,
         # (This happens when the GalleryField was saved as null)
@@ -71,7 +71,48 @@ class GalleryImageList(list):
 
 
 class GalleryField(models.JSONField):
-    attr_class = GalleryImageList
+    """This is a model field which saves the id of images.
+
+    :param target_model: A string in the form of ``"app_label.model_name"``,
+           which can be loaded by :meth:`django.apps.get_model` (see 
+           `Django docs <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_),
+           defaults to `None`. If `None`, ``gallery.BuiltInGalleryImage``,
+           which can be overridden by 
+           ``settings.DJANGO_GALLERY_WIDGET_CONFIG["default_target_image_model"]``,
+           will be used.
+
+    :type target_model: str, optional.
+
+    A valid ``target_model`` need to meet one of the following 2 requirements:
+
+    1. It has a :class:`django.db.models.ImageField` named ``image`` 
+
+    2. It has a :class:`django.db.models.ImageField` which not named ``image``
+       but the field can be accessed by a `classmethod` :meth:`get_image_field`,
+       for example:
+
+    .. code-block:: python
+        
+       class MyImage(models.Model):
+            photo = models.ImageField(
+                upload_to="my_images", storage=default_storage, verbose_name=_("Image"))
+            creator = models.ForeignKey(
+                    settings.AUTH_USER_MODEL, null=False, blank=False,
+                            verbose_name=_('Creator'), on_delete=models.CASCADE)
+            
+            @classmethod
+            def get_image_field(cls):
+                return cls._meta.get_field("photo")
+
+    .. note:: As demonstrated in above example, when defining the :meth:`get_image_field`,
+       we can't simply ``return cls.photo`` because it
+       returns a :class:`django.db.models.fields.files.ImageFieldFile`
+       object instead of a :class:`django.db.models.ImageField` object.
+ 
+
+    """  # noqa
+
+    attr_class = GalleryImages
     descriptor_class = GalleryDescriptor
 
     def contribute_to_class(self, cls, name, private_only=False):
@@ -126,32 +167,39 @@ class GalleryField(models.JSONField):
 
 
 class GalleryFormField(forms.JSONField):
+    """The default formfield for :class:`gallery.fields.GalleryField`.
+
+    :param max_number_of_images: Max allowed number of images, defaults
+           to `None`, which means unlimited.
+    :type max_number_of_images: int, optional.
+
+    :param kwargs: Besides the options from parent class, the following were added:
+
+           * target_model: str, a valid target image model which can be loaded by
+             ``apps.get_model``. When this field is used in the model form,
+             it is auto configured by the model instance.
+
+             However, if this field is used as a non-model form field, when
+             not specified, it will use the built-in default target image
+             model ``gallery.BuiltInGalleryImage``, which can be overridden by
+             ``settings.DJANGO_GALLERY_WIDGET_CONFIG['default_target_image_model']``.
+
+           * widget: if not specified, defaults to ``GalleryWidget`` with default
+             values.
+
+
+    .. note:: If `target_model` not specified when initializing, an info will
+       be logged to the stdout, which can be turned off by adding
+       ``gallery_form_field.I001`` in ``settings.SILENCED_SYSTEM_CHECKS``.
+
+    """
+
     default_error_messages = {
         'required': _("The submitted file is empty."),
         'invalid': _("The submitted images are invalid."),
     }
 
     def __init__(self, max_number_of_images=None, **kwargs):
-        """
-        :param max_number_of_images: int.
-        :param kwargs:
-          - target_model: str, a valid target image model which can be loaded by
-           ``apps.get_model``. When this field is used in the model form,
-            it is auto configured by the model instance.
-            However, if this field is used as a non-model form field, when
-            not specified, it will use the built-in default target image
-            model, which can be overridden by
-            ``DJANGO_GALLERY_WIDGET_CONFIG['default_target_image_model']``
-            in settings. Moreover, if not configured, an info will be logged
-            to the console, which can be turned off by
-            adding ``gallery_form_field.I001``
-            in ``settings.SILENCED_SYSTEM_CHECKS``
-          - widget: if not specified, defaults ``GalleryWidget`` with default
-           values.
-
-          Overall, You need to make sure all the urls in ``widget`` are
-          handling the ``image_model`` instances.
-        """
 
         # The following 2 are used to validate GalleryWidget params
         # see GalleryWidget.defaults_checks()

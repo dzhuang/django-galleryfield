@@ -1,18 +1,19 @@
 from django.conf import settings
 from django.core import checks
+from django.apps import apps
 
 from gallery.utils import (
     DJGalleryCriticalCheckMessage, INSTANCE_ERROR_PATTERN,
-    GENERIC_ERROR_PATTERN, apps
+    GENERIC_ERROR_PATTERN, get_formatted_thumbnail_size,
+    InvalidThumbnailFormat
 )
+
+from gallery import defaults
 
 
 DJANGO_GALLERY_WIDGET_CONFIG = "DJANGO_GALLERY_WIDGET_CONFIG"
 
 ASSETS = "assets"
-BOOTSTRAP_JS_PATH = "bootstrap_js_path"
-BOOTSTRAP_CSS_PATH = "bootstrap_css_path"
-JQUERY_JS_PATH = "jquery_js_path"
 EXTRA_JS = "extra_js"
 EXTRA_CSS = "extra_css"
 
@@ -64,43 +65,8 @@ def check_settings(app_configs, **kwargs):
                 id="django-gallery-widget-assets.E001"
             ))
         else:
-            bootstrap_js_path = assets.get(BOOTSTRAP_JS_PATH, None)
-            if (bootstrap_js_path is not None
-                    and not isinstance(bootstrap_js_path, str)):
-                errors.append(DJGalleryCriticalCheckMessage(
-                    msg=(INSTANCE_ERROR_PATTERN
-                         % {"location": "'%s' in '%s' in '%s'" % (
-                                BOOTSTRAP_JS_PATH, ASSETS,
-                                DJANGO_GALLERY_WIDGET_CONFIG),
-                            "types": "str"}),
-                    id="django-gallery-widget-assets.E002"
-                ))
-
-            bootstrap_css_path = assets.get(BOOTSTRAP_CSS_PATH, None)
-            if (bootstrap_css_path is not None
-                    and not isinstance(bootstrap_css_path, str)):
-                errors.append(DJGalleryCriticalCheckMessage(
-                    msg=(INSTANCE_ERROR_PATTERN
-                         % {"location": "'%s' in '%s' in '%s'" % (
-                                BOOTSTRAP_CSS_PATH, ASSETS,
-                                DJANGO_GALLERY_WIDGET_CONFIG),
-                            "types": "str"}),
-                    id="django-gallery-widget-assets.E003"
-                ))
-
-            jquery_js_path = assets.get(JQUERY_JS_PATH, None)
-            if (jquery_js_path is not None
-                    and not isinstance(jquery_js_path, str)):
-                errors.append(DJGalleryCriticalCheckMessage(
-                    msg=(INSTANCE_ERROR_PATTERN
-                         % {"location": "'%s' in '%s' in '%s'" % (
-                                JQUERY_JS_PATH, ASSETS,
-                                DJANGO_GALLERY_WIDGET_CONFIG),
-                            "types": "str"}),
-                    id="django-gallery-widget-assets.E004"
-                ))
-
-            extra_js = assets.get(EXTRA_JS, None)
+            assets_copy = assets.copy()
+            extra_js = assets_copy.pop(EXTRA_JS, None)
             if extra_js is not None:
                 if not isinstance(extra_js, list):
                     errors.append(DJGalleryCriticalCheckMessage(
@@ -125,7 +91,7 @@ def check_settings(app_configs, **kwargs):
                                 id="django-gallery-widget-assets.E006"
                             ))
 
-            extra_css = assets.get(EXTRA_CSS, None)
+            extra_css = assets_copy.pop(EXTRA_CSS, None)
             if extra_css is not None:
                 if not isinstance(extra_css, list):
                     errors.append(DJGalleryCriticalCheckMessage(
@@ -150,6 +116,41 @@ def check_settings(app_configs, **kwargs):
                                 id="django-gallery-widget-assets.E008"
                             ))
 
+            for asset_name, asset_value in assets_copy.items():
+                if asset_name not in (
+                        defaults.VENDER_CSS_NAMES + defaults.VENDER_JS_NAMES):
+                    errors.append(checks.Warning(
+                        msg=("%(location)s is not in the required assets, it"
+                             "you want to use it, put it in %(extra_css)s or "
+                             "%(extra_js)s"
+                             % {"location": (
+                                        "Asset '%s' in '%s' in '%s'" % (
+                                            str(asset_name), ASSETS,
+                                            DJANGO_GALLERY_WIDGET_CONFIG)),
+                                 "extra_js": EXTRA_JS,
+                                 "extra_css": EXTRA_CSS}
+                             ),
+                        id="django-gallery-widget-assets.W001"
+                    ))
+                    continue
+
+                if asset_value is None:
+                    errors.append(checks.Warning(
+                        msg=("%(location)s is set to None, that might "
+                             "cause unexpected result in views as well "
+                             "as in admin."
+                             % {"location": (
+                                        "Asset '%s' in '%s' in '%s'" % (
+                                            str(asset_name), ASSETS,
+                                            DJANGO_GALLERY_WIDGET_CONFIG))}
+                             ),
+                        id="django-gallery-widget-assets.W002"
+                    ))
+                    continue
+
+                # Note the asset_value is not necessary a str, it can be a
+                # JS object (see django-js-asset).
+
     thumbnails = conf.get(THUMBNAILS, None)
     if thumbnails is not None:
         if not isinstance(thumbnails, dict):
@@ -162,10 +163,26 @@ def check_settings(app_configs, **kwargs):
             ))
         else:
             thumbnail_size = thumbnails.get(THUMBNAIL_SIZE, None)
-            if thumbnail_size is not None:
-                try:
-                    _size = float(thumbnail_size)
-                except Exception as e:
+            try:
+                get_formatted_thumbnail_size(
+                    thumbnail_size, name=THUMBNAIL_SIZE)
+            except Exception as e:
+                if isinstance(e, InvalidThumbnailFormat):
+                    errors.append(DJGalleryCriticalCheckMessage(
+                        msg=(GENERIC_ERROR_PATTERN
+                             % {"location": "'%s' in '%s' in '%s'" % (
+                                    THUMBNAIL_SIZE, THUMBNAILS,
+                                    DJANGO_GALLERY_WIDGET_CONFIG),
+                                "error_type": type(e).__name__,
+                                "error_str": (
+                                    "'%s' must be an int, or a string of int, "
+                                    "or in the form of 80x60, or a list, e.g,"
+                                    " [80, 60], or a tuple (80, 60)"
+                                    % THUMBNAIL_SIZE)}
+                             ),
+                        id="django-gallery-widget-thumbnails.E003"
+                    ))
+                else:
                     errors.append(DJGalleryCriticalCheckMessage(
                         msg=(GENERIC_ERROR_PATTERN
                              % {"location": "'%s' in '%s' in '%s'" % (
@@ -176,19 +193,6 @@ def check_settings(app_configs, **kwargs):
                              ),
                         id="django-gallery-widget-thumbnails.E002"
                     ))
-                else:
-                    if _size < 0:
-                        errors.append(DJGalleryCriticalCheckMessage(
-                            msg=(GENERIC_ERROR_PATTERN
-                                 % {"location": "'%s' in '%s' in '%s'" % (
-                                        THUMBNAIL_QUALITY, THUMBNAILS,
-                                        DJANGO_GALLERY_WIDGET_CONFIG),
-                                    "error_type": TypeError.__name__,
-                                    "error_str":
-                                        "Thumbnail size should be a positive number"}
-                                 ),
-                            id="django-gallery-widget-thumbnails.E003"
-                        ))
 
             thumbnail_quality = thumbnails.get(THUMBNAIL_QUALITY, None)
             if thumbnail_quality is not None:

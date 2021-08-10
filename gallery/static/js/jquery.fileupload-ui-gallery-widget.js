@@ -68,6 +68,9 @@
                         if (that._trigger('replace', e, data) !== false)
                         {delete data.replaceChild;}
                     }
+
+                    // todo: check if edit is allowed, for example,
+                    // gif is not allowed in chrome.
                     $(data.context).find('.edit').prop('disabled', false);
                     that.toggleFileuploadSortableHandle();
                     that._toggleFileuploadButtonBarButtonDisplay();
@@ -91,7 +94,7 @@
                         options = that.options;
 
                     data.formData = {
-                        "preview_size": options.previewMaxWidth,
+                        "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
                         "csrfmiddlewaretoken": get_cookie("csrftoken")
                     };
                 },
@@ -273,7 +276,6 @@
                 }
 
                 if (editType === "download") {
-                    console.log($button.closest(".template-download").find(".preview"));
                     $editImg.attr('src', $button.closest(".template-download").find(".preview").find("a").attr("href"));
                     $editImg.submitData = function (result) {
                         var messageBox = options.cropperResultMessageBoxSelector;
@@ -284,7 +286,7 @@
                             url: $button.data("action"),
                             data: {
                                 "cropped_result": JSON.stringify(result),
-                                "preview_size": options.previewMaxWidth,
+                                "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
                                 "csrfmiddlewaretoken": get_cookie("csrftoken")
                             },
                         })

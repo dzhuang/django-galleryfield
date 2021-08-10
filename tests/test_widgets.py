@@ -9,6 +9,7 @@ from gallery.fields import GalleryFormField
 from gallery.widgets import GalleryWidget
 from gallery import conf
 from gallery import defaults
+from gallery.utils import get_formatted_thumbnail_size
 
 from tests import factories
 from tests.test_fields import DemoTestGalleryModelForm
@@ -114,14 +115,46 @@ class GalleryWidgetTest(SimpleTestCase):
         expected_string = "maxNumberOfFiles: %i" % max_number_of_file
         self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
 
-    def test_gallery_widget_preview_size(self):
+    def test_gallery_widget_thumbnail_size(self):
         f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         f.widget = GalleryWidget()
-        expected_string = "previewMaxWidth: %i" % conf.DEFAULT_THUMBNAIL_SIZE
+        expected_value = get_formatted_thumbnail_size(
+                conf.DEFAULT_THUMBNAIL_SIZE).split("x")[0]
+        expected_string = "previewMaxWidth: %s" % expected_value
         self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
 
-        f.widget = GalleryWidget(preview_size=130)
-        expected_string = "previewMaxWidth: %i" % 130
+        f.widget = GalleryWidget(thumbnail_size=130)
+        expected_string = "previewMaxWidth: %s" % str(130)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
+        expected_string = "previewMaxHeight: %s" % str(130)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
+
+        f.widget = GalleryWidget(thumbnail_size=(135, 250))
+        expected_string = "previewMaxWidth: %s" % str(135)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
+        expected_string = "previewMaxHeight: %s" % str(250)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
+
+        f.widget = GalleryWidget(thumbnail_size="130x260")
+        expected_string = "previewMaxWidth: %s" % str(130)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
+        expected_string = "previewMaxHeight: %s" % str(260)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
+
+    def test_set_thumbnail_size_after_gallery_widget_init(self):
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        f.widget = GalleryWidget(thumbnail_size=130)
+        f.widget.thumbnail_size = 250
+        expected_string = "previewMaxWidth: %s" % str(250)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
+        expected_string = "previewMaxHeight: %s" % str(250)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
+
+        f.widget.thumbnail_size = "111x222"
+        expected_string = "previewMaxWidth: %s" % str(111)
+        self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
+        expected_string = "previewMaxHeight: %s" % str(222)
         self.check_in_html(f.widget, "image", '', strict=True, html=expected_string)
 
     def test_gallery_widget_jquery_upload_options_None(self):

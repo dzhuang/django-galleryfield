@@ -1,7 +1,9 @@
 django<=3.3
-django-crispy-forms
 sorl-thumbnail
 pillow
+django-crispy-forms
+django-npm
+
 codecov
 factory_boy
 pytest
@@ -11,6 +13,3 @@ pytest-cov
 selenium
 flake8
 
-# flake8
-# pep8-naming
-# mypy

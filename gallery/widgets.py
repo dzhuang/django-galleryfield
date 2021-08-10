@@ -6,49 +6,76 @@ from django.core.exceptions import ImproperlyConfigured
 from django.urls import NoReverseMatch
 
 from gallery import conf, defaults
-from gallery.utils import get_url_from_str, convert_dict_to_plain_text
+from gallery.utils import (
+    get_url_from_str, convert_dict_to_plain_text, get_formatted_thumbnail_size)
 
 NoReverseMatch_EXCEPTION_STR_RE = re.compile("Reverse for '(.+)' not found")
 
-js = [
-    conf.JQUERY_JS_PATH,
-    'vendor/jquery-ui-dist/jquery-ui.min.js',
-    'vendor/blueimp-file-upload/js/vendor/jquery.ui.widget.js',
-    'vendor/blueimp-tmpl/js/tmpl.min.js',
-    "vendor/blueimp-load-image/js/load-image.all.min.js",
-    "vendor/blueimp-canvas-to-blob/js/canvas-to-blob.js",
-    conf.BOOTSTRAP_JS_PATH,
-    "vendor/jquery.iframe-transport/jquery.iframe-transport.js",
-    'vendor/blueimp-file-upload/js/jquery.fileupload.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-process.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-image.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-audio.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-video.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-validate.js',
-    'vendor/blueimp-file-upload/js/jquery.fileupload-ui.js',
-    'vendor/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
-    "vendor/cropper/dist/cropper.min.js",
-    "js/jquery.fileupload-ui-gallery-widget.js",
-] + conf.EXTRA_JS
-
-css = [
-          conf.BOOTSTRAP_CSS_PATH,
-          'vendor/jquery-ui-dist/jquery-ui.theme.min.css',
-          'vendor/blueimp-gallery/css/blueimp-gallery.min.css',
-          "vendor/blueimp-file-upload/css/jquery.fileupload.css",
-          "vendor/blueimp-file-upload/css/jquery.fileupload-ui.css",
-          'vendor/font-awesome/css/font-awesome.min.css',
-          "vendor/cropper/dist/cropper.min.css",
-] + conf.EXTRA_CSS
-
 
 class GalleryWidget(forms.HiddenInput):
+    """This is the default widget used by :class:`gallery.fields.GalleryFormField`.
+
+    :param upload_handler_url: An URL name or an url of the upload handler
+           view used by the widget instance, defaults to `None`. If `None`, 
+           upload ui won't show upload buttons.
+    :type upload_handler_url: str, optional
+    :param fetch_request_url: An URL name or an url for fetching the existing
+           images in the gallery instance, defaults to `None`. If `None`, 
+           upload ui won't load existing images.
+    :type fetch_request_url: str, optional
+    :param crop_request_url: An URL name or an url for handling server side
+           cropping of uploaded images, defaults to None. If `None`, upload 
+           ui won't show `Edit` buttons for uploaded images.
+    :type crop_request_url: str, optional
+    :param multiple: Whether allow to select multiple image files in the 
+           file picker.
+    :type multiple: bool, optional
+    :param thumbnail_size: The thumbnail size (both width and height), defaults 
+           to ``defaults.DEFAULT_THUMBNAIL_SIZE``, which can be overridden by
+           ``settings.DJANGO_GALLERY_WIDGET_CONFIG["thumbnails"]["size"]``.
+           The value can be set after the widget is initialized.
+    :type thumbnail_size: int, optional
+    :param template: The path of template which is used to render the widget.
+           defaults to ``gallery/widget.html``, which support template 
+           inheritance.
+    :type template: str, optional     
+    :param attrs: Html attribute when rendering the field (Which is a 
+           :class:`django.forms.HiddenInput`), defaults to `None`. See 
+           `Django docs <https://docs.djangoproject.com/en/dev/ref/forms/widgets/#django.forms.Widget.attrs>`_.
+    :type attrs: dict, optional
+    :param options: Other options when rendering the widget. Implemented options:
+
+           * **accepted_mime_types** (`list`, `optional`) - A list of MIME types
+             used to filter files when picking files with file picker, defaults to ``['image/*']``
+    :type options: dict, optional
+    :param jquery_upload_ui_options: The default template is using 
+           blueimp/jQuery-File-Upload package to render the ui and dealing with
+           AJAX upload. This param can be used to set the options. See
+           `jQuery-File-Upload Wiki <https://github.com/blueimp/jQuery-File-Upload/wiki/Options#singlefileuploads>`_
+           for all the available options. The default options can be 
+           seen in ``defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS``. Notice that
+           ``maxNumberOfFiles`` is overridden by the ``max_number_of_images`` param
+           when initializing :class:`gallery.fields.GalleryFormField`, and
+           ``previewMaxWidth`` and ``previewMaxHeight`` are overridden by
+           param ``thumbnail_size``.
+    :type jquery_upload_ui_options: dict, optional
+    :param disable_fetch: Whether disable fetching existing images of the
+           form instance (if any), defaults to `False`. If True, the validity of
+           ``fetch_request_url`` will not be checked.
+    :type disable_fetch: bool, optional
+    :param disable_server_side_crop: Whether disable server side cropping of 
+           uploaded images, defaults to `False`. If True, the validity of
+           ``crop_request_url`` will not be checked.
+    :type disable_server_side_crop: bool, optional
+    
+    """  # noqa
+
     def __init__(
             self,
             upload_handler_url=None,
             fetch_request_url=None,
             multiple=True,
-            preview_size=conf.DEFAULT_THUMBNAIL_SIZE,
+            thumbnail_size=conf.DEFAULT_THUMBNAIL_SIZE,
             template="gallery/widget.html",
             attrs=None, options=None,
             jquery_upload_ui_options=None,
@@ -59,7 +86,7 @@ class GalleryWidget(forms.HiddenInput):
         super(GalleryWidget, self).__init__(attrs)
 
         self.multiple = multiple
-        self.preview_size = preview_size
+        self._thumbnail_size = get_formatted_thumbnail_size(thumbnail_size)
         self.template = template
 
         self.disable_fetch = disable_fetch
@@ -76,17 +103,18 @@ class GalleryWidget(forms.HiddenInput):
 
         # https://github.com/blueimp/jQuery-File-Upload/wiki/Options#singlefileuploads
         _jquery_upload_ui_options.pop("singleFileUploads", None)
-        _jquery_upload_ui_options.pop("singleFileUploads", None)
-
-        _jquery_upload_ui_options.update(
-            {"previewMaxWidth": preview_size,
-             "previewMaxHeight": preview_size,
-             "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
-             })
 
         self.ui_options = _jquery_upload_ui_options
         self.options = options and options.copy() or {}
         self.options.setdefault("accepted_mime_types", ['image/*'])
+
+    @property
+    def thumbnail_size(self):
+        return self._thumbnail_size
+
+    @thumbnail_size.setter
+    def thumbnail_size(self, value):
+        self._thumbnail_size = get_formatted_thumbnail_size(value)
 
     @property
     def upload_handler_url(self):
@@ -189,8 +217,8 @@ class GalleryWidget(forms.HiddenInput):
         raise ImproperlyConfigured(msg)
 
     class Media:
-        js = tuple(_js for _js in js if _js)
-        css = {'all': tuple(_css for _css in css if _css)}
+        js = tuple(conf.JS)
+        css = {'all': tuple(conf.CSS)}
 
     @property
     def is_hidden(self):
@@ -203,7 +231,7 @@ class GalleryWidget(forms.HiddenInput):
             'input_string': super().render(name, value, attrs, renderer),
             'name': name,
             'multiple': self.multiple and 1 or 0,
-            'preview_size': str(self.preview_size),
+            'thumbnail_size': str(self.thumbnail_size),
             'prompt_alert_on_window_reload_if_changed':
                 conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED
         }
@@ -234,6 +262,13 @@ class GalleryWidget(forms.HiddenInput):
             self.ui_options.pop("maxNumberOfFiles", None)
         else:
             self.ui_options["maxNumberOfFiles"] = max_number_of_images
+
+        _width, _height = self.thumbnail_size.split("x")
+        self.ui_options.update(
+            {"previewMaxWidth": _width,
+             "previewMaxHeight": _height,
+             "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
+             })
 
         context["jquery_fileupload_ui_options"] = (
             convert_dict_to_plain_text(self.ui_options, 16))

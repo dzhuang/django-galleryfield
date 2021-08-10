@@ -16,6 +16,7 @@ from gallery import defaults
 from gallery.models import BuiltInGalleryImage
 from gallery.mixins import ImageListView, ImageCreateView, ImageCropView  # noqa
 
+
 class ViewTestMixin(UserCreateMixin):
     @classmethod
     def setUpTestData(cls):  # noqa
@@ -54,12 +55,12 @@ class ViewTestMixin(UserCreateMixin):
     @staticmethod
     def _get_crop_post_data(
             cropped_result=None,
-            preview_size=defaults.DEFAULT_THUMBNAIL_SIZE):
+            thumbnail_size=defaults.DEFAULT_THUMBNAIL_SIZE):
         data = {}
         if cropped_result:
             data.update({"cropped_result": cropped_result})
-        if preview_size:
-            data.update({"preview_size": preview_size})
+        if thumbnail_size:
+            data.update({"thumbnail_size": thumbnail_size})
 
         return data
 
@@ -240,10 +241,10 @@ class GalleryWidgetFetchViewTest(ViewTestMixin, TestCase):
         )
         self.assertEqual(resp.status_code, 302)
 
+
     # def test_error_config(self):
     #     class MyTest(ImageListView):
     #         crop_url_name = "builtingalleryimage_crop"
-
 
 
 @override_settings(MEDIA_ROOT=test_media_root)

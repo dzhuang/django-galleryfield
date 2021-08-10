@@ -1,0 +1,19 @@
+{
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/dzhuang/django-gallery-widget.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "blueimp-file-upload": "^10.31.0",
+    "blueimp-gallery": "^3.3.0",
+    "blueimp-tmpl": "^3.19.0",
+    "bootstrap": "^3.4.1",
+    "clipboard": "^2.0.8",
+    "cropper": "^4.1.0",
+    "jquery": "^3.6.0",
+    "jquery-form": "^4.3.0",
+    "jquery-ui-dist": "^1.12.1",
+    "font-awesome": "^4.7.0"
+  }
+}

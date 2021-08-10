@@ -128,21 +128,23 @@ class CheckAssets(CheckSettingsBase):
 
     VALID_CONF = {
         "assets": {
-            "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
-            "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
-            "jquery_js_path": "vendor/jquery.min.js",
+            "jquery.js": "jquery/dist/jquery.min.js",
+            "bootstrap.css": "bootstrap/dist/css/bootstrap.min.css",
             "extra_js": ["some/js"],
             "extra_css": ["some/css"],
         },
     }
 
-    VALID_CONF_ALL_None = {
+    VALID_CONF_EXTRA_None = {
         "assets": {
-            "bootstrap_js_path": None,
-            "bootstrap_css_path": None,
-            "jquery_js_path": None,
             "extra_js": None,
             "extra_css": None,
+        },
+    }
+
+    CONF_SET_NONE_WARNED = {
+        "assets": {
+            "jquery.js": None,
         },
     }
 
@@ -150,21 +152,9 @@ class CheckAssets(CheckSettingsBase):
         "assets": object
     }
 
-    INVALID_CONF_BOOTSTRAP_JS = {
+    NOT_LISTED_ASSET = {
         "assets": {
-            "bootstrap_js_path": object,
-        },
-    }
-
-    INVALID_CONF_BOOTSTRAP_CSS = {
-        "assets": {
-            "bootstrap_css_path": object,
-        },
-    }
-
-    INVALID_CONF_JQUERY_JS = {
-        "assets": {
-            "jquery_js_path": object,
+            "bootstrap4.css": "bootstrap/dist/css/bootstrap.min.css",
         },
     }
 
@@ -204,41 +194,37 @@ class CheckAssets(CheckSettingsBase):
     def test_valid_config3(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_ALL_None)
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_EXTRA_None)
     def test_valid_config4(self):
         self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=NOT_LISTED_ASSET)
+    def test_item_not_listed_warned_config(self):
+        self.assertCheckMessages(["django-gallery-widget-assets.W001"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=CONF_SET_NONE_WARNED)
+    def test_item_set_none_warned_config(self):
+        self.assertCheckMessages(["django-gallery-widget-assets.W002"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_Dict)
     def test_invalid_config01(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E001"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_BOOTSTRAP_JS)
-    def test_invalid_config02(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E002"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_BOOTSTRAP_CSS)
-    def test_invalid_config03(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E003"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_JQUERY_JS)
-    def test_invalid_config04(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E004"])
-
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_JS)
-    def test_invalid_config05(self):
+    def test_invalid_config02(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E005"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_CSS)
-    def test_invalid_config06(self):
+    def test_invalid_config03(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E007"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_JS_ELE)
-    def test_invalid_config07(self):
+    def test_invalid_config04(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E006",
                                   "django-gallery-widget-assets.E006"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_CSS_ELE)
-    def test_invalid_config08(self):
+    def test_invalid_config05(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E008",
                                   "django-gallery-widget-assets.E008"])
 
@@ -272,10 +258,52 @@ class CheckThumbnails(CheckSettingsBase):
         },
     }
 
+    VALID_CONF_int_tuple = {
+        "thumbnails": {
+            "size": (20, 80),
+        },
+    }
+
+    VALID_CONF_int_list = {
+        "thumbnails": {
+            "size": (20, 80),
+        },
+    }
+
+    VALID_CONF_str_tuple = {
+        "thumbnails": {
+            "size": ("20", "80"),
+        },
+    }
+
+    VALID_CONF_str_list = {
+        "thumbnails": {
+            "size": ["20", "80"],
+        },
+    }
+
+    VALID_CONF_x = {
+        "thumbnails": {
+            "size": "20x80",
+        },
+    }
+
+    VALID_CONF_X = {
+        "thumbnails": {
+            "size": "20x80",
+        },
+    }
+
+    VALID_CONF_CONTAINS_SPACES = {
+        "thumbnails": {
+            "size": " 20 x 80 ",
+        },
+    }
+
     VALID_CONF_CAN_CONVERT_TO_NUMBER = {
         "thumbnails": {
-            "size": None,
-            "quality": None
+            "size": "40",
+            "quality": "80"
         },
     }
 
@@ -294,6 +322,42 @@ class CheckThumbnails(CheckSettingsBase):
         "thumbnails": {
             "size": -10,
             "quality": -0.1
+        },
+    }
+
+    INVALID_CONF_NEGATIVE_LIST = {
+        "thumbnails": {
+            "size": [-100, 100],
+        },
+    }
+
+    INVALID_CONF_NEGATIVE_STR_LIST = {
+        "thumbnails": {
+            "size": ["-100", "100"],
+        },
+    }
+
+    INVALID_CONF_NEGATIVE_TUPLE = {
+        "thumbnails": {
+            "size": ("-100", "100"),
+        },
+    }
+
+    INVALID_CONF_EMPT_STR = {
+        "thumbnails": {
+            "size": "       ",
+        },
+    }
+
+    INVALID_CONF_CONTAINS_3_tuple = {
+        "thumbnails": {
+            "size": (100, 200, 300),
+        },
+    }
+
+    INVALID_CONF_CONTAINS_2_x = {
+        "thumbnails": {
+            "size": "100x200x300",
         },
     }
 
@@ -318,6 +382,35 @@ class CheckThumbnails(CheckSettingsBase):
     def test_valid_config5(self):
         self.assertCheckMessages([])
 
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_int_tuple)
+    def test_valid_config6(self):
+        self.assertCheckMessages([])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_str_list)
+    def test_valid_config7(self):
+        self.assertCheckMessages([])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_int_list)
+    def test_valid_config8(self):
+        self.assertCheckMessages([])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_x)
+    def test_valid_config9(self):
+        self.assertCheckMessages([])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_X)
+    def test_valid_config10(self):
+        self.assertCheckMessages([])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_CONTAINS_SPACES)
+    def test_valid_config11(self):
+        self.assertCheckMessages([])
+
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_Dict)
     def test_invalid_config1(self):
         self.assertCheckMessages(["django-gallery-widget-thumbnails.E001"])
@@ -325,7 +418,7 @@ class CheckThumbnails(CheckSettingsBase):
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_NUMBER)
     def test_invalid_config2(self):
         self.assertCheckMessages([
-            "django-gallery-widget-thumbnails.E002",
+            "django-gallery-widget-thumbnails.E003",
             "django-gallery-widget-thumbnails.E004"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NEGATIVE)
@@ -333,6 +426,36 @@ class CheckThumbnails(CheckSettingsBase):
         self.assertCheckMessages([
             "django-gallery-widget-thumbnails.E003",
             "django-gallery-widget-thumbnails.E005"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NEGATIVE_LIST)
+    def test_invalid_config4(self):
+        self.assertCheckMessages([
+            "django-gallery-widget-thumbnails.E003"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NEGATIVE_TUPLE)
+    def test_invalid_config5(self):
+        self.assertCheckMessages([
+            "django-gallery-widget-thumbnails.E003"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NEGATIVE_STR_LIST)
+    def test_invalid_config6(self):
+        self.assertCheckMessages([
+            "django-gallery-widget-thumbnails.E003"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EMPT_STR)
+    def test_invalid_config7(self):
+        self.assertCheckMessages([
+            "django-gallery-widget-thumbnails.E002"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_CONTAINS_3_tuple)
+    def test_invalid_config8(self):
+        self.assertCheckMessages([
+            "django-gallery-widget-thumbnails.E003"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_CONTAINS_2_x)
+    def test_invalid_config9(self):
+        self.assertCheckMessages([
+            "django-gallery-widget-thumbnails.E003"])
 
 
 """

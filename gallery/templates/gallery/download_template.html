@@ -52,29 +52,28 @@
             {% block JS_DOWNLOAD_TEMPLATE_DELETE %}
             {% if not uploader_disabled %}
             <td>
-                    <a type="button" class="btn btn-danger delete fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}"
-                            href="javascript(void(0))">
-                        <i class="glyphicon glyphicon-trash"></i>
-                        <span>{% trans "Delete" %}</span>
-                    </a>
 
         {% templatetag openbrace %}% if (!file.error) { %{% templatetag closebrace %}
-                    {% if upload_handler_url %}
-                    <input type="checkbox" value="1" class="toggle fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}">
-                    {% endif %}
                 {% if not disable_server_side_crop %}
                 {% templatetag openbrace %}% if (file.cropUrl) { %{% templatetag closebrace %}
-                <button
+                <a type="button"
                         class="btn btn-info btn-control edit"
-                        type="button"
                         data-toggle="modal"
                         data-action="{% templatetag openbrace %}%=file.cropUrl%{% templatetag closebrace %}"
                 >
                     <i class="glyphicon glyphicon-edit"></i>
                         <span>{% trans "Edit" %}</span>
-                </button>
+                </a>
                 {% templatetag openbrace %}% } %{% templatetag closebrace %}
                 {% endif %}
+                    <a type="button" class="btn btn-danger delete fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}"
+                            href="javascript(void(0))">
+                        <i class="glyphicon glyphicon-trash"></i>
+                        <span>{% trans "Delete" %}</span>
+                    </a>
+                    {% if upload_handler_url %}
+                    <input type="checkbox" value="1" class="toggle fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}">
+                    {% endif %}
             </td>
             <td class="sortableHandle hidden col-lg-1 col-md-1 col-sm-1 col-xs-1"
                  style="vertical-align: middle; text-align: center">
