@@ -55,6 +55,7 @@ jobs:
           pip install -r tests/requirements_test.txt
           pip uninstall -y Django
           pip install Django${{ matrix.django-version }}
+          npm install
       - name: Install OS dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
