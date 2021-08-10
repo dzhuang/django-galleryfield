@@ -189,18 +189,18 @@ class GalleryWidgetTest(SimpleTestCase):
         field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         test_case = {
-            "gallery_image_upload":
+            "builtingalleryimage_upload":
                 {"upload_handler_url": "test_image_upload"},
-            "gallery_image_crop":
+            "builtingalleryimage_crop":
                 {"crop_request_url": "test_image_crop"},
-            "gallery_images_fetch":
+            "builtingalleryimage_fetch":
                 {"fetch_request_url": "test_images_fetch"}
         }
 
         default_urls = {
-            "upload_handler_url": "gallery_image_upload",
-            "crop_request_url": "gallery_image_crop",
-            "fetch_request_url": "gallery_images_fetch"
+            "upload_handler_url": "builtingalleryimage_upload",
+            "crop_request_url": "builtingalleryimage_crop",
+            "fetch_request_url": "builtingalleryimage_fetch"
         }
 
         for default, kwargs in test_case.items():
@@ -225,7 +225,7 @@ class GalleryWidgetTest(SimpleTestCase):
 
         kwargs = {
             "upload_handler_url": "test_image_upload",
-            "crop_request_url": "gallery_image_crop",  # a conflict url
+            "crop_request_url": "builtingalleryimage_crop",  # a conflict url
             "fetch_request_url": "test_images_fetch",
             "disable_server_side_crop": True
         }
@@ -239,7 +239,7 @@ class GalleryWidgetTest(SimpleTestCase):
         kwargs = {
             "upload_handler_url": "test_image_upload",
             "crop_request_url": "test_image_crop",
-            "fetch_request_url": "gallery_images_fetch",  # a conflict url
+            "fetch_request_url": "builtingalleryimage_fetch",  # a conflict url
             "disable_fetch": True
         }
 

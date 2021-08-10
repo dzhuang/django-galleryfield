@@ -7,11 +7,11 @@ from . import views
 urlpatterns = [
     path('upload/',
          login_required(views.BuiltInImageCreateView.as_view()),
-         name="gallery_image_upload"),
+         name="builtingalleryimage_upload"),
     path('crop/<int:pk>',
          login_required(views.BuiltInImageCropView.as_view()),
-         name="gallery_image_crop"),
+         name="builtingalleryimage_crop"),
     path('fetch/',
          login_required((views.BuiltInImageListView.as_view())),
-         name="gallery_images_fetch"),
+         name="builtingalleryimage_fetch"),
 ]
