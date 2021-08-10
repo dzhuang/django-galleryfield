@@ -5,8 +5,7 @@
 {# See https://github.com/blueimp/Gallery and https://github.com/jazzband/sorl-thumbnail for details #}
 {% block header %}
 {{ block.super}}
-<link rel="stylesheet" href="{% static 'vendor/blueimp-gallery/css/blueimp-gallery.min.css' %}" />
-<!--<script src="{% static 'vendor/blueimp-gallery/js/jquery.blueimp-gallery.min.js' %}"></script>-->
+<link rel="stylesheet" href="{% static 'blueimp-gallery/css/blueimp-gallery.min.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -61,7 +60,7 @@
 
 
 {% block back_staff %}
-<script src="{% static 'vendor/blueimp-gallery/js/jquery.blueimp-gallery.min.js' %}"></script>
+<script src="{% static 'blueimp-gallery/js/jquery.blueimp-gallery.min.js' %}"></script>
 <script>
   blueimp.Gallery(document.getElementById('links').getElementsByTagName('a'), {
     container: '#blueimp-gallery-carousel',
