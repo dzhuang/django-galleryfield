@@ -128,21 +128,23 @@ class CheckAssets(CheckSettingsBase):
 
     VALID_CONF = {
         "assets": {
-            "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
-            "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
-            "jquery_js_path": "vendor/jquery.min.js",
+            "jquery.js": "jquery/dist/jquery.min.js",
+            "bootstrap.css": "bootstrap/dist/css/bootstrap.min.css",
             "extra_js": ["some/js"],
             "extra_css": ["some/css"],
         },
     }
 
-    VALID_CONF_ALL_None = {
+    VALID_CONF_EXTRA_None = {
         "assets": {
-            "bootstrap_js_path": None,
-            "bootstrap_css_path": None,
-            "jquery_js_path": None,
             "extra_js": None,
             "extra_css": None,
+        },
+    }
+
+    CONF_SET_NONE_WARNED = {
+        "assets": {
+            "jquery.js": None,
         },
     }
 
@@ -150,21 +152,9 @@ class CheckAssets(CheckSettingsBase):
         "assets": object
     }
 
-    INVALID_CONF_BOOTSTRAP_JS = {
+    NOT_LISTED_ASSET = {
         "assets": {
-            "bootstrap_js_path": object,
-        },
-    }
-
-    INVALID_CONF_BOOTSTRAP_CSS = {
-        "assets": {
-            "bootstrap_css_path": object,
-        },
-    }
-
-    INVALID_CONF_JQUERY_JS = {
-        "assets": {
-            "jquery_js_path": object,
+            "bootstrap4.css": "bootstrap/dist/css/bootstrap.min.css",
         },
     }
 
@@ -204,41 +194,37 @@ class CheckAssets(CheckSettingsBase):
     def test_valid_config3(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_ALL_None)
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_EXTRA_None)
     def test_valid_config4(self):
         self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=NOT_LISTED_ASSET)
+    def test_item_not_listed_warned_config(self):
+        self.assertCheckMessages(["django-gallery-widget-assets.W001"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=CONF_SET_NONE_WARNED)
+    def test_item_set_none_warned_config(self):
+        self.assertCheckMessages(["django-gallery-widget-assets.W002"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_Dict)
     def test_invalid_config01(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E001"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_BOOTSTRAP_JS)
-    def test_invalid_config02(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E002"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_BOOTSTRAP_CSS)
-    def test_invalid_config03(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E003"])
-
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_JQUERY_JS)
-    def test_invalid_config04(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E004"])
-
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_JS)
-    def test_invalid_config05(self):
+    def test_invalid_config02(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E005"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_CSS)
-    def test_invalid_config06(self):
+    def test_invalid_config03(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E007"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_JS_ELE)
-    def test_invalid_config07(self):
+    def test_invalid_config04(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E006",
                                   "django-gallery-widget-assets.E006"])
 
     @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_CSS_ELE)
-    def test_invalid_config08(self):
+    def test_invalid_config05(self):
         self.assertCheckMessages(["django-gallery-widget-assets.E008",
                                   "django-gallery-widget-assets.E008"])
 

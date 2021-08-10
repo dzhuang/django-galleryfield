@@ -15,9 +15,6 @@ Default::
 
     {
         "assets": {
-            "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
-            "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
-            "jquery_js_path": "vendor/jquery.min.js",
             "extra_js": [],
             "extra_css": [],
         },
@@ -48,15 +45,18 @@ Default::
 Allow single or part overriding. The paths can be URLs, CDN address or local paths, see
 `configuring-static-files <https://docs.djangoproject.com/en/3.2/howto/static-files/#configuring-static-files>`_
 for reference. ``extra_js`` and ``extra_css`` are useful when you want add extra JS or CSS
-when inheriting :template:`gallery/widget.html`.
+when inheriting ``gallery/widget.html`` template.
 
 
 The ``integrity`` and ``crossorigin`` were unable to be configured except hard coding
 
+
+
+
 .. setting:: default_urls
 
-``default_urls``
-~~~~~~~~~~~~~~~~~
+default_urls
+~~~~~~~~~~~~~~
 
 Default::
 

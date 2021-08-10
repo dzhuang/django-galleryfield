@@ -52,7 +52,7 @@ VENDER_JS_NAMES = (
     'blueimp-gallery-fullscreen.js',
     'cropper.js')
 
-VENDER_CSS_NAMEs = (
+VENDER_CSS_NAMES = (
     'bootstrap.css',
     'jquery-ui.theme.css',
     'jquery.fileupload.css',
@@ -111,6 +111,8 @@ DEFAULT_ASSETS = {
     "font-awesome.css": "font-awesome/css/font-awesome.min.css",
     "cropper.css": "cropper/dist/cropper.min.css",
 }
+"""dict: The default assets used to render the :class:`GalleryWidget` instance.
+"""
 
 BUILT_IN_JS = ["js/jquery.fileupload-ui-gallery-widget.js"]
 BUILT_IN_CSS = []

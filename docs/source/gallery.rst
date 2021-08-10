@@ -12,12 +12,9 @@ gallery.conf module
 
 gallery.defaults module
 -----------------------
-
-.. automodule:: gallery.defaults
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
+.. autodata:: gallery.defaults.DEFAULT_ASSETS
+   :annotation:
+.. pprint:: gallery.defaults.DEFAULT_ASSETS
 
 gallery.models module
 ---------------------

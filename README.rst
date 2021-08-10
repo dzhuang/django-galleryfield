@@ -52,6 +52,7 @@ Requirements
 -  Django 3.1 or later
 -  `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`__
 -  `pillow <https://github.com/python-imaging/Pillow>`__ (or PIL)
+-  npm and django-npm (for managing statics)
 -  Bootstrap 3 or later (included)
 -  jQuery 1.7 or later (included)
 -  jQuery UI (included)
@@ -64,12 +65,12 @@ Install
 
 ::
 
-    pip install django-gallery-widget.git
+    pip install django-gallery-widget
 
 In ``settings.py``
 ~~~~~~~~~~~~~~~~~~
 
-::
+.. code-block:: python
 
     INSTALLED_APPS = (
         ...,
@@ -79,6 +80,16 @@ In ``settings.py``
     )
 
     DJANGO_GALLERY_CONFIG = ...
+
+And add the following code:
+
+.. code-block:: python
+
+    from django.conf.global_settings import STATICFILES_FINDERS
+
+    STATICFILES_FINDERS = tuple(STATICFILES_FINDERS) + (
+        "npm.finders.NpmFinder",)
+
 
 In ``urls.py``
 ~~~~~~~~~~~~~~
@@ -90,13 +101,14 @@ In ``urls.py``
 Run the demo
 ~~~~~~~~~~~~
 
-::
+.. code-block:: bash
 
     git clone https://github.com/dzhuang/django-gallery-widget.git
     cd django-gallery-widget
     cd demo
     pip install -r requirements.txt
     cd ..
+    npm install  # or yarn
     python manage.py migrate
     python manage.py createsuperuser # Create a superuser account so that you can upload images
     python manage.py runserver
@@ -128,7 +140,7 @@ Settings
 Django Gallery Widget related settings is a dict as shown below with
 default value.
 
-.. code:: Python
+.. code-block:: python
 
 
     DJANGO_GALLERY_WIDGET_CONFIG = {
@@ -150,9 +162,9 @@ default value.
 Model related default\_values
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Django-Gallery-Widget has a built-in image Model ``gallery.models.BuiltInGalleryImage``, in which ``image`` is the target field of the gallery model. User can use this models without much modifying in their apps. See the demo app for details. With that built-in model, default views are applied with default urls (i.e, ``upload_handler_url_name``, ``fetch_url_name`` and ``crop_url_name``).
+Django-Gallery-Widget has a built-in image model ``gallery.models.BuiltInGalleryImage``, which contains a ``image`` field. The image model is used as the default ``target_model`` for gallery field. User can use this models without much modifying in their apps. See the demo app for details. With that built-in model, default views are applied with 3 default urls (i.e, ``upload_handler_url_name``, ``fetch_url_name`` and ``crop_url_name``).
 
-However, it is heavily suggested for developers to write your own image models, views, urls, and override those settings for your apps, especially in terms of permission considerations.
+However, it is heavily suggested for developers to write your own image models, and related views, urls, especially in terms of permission considerations.
 
 What are the difference as compared to peer apps
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
