@@ -172,5 +172,5 @@ Known issues
 -------------
 
 -  Css rendering of buttons in Admin.
--  Gif will be converted to png (to retain gif, you need to set ``disableImageResize`` to ``False` in :attr:`jquery_fileupload_ui_options` when initialize :class:`GalleryWidget`).
+-  Gif will be converted to png (to retain gif, you need to set ``disableImageResize`` to ``False`` in ``jquery_fileupload_ui_options`` when initializing ``GalleryWidget``).
 -  Doesn't support svg because django ImageField can't handle it for now.
