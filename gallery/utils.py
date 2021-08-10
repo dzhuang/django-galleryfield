@@ -208,3 +208,31 @@ def get_url_from_str(url_str, require_urlconf_ready=False):
             raise ImproperlyConfigured(
                 "'%s' is neither a valid url nor a valid url name" % url_str)
     return url_str
+
+
+class InvalidThumbnailFormat(ValueError):
+    pass
+
+
+def get_formatted_thumbnail_size(thumbnail_size, name="thumbnail_size"):
+    if not thumbnail_size:
+        thumbnail_size = defaults.DEFAULT_THUMBNAIL_SIZE
+
+    def get_iterator(size_iter):
+        if not 0 < len(size_iter) <= 2:
+            raise InvalidThumbnailFormat()
+        for _item in size_iter:
+            if not str(_item).isdigit():
+                raise InvalidThumbnailFormat(str(_item))
+        if len(size_iter) == 1:
+            size_iter = size_iter * 2
+        return "x".join(list(map(str, size_iter)))
+
+    if not isinstance(thumbnail_size, (list, tuple)):
+        thumbnail_size = str(thumbnail_size).strip()
+        if not thumbnail_size:
+            raise ValueError(
+                "'%s' can't be an empty string" % name)
+        thumbnail_size = [s.strip() for s in thumbnail_size.lower().split("x")]
+
+    return get_iterator(thumbnail_size)

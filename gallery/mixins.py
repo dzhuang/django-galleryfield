@@ -18,7 +18,7 @@ from django.db.models import When, Case
 from django.urls import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 
-from gallery.utils import get_or_check_image_field
+from gallery.utils import get_or_check_image_field, get_formatted_thumbnail_size
 from gallery import conf, defaults
 
 
@@ -34,7 +34,7 @@ class BaseImageModelMixin:
 
         super().setup(request, *args, **kwargs)
         self.setup_model_and_image_field()
-        self.preview_size = self.get_and_validate_preview_size_from_request()
+        self.thumbnail_size = self.get_and_validate_thumbnail_size_from_request()
 
     def setup_model_and_image_field(self):
         if self.target_model is None:
@@ -71,7 +71,7 @@ class BaseImageModelMixin:
             is_checking=False).name)
         self.model = apps.get_model(self.target_model)
 
-    def get_and_validate_preview_size_from_request(self):
+    def get_and_validate_thumbnail_size_from_request(self):
         # Get preview size from request
         method = self.request.method.lower()
         if method == "get":
@@ -79,13 +79,21 @@ class BaseImageModelMixin:
         else:
             request_dict = self.request.POST
 
-        # todo: validate and process situation like 60x80
-        return request_dict.get('preview_size', conf.DEFAULT_THUMBNAIL_SIZE)
+        thumbnail_size = request_dict.get(
+            'thumbnail_size', conf.DEFAULT_THUMBNAIL_SIZE)
+        try:
+            return get_formatted_thumbnail_size(thumbnail_size)
+        except Exception:
+            raise ImproperlyConfigured(
+                "Thumbnail size must be an int, or a string of int, "
+                "or in the form of 80x60, or a list, e.g,"
+                " [80, 60], or a tuple (80, 60)"
+            )
 
     def get_thumbnail(self, image):
         return get_thumbnail(
-            image,
-            "%sx%s" % (self.preview_size, self.preview_size),
+            file_=image,
+            geometry_string=self.thumbnail_size,
             crop="center",
             quality=conf.DEFAULT_THUMBNAIL_QUALITY)
 

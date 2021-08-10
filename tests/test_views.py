@@ -55,12 +55,12 @@ class ViewTestMixin(UserCreateMixin):
     @staticmethod
     def _get_crop_post_data(
             cropped_result=None,
-            preview_size=defaults.DEFAULT_THUMBNAIL_SIZE):
+            thumbnail_size=defaults.DEFAULT_THUMBNAIL_SIZE):
         data = {}
         if cropped_result:
             data.update({"cropped_result": cropped_result})
-        if preview_size:
-            data.update({"preview_size": preview_size})
+        if thumbnail_size:
+            data.update({"thumbnail_size": thumbnail_size})
 
         return data
 

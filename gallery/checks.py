@@ -1,9 +1,11 @@
 from django.conf import settings
 from django.core import checks
+from django.apps import apps
 
 from gallery.utils import (
     DJGalleryCriticalCheckMessage, INSTANCE_ERROR_PATTERN,
-    GENERIC_ERROR_PATTERN, apps
+    GENERIC_ERROR_PATTERN, get_formatted_thumbnail_size,
+    InvalidThumbnailFormat
 )
 
 from gallery import defaults
@@ -12,9 +14,6 @@ from gallery import defaults
 DJANGO_GALLERY_WIDGET_CONFIG = "DJANGO_GALLERY_WIDGET_CONFIG"
 
 ASSETS = "assets"
-BOOTSTRAP_JS_PATH = "bootstrap_js_path"
-BOOTSTRAP_CSS_PATH = "bootstrap_css_path"
-JQUERY_JS_PATH = "jquery_js_path"
 EXTRA_JS = "extra_js"
 EXTRA_CSS = "extra_css"
 
@@ -164,10 +163,26 @@ def check_settings(app_configs, **kwargs):
             ))
         else:
             thumbnail_size = thumbnails.get(THUMBNAIL_SIZE, None)
-            if thumbnail_size is not None:
-                try:
-                    _size = float(thumbnail_size)
-                except Exception as e:
+            try:
+                get_formatted_thumbnail_size(
+                    thumbnail_size, name=THUMBNAIL_SIZE)
+            except Exception as e:
+                if isinstance(e, InvalidThumbnailFormat):
+                    errors.append(DJGalleryCriticalCheckMessage(
+                        msg=(GENERIC_ERROR_PATTERN
+                             % {"location": "'%s' in '%s' in '%s'" % (
+                                    THUMBNAIL_SIZE, THUMBNAILS,
+                                    DJANGO_GALLERY_WIDGET_CONFIG),
+                                "error_type": type(e).__name__,
+                                "error_str": (
+                                    "'%s' must be an int, or a string of int, "
+                                    "or in the form of 80x60, or a list, e.g,"
+                                    " [80, 60], or a tuple (80, 60)"
+                                    % THUMBNAIL_SIZE)}
+                             ),
+                        id="django-gallery-widget-thumbnails.E003"
+                    ))
+                else:
                     errors.append(DJGalleryCriticalCheckMessage(
                         msg=(GENERIC_ERROR_PATTERN
                              % {"location": "'%s' in '%s' in '%s'" % (
@@ -178,19 +193,6 @@ def check_settings(app_configs, **kwargs):
                              ),
                         id="django-gallery-widget-thumbnails.E002"
                     ))
-                else:
-                    if _size < 0:
-                        errors.append(DJGalleryCriticalCheckMessage(
-                            msg=(GENERIC_ERROR_PATTERN
-                                 % {"location": "'%s' in '%s' in '%s'" % (
-                                        THUMBNAIL_QUALITY, THUMBNAILS,
-                                        DJANGO_GALLERY_WIDGET_CONFIG),
-                                    "error_type": TypeError.__name__,
-                                    "error_str":
-                                        "Thumbnail size should be a positive number"}
-                                 ),
-                            id="django-gallery-widget-thumbnails.E003"
-                        ))
 
             thumbnail_quality = thumbnails.get(THUMBNAIL_QUALITY, None)
             if thumbnail_quality is not None:

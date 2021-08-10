@@ -1,5 +1,6 @@
 from django.conf import settings
 from . import defaults
+from .utils import get_formatted_thumbnail_size
 
 """
 DJANGO_GALLERY_WIDGET_CONFIG = {
@@ -42,8 +43,9 @@ CSS = [c for c in _css if c]
 
 # todo: allow 60x90 to thumbnail size and check
 _APP_CONFIG_THUMBNAILS = _APP_CONFIG.get("thumbnails", {})
-DEFAULT_THUMBNAIL_SIZE = int(_APP_CONFIG_THUMBNAILS.get(
-    "size", defaults.DEFAULT_THUMBNAIL_SIZE))
+DEFAULT_THUMBNAIL_SIZE = get_formatted_thumbnail_size(
+    _APP_CONFIG_THUMBNAILS.get(
+        "size", defaults.DEFAULT_THUMBNAIL_SIZE))
 DEFAULT_THUMBNAIL_QUALITY = int(_APP_CONFIG_THUMBNAILS.get(
     "quality", defaults.DEFAULT_THUMBNAIL_QUALITY))
 

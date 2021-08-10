@@ -6,7 +6,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.urls import NoReverseMatch
 
 from gallery import conf, defaults
-from gallery.utils import get_url_from_str, convert_dict_to_plain_text
+from gallery.utils import (
+    get_url_from_str, convert_dict_to_plain_text, get_formatted_thumbnail_size)
 
 NoReverseMatch_EXCEPTION_STR_RE = re.compile("Reverse for '(.+)' not found")
 
@@ -29,10 +30,11 @@ class GalleryWidget(forms.HiddenInput):
     :param multiple: Whether allow to select multiple image files in the 
            file picker.
     :type multiple: bool, optional
-    :param preview_size: The thumbnail size (both width and height), defaults 
+    :param thumbnail_size: The thumbnail size (both width and height), defaults 
            to ``defaults.DEFAULT_THUMBNAIL_SIZE``, which can be overridden by
            ``settings.DJANGO_GALLERY_WIDGET_CONFIG["thumbnails"]["size"]``.
-    :type preview_size: int, optional
+           The value can be set after the widget is initialized.
+    :type thumbnail_size: int, optional
     :param template: The path of template which is used to render the widget.
            defaults to ``gallery/widget.html``, which support template 
            inheritance.
@@ -55,7 +57,7 @@ class GalleryWidget(forms.HiddenInput):
            ``maxNumberOfFiles`` is overridden by the ``max_number_of_images`` param
            when initializing :class:`gallery.fields.GalleryFormField`, and
            ``previewMaxWidth`` and ``previewMaxHeight`` are overridden by
-           param ``preview_size``.
+           param ``thumbnail_size``.
     :type jquery_upload_ui_options: dict, optional
     :param disable_fetch: Whether disable fetching existing images of the
            form instance (if any), defaults to `False`. If True, the validity of
@@ -73,7 +75,7 @@ class GalleryWidget(forms.HiddenInput):
             upload_handler_url=None,
             fetch_request_url=None,
             multiple=True,
-            preview_size=conf.DEFAULT_THUMBNAIL_SIZE,
+            thumbnail_size=conf.DEFAULT_THUMBNAIL_SIZE,
             template="gallery/widget.html",
             attrs=None, options=None,
             jquery_upload_ui_options=None,
@@ -84,7 +86,7 @@ class GalleryWidget(forms.HiddenInput):
         super(GalleryWidget, self).__init__(attrs)
 
         self.multiple = multiple
-        self.preview_size = preview_size
+        self._thumbnail_size = get_formatted_thumbnail_size(thumbnail_size)
         self.template = template
 
         self.disable_fetch = disable_fetch
@@ -101,17 +103,18 @@ class GalleryWidget(forms.HiddenInput):
 
         # https://github.com/blueimp/jQuery-File-Upload/wiki/Options#singlefileuploads
         _jquery_upload_ui_options.pop("singleFileUploads", None)
-        _jquery_upload_ui_options.pop("singleFileUploads", None)
-
-        _jquery_upload_ui_options.update(
-            {"previewMaxWidth": preview_size,
-             "previewMaxHeight": preview_size,
-             "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
-             })
 
         self.ui_options = _jquery_upload_ui_options
         self.options = options and options.copy() or {}
         self.options.setdefault("accepted_mime_types", ['image/*'])
+
+    @property
+    def thumbnail_size(self):
+        return self._thumbnail_size
+
+    @thumbnail_size.setter
+    def thumbnail_size(self, value):
+        self._thumbnail_size = get_formatted_thumbnail_size(value)
 
     @property
     def upload_handler_url(self):
@@ -228,7 +231,7 @@ class GalleryWidget(forms.HiddenInput):
             'input_string': super().render(name, value, attrs, renderer),
             'name': name,
             'multiple': self.multiple and 1 or 0,
-            'preview_size': str(self.preview_size),
+            'thumbnail_size': str(self.thumbnail_size),
             'prompt_alert_on_window_reload_if_changed':
                 conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED
         }
@@ -259,6 +262,13 @@ class GalleryWidget(forms.HiddenInput):
             self.ui_options.pop("maxNumberOfFiles", None)
         else:
             self.ui_options["maxNumberOfFiles"] = max_number_of_images
+
+        _width, _height = self.thumbnail_size.split("x")
+        self.ui_options.update(
+            {"previewMaxWidth": _width,
+             "previewMaxHeight": _height,
+             "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
+             })
 
         context["jquery_fileupload_ui_options"] = (
             convert_dict_to_plain_text(self.ui_options, 16))
