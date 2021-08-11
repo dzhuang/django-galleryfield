@@ -239,8 +239,8 @@ As you might guess from the first line, the ``GalleryField`` provide a ``Queryse
 for the image model instances it related to. No wonder, you can do the following::
 
    >>> first_gallery = MyGallery.objects.first()
-   >>> photos_in_first_gallery = first_gallery.photo.objects.all()
-   >>> photos_before_2020 = photos_in_first_gallery.filter(creation_time__lt=datetime(2021, 01, 01))
+   >>> photos_in_first_gallery = first_gallery.album.objects.all()
+   >>> photos_before_2021 = photos_in_first_gallery.filter(creation_time__lt=datetime(2021, 01, 01))
 
 
 More over, the demo provide a good example of `how to render <https://github.com/dzhuang/django-gallery-widget/blob/main/demo/templates/demo/demogallery_detail.html>`__
@@ -315,10 +315,9 @@ FAQs
 -----
 - Q: Why there isn't a delete view for image in the widget?
 
-- A: Image upload behavior is much more complex than generic form views. Actually, the `jQuery File Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`__ has a working delete button, but we changed
-   its behavior to just an UI behavior, considered the following situations:
+- A: Image upload behavior is much more complex than generic form views. Actually, the `jQuery File Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`__ has a     working delete button, but we changed its behavior to just an UI behavior, considered the following situations:
 
-  The simple case, when a user navigate away before saving the pks of the images they have just uploaded,
+  For a simpler case, when a user navigate away before saving the pks of the images they have just uploaded,
   it's almost impossible to delete those images from client side.
 
   Another situations happens when a gallery field is a required field. If there exists a delete view, when a user tries to delete ALL
