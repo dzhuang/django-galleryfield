@@ -92,9 +92,12 @@ And add the following code:
     STATICFILES_FINDERS = tuple(STATICFILES_FINDERS) + (
         "npm.finders.NpmFinder",)
 
+in ``settings.py``.
+
 
 In ``urls.py``
 ~~~~~~~~~~~~~~
+Add the following line in your app's url.py
 
 ::
 
@@ -162,6 +165,9 @@ default value.
 
 
     DJANGO_GALLERY_WIDGET_CONFIG = {
+        "jquery_file_upload_ui_options": { # options for jQuery-File-Upload
+            ...
+        },
         "assets": {
             "bootstrap.js": 'vendor/bootstrap/dist/js/bootstrap.min.js',
             "jquery.js": "vendor/jquery.min.js",
@@ -170,12 +176,18 @@ default value.
             "extra_css": [],
         },
         "thumbnails": {
-            "size": 120,
+            "size": "120x80",
             "quality": 80
         },
         "widget_hidden_input_css_class": "django-gallery-widget",
         "prompt_alert_if_changed_on_window_reload": True,
     }
+
+The default values can be seen in ``gallery_widget.defaults``. For ``jquery_file_upload_ui_options``,
+refer to `available options <https://github.com/blueimp/jQuery-File-Upload/wiki/Options#general-options>`__ for jQuery-File-Upload
+Notice that ``fileInput``, ``paramName``, ``singleFileUploads``, ``previewMaxWidth`` and ``previewMaxHeight`` settings will
+be ignored (they were overridden in the package).
+
 
 Model related default\_values
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

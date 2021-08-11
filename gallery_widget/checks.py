@@ -26,6 +26,15 @@ WIDGET_HIDDEN_INPUT_CSS_CLASS = "widget_hidden_input_css_class"
 PROMPT_ALERT_IF_CHANGED_ON_WINDOW_RELOAD = (
     "prompt_alert_if_changed_on_window_reload")
 
+JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = (
+    "jquery_file_upload_ui_options"
+)
+
+MAX_NUMBER_OF_FILES = "maxNumberOfFiles"
+SINGLE_FILE_UPLOADS = "singleFileUploads"
+PREVIEW_MAX_WIDTH = "previewMaxWidth"
+PREVIEW_MAX_HEIGHT = "previewMaxHeight"
+
 
 def register_gallery_widget_settings_checks():
     checks.register(check_settings, "django_gallery_widget_checks")
@@ -224,8 +233,62 @@ def check_settings(app_configs, **kwargs):
                             id="django-gallery-widget-thumbnails.E005"
                         ))
 
-    widget_hidden_input_css_class = conf.get(
-        WIDGET_HIDDEN_INPUT_CSS_CLASS, None)
+    jfu_options = conf.get(JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS, None)
+    if jfu_options is not None:
+        if not isinstance(jfu_options, dict):
+            errors.append(DJGalleryCriticalCheckMessage(
+                msg=(INSTANCE_ERROR_PATTERN
+                     % {"location": "'%s' in '%s'" % (
+                            JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS,
+                            DJANGO_GALLERY_WIDGET_CONFIG),
+                        "types": "dict"}),
+                id="django-gallery-widget-jquery_file_upload_ui_options.E001"
+            ))
+        else:
+            if MAX_NUMBER_OF_FILES in jfu_options:
+                errors.append(checks.Warning(
+                    msg=("%(location)s will be ignored, that is configured in "
+                         "the formfield the GalleryWidget is serving, with the "
+                         "param name `max_number_of_images`"
+                         % {"location": (
+                                    "option '%s' in '%s' in '%s'" % (
+                                        MAX_NUMBER_OF_FILES,
+                                        JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS,
+                                        DJANGO_GALLERY_WIDGET_CONFIG))}),
+                    id="django-gallery-widget-jquery_file_upload_ui_options.W001"
+                ))
+
+            if (SINGLE_FILE_UPLOADS in jfu_options
+                    # Some user might use "false" string to represent False
+                    and str(jfu_options[SINGLE_FILE_UPLOADS]).lower() == "false"):
+                errors.append(checks.Warning(
+                    msg=("%(location)s set to False is not allowed and will"
+                         "be ignored. "
+                         % {"location": (
+                                    "option '%s' in '%s' in '%s'" % (
+                                        SINGLE_FILE_UPLOADS,
+                                        JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS,
+                                        DJANGO_GALLERY_WIDGET_CONFIG))}),
+                    id="django-gallery-widget-jquery_file_upload_ui_options.W002"
+                ))
+
+            if PREVIEW_MAX_WIDTH in jfu_options or PREVIEW_MAX_HEIGHT in jfu_options:
+                errors.append(checks.Warning(
+                    msg=("%(location)s will be ignored. By preview size, we mean "
+                         "the thumbnail size in the GalleryWidget UI, so you should "
+                         "set the value in %(right_place)s."
+                         % {"location": (
+                                    "option '%s' or '%s' in '%s' in '%s'" % (
+                                        PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT,
+                                        JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS,
+                                        DJANGO_GALLERY_WIDGET_CONFIG)),
+                             "right_place": "'%s' in '%s' in '%s'" % (
+                                    THUMBNAIL_SIZE, THUMBNAILS,
+                                    DJANGO_GALLERY_WIDGET_CONFIG)}),
+                    id="django-gallery-widget-jquery_file_upload_ui_options.W003"
+                ))
+
+    widget_hidden_input_css_class = conf.get(WIDGET_HIDDEN_INPUT_CSS_CLASS, None)
 
     if widget_hidden_input_css_class is not None:
         if not isinstance(widget_hidden_input_css_class, str):

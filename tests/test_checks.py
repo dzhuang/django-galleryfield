@@ -103,9 +103,8 @@ class CheckConfigs(CheckSettingsBase):
 """
 DJANGO_GALLERY_WIDGET_CONFIG = {
     "assets": {
-        "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
-        "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
-        "jquery_js_path": "vendor/jquery.min.js",
+        "bootstrap.js": 'vendor/bootstrap/dist/js/bootstrap.min.js',
+        "bootstrap.css": "vendor/bootstrap/dist/css/bootstrap.min.css",
         "extra_js": [],
         "extra_css": [],
     },
@@ -113,6 +112,7 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
         "size": 120,
         "quality": 80
     },
+    jquery_file_upload_ui_options: {},
     "widget_hidden_input_css_class": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,
 }
@@ -456,6 +456,117 @@ class CheckThumbnails(CheckSettingsBase):
     def test_invalid_config9(self):
         self.assertCheckMessages([
             "django-gallery-widget-thumbnails.E003"])
+
+
+"""
+    jquery_file_upload_ui_options: {},
+"""
+
+MAX_NUMBER_OF_FILES = "maxNumberOfFiles"
+SINGLE_FILE_UPLOADS = "singleFileUploads"
+PREVIEW_MAX_WIDTH = "previewMaxWidth"
+PREVIEW_MAX_HEIGHT = "previewMaxHeight"
+
+
+class CheckJqueryFileUploadUiOptions(CheckSettingsBase):
+    msg_id_prefix = "django-gallery-widget-jquery_file_upload_ui_options"
+
+    VALID_CONF_None = {"jquery_file_upload_ui_options": None}
+
+    VALID_CONF_Dict = {"jquery_file_upload_ui_options": dict()}
+
+    VALID_CONF = {
+        "jquery_file_upload_ui_options": {
+            "autoUpload": False
+        }
+    }
+
+    WARN_CONF_MAX_NUMBER_OF_FILES = {
+        "jquery_file_upload_ui_options": {
+            "maxNumberOfFiles": 20
+        }
+    }
+
+    WARN_CONF_SINGLE_FILE_UPLOADS_FALSE = {
+        "jquery_file_upload_ui_options": {
+            "singleFileUploads": False
+        }
+    }
+
+    WARN_CONF_SINGLE_FILE_UPLOADS_FALSE_STRING = {
+        "jquery_file_upload_ui_options": {
+            "singleFileUploads": "false"
+        }
+    }
+
+    NO_WARN_CONF_SINGLE_FILE_UPLOADS_TRUE = {
+        "jquery_file_upload_ui_options": {
+            "singleFileUploads": True
+        }
+    }
+
+    WARN_CONF_PREVIEW_MAX_WIDTH = {
+        "jquery_file_upload_ui_options": {
+            "previewMaxWidth": 120
+        }
+    }
+
+    WARN_CONF_PREVIEW_MAX_HEIGHT = {
+        "jquery_file_upload_ui_options": {
+            "previewMaxHeight": 180
+        }
+    }
+
+    INVALID_CONF_NOT_Dict = {"jquery_file_upload_ui_options": object}
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
+    def test_valid_config1(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_Dict)
+    def test_valid_config2(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF)
+    def test_valid_config3(self):
+        self.assertCheckMessages([])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=NO_WARN_CONF_SINGLE_FILE_UPLOADS_TRUE)
+    def test_valid_config4(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_Dict)
+    def test_item_not_dict(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-jquery_file_upload_ui_options.E001"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_MAX_NUMBER_OF_FILES)
+    def test_item_warned_max_number_of_files(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-jquery_file_upload_ui_options.W001"])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_SINGLE_FILE_UPLOADS_FALSE)
+    def test_warn_single_upload_false_1(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-jquery_file_upload_ui_options.W002"])
+
+    @override_settings(
+        DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_SINGLE_FILE_UPLOADS_FALSE_STRING)
+    def test_warn_single_upload_false_2(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-jquery_file_upload_ui_options.W002"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_PREVIEW_MAX_HEIGHT)
+    def test_warn_preview_max_height(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-jquery_file_upload_ui_options.W003"])
+
+    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_PREVIEW_MAX_WIDTH)
+    def test_warn_preview_max_width(self):
+        self.assertCheckMessages(
+            ["django-gallery-widget-jquery_file_upload_ui_options.W003"])
 
 
 """
