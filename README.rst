@@ -135,7 +135,7 @@ For advanced users
 --------------------
 Although the demo and built in image processing views might have meet the basic needs, advance user might require more
 more in terms of permission control, template inheritance, and Image model customization.
-Before that, we need to address the how this package is working.
+Before that, we need to address how this package is working.
 
 Currently, Django don't have a `Field` which can store unknown length of images or
 files. However, the introduction of ``JsonField`` (from Django 3) give us the possibility
