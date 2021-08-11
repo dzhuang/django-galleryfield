@@ -355,7 +355,7 @@ class GalleryWidgetTest(SimpleTestCase):
         expected_string = "autoUpload: true"
         self.assertIn(
             expected_string,
-            mock_render.call_args.kwargs["context"]["jquery_fileupload_ui_options"],
+            str(mock_render.call_args),
         )
 
     @mock.patch('gallery_widget.widgets.logger.warning')
@@ -371,11 +371,11 @@ class GalleryWidgetTest(SimpleTestCase):
         expected_message = ("'maxNumberOfFiles' in 'jquery_file_upload_ui_options' "
                             "will be overridden later by the formfield")
         self.assertEqual(mock_log.call_count, 1)
-        self.assertIn(expected_message, mock_log.call_args.args[0])
+        self.assertIn(expected_message, str(mock_log.call_args))
         self._render_widget(f.widget, "image")
         self.assertNotIn(
             "maxNumberOfFiles",
-            mock_render.call_args.kwargs["context"]["jquery_fileupload_ui_options"],
+            str(mock_render.call_args.kwargs),
         )
 
     @mock.patch('gallery_widget.widgets.logger.warning')
@@ -397,12 +397,11 @@ class GalleryWidgetTest(SimpleTestCase):
                                     "'jquery_file_upload_ui_options' is not "
                                     "allowed and will be ignored.")
                 self.assertEqual(mock_log.call_count, 1)
-                self.assertIn(expected_message, mock_log.call_args.args[0])
+                self.assertIn(expected_message, str(mock_log.call_args))
                 self._render_widget(f.widget, "image")
                 self.assertNotIn(
                     "singleFileUploads",
-                    mock_render.call_args.kwargs["context"][
-                        "jquery_fileupload_ui_options"],
+                    str(mock_render.call_args),
                 )
                 mock_render.reset_mock()
                 mock_log.reset_mock()
@@ -430,12 +429,11 @@ class GalleryWidgetTest(SimpleTestCase):
                     "'previewMaxWidth' and 'previewMaxHeight' "
                     "in 'jquery_file_upload_ui_options' are ignored.")
                 self.assertEqual(mock_log.call_count, 1)
-                self.assertIn(expected_message, mock_log.call_args.args[0])
+                self.assertIn(expected_message, str(mock_log.call_args))
                 self._render_widget(f.widget, "image")
                 self.assertIn(
                     expected_rendered_values[i],
-                    mock_render.call_args.kwargs["context"][
-                        "jquery_fileupload_ui_options"],
+                    str(mock_render.call_args),
                 )
                 mock_render.reset_mock()
                 mock_log.reset_mock()

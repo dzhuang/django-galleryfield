@@ -136,9 +136,9 @@ class GalleryWidget(forms.HiddenInput):
 
         if "maxNumberOfFiles" in ju_settings:
             logger.warning(
-                "%(obj)s: 'maxNumberOfFiles' in 'jquery_file_upload_ui_options' will "
-                "be overridden later by the formfield. You should set that value in "
-                "the formfield it belongs to, e.g. \n"
+                "%(obj)s: 'maxNumberOfFiles' in 'jquery_file_upload_ui_options' "
+                "will be overridden later by the formfield. You should set that "
+                "value in the formfield it belongs to, e.g. \n"
                 "self.fields['my_gallery_field'].max_number_of_images = %(value)s"
                 % {"obj": self.__class__.__name__,
                    "value": str(ju_settings["maxNumberOfFiles"])}
@@ -147,16 +147,18 @@ class GalleryWidget(forms.HiddenInput):
         if ("singleFileUploads" in ju_settings
                 and str(ju_settings["singleFileUploads"]).lower() == "false"):
             logger.warning(
-                "%(obj)s: 'singleFileUploads=False' in 'jquery_file_upload_ui_options' "
-                "is not allowed and will be ignored."
+                "%(obj)s: 'singleFileUploads=False' in "
+                "'jquery_file_upload_ui_options' is not allowed and will be "
+                "ignored."
                 % {"obj": self.__class__.__name__}
             )
 
         if "previewMaxWidth" in ju_settings or "previewMaxHeight" in ju_settings:
             logger.warning(
                 "%(obj)s: 'previewMaxWidth' and 'previewMaxHeight' in "
-                "'jquery_file_upload_ui_options' are ignored. You should set the value "
-                "by the 'thumbnail_size' option, e.g., thumbnail_size='120x60'"
+                "'jquery_file_upload_ui_options' are ignored. You should set "
+                "the value by the 'thumbnail_size' option, e.g., "
+                "thumbnail_size='120x60'"
                 % {"obj": self.__class__.__name__}
             )
 

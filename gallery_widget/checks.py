@@ -274,9 +274,9 @@ def check_settings(app_configs, **kwargs):
 
             if PREVIEW_MAX_WIDTH in jfu_options or PREVIEW_MAX_HEIGHT in jfu_options:
                 errors.append(checks.Warning(
-                    msg=("%(location)s will be ignored. By preview size, we mean the "
-                         "thumbnail size in the GalleryWidget UI, so you should set "
-                         "the value in %(right_place)s."
+                    msg=("%(location)s will be ignored. By preview size, we mean "
+                         "the thumbnail size in the GalleryWidget UI, so you should "
+                         "set the value in %(right_place)s."
                          % {"location": (
                                     "option '%s' or '%s' in '%s' in '%s'" % (
                                         PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT,
