@@ -151,8 +151,8 @@ pks to the ``GalleryField``: Create (which we called **upload**), List (which we
 The potential problems include: We will have to write 3 views each time we want to use a new ``target_model`` for
 a new type of gallery/album, is there any shortcut that we don't need to write much code to achieve that?
 And, can a gallery model field automatically know what default url name they should look for when trying to do the 3
-tasks (find the views)? Finally, our strategy is to introduce a class-based-view for each task, and
-a default url name through added a suffix to the model_name of the ``target_model``, and the last step
+tasks (find the views)? Our strategy is to introduce a class-based-view for each task, and
+a default url name through adding a suffix to the model_name of the ``target_model``, and the last step
 is mapping the url names and views function in the URL_CONF.
 
 
@@ -184,7 +184,7 @@ Image model is where we actually save the image instance uploaded. To be a valid
             # Notice, we can't simply return 'cls.photo'
             return cls._meta.get_field("photo")
 
-The ``gallery_widget.models.BuiltInGalleryImage`` is using this style (with ``target_model="garllery_widget.BuiltInGalleryImage"``).
+The ``gallery_widget.models.BuiltInGalleryImage`` is using the first style (with ``target_model="garllery_widget.BuiltInGalleryImage"``).
 However, if you don't want to do much change to your existing models (e.g., avoiding migrations of existing model),
 the second style is more sounding. In the following, we will use the above model in a ``GalleryField``
 with ``target_model = "my_app.MyImage"``.
