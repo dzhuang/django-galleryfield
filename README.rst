@@ -29,19 +29,19 @@ ScreenShots
 
 -  Multiple image upload, sortable
 
-.. image:: /demo/static/demo/screen_upload.png
+.. image:: https://github.com/dzhuang/django-gallery-widget/blob/main/demo/static/demo/screen_upload.png
    :width: 70%
    :align: center
 
 -  Client/Server side crop
 
-.. image:: /demo/static/demo/screen_crop.png
+.. image:: https://github.com/dzhuang/django-gallery-widget/blob/main/demo/static/demo/screen_crop.png
    :width: 70%
    :align: center
 
 -  Easy Gallery render
 
-.. image:: /demo/static/demo/screen_detail.png
+.. image:: https://github.com/dzhuang/django-gallery-widget/blob/main/demo/static/demo/screen_detail.png
    :width: 70%
    :align: center
 
