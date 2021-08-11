@@ -16,6 +16,7 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
     },
     "widget_hidden_input_css_class": "django-gallery-widget",
     "prompt_alert_if_changed_on_window_reload": True,
+    "jquery_file_upload_ui_options": {}
 }
 """
 
@@ -41,7 +42,6 @@ CSS = [c for c in _css if c]
 
 # }}}
 
-# todo: allow 60x90 to thumbnail size and check
 _APP_CONFIG_THUMBNAILS = _APP_CONFIG.get("thumbnails", {})
 DEFAULT_THUMBNAIL_SIZE = get_formatted_thumbnail_size(
     _APP_CONFIG_THUMBNAILS.get(
@@ -61,3 +61,8 @@ PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = _APP_CONFIG.get(
 )
 
 # todo: allow setting default jquery_fileupload_ui_options in settings.
+
+JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = _APP_CONFIG.get(
+    "jquery_file_upload_ui_options",
+    defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
+)

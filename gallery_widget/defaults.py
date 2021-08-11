@@ -1,11 +1,11 @@
-GALLERY_WIDGET_UI_DEFAULT_OPTIONS = {
-    "autoUpload": "false",
+JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = {
+    "autoUpload": False,
     "imageMaxWidth": 1024,
     "imageMaxHeight": 1024,
     "loadImageFileTypes": r"/^image\/(gif|jpeg|png|bmp|svg\+xml)$/",
     "sequentialUploads": "true",
     "acceptFileTypes": r"/(\.|\/)(png|gif|bmp|jpe?g)$/i",
-    "imageOrientation": "true",
+    "imageOrientation": True,
     # "maxNumberOfFiles": 0,  # This is overridden by GalleryFormField max_number_of_images value  # noqa
     # "previewMaxWidth": 80,  # This is overridden by DEFAULT_THUMBNAIL_SIZE
     # "previewMaxHeight": 80,

@@ -6,7 +6,9 @@ from django.core.exceptions import ImproperlyConfigured
 
 from gallery_widget import conf, defaults
 from gallery_widget.utils import (
-    get_url_from_str, convert_dict_to_plain_text, get_formatted_thumbnail_size)
+    get_url_from_str, convert_dict_to_plain_text, get_formatted_thumbnail_size,
+    logger
+)
 
 NoReverseMatch_EXCEPTION_STR_RE = re.compile("Reverse for '(.+)' not found")
 
@@ -51,17 +53,17 @@ class GalleryWidget(forms.HiddenInput):
            * **accepted_mime_types** (`list`, `optional`) - A list of MIME types
              used to filter files when picking files with file picker, defaults to ``['image/*']``
     :type options: dict, optional
-    :param jquery_upload_ui_options: The default template is using 
+    :param jquery_file_upload_ui_options: The default template is using 
            blueimp/jQuery-File-Upload package to render the ui and dealing with
            AJAX upload. This param can be used to set the options. See
-           `jQuery-File-Upload Wiki <https://github.com/blueimp/jQuery-File-Upload/wiki/Options#singlefileuploads>`_
+           `jQuery-File-Upload Wiki <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`_
            for all the available options. The default options can be 
            seen in ``defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS``. Notice that
            ``maxNumberOfFiles`` is overridden by the ``max_number_of_images`` param
            when initializing :class:`gallery_widget.fields.GalleryFormField`, and
            ``previewMaxWidth`` and ``previewMaxHeight`` are overridden by
            param ``thumbnail_size``.
-    :type jquery_upload_ui_options: dict, optional
+    :type jquery_file_upload_ui_options: dict, optional
     :param disable_fetch: Whether disable fetching existing images of the
            form instance (if any), defaults to `False`. If True, the validity of
            ``fetch_request_url`` will not be checked.
@@ -81,7 +83,7 @@ class GalleryWidget(forms.HiddenInput):
             thumbnail_size=conf.DEFAULT_THUMBNAIL_SIZE,
             template="gallery_widget/widget.html",
             attrs=None, options=None,
-            jquery_upload_ui_options=None,
+            jquery_file_upload_ui_options=None,
             disable_fetch=False,
             disable_server_side_crop=False,
             **kwargs):
@@ -95,19 +97,13 @@ class GalleryWidget(forms.HiddenInput):
         self.disable_fetch = disable_fetch
         self.disable_server_side_crop = disable_server_side_crop
 
-        self._upload_handler_url = upload_handler_url
+        self.upload_handler_url = upload_handler_url
 
-        self._fetch_request_url = (
+        self.fetch_request_url = (
             None if disable_fetch else fetch_request_url)
 
-        jquery_upload_ui_options = jquery_upload_ui_options or {}
-        _jquery_upload_ui_options = defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS.copy()
-        _jquery_upload_ui_options.update(jquery_upload_ui_options)
+        self.jquery_file_upload_ui_options = jquery_file_upload_ui_options or {}
 
-        # https://github.com/blueimp/jQuery-File-Upload/wiki/Options#singlefileuploads
-        _jquery_upload_ui_options.pop("singleFileUploads", None)
-
-        self.ui_options = _jquery_upload_ui_options
         self.options = options and options.copy() or {}
         self.options.setdefault("accepted_mime_types", ['image/*'])
 
@@ -120,21 +116,51 @@ class GalleryWidget(forms.HiddenInput):
         self._thumbnail_size = get_formatted_thumbnail_size(value)
 
     @property
-    def upload_handler_url(self):
-        return self._upload_handler_url
+    def jquery_file_upload_ui_options(self):
+        return (self._jquery_file_upload_ui_options
+                or conf.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS)
 
-    @upload_handler_url.setter
-    def upload_handler_url(self, url):
-        self._upload_handler_url = get_url_from_str(url)
+    @jquery_file_upload_ui_options.setter
+    def jquery_file_upload_ui_options(self, options):
+        if options is None:
+            return
+        if not isinstance(options, dict):
+            raise ImproperlyConfigured(
+                "%(obj)s: 'jquery_file_upload_ui_options' must be a dict" % {
+                    "obj": self.__class__.__name__
+                }
+            )
+        ju_settings = (
+            conf.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS.copy())
+        ju_settings.update(options)
 
-    @property
-    def fetch_request_url(self):
-        return self._fetch_request_url
+        if "maxNumberOfFiles" in ju_settings:
+            logger.warning(
+                "%(obj)s: 'maxNumberOfFiles' in 'jquery_file_upload_ui_options' will "
+                "be overridden later by the formfield. You should set that value in "
+                "the formfield it belongs to, e.g. \n"
+                "self.fields['my_gallery_field'].max_number_of_images = %(value)s"
+                % {"obj": self.__class__.__name__,
+                   "value": str(ju_settings["maxNumberOfFiles"])}
+            )
 
-    @fetch_request_url.setter
-    def fetch_request_url(self, url):
-        self._fetch_request_url = (
-            None if self.disable_fetch else get_url_from_str(url))
+        if ("singleFileUploads" in ju_settings
+                and str(ju_settings["singleFileUploads"]).lower() == "false"):
+            logger.warning(
+                "%(obj)s: 'singleFileUploads=False' in 'jquery_file_upload_ui_options' "
+                "is not allowed and will be ignored."
+                % {"obj": self.__class__.__name__}
+            )
+
+        if "previewMaxWidth" in ju_settings or "previewMaxHeight" in ju_settings:
+            logger.warning(
+                "%(obj)s: 'previewMaxWidth' and 'previewMaxHeight' in "
+                "'jquery_file_upload_ui_options' are ignored. You should set the value "
+                "by the 'thumbnail_size' option, e.g., thumbnail_size='120x60'"
+                % {"obj": self.__class__.__name__}
+            )
+
+        self._jquery_file_upload_ui_options = ju_settings
 
     def set_and_check_urls(self):
         # We now then the url names into an actual url, that
@@ -150,15 +176,18 @@ class GalleryWidget(forms.HiddenInput):
                 "a valid url nor a valid url name."
                 % self.upload_handler_url)
 
-        try:
-            self.fetch_request_url = get_url_from_str(
-                    self.fetch_request_url, require_urlconf_ready=True)
+        if self.disable_fetch:
+            self.fetch_request_url = None
+        else:
+            try:
+                self.fetch_request_url = get_url_from_str(
+                        self.fetch_request_url, require_urlconf_ready=True)
 
-        except Exception:
-            raise ImproperlyConfigured(
-                "'fetch_request_url' is invalid: %s is neither "
-                "a valid url nor a valid url name."
-                % self.fetch_request_url)
+            except Exception:
+                raise ImproperlyConfigured(
+                    "'fetch_request_url' is invalid: %s is neither "
+                    "a valid url nor a valid url name."
+                    % self.fetch_request_url)
 
         # In the following we validate update the urls from url names (if it is
         # not an url) and check the potential conflicts of init params
@@ -181,8 +210,6 @@ class GalleryWidget(forms.HiddenInput):
         image_model_is_default = (
                 target_image_model == defaults.DEFAULT_TARGET_IMAGE_MODEL)
 
-        # We reverse the url name here
-
         if image_model_is_default:
             return
 
@@ -197,7 +224,7 @@ class GalleryWidget(forms.HiddenInput):
                 {"param": "upload_handler_url",
                  "value": self.upload_handler_url})
 
-        if not self.disable_fetch:
+        if self.fetch_request_url:
             fetch_request_url_is_default = (
                 self.fetch_request_url
                 == get_url_from_str(defaults.DEFAULT_FETCH_URL_NAME,
@@ -239,6 +266,38 @@ class GalleryWidget(forms.HiddenInput):
     def is_hidden(self):
         return False
 
+    def get_stringfied_jquery_file_upload_ui_options(self):
+        # See blueimp/jQuery-File-Upload
+        # https://github.com/blueimp/jQuery-File-Upload/wiki/Options
+
+        # We copy the options as the actual context used in rendering
+        # so as to avoid logger warnings
+        ui_options = self.jquery_file_upload_ui_options.copy()
+
+        # Remove the option (i.e., use default False)
+        ui_options.pop("singleFileUploads", None)
+
+        # override maxNumberOfFiles
+        ui_options.pop("maxNumberOfFiles", None)
+        max_number_of_images = (
+            getattr(self, "max_number_of_images", None))
+
+        if max_number_of_images:
+            ui_options["maxNumberOfFiles"] = max_number_of_images
+
+        # override previewMaxWidth and previewMaxHeight
+
+        _width, _height = self.thumbnail_size.split("x")
+        ui_options.update(
+            {"previewMaxWidth": _width,
+             "previewMaxHeight": _height,
+
+             # This is used as a CSS selector to fine the input field
+             "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
+             })
+
+        return convert_dict_to_plain_text(ui_options, indent=16)
+
     def render(self, name, value, attrs=None, renderer=None):
         self.set_and_check_urls()
 
@@ -269,23 +328,7 @@ class GalleryWidget(forms.HiddenInput):
             })
         context["widget"] = _context["widget"]
 
-        # Set blueimp/jQuery-File-Upload
-        # https://github.com/blueimp/jQuery-File-Upload/wiki/Options
-        max_number_of_images = (
-            getattr(self, "max_number_of_images", None))
-        if not max_number_of_images:
-            self.ui_options.pop("maxNumberOfFiles", None)
-        else:
-            self.ui_options["maxNumberOfFiles"] = max_number_of_images
-
-        _width, _height = self.thumbnail_size.split("x")
-        self.ui_options.update(
-            {"previewMaxWidth": _width,
-             "previewMaxHeight": _height,
-             "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
-             })
-
         context["jquery_fileupload_ui_options"] = (
-            convert_dict_to_plain_text(self.ui_options, 16))
+            self.get_stringfied_jquery_file_upload_ui_options())
 
-        return renderer.render(self.template, context)
+        return renderer.render(template_name=self.template, context=context)

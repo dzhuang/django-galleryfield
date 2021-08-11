@@ -1,4 +1,7 @@
 import json
+
+from unittest import mock
+
 from django import forms
 from django.forms.renderers import DjangoTemplates
 from django.test import SimpleTestCase, TestCase
@@ -53,7 +56,7 @@ class GalleryWidgetTest(SimpleTestCase):
                ' class="django-gallery-widget-files-field '
                ' hiddeninput" id="id_f">')
 
-    def _render_widget(self, widget, name, value, attrs=None, **kwargs):
+    def _render_widget(self, widget, name, value=None, attrs=None, **kwargs):
         django_renderer = DjangoTemplates()
         print_output = kwargs.pop("print_output", False)
         output = widget.render(name, value, attrs=attrs,
@@ -82,7 +85,7 @@ class GalleryWidgetTest(SimpleTestCase):
         for _html in html:
             self.assertNotIn(_html, output)
 
-    def test_gallery_widget_render(self):
+    def test_gallery_widget_render_with_value(self):
         f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         image_data = [1]
         value = json.dumps(image_data)
@@ -95,21 +98,22 @@ class GalleryWidgetTest(SimpleTestCase):
         from random import randint
         max_number_of_file_ui_options_value = randint(1, 10)
         f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
-        f.widget = GalleryWidget(
-            jquery_upload_ui_options={
-                "maxNumberOfFiles": max_number_of_file_ui_options_value})
+
+        f.widget.jquery_file_upload_ui_options.update(
+            {"maxNumberOfFiles": max_number_of_file_ui_options_value})
+
         setattr(f.widget, "max_number_of_images", None)
         self.check_not_in_html(f.widget, "image", '', html="maxNumberOfFiles")
 
         f.widget = GalleryWidget(
-            jquery_upload_ui_options={
+            jquery_file_upload_ui_options={
                 "maxNumberOfFiles": max_number_of_file_ui_options_value})
         setattr(f.widget, "max_number_of_images", 0)
         self.check_not_in_html(f.widget, "image", '', html="maxNumberOfFiles")
 
         max_number_of_file = randint(1, 10)
         f.widget = GalleryWidget(
-            jquery_upload_ui_options={"maxNumberOfFiles": 0})
+            jquery_file_upload_ui_options={"maxNumberOfFiles": 0})
 
         setattr(f.widget, "max_number_of_images", max_number_of_file)
         expected_string = "maxNumberOfFiles: %i" % max_number_of_file
@@ -163,7 +167,7 @@ class GalleryWidgetTest(SimpleTestCase):
             f.widget, "image", '', strict=True, html="disableImageResize")
 
         f.widget = GalleryWidget(
-            jquery_upload_ui_options={"disableImageResize": None})
+            jquery_file_upload_ui_options={"disableImageResize": None})
         self.check_not_in_html(f.widget, "image", '', html="disableImageResize")
 
     def test_gallery_widget_disabled(self):
@@ -321,6 +325,120 @@ class GalleryWidgetTest(SimpleTestCase):
                 self.assertIn(
                     expected_error_str,
                     cm.exception.args[0], cm.exception)
+
+    def test_widget_set_jquery_file_upload_ui_options_None_get_default(self):
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        f.widget.jquery_file_upload_ui_options = None
+        self.assertDictEqual(
+            f.widget.jquery_file_upload_ui_options,
+            defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS)
+
+    def test_widget_set_jquery_file_upload_ui_options_not_dict(self):
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        with self.assertRaises(ImproperlyConfigured) as cm:
+            f.widget.jquery_file_upload_ui_options = "foo-bar"
+
+        expected_error_msg = "'jquery_file_upload_ui_options' must be a dict"
+        self.assertIn(expected_error_msg, cm.exception.args[0])
+
+    @mock.patch("django.forms.renderers.DjangoTemplates.render")
+    def test_widget_set_jquery_file_upload_ui_options_render(self, mock_render):
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        f.widget.jquery_file_upload_ui_options = {
+            "autoUpload": True
+        }
+        self._render_widget(f.widget, "image")
+
+        expected_string = "autoUpload: true"
+        self.assertIn(
+            expected_string,
+            mock_render.call_args.kwargs["context"]["jquery_fileupload_ui_options"],
+        )
+
+    @mock.patch('gallery_widget.widgets.logger.warning')
+    @mock.patch("django.forms.renderers.DjangoTemplates.render")
+    def test_widget_set_jquery_file_upload_ui_options_configured_maxNumberOfFiles(
+            self, mock_render, mock_log):
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        f.widget.jquery_file_upload_ui_options = {
+            "maxNumberOfFiles": 10
+        }
+
+        expected_message = ("'maxNumberOfFiles' in 'jquery_file_upload_ui_options' "
+                            "will be overridden later by the formfield")
+        self.assertEqual(mock_log.call_count, 1)
+        self.assertIn(expected_message, mock_log.call_args.args[0])
+        self._render_widget(f.widget, "image")
+        self.assertNotIn(
+            "maxNumberOfFiles",
+            mock_render.call_args.kwargs["context"]["jquery_fileupload_ui_options"],
+        )
+
+    @mock.patch('gallery_widget.widgets.logger.warning')
+    @mock.patch("django.forms.renderers.DjangoTemplates.render")
+    def test_widget_set_jquery_file_upload_ui_options_configured_preview_size(  # noqa
+            self, mock_render, mock_log):
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        values = [False, "false", "False"]
+
+        for value in values:
+            with self.subTest(value=value):
+
+                f.widget.jquery_file_upload_ui_options = {
+                    "singleFileUploads": value
+                }
+
+                expected_message = ("'singleFileUploads=False' in "
+                                    "'jquery_file_upload_ui_options' is not "
+                                    "allowed and will be ignored.")
+                self.assertEqual(mock_log.call_count, 1)
+                self.assertIn(expected_message, mock_log.call_args.args[0])
+                self._render_widget(f.widget, "image")
+                self.assertNotIn(
+                    "singleFileUploads",
+                    mock_render.call_args.kwargs["context"][
+                        "jquery_fileupload_ui_options"],
+                )
+                mock_render.reset_mock()
+                mock_log.reset_mock()
+
+    @mock.patch('gallery_widget.widgets.logger.warning')
+    @mock.patch("django.forms.renderers.DjangoTemplates.render")
+    def test_widget_set_jquery_file_upload_ui_options_configured_singleFileUploads_true(  # noqa
+            self, mock_render, mock_log):
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+        f.widget.thumbnail_size = "120x180"
+
+        values = [{"previewMaxWidth": 100},
+                  {"previewMaxHeight": 150}]
+
+        expected_rendered_values = [
+            "previewMaxWidth: 120",
+            "previewMaxHeight: 180"]
+
+        for i, value in enumerate(values):
+            with self.subTest(value=value):
+
+                f.widget.jquery_file_upload_ui_options = value
+
+                expected_message = (
+                    "'previewMaxWidth' and 'previewMaxHeight' "
+                    "in 'jquery_file_upload_ui_options' are ignored.")
+                self.assertEqual(mock_log.call_count, 1)
+                self.assertIn(expected_message, mock_log.call_args.args[0])
+                self._render_widget(f.widget, "image")
+                self.assertIn(
+                    expected_rendered_values[i],
+                    mock_render.call_args.kwargs["context"][
+                        "jquery_fileupload_ui_options"],
+                )
+                mock_render.reset_mock()
+                mock_log.reset_mock()
 
 
 class GalleryWidgetTestExtra(TestCase):
