@@ -315,8 +315,7 @@ FAQs
 -----
 - Q: Why there isn't a delete view for image in the widget?
 
-- A: Image upload behavior is much more complex than generic form views. Actually, the `jQuery File
-   Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`__ has a working delete button, but we changed
+- A: Image upload behavior is much more complex than generic form views. Actually, the `jQuery File Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`__ has a working delete button, but we changed
    its behavior to just an UI behavior, considered the following situations:
 
   The simple case, when a user navigate away before saving the pks of the images they have just uploaded,
