@@ -314,7 +314,6 @@
                 singleFileUploads: true,
                 url: uploadURL,
                 type: 'POST',
-                paramName: 'files[]',
                 messages: {
                     maxFileSize: '{% trans "File is too big" %}',
                     minFileSize: '{% trans "File is too small" %}',
@@ -325,7 +324,7 @@
                     uploadedBytes: '{% trans "Uploaded bytes exceed file size" %}',
                     emptyResult: '{% trans "Empty file upload result" %}'
                 },
-            {{ jquery_fileupload_ui_options|safe }}
+{{ jquery_fileupload_ui_options|safe }}
 
                 change: function(e, data) {
                     if (typeof on_input_change !== 'undefined') on_input_change();

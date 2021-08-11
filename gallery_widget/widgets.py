@@ -279,6 +279,14 @@ class GalleryWidget(forms.HiddenInput):
         # Remove the option (i.e., use default False)
         ui_options.pop("singleFileUploads", None)
 
+        # Remove other options which we are using default but
+        # don't allow user to change
+        for option in ["fileInput", "formData"]:
+            ui_options.pop(option, None)
+
+        # Fixme: this is hardcoded
+        ui_options["paramName"] = "'files[]'"
+
         # override maxNumberOfFiles
         ui_options.pop("maxNumberOfFiles", None)
         max_number_of_images = (
