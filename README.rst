@@ -193,12 +193,12 @@ with ``target_model = "my_app.MyImage"``.
 Three views for handling the image model objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Three views for handling the image model objects (upload, fetch and crop). We have provided 3
+- Three views for handling the image model objects (upload, fetch and crop). We provided 3
   class-based-views for these views to enable the built-in views.
 
-  - ``gallery_widget.mixins.ImageCreateView``
-  - ``gallery_widget.mixins.ImageListView``
-  - ``gallery_widget.mixins.ImageCropView``
+  - ``gallery_widget.views.ImageCreateView``
+  - ``gallery_widget.views.ImageListView``
+  - ``gallery_widget.views.ImageCropView``
 
   We hope users can subclass the views above without much coding work. We think the `Built-in views
   <https://github.com/dzhuang/django-gallery-widget/blob/main/gallery_widget/views.py>`__
@@ -206,7 +206,7 @@ Three views for handling the image model objects
 
 - URL_CONF configurations.
   A ``target_model`` should map the three different views above, to three url names in the `URL_CONF`.
-  The default names are the lower cased model_name, suffixed by `-upload`, `-fetch` and `crop`,
+  The default names are the lower cased model_name, suffixed by ``-upload``, ``-fetch`` and ``-crop``,
   respectively. For example, if you have a `target_model` named ``my_app.MyImage``, then the default
   url names are ``myimage-upload``, ``myimage-fetch`` and ``myimage-crop``. In this way, you don't
   need to specify in the ``GalleryWidget`` the param ``upload_handler_url`` and ``fetch_request_url``,
