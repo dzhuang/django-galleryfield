@@ -135,7 +135,7 @@ For advanced users
 --------------------
 Although the demo and built in image processing views might have meet the basic needs, advance user might require more
 more in terms of permission control, template inheritance, and Image model customization.
-Before that, we need to address the how this package is working.
+Before that, we need to address how this package is working.
 
 Currently, Django don't have a `Field` which can store unknown length of images or
 files. However, the introduction of ``JsonField`` (from Django 3) give us the possibility
@@ -151,8 +151,8 @@ pks to the ``GalleryField``: Create (which we called **upload**), List (which we
 The potential problems include: We will have to write 3 views each time we want to use a new ``target_model`` for
 a new type of gallery/album, is there any shortcut that we don't need to write much code to achieve that?
 And, can a gallery model field automatically know what default url name they should look for when trying to do the 3
-tasks (find the views)? Finally, our strategy is to introduce a class-based-view for each task, and
-a default url name through added a suffix to the model_name of the ``target_model``, and the last step
+tasks (find the views)? Our strategy is to introduce a class-based-view for each task, and
+a default url name through adding a suffix to the model_name of the ``target_model``, and the last step
 is mapping the url names and views function in the URL_CONF.
 
 
@@ -184,7 +184,7 @@ Image model is where we actually save the image instance uploaded. To be a valid
             # Notice, we can't simply return 'cls.photo'
             return cls._meta.get_field("photo")
 
-The ``gallery_widget.models.BuiltInGalleryImage`` is using this style (with ``target_model="garllery_widget.BuiltInGalleryImage"``).
+The ``gallery_widget.models.BuiltInGalleryImage`` is using the first style (with ``target_model="garllery_widget.BuiltInGalleryImage"``).
 However, if you don't want to do much change to your existing models (e.g., avoiding migrations of existing model),
 the second style is more sounding. In the following, we will use the above model in a ``GalleryField``
 with ``target_model = "my_app.MyImage"``.
@@ -193,12 +193,12 @@ with ``target_model = "my_app.MyImage"``.
 Three views for handling the image model objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Three views for handling the image model objects (upload, fetch and crop). We have provided 3
+- Three views for handling the image model objects (upload, fetch and crop). We provided 3
   class-based-views for these views to enable the built-in views.
 
-  - ``gallery_widget.mixins.ImageCreateView``
-  - ``gallery_widget.mixins.ImageListView``
-  - ``gallery_widget.mixins.ImageCropView``
+  - ``gallery_widget.views.ImageCreateView``
+  - ``gallery_widget.views.ImageListView``
+  - ``gallery_widget.views.ImageCropView``
 
   We hope users can subclass the views above without much coding work. We think the `Built-in views
   <https://github.com/dzhuang/django-gallery-widget/blob/main/gallery_widget/views.py>`__
@@ -206,7 +206,7 @@ Three views for handling the image model objects
 
 - URL_CONF configurations.
   A ``target_model`` should map the three different views above, to three url names in the `URL_CONF`.
-  The default names are the lower cased model_name, suffixed by `-upload`, `-fetch` and `crop`,
+  The default names are the lower cased model_name, suffixed by ``-upload``, ``-fetch`` and ``-crop``,
   respectively. For example, if you have a `target_model` named ``my_app.MyImage``, then the default
   url names are ``myimage-upload``, ``myimage-fetch`` and ``myimage-crop``. In this way, you don't
   need to specify in the ``GalleryWidget`` the param ``upload_handler_url`` and ``fetch_request_url``,
@@ -239,8 +239,8 @@ As you might guess from the first line, the ``GalleryField`` provide a ``Queryse
 for the image model instances it related to. No wonder, you can do the following::
 
    >>> first_gallery = MyGallery.objects.first()
-   >>> photos_in_first_gallery = first_gallery.photo.objects.all()
-   >>> photos_before_2020 = photos_in_first_gallery.filter(creation_time__lt=datetime(2021, 01, 01))
+   >>> photos_in_first_gallery = first_gallery.album.objects.all()
+   >>> photos_before_2021 = photos_in_first_gallery.filter(creation_time__lt=datetime(2021, 01, 01))
 
 
 More over, the demo provide a good example of `how to render <https://github.com/dzhuang/django-gallery-widget/blob/main/demo/templates/demo/demogallery_detail.html>`__
@@ -315,10 +315,9 @@ FAQs
 -----
 - Q: Why there isn't a delete view for image in the widget?
 
-- A: Image upload behavior is much more complex than generic form views. Actually, the `jQuery File Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`__ has a working delete button, but we changed
-   its behavior to just an UI behavior, considered the following situations:
+- A: Image upload behavior is much more complex than generic form views. Actually, the `jQuery File Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`__ has a     working delete button, but we changed its behavior to just an UI behavior, considered the following situations:
 
-  The simple case, when a user navigate away before saving the pks of the images they have just uploaded,
+  For a simpler case, when a user navigate away before saving the pks of the images they have just uploaded,
   it's almost impossible to delete those images from client side.
 
   Another situations happens when a gallery field is a required field. If there exists a delete view, when a user tries to delete ALL
