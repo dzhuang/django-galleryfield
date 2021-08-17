@@ -3,11 +3,13 @@ from django.http import JsonResponse
 from django.utils.translation import gettext
 from django.views.decorators.http import require_POST, require_GET
 
+# {{{ The following 3 views are for testing whether upload, fetch, crop has
+# customized views instead of built-in views
+
 
 @require_POST
 @login_required
-def fake_upload(request, *args, **kwargs):
-
+def fake_upload(request):
     return JsonResponse(
         {"files": []},
         status=200)
@@ -22,10 +24,12 @@ def fake_fetch(request):
 
 @login_required
 @require_POST
-def fake_crop(request, *args, **kwargs):
+def fake_crop(request):
     return JsonResponse(
         {
             "file": {},
             'message': gettext('Done!')
         },
         status=200)
+
+# }}}

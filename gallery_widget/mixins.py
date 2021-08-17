@@ -87,7 +87,9 @@ class BaseImageModelMixin:
             raise ImproperlyConfigured(
                     "'crop_url_name' in %s is using built-in default, while "
                     "'target_model' is not using built-in default value. They "
-                    "are handling different image models. This is prohibited.")
+                    "are handling different image models. This is prohibited."
+                    % self.__class__.__name__
+            )
 
     def get_and_validate_thumbnail_size_from_request(self):
         # Get preview size from request
@@ -227,7 +229,6 @@ class ImageCreateView(BaseCreateMixin, CreateView):
 
 class BaseListViewMixin(BaseImageModelMixin, BaseListView):
     # List view doesn't include a form
-    target_model = "gallery_widget.BuiltInGalleryImage"
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -264,7 +265,7 @@ class BaseListViewMixin(BaseImageModelMixin, BaseListView):
         # See https://github.com/django/django/pull/14757
         queryset = self.model._default_manager.all()
         ordering = self.get_ordering()
-        if ordering:
+        if ordering:  # pragma: no cover
             if not isinstance(ordering, (list, tuple)):
                 ordering = (ordering,)
             queryset = queryset.order_by(*ordering)
@@ -326,6 +327,9 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
         return ImageForm
 
     def setup(self, request, *args, **kwargs):
+        if self.disable_server_side_crop:
+            raise SuspiciousOperation(
+                gettext("Server side crop is not enabled."))
         super().setup(request, *args, **kwargs)
         self._cropped_result = self.get_and_validate_cropped_result_from_request()
 
