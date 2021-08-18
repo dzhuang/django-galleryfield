@@ -1,3 +1,4 @@
+import os
 import json
 
 from django.urls import reverse
@@ -6,7 +7,7 @@ from django.utils.http import urlencode
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
 from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
-
+from unittest import mock
 
 from tests.mixins import UserCreateMixin
 from tests.utils import (
@@ -229,6 +230,27 @@ class GalleryWidgetUploadViewTest(ViewTestMixin, TestCase):
                         "is not using built-in default value")
         self.assertIn(expected_msg, cm.exception.args[0])
 
+    def test_cbv_thumbnail_size_invalid(self):
+        file = find("demo/screen_upload.png")
+
+        data = {"thumbnail_size": "100.1"}
+
+        with open(file, "rb") as fp:
+            data["files[]"] = fp
+            request = self.factory.post(
+                self.get_demo_upload_url(), data=data,
+                HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        request.user = self.user
+
+        with self.assertRaises(ImproperlyConfigured) as cm:
+            built_in_views.BuiltInImageCreateView.as_view()(request)
+
+        expected_msg = ("'thumbnail_size' must be an int, or a string of int, "
+                        "or a string in the form of '80x60', or a list or tuple of "
+                        "2 ints, e.g, [80, 60] or (80, 60).")
+
+        self.assertIn(expected_msg, cm.exception.args[0])
+
 
 @override_settings(MEDIA_ROOT=test_media_root)
 class GalleryWidgetFetchViewTest(ViewTestMixin, TestCase):
@@ -264,6 +286,25 @@ class GalleryWidgetFetchViewTest(ViewTestMixin, TestCase):
         another_user = self.create_user()
         self.c.force_login(another_user)
         self.assertEqual(len(get_fetched_result()), 0)
+
+    def test_fetch_thumbnail_size_list(self):
+        gallery = factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5,
+            shuffle=True)
+
+        factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=2,
+            shuffle=True)
+
+        self.c.force_login(self.user)
+
+        url = self.get_demo_fetch_url(
+            params={"pks": list(gallery.images)})
+
+        url += "&thumbnail_size=100&thumbnail_size=150"
+
+        resp = self.c.get(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        self.assertEqual(resp.status_code, 200)
 
     def test_fetch_without_pks(self):
         gallery = factories.DemoGalleryFactory.create(
@@ -447,6 +488,88 @@ class GalleryWidgetFetchViewTest(ViewTestMixin, TestCase):
                         "is not using built-in default value")
         self.assertIn(expected_msg, cm.exception.args[0])
 
+    def test_cbv_thumbnail_size_invalid(self):
+        gallery = factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5,
+            shuffle=True)
+
+        factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=2,
+            shuffle=True)
+
+        request = self.factory.get(
+            self.get_demo_fetch_url(
+                params={"pks": list(gallery.images),
+                        "thumbnail_size": 100.1}),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        request.user = self.user
+
+        with self.assertRaises(ImproperlyConfigured) as cm:
+            built_in_views.BuiltInImageListView.as_view()(request)
+
+        expected_msg = ("'thumbnail_size' must be an int, or a string of int, "
+                        "or a string in the form of '80x60', or a list of2 ints, "
+                        "e.g, [80, 60]. "
+                        "Ref: https://stackoverflow.com/a/30107874/3437454")
+
+        self.assertIn(expected_msg, cm.exception.args[0])
+
+    def test_cbv_image_unexpectedly_deleted(self):
+        gallery = factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5,
+            shuffle=True)
+
+        factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=2,
+            shuffle=True)
+
+        from sorl.thumbnail import delete
+
+        for obj in BuiltInGalleryImage.objects.all():
+            # Why this won't delete the thumbnail cache?
+            delete(obj.image.path, delete_file=True)
+
+        request = self.factory.get(
+            self.get_demo_fetch_url(
+                params={"pks": list(gallery.images)}),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        request.user = self.user
+
+        resp = built_in_views.BuiltInImageListView.as_view()(request)
+
+        self.assertEqual(resp.status_code, 200)
+
+        resp_files = json.loads(resp.content)['files']
+        for f in resp_files:
+            self.assertEqual(f['error'],
+                             'image: The image was unexpectedly deleted from server')
+
+    def test_cbv_get_thumbnail_error(self):
+        gallery = factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=5,
+            shuffle=True)
+
+        factories.DemoGalleryFactory.create(
+            creator=self.user, number_of_images=2,
+            shuffle=True)
+
+        request = self.factory.get(
+            self.get_demo_fetch_url(
+                params={"pks": list(gallery.images)}),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        request.user = self.user
+
+        with mock.patch("gallery_widget.mixins.get_thumbnail") as mock_get_thumb:
+            mock_get_thumb.side_effect = RuntimeError("Unexpected error")
+            resp = built_in_views.BuiltInImageListView.as_view()(request)
+
+        self.assertEqual(resp.status_code, 200)
+
+        resp_files = json.loads(resp.content)['files']
+        for f in resp_files:
+            self.assertEqual(f['error'],
+                             'thumbnail: RuntimeError: Unexpected error')
+
 
 @override_settings(MEDIA_ROOT=test_media_root)
 class GalleryWidgetCropViewTest(ViewTestMixin, TestCase):
@@ -515,6 +638,29 @@ class GalleryWidgetCropViewTest(ViewTestMixin, TestCase):
                            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(resp.status_code, 400)
 
+    def test_crop_no_cropResult(self):
+        data = self.get_default_crop_post_data(x=None)
+
+        data.pop("cropped_result")
+
+        self.c.force_login(self.user)
+        pk = self.get_demo_crop_pk(1)
+        resp = self.c.post(self.get_demo_crop_url(pk), data=data,
+                           HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        self.assertEqual(resp.status_code, 400)
+
+    def test_crop_cropResult_not_json(self):
+        data = self.get_default_crop_post_data(x=None)
+
+        data["cropped_result"] = {
+            "x": 100, "y": 200, "width": 400, "height": 810, "rotate": -90}
+
+        self.c.force_login(self.user)
+        pk = self.get_demo_crop_pk(1)
+        resp = self.c.post(self.get_demo_crop_url(pk), data=data,
+                           HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        self.assertEqual(resp.status_code, 400)
+
     def test_crop_no_rotate(self):
         data = self.get_default_crop_post_data(rotate=0)
 
@@ -527,7 +673,6 @@ class GalleryWidgetCropViewTest(ViewTestMixin, TestCase):
     def test_crop_io_error(self):
         # no actual image file
         gallery = factories.DemoGalleryFactory.create(creator=self.user)
-        import os
         os.remove(gallery.images.objects.first().image.path)
 
         pk = gallery.images.objects.first().pk
@@ -649,4 +794,24 @@ class GalleryWidgetCropViewTest(ViewTestMixin, TestCase):
         expected_msg = ("'crop_url_name' in BuiltInImageCropView "
                         "is using built-in default, while 'target_model' "
                         "is not using built-in default value")
+        self.assertIn(expected_msg, cm.exception.args[0])
+
+    def test_cbv_thumbnail_size_invalid(self):
+        pk = self.get_demo_crop_pk(0)
+        data = self.get_default_crop_post_data()
+        data["thumbnail_size"] = 100.1
+
+        kwargs = {"pk": pk}
+        request = self.factory.post(
+            self.get_demo_crop_url(pk), data=data,
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        request.user = self.user
+
+        with self.assertRaises(ImproperlyConfigured) as cm:
+            built_in_views.BuiltInImageCropView.as_view()(request, **kwargs)
+
+        expected_msg = ("'thumbnail_size' must be an int, or a string of int, "
+                        "or a string in the form of '80x60', or a list or tuple of "
+                        "2 ints, e.g, [80, 60] or (80, 60).")
+
         self.assertIn(expected_msg, cm.exception.args[0])
