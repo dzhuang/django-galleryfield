@@ -3,8 +3,8 @@ import json
 import factory
 from django.contrib.auth import get_user_model
 
-from gallery_widget.models import BuiltInGalleryImage
 from demo.models import DemoGallery
+from gallery_widget.models import BuiltInGalleryImage
 
 
 class UserFactory(factory.django.DjangoModelFactory):

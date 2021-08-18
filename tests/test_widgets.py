@@ -1,19 +1,16 @@
 import json
-
 from unittest import mock
 
 from django import forms
+from django.core.exceptions import ImproperlyConfigured
 from django.forms.renderers import DjangoTemplates
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
-from django.core.exceptions import ImproperlyConfigured
 
+from gallery_widget import conf, defaults
 from gallery_widget.fields import GalleryFormField
-from gallery_widget.widgets import GalleryWidget
-from gallery_widget import conf
-from gallery_widget import defaults
 from gallery_widget.utils import get_formatted_thumbnail_size
-
+from gallery_widget.widgets import GalleryWidget
 from tests import factories
 from tests.test_fields import DemoTestGalleryModelForm
 

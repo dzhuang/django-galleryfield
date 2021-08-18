@@ -1,26 +1,26 @@
-import os
 import json
-from urllib.parse import unquote
-from sorl.thumbnail import get_thumbnail
-from PIL import Image
+import os
 from io import BytesIO
+from urllib.parse import unquote
 
 from django import forms
-from django.views.generic import CreateView, UpdateView
-from django.views.generic.list import BaseListView
-from django.http import JsonResponse
-from django.core.exceptions import (
-    ImproperlyConfigured, SuspiciousOperation, PermissionDenied)
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.apps import apps
-from django.utils.translation import gettext
-from django.db.models import When, Case
-from django.urls import reverse
+from django.core.exceptions import (ImproperlyConfigured, PermissionDenied,
+                                    SuspiciousOperation)
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Case, When
+from django.http import JsonResponse
+from django.urls import reverse
+from django.utils.translation import gettext
+from django.views.generic import UpdateView
+from django.views.generic.list import BaseListView
+from PIL import Image
+from sorl.thumbnail import get_thumbnail
 
-from gallery_widget.utils import (
-    get_or_check_image_field, get_formatted_thumbnail_size)
 from gallery_widget import conf, defaults
+from gallery_widget.utils import (get_formatted_thumbnail_size,
+                                  get_or_check_image_field)
 
 
 class BaseImageModelMixin:
@@ -87,26 +87,40 @@ class BaseImageModelMixin:
             raise ImproperlyConfigured(
                     "'crop_url_name' in %s is using built-in default, while "
                     "'target_model' is not using built-in default value. They "
-                    "are handling different image models. This is prohibited.")
+                    "are handling different image models. This is prohibited."
+                    % self.__class__.__name__
+            )
 
     def get_and_validate_thumbnail_size_from_request(self):
         # Get preview size from request
         method = self.request.method.lower()
-        if method == "get":
-            request_dict = self.request.GET
-        else:
-            request_dict = self.request.POST
 
-        thumbnail_size = request_dict.get(
-            'thumbnail_size', conf.DEFAULT_THUMBNAIL_SIZE)
+        if method == "get":
+            # If thumbnail_size is a list, request query string should be in
+            # the form of &thumbnail_size=100&thumbnail_size=150, and the
+            # 'get' method should be 'getlist'
+            # Ref: https://stackoverflow.com/a/30107874/3437454
+            thumbnail_size = self.request.GET.getlist(
+                'thumbnail_size', conf.DEFAULT_THUMBNAIL_SIZE)
+            error_msg = gettext(
+                "'thumbnail_size' must be an int, or a string of int, "
+                "or a string in the form of '80x60', or a list of"
+                "2 ints, e.g, [80, 60]. "
+                "Ref: https://stackoverflow.com/a/30107874/3437454"
+            )
+        else:
+            thumbnail_size = self.request.POST.get(
+                'thumbnail_size', conf.DEFAULT_THUMBNAIL_SIZE)
+            error_msg = gettext(
+                "'thumbnail_size' must be an int, or a string of int, "
+                "or a string in the form of '80x60', or a list or tuple of "
+                "2 ints, e.g, [80, 60] or (80, 60)."
+            )
+
         try:
             return get_formatted_thumbnail_size(thumbnail_size)
         except Exception:
-            raise ImproperlyConfigured(
-                "Thumbnail size must be an int, or a string of int, "
-                "or in the form of 80x60, or a list, e.g,"
-                " [80, 60], or a tuple (80, 60)"
-            )
+            raise ImproperlyConfigured(error_msg)
 
     def get_thumbnail(self, image):
         return get_thumbnail(
@@ -126,11 +140,13 @@ class BaseImageModelMixin:
             'url': image.url,
         }
 
+        error = []
+
         try:
             image_size = image.size
         except OSError:
-            result["error"] = gettext(
-                "The image was unexpectedly deleted from server")
+            error.append(gettext(
+                "image: The image was unexpectedly deleted from server"))
         else:
             result.update({
                 "size": image_size,
@@ -140,12 +156,14 @@ class BaseImageModelMixin:
             result["cropUrl"] = reverse(self.crop_url_name, kwargs={"pk": obj.pk})
 
         try:
-            # When the image file is deleted, it's thumbnail could still exist
-            # because of cache.
             result['thumbnailUrl'] = self.get_thumbnail(image).url
-        except Exception:
-            pass
+        except Exception as e:
+            error.append(
+                gettext("thumbnail: %s: %s" % (type(e).__name__, str(e)))
+            )
 
+        if error:
+            result["error"] = "; ".join(error)
         return result
 
     def render_to_response(self, context, **response_kwargs):
@@ -210,24 +228,8 @@ class BaseCreateMixin(ImageFormViewMixin, BaseImageModelMixin):
             self.get_context_data(form=form), status=400)
 
 
-class ImageCreateView(BaseCreateMixin, CreateView):
-    def form_valid(self, form):
-        """User should override this method to save the object,
-        for example, image model usually has a not null user field,
-        that should be handled here.
-
-        See https://docs.djangoproject.com/en/3.2/topics/forms/modelforms/#the-save-method
-        for detail.
-
-        See :class:`gallery_widget.views.BuiltInImageCreateView` for example.
-        """  # noqa
-        self.object.save()
-        return super().form_valid(form)
-
-
 class BaseListViewMixin(BaseImageModelMixin, BaseListView):
     # List view doesn't include a form
-    target_model = "gallery_widget.BuiltInGalleryImage"
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -264,7 +266,7 @@ class BaseListViewMixin(BaseImageModelMixin, BaseListView):
         # See https://github.com/django/django/pull/14757
         queryset = self.model._default_manager.all()
         ordering = self.get_ordering()
-        if ordering:
+        if ordering:  # pragma: no cover
             if not isinstance(ordering, (list, tuple)):
                 ordering = (ordering,)
             queryset = queryset.order_by(*ordering)
@@ -286,16 +288,6 @@ class BaseListViewMixin(BaseImageModelMixin, BaseListView):
         context.update(kwargs)
 
         return context
-
-
-class ImageListView(BaseListViewMixin, BaseListView):
-    def get_queryset(self):
-        """
-        You need to override this method to do some basic
-        filter in terms of who can see which images.
-        :return: A Queryset
-        """
-        return super().get_queryset()
 
 
 class CropError(Exception):
@@ -326,6 +318,9 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
         return ImageForm
 
     def setup(self, request, *args, **kwargs):
+        if self.disable_server_side_crop:
+            raise SuspiciousOperation(
+                gettext("Server side crop is not enabled."))
         super().setup(request, *args, **kwargs)
         self._cropped_result = self.get_and_validate_cropped_result_from_request()
 
@@ -398,14 +393,3 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
             charset=None
         )
         return upload_file
-
-    def form_valid(self, form):
-        """User should override this method to save the object,
-        if only the model contains dynamic fields like DateTimeField
-        """
-        self.object = form.save()
-        return super().form_valid(form)
-
-
-class ImageCropView(BaseCropViewMixin, UpdateView):
-    pass

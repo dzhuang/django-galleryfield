@@ -1,11 +1,12 @@
 import logging
+
 from django.apps import apps
 from django.core.checks import Critical, Info
-from django.core.exceptions import (
-    ImproperlyConfigured, FieldDoesNotExist, AppRegistryNotReady)
+from django.core.exceptions import (AppRegistryNotReady, FieldDoesNotExist,
+                                    ImproperlyConfigured)
 from django.db.models import ImageField
-from django.urls import (
-    resolve, Resolver404, reverse_lazy, reverse, NoReverseMatch)
+from django.urls import (NoReverseMatch, Resolver404, resolve, reverse,
+                         reverse_lazy)
 
 from gallery_widget import defaults
 
@@ -220,7 +221,7 @@ def get_formatted_thumbnail_size(thumbnail_size, name="thumbnail_size"):
     if not thumbnail_size:
         thumbnail_size = defaults.DEFAULT_THUMBNAIL_SIZE
 
-    def get_iterator(size_iter):
+    def get_thumb_size_from_iterator(size_iter):
         if not 0 < len(size_iter) <= 2:
             raise InvalidThumbnailFormat()
         for _item in size_iter:
@@ -237,4 +238,4 @@ def get_formatted_thumbnail_size(thumbnail_size, name="thumbnail_size"):
                 "'%s' can't be an empty string" % name)
         thumbnail_size = [s.strip() for s in thumbnail_size.lower().split("x")]
 
-    return get_iterator(thumbnail_size)
+    return get_thumb_size_from_iterator(thumbnail_size)

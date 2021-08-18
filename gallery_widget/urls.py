@@ -1,7 +1,7 @@
-from django.urls import path
 from django.contrib.auth.decorators import login_required
+from django.urls import path
 
-from . import views
+from gallery_widget import views
 
 # The default view names also follow the form of "model_name-upload".
 

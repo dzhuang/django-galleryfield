@@ -1,4 +1,5 @@
 from django.db import models
+
 from gallery_widget.fields import GalleryField
 
 
@@ -9,6 +10,8 @@ class FakeValidImageModel(models.Model):
 class DemoGalleryForTest(models.Model):
     images = GalleryField(target_model="tests.FakeValidImageModel")
 
+
+# {{{ invalid models
 
 class FakeInvalidImageModel1(models.Model):
     image = models.CharField(max_length=250)
@@ -43,3 +46,6 @@ class FakeInvalidImageModel5(models.Model):
     @classmethod
     def get_image_field(cls):
         return cls._meta.get_field("image")
+
+
+# }}}

@@ -1,11 +1,11 @@
-from django.urls import reverse
-from django.views.generic.edit import UpdateView, CreateView
-from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http.response import HttpResponseRedirect
+from django.urls import reverse
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView
 
-from demo.models import DemoGallery
 from demo.forms import GalleryForm
+from demo.models import DemoGallery
 
 
 class GalleryFormView(LoginRequiredMixin, CreateView):
