@@ -7,7 +7,8 @@ django-gallery-widget
    :target: https://github.com/dzhuang/django-gallery-widget/tree/main
 .. image:: https://badge.fury.io/py/django-gallery-widget.svg
    :target: https://badge.fury.io/py/django-gallery-widget
-
+.. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
+   :target: https://pycqa.github.io/isort/
 
 Django AJAX form widgets and model fields for multiple images upload with progress bar. This package is **NOT** about
 how to elegantly render multiple images in a page, but how to CRUD multiple images in a model field, which makes
