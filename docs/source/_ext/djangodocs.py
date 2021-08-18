@@ -2,14 +2,14 @@
 Copied from Sphinx plugins for Django documentation.-----------------------------------------------
 """
 
+from importlib import import_module
+from inspect import getsource
+
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx import addnodes
 from sphinx.domains.std import Cmdoption
 from sphinx.util.nodes import set_source_info
-from importlib import import_module
-from inspect import getsource
-
 
 
 def setup(app):

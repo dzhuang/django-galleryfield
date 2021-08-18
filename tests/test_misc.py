@@ -1,7 +1,6 @@
-from django.urls import reverse, NoReverseMatch
-from django.test import SimpleTestCase
 from django.core.exceptions import ImproperlyConfigured
-
+from django.test import SimpleTestCase
+from django.urls import NoReverseMatch, reverse
 
 from gallery_widget.utils import get_url_from_str
 

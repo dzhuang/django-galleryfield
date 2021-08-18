@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils.translation import gettext
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_GET, require_POST
 
 # {{{ The following 3 views are for testing whether upload, fetch, crop has
 # customized views instead of built-in views

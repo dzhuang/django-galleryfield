@@ -1,26 +1,26 @@
-import os
 import json
-from urllib.parse import unquote
-from sorl.thumbnail import get_thumbnail
-from PIL import Image
+import os
 from io import BytesIO
+from urllib.parse import unquote
 
 from django import forms
+from django.apps import apps
+from django.core.exceptions import (ImproperlyConfigured, PermissionDenied,
+                                    SuspiciousOperation)
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Case, When
+from django.http import JsonResponse
+from django.urls import reverse
+from django.utils.translation import gettext
 from django.views.generic import UpdateView
 from django.views.generic.list import BaseListView
-from django.http import JsonResponse
-from django.core.exceptions import (
-    ImproperlyConfigured, SuspiciousOperation, PermissionDenied)
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.apps import apps
-from django.utils.translation import gettext
-from django.db.models import When, Case
-from django.urls import reverse
-from django.core.serializers.json import DjangoJSONEncoder
+from PIL import Image
+from sorl.thumbnail import get_thumbnail
 
-from gallery_widget.utils import (
-    get_or_check_image_field, get_formatted_thumbnail_size)
 from gallery_widget import conf, defaults
+from gallery_widget.utils import (get_formatted_thumbnail_size,
+                                  get_or_check_image_field)
 
 
 class BaseImageModelMixin:

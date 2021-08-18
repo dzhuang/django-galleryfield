@@ -1,11 +1,12 @@
 import logging
+
 from django.apps import apps
 from django.core.checks import Critical, Info
-from django.core.exceptions import (
-    ImproperlyConfigured, FieldDoesNotExist, AppRegistryNotReady)
+from django.core.exceptions import (AppRegistryNotReady, FieldDoesNotExist,
+                                    ImproperlyConfigured)
 from django.db.models import ImageField
-from django.urls import (
-    resolve, Resolver404, reverse_lazy, reverse, NoReverseMatch)
+from django.urls import (NoReverseMatch, Resolver404, resolve, reverse,
+                         reverse_lazy)
 
 from gallery_widget import defaults
 

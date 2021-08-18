@@ -1,6 +1,7 @@
 from django.conf import settings
-from . import defaults
-from .utils import get_formatted_thumbnail_size
+
+from gallery_widget import defaults
+from gallery_widget.utils import get_formatted_thumbnail_size
 
 """
 DJANGO_GALLERY_WIDGET_CONFIG = {

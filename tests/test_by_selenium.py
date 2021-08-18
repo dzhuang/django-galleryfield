@@ -3,16 +3,14 @@ from urllib.parse import urljoin
 
 from django.contrib.staticfiles.finders import find
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.urls import reverse
 from django.test.utils import override_settings
+from django.urls import reverse
 from selenium import webdriver
 
-
-from tests.utils import remove_upload_directory, test_media_root
-from tests.mixins import UserCreateMixin
-from gallery_widget.models import BuiltInGalleryImage
 from demo.models import DemoGallery
-
+from gallery_widget.models import BuiltInGalleryImage
+from tests.mixins import UserCreateMixin
+from tests.utils import remove_upload_directory, test_media_root
 
 CHROMIUM = "chromium"
 FIREFOX = "firefox"

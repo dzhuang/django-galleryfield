@@ -1,22 +1,21 @@
-import os
 import json
+import os
+from unittest import mock
 
-from django.urls import reverse
 from django.contrib.staticfiles.finders import find
-from django.utils.http import urlencode
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
 from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
-from unittest import mock
-
-from tests.mixins import UserCreateMixin
-from tests.utils import (
-    get_upload_file_path, test_media_root, remove_upload_directory)
-from tests import factories
+from django.urls import reverse
+from django.utils.http import urlencode
 
 from gallery_widget import defaults
-from gallery_widget.models import BuiltInGalleryImage
 from gallery_widget import views as built_in_views
+from gallery_widget.models import BuiltInGalleryImage
+from tests import factories
+from tests.mixins import UserCreateMixin
+from tests.utils import (get_upload_file_path, remove_upload_directory,
+                         test_media_root)
 
 
 class ViewTestMixin(UserCreateMixin):

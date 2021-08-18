@@ -1,4 +1,5 @@
 from django.db import models
+
 from gallery_widget.fields import GalleryField
 
 

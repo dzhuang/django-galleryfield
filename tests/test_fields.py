@@ -1,21 +1,19 @@
 import random
+from unittest import mock
 
 from django import forms
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.forms import ValidationError
-from django.core.exceptions import ImproperlyConfigured
 from django.forms.widgets import Textarea
 from django.test import TestCase
 from django.test.utils import isolate_apps, override_settings
 
-from unittest import mock
-
+from demo.models import DemoGallery
 from gallery_widget.fields import GalleryField, GalleryFormField
 from gallery_widget.widgets import GalleryWidget
-
-from demo.models import DemoGallery
-from tests.factories import DemoGalleryFactory
 from tests import factories
+from tests.factories import DemoGalleryFactory
 
 
 class DemoTestGalleryModelForm(forms.ModelForm):

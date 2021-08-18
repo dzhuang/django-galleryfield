@@ -1,15 +1,17 @@
-from django.utils.deconstruct import deconstructible
-from django.db import models
-from django.utils.translation import gettext_lazy as _, ngettext_lazy
 from django import forms
-from django.core.exceptions import ValidationError, ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.core.validators import BaseValidator
+from django.db import models
+from django.db.models import Case, IntegerField, Value, When
 from django.db.models.query_utils import DeferredAttribute
-from django.db.models import Case, Value, When, IntegerField
+from django.utils.deconstruct import deconstructible
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy
 
-from gallery_widget import conf, defaults as _defaults
+from gallery_widget import conf
+from gallery_widget import defaults as _defaults
+from gallery_widget.utils import apps, get_or_check_image_field, logger
 from gallery_widget.widgets import GalleryWidget
-from gallery_widget.utils import get_or_check_image_field, apps, logger
 
 
 @deconstructible
