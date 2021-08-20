@@ -126,6 +126,9 @@ Run the demo
 
 .. note:: You might need to install JSON1 extension for SQLite for this the demo to run properly. See `Enabling JSON1 extension on SQLite <https://code.djangoproject.com/wiki/JSON1Extension>`__.
 
+Online documentation
+~~~~~~~~~~~~~~~~~~~~~~
+Please visit https://django-gallery-widget.readthedocs.io for the documentation. (Not uploaded)
 
 
 License
