@@ -7,12 +7,29 @@ from gallery_widget.mixins import (BaseCreateMixin, BaseCropViewMixin,
 
 
 class ImageCreateView(BaseCreateMixin, CreateView):
+    """
+    The Class-based view handling the saving of uploaded image.
+
+    .. attribute:: target_model
+
+       |view_target_model|
+
+    .. attribute:: crop_url_name
+
+       |view_crop_url_name|
+
+    .. attribute:: disable_server_side_crop
+
+       |view_disable_server_side_crop|
+
+    .. automethod:: form_valid
+    """
     def form_valid(self, form):
         """User should override this method to save the object,
-        for example, image model usually has a not null user field,
+        for example, image model usually has a non-null user field,
         that should be handled here.
 
-        See https://docs.djangoproject.com/en/3.2/topics/forms/modelforms/#the-save-method
+        See `the-save-method <https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method>`_
         for detail.
 
         See :class:`gallery_widget.views.BuiltInImageCreateView` for example.
@@ -22,19 +39,57 @@ class ImageCreateView(BaseCreateMixin, CreateView):
 
 
 class ImageListView(BaseListViewMixin, BaseListView):
+    """
+    The Class-based view for fetching the existing images of the gallery instance.
+
+    .. attribute:: target_model
+
+       |view_target_model|
+
+    .. attribute:: crop_url_name
+
+       |view_crop_url_name|
+
+    .. attribute:: disable_server_side_crop
+
+       |view_disable_server_side_crop|
+
+    .. automethod:: get_queryset
+    """
     def get_queryset(self):
         """
-        You need to override this method to do some basic
-        filter in terms of who can see which images.
+        User need to override this method to do some basic filter in terms of
+        who can see which images.
+
         :return: A Queryset
         """
         return super().get_queryset()
 
 
 class ImageCropView(BaseCropViewMixin, UpdateView):
+    """
+    The Class-based view handling server side cropping of an image model
+    instance.
+
+    .. attribute:: target_model
+
+       |view_target_model|
+
+    .. attribute:: crop_url_name
+
+       |view_crop_url_name|
+
+    .. attribute:: disable_server_side_crop
+
+       |view_disable_server_side_crop|
+
+    .. automethod:: form_valid
+    """
     def form_valid(self, form):
-        """This method should be overridden to save the object,
-        if only the model contains dynamic fields like DateTimeField
+        """Save the object from the form. This method should only be overridden
+        when the model contains dynamic fields which need to be updated. For
+        example, when there is a  ``DateTimeField`` which records the updated
+        datetime of the image.
         """
         self.object = form.save()
         return super().form_valid(form)

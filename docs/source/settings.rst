@@ -2,156 +2,137 @@
 Settings
 ========
 
-.. contents::
-    :local:
-    :depth: 1
+Settings related to the package were included in a dict named ``DJANGO_GALLERY_WIDGET_CONFIG``.
 
 .. setting:: DJANGO_GALLERY_WIDGET_CONFIG
 
 ``DJANGO_GALLERY_WIDGET_CONFIG``
 ---------------------------------
 
-Default::
+Default:
+
+.. code-block:: python
 
     {
         "assets": {
+            "jquery.js": "jquery/dist/jquery.min.js",
+            "jquery-ui.js": "jquery-ui-dist/jquery-ui.min.js",
+           ...
             "extra_js": [],
             "extra_css": [],
         },
+
         "thumbnails": {
-            "size": 120,
+            "size": "120x120",
             "quality": 80
         },
+
         "widget_hidden_input_css_class": "django-gallery-widget",
         "prompt_alert_if_changed_on_window_reload": True,
+        "jquery_file_upload_ui_options": {
+            "autoUpload": False,
+            "imageMaxWidth": 1024,
+            "imageMaxHeight": 1024,
+            ...
+        }
     }
 
-.. setting:: default_target_image_model
+See details below.
+
+.. setting:: settings_default_assets
 
 assets
 ~~~~~~~
 
-Default::
+Default:
+
+.. code-block:: python
 
     {
-        "bootstrap_js_path": 'vendor/bootstrap/dist/js/bootstrap.min.js',
-        "bootstrap_css_path": "vendor/bootstrap/dist/css/bootstrap.min.css",
-        "jquery_js_path": "vendor/jquery.min.js",
+
+        "jquery.js": "jquery/dist/jquery.min.js",
+        "jquery-ui.js": "jquery-ui-dist/jquery-ui.min.js",
+        ...
         "extra_js": [],
         "extra_css": []
     }
 
+The first part is the static assets required to render the
+:class:`gallery_widget.widgets.GalleryWidget`.
+The value includes 2 parts. The second part, i.e., ``extra_js`` and
+``extra_css`` allow user to add customized static files when customize
+the rendering of the widget. The first part is the static assets required to render
+the :class:`gallery_widget.widgets.GalleryWidget`. The default value for this part
+is listed in ``gallery_widget.defaults.DEFAULT_ASSETS``.
 
-Allow single or part overriding. The paths can be URLs, CDN address or local paths, see
-`configuring-static-files <https://docs.djangoproject.com/en/3.2/howto/static-files/#configuring-static-files>`_
-for reference. ``extra_js`` and ``extra_css`` are useful when you want add extra JS or CSS
-when inheriting ``gallery/widget.html`` template.
+.. currentmodule:: gallery_widget.default
+.. autodata:: gallery_widget.defaults.DEFAULT_ASSETS
+   :annotation:
+.. pprint:: gallery_widget.defaults.DEFAULT_ASSETS
 
 
-The ``integrity`` and ``crossorigin`` were unable to be configured except hard coding
+.. warning::
+   This project relies heavily on CSS and JS frameworks/packages, so we strongly
+   suggest using ``django-npm`` to manage the static assets for convenience. If
+   you have other options, for example, not willing to have a local copy of those assets,
+   you need to make sure ALL the items in ``gallery_widget.defaults.DEFAULT_ASSET``
+   properly configure in this setting and
+   can be accessed properly.
 
+   BTW, trying to ignore some commonly used framework such as
+   `Bootstrap` (because you already has it in your instance) will result in failure in
+   rendering the widget in Admin.
 
+.. setting:: settings_thumbnails
 
-
-.. setting:: default_urls
-
-default_urls
-~~~~~~~~~~~~~~
-
+thumbnails
+~~~~~~~~~~~
 Default::
 
-    {
-        "upload_handler_url_name": "gallery_image_upload",
-         "fetch_url_name": "gallery_images_fetch",
-         "crop_url_name": "gallery_image_crop"
-    }
+        "thumbnails": {
+            "size": "120x120",
+            "quality": 80
+        },
 
-A dictionary which contains all the default URL names which will be used by
-the :class:`gallery_widget.widgets.GalleryWidget` instance when not specified.
+We use `sorl.thumbnail <https://github.com/jazzband/sorl-thumbnail>`_ to generate the thumbnails
+in the project. The term ``size`` correspond to
+`geometry <https://sorl-thumbnail.readthedocs.io/en/latest/template.html#geometry>`_ in ``sorl.thumbnail``.
+Currently, we accept the following format of size:
 
+.. code-block:: python
 
-
-.. setting:: ADMINS
-
-``ADMINS``
-----------
-
-Default: ``[]`` (Empty list)
-
-A list of all the people who get code error notifications. When
-:setting:`DEBUG=False <DEBUG>` and :class:`~django.utils.log.AdminEmailHandler`
-is configured in :setting:`LOGGING` (done by default), Django emails these
-people the details of exceptions raised in the request/response cycle.
-
-Each item in the list should be a tuple of (Full name, email address). Example::
+    '120x80'
+    (120, 80)  # same as '120x80'
+    ('120', '80')  # same as '120x80'
+    [120, 80]  # same as '120x80'
+    ['120', '80'] # same as '120x80'
+    120  # same as '120x120'
 
 
+The ``size`` can be overridden when initializing :class:`gallery_widget.widgets.GalleryWidget` via
+:attr:`thumbnail_size`.
 
-    [('John', 'john@example.com'), ('Mary', 'mary@example.com')]
-
-.. setting:: ALLOWED_HOSTS
-
-``ALLOWED_HOSTS``
------------------
-
-Default: ``[]`` (Empty list)
+For quality, please refer to
+`quality option <https://sorl-thumbnail.readthedocs.io/en/latest/template.html#quality>`_ in
+`sorl.thumbnail <https://github.com/jazzband/sorl-thumbnail>`_.
 
 
-Values in this list can be fully qualified names (e.g. ``'www.example.com'``),
-in which case they will be matched against the request's ``Host`` header
-exactly (case-insensitive, not including port). A value beginning with a period
-can be used as a subdomain wildcard: ``'.example.com'`` will match
-``example.com``, ``www.example.com``, and any other subdomain of
-``example.com``. A value of ``'*'`` will match anything; in this case you are
-responsible to provide your own validation of the ``Host`` header (perhaps in a
-middleware; if so this middleware must be listed first in
-:setting:`MIDDLEWARE`).
+jquery_file_upload_ui_options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The default value is listed in ``gallery_widget.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS``.
 
-Django also allows the `fully qualified domain name (FQDN)`_ of any entries.
-Some browsers include a trailing dot in the ``Host`` header which Django
-strips when performing host validation.
+.. autodata:: gallery_widget.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
+   :annotation:
+.. pprint:: gallery_widget.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
 
-.. _`fully qualified domain name (FQDN)`: https://en.wikipedia.org/wiki/Fully_qualified_domain_name
+The value can be overridden when initializing :class:`gallery_widget.widgets.GalleryWidget` via
+:attr:`jquery_file_upload_ui_options`.
+Please refer to `available options <https://github.com/blueimp/jQuery-File-Upload/wiki/Options#general-options>`__
+for the details and more options.
 
-If the ``Host`` header (or ``X-Forwarded-Host`` if
-:setting:`USE_X_FORWARDED_HOST` is enabled) does not match any value in this
-list, the :meth:`django.http.HttpRequest.get_host()` method will raise
-:exc:`~django.core.exceptions.SuspiciousOperation`.
+.. warning::
+   Options ``previewMaxWidth`` and ``previewMaxHeight`` were ignored in favor of
+   :setting:`thumbnail settings <settings_thumbnails>`.
+   Options ``fileInput``, ``paramName`` and ``singleFileUploads`` were also
+   ignored (overridden).
 
-When :setting:`DEBUG` is ``True`` and ``ALLOWED_HOSTS`` is empty, the host
-is validated against ``['localhost', '127.0.0.1', '[::1]']``.
-
-
-
-This validation only applies via :meth:`~django.http.HttpRequest.get_host()`;
-if your code accesses the ``Host`` header directly from ``request.META`` you
-are bypassing this security protection.
-
-.. setting:: APPEND_SLASH
-
-``APPEND_SLASH``
-----------------
-
-Default: ``True``
-
-When set to ``True``, if the request URL does not match any of the patterns
-in the URLconf and it doesn't end in a slash, an HTTP redirect is issued to the
-same URL with a slash appended. Note that the redirect may cause any data
-submitted in a POST request to be lost.
-
-The :setting:`APPEND_SLASH` setting is only used if
-:class:`~django.middleware.common.CommonMiddleware` is installed
-. See also :setting:`PREPEND_WWW`.
-
-.. setting:: CACHES
-
-``CACHES``
-----------
-
-Default::
-
-    {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        }
-    }

@@ -1,5 +1,8 @@
+Model field and form field
+===================================
+
 GalleryField
----------------------
+-------------
 
 .. autoclass:: gallery_widget.fields.GalleryField
    :show-inheritance:
@@ -21,7 +24,7 @@ method such as ``slice``, ``append()`` and ``extend()``.
 
 For example::
 
-   >>> g = Demogallery_widget.objects.first()
+   >>> g = Demogallery.objects.first()
    >>> g.images
    [2, 1, 3]
    >>> len(g.images)
@@ -68,3 +71,30 @@ GalleryFormField
 
 .. autoclass:: gallery_widget.fields.GalleryFormField
    :show-inheritance:
+
+.. note:: :class:`gallery_widget.fields.GalleryFormField` is not supposed to be used independently
+   (i.e., as a non-modelform field). The most possible cases for us to access the formfield are
+   in the modelform configurations. For example:
+
+    .. code-block:: python
+
+        class MyGalleryForm(forms.ModelForm):
+            class Meta:
+                model = MyGallery
+                fields = ["images"]
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+
+                self.fields["images"].required = False
+                self.fields["images"].max_number_of_images = 2
+
+                # from django.forms.widgets import Textarea
+                # self.fields["images"].widget = Textarea()  # Use Textarea as widget
+
+
+.. warning:: If you want to use :class:`gallery_widget.fields.GalleryFormField` as a non-modelform
+   field, remember to initialize the
+   field with a key word argument like ``target_model="my_app.MyImage"``, otherwise it will use
+   ``gallery_widget.BuiltInGalleryImage`` as the ``target_model``. Also, keep in mind that
+   the ``cleaned_data`` of the field only contains the ``pk`` of the image model instances.

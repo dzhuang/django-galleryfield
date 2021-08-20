@@ -30,8 +30,8 @@ class BaseImageModelMixin:
        cropping of uploaded images, if configured None, it will used the value
        in the form of ``model_name-crop`` in lower case, where the modelname is
        the second part of ``self.target_model``. For example, if
-       ``self.target_model`` is ``myapp.MyImageModel``, then the `crop_url_name`
-       is auto-configured to ``myimagemodel-crop``. You need to make sure you
+       ``self.target_model`` is ``my_app.MyImage``, then the `crop_url_name`
+       is auto-configured to ``myimage-crop``. You need to make sure you
        had that URL name in your URL_CONF and related views exists.
 
     :attr:`disable_server_side_crop`: bool, determining whether server side crop

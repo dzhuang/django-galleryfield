@@ -10,12 +10,15 @@ Welcome to django-gallery-widget's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   quick_start
    intro
+   about_demo
+   customize
    fields
+   views
    widget
    settings
-   customize
-   gallery
+   misc
 
 
 Indices and tables

@@ -164,5 +164,4 @@ class PrettyPrintIterable(Directive):
         literal = nodes.literal_block(code, code)
         literal['language'] = 'python'
 
-        return [addnodes.desc_name(text=member_name),
-                addnodes.desc_content('', literal)]
+        return [addnodes.desc_content('', literal)]
