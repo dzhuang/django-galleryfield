@@ -28,8 +28,7 @@ Static dependencies which will can be installed by ``npm``:
 -  Bootstrap 3 or later (included)
 -  jQuery 1.7 or later (included)
 -  jQuery UI (included)
--  `blueimp/jQuery-File-Upload <https://github.com/blueimp/jQuery-File-Upload>`__
-   (included)
+-  `blueimp/jQuery-File-Upload <https://github.com/blueimp/jQuery-File-Upload>`_(included)
 -  `blueimp/Gallery <https://github.com/blueimp/Gallery>`__ (included)
 -  `cropper <https://fengyuanchen.github.io/cropper>`_ by Chen Fengyuan(included)
 
