@@ -1,0 +1,10 @@
+.snippet-filename {
+    background: #c5e2f7;
+    color: #276e9c;
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,Courier,monospace;
+    font-variant-ligatures: no-common-ligatures;
+    text-rendering: optimizeSpeed;
+    font-size: 1em;
+    padding: 5px 20px;
+    border-radius: 4px 4px 0 0;
+}

@@ -21,12 +21,13 @@ from django.urls import include, path
 from demo import views
 
 urlpatterns = [
-    path(r'', views.GalleryFormView.as_view(), name='gallery'),
+    path(r'', views.GalleryCreateView.as_view(), name='gallery'),
     path('gallery/<int:pk>',
          views.GalleryUpdateView.as_view(), name='gallery-update'),
     path('gallery-detail/<int:pk>',
          views.GalleryDetailView.as_view(), name='gallery-detail'),
-    path(r"gallery-handler/", include("gallery_widget.urls")),
+
+    path(r"images-handler/", include("gallery_widget.urls")),
     path('admin/', admin.site.urls),
 ]
 

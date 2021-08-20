@@ -6,14 +6,14 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = {
     "sequentialUploads": "true",
     "acceptFileTypes": r"/(\.|\/)(png|gif|bmp|jpe?g)$/i",
     "imageOrientation": True,
-    # "maxNumberOfFiles": 0,  # This is overridden by GalleryFormField max_number_of_images value  # noqa
-    # "previewMaxWidth": 80,  # This is overridden by DEFAULT_THUMBNAIL_SIZE
-    # "previewMaxHeight": 80,
     "maxFileSize": 1.5 * 1024 ** 2,  # 1.5Mb
     "minFileSize": 0.0001 * 1024 ** 2,  # 0.0001Mb
     "disableImageResize": "/Android(?!.*Chrome)|Opera/.test(window.navigator "
                           "&& navigator.userAgent)",
 }
+"""dict: The default options for jQuery-File-Upload module.
+"""
+
 
 # {{{ DO NOT change this if you have deployed this app on you production server!
 # Or else it might cause unexpected result!
@@ -120,7 +120,7 @@ BUILT_IN_CSS = []
 EXTRA_JS = []
 EXTRA_CSS = []
 
-DEFAULT_THUMBNAIL_SIZE = (120, 120)
+DEFAULT_THUMBNAIL_SIZE = "120x120"
 DEFAULT_THUMBNAIL_QUALITY = 80
 
 WIDGET_HIDDEN_INPUT_CSS_CLASS = "django-gallery-widget"

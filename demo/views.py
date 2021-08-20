@@ -8,7 +8,7 @@ from demo.forms import GalleryForm
 from demo.models import DemoGallery
 
 
-class GalleryFormView(LoginRequiredMixin, CreateView):
+class GalleryCreateView(LoginRequiredMixin, CreateView):
     form_class = GalleryForm
     template_name = "form.html"
     extra_context = {

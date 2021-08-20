@@ -1,5 +1,4 @@
 import json
-import re
 
 from django import forms
 from django.core.exceptions import ImproperlyConfigured
@@ -8,8 +7,6 @@ from gallery_widget import conf, defaults
 from gallery_widget.utils import (convert_dict_to_plain_text,
                                   get_formatted_thumbnail_size,
                                   get_url_from_str, logger)
-
-NoReverseMatch_EXCEPTION_STR_RE = re.compile("Reverse for '(.+)' not found")
 
 
 class GalleryWidget(forms.HiddenInput):

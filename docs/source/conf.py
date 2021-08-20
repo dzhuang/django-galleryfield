@@ -65,9 +65,6 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-# --Customization--------------------------------------------------------------
-
-
-
-
-
+html_css_files = [
+    'css/custom.css',
+]
