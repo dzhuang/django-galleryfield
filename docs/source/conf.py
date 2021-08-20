@@ -15,10 +15,10 @@ import sys
 
 import django
 
-sys.path.insert(0, os.path.abspath('../../'))
-sys.path.insert(0, os.path.abspath('../../gallery_widget/'))
-sys.path.insert(0, os.path.abspath('../../demo/'))
-sys.path.insert(0, os.path.abspath('_ext/'))
+sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('../../gallery_widget'))
+sys.path.insert(0, os.path.abspath('../../demo'))
+sys.path.insert(0, os.path.abspath('_ext'))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'demo.settings'
 
