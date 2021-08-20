@@ -128,7 +128,7 @@ Run the demo
 
 Online documentation
 ~~~~~~~~~~~~~~~~~~~~~~
-Please visit https://django-gallery-widget.readthedocs.io for the documentation. (Not uploaded)
+Please visit https://django-gallery-widget.readthedocs.io for the documentation.
 
 
 License
