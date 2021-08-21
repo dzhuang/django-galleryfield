@@ -3,7 +3,7 @@ Quick Start
 
 Installation
 ~~~~~~~~~~~~~~
-You can install with pip from PyPi via::
+You can install with pip from `PyPi <https://pypi.org/project/django-gallery-widget/>`_ via::
 
     pip install django-gallery-widget
 
@@ -19,18 +19,22 @@ Gallery-widget is compatible with Python 3 (3.6 or later were tested).
 Dependencies
 ~~~~~~~~~~~~~~~~
 Python dependencies include:
+
 -  Django 3.1 or later
 -  `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`_ (auto installed)
 -  `pillow <https://github.com/python-imaging/Pillow>`_ (auto installed)
 -  django-npm (for managing statics, you need to have ``npm`` installed in your OS)
 
-Static dependencies which will can be installed by ``npm``:
--  Bootstrap 3 or later (included)
--  jQuery 1.7 or later (included)
--  jQuery UI (included)
--  `blueimp/jQuery-File-Upload <https://github.com/blueimp/jQuery-File-Upload>`_(included)
--  `blueimp/Gallery <https://github.com/blueimp/Gallery>`__ (included)
--  `cropper <https://fengyuanchen.github.io/cropper>`_ by Chen Fengyuan(included)
+Static dependencies:
+
+-  Bootstrap 3
+-  jQuery 1.7 or later
+-  jQuery UI
+-  `blueimp/jQuery-File-Upload <https://github.com/blueimp/jQuery-File-Upload>`_
+-  `blueimp/Gallery <https://github.com/blueimp/Gallery>`_
+-  `cropper <https://fengyuanchen.github.io/cropper>`_ by Chen Fengyuan
+
+The static dependencies can be installed by command ``npm install``.
 
 
 Configurations
@@ -65,7 +69,7 @@ Configurations
 
     from django.urls import include, path
 
-    urlpatterns += [path(r"gallery-handler/", include("gallery_widget.urls"))]
+    urlpatterns += [path(r"images-handler/", include("gallery_widget.urls"))]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 - The sync the database::

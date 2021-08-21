@@ -1,30 +1,41 @@
 Customization
 ===============
 
-Although the demo and built in image processing views might have meet the basic needs, advance user might
-require more in terms of image storage, permission control, template inheritance, and Image model field
-customization. Before that, we need to address how this package is working.
+Although the built-in image model, along with the image processing views
+demonstrated in the demo, might have met the basic needs for some apps,
+advance users might require more features in terms of image storage,
+permission control, template inheritance, and Image model (fields)
+customization.
 
-Model and views
-------------------
+Before that, we need to address how this app is working.
 
-Currently, Django don't have a `Field` which can store unknown length of images or
-files. However, the introduction of ``JsonField`` (from Django 3) give us the possibility
-to store the pks for image model instances (instances which has an ``ImageField``).
+Image model and views
+----------------------
 
-The first obstacle is we need to map the pks to the actual image models instances.
-We finally work round this issue by saving the `app_label.model_name <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_
-(which we called ``target_model`` throughout the package) in :class:`gallery_widget.fields.GalleryField`.
+Until now, Django didn't supply any type of `Field` which can store unknown
+length of images or files. However, the introduction of ``JsonField``
+(since Django 3) made it possible workaround the issue by storing the ``pk``
+of image model instances as a Json list in a custom ``JsonField``.
 
-Following that, we need to have three basic views to handle image model instances, before saving their
-pks to the ``GalleryField``: Create (which we called **upload**), List (which we called **fetch**) and Update
-(which we mean **crop**).
-The potential problems include: We will have to write 3 views each time we want to use a new ``target_model`` for
-a new type of gallery/album, is there any shortcut that we don't need to write much code to achieve that?
-And, can a gallery model field automatically know what default url name they should look for when trying to do the 3
-tasks (find the views)? Our strategy is to introduce a class-based-view for each task, and
-a default url name through adding a suffix to the model_name of the ``target_model``, and the last step
-is mapping the url names and views function in the URL_CONF.
+The first obstacle we met is: how to map the ``pks`` to the actual image model instances?
+Our workaround is saving the
+`app_label.model_name <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_
+of the image model (which we called ``target_model`` throughout the app and docs)
+in :class:`gallery_widget.fields.GalleryField`.
+
+Following that, there should be three basic views to handle image model instances,
+before saving their ``pks`` to the ``GalleryField``:
+Create (which we called **upload** operation),
+List (which we called **fetch** operation)
+and Update (which we mean **crop** operation).
+The potential problems include: users will have to write 3 image handling views each time when
+a new ``target_model`` is introduced for a new type of gallery/album,
+is there any shortcut that we don't need to write much code to achieve that?
+And, can a image model automatically know what default url name they should look for
+(to find the views) when trying to do the 3 operations?
+We finally introduced a class-based views for each operation, and
+set a :ref:`naming rule <image_handling_url_naming_rule>` for the naming of the url names
+for the 3 operations.
 
 Therefore, a model level customization (for image model) involves:
 
@@ -33,7 +44,8 @@ Therefore, a model level customization (for image model) involves:
 
 A valid target image model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Image model is where we actually save the image instance uploaded. To be a valid target image model, it need to meet one of the following 2 requirements:
+Image model is where we actually save the image uploaded. To be a valid target image model,
+it need to meet one of the following 2 requirements:
 
 1. It has a ``django.db.models.ImageField`` named ``image``.
 
@@ -57,15 +69,18 @@ Image model is where we actually save the image instance uploaded. To be a valid
         def get_image_field(cls):
             return cls._meta.get_field("photo")
 
-.. note:: As demonstrated in above example, when defining the :meth:`get_image_field`,
+.. note:: In the example above, when defining the :meth:`get_image_field`,
    we can't simply ``return cls.photo`` because it
    returns a :class:`django.db.models.fields.files.ImageFieldFile`
    object instead of a :class:`django.db.models.ImageField` object.
 
 The :class:`gallery_widget.models.BuiltInGalleryImage` is using the first style (
 with ``target_model="garllery_widget.BuiltInGalleryImage"``).
-However, if you don't want to do much change to your existing models (e.g., avoiding migrations of existing model),
-the second style is more sounding. In the following, we will use the above model in a :class:`gallery_widget.fields.GalleryField`
+However, if you don't want to do much change to your existing models
+(e.g., avoiding migrations of existing model),
+the second style is more sounding.
+
+In the following, we will use the above model in a :class:`gallery_widget.fields.GalleryField`
 with ``target_model = "my_app.MyImage"``.
 
 
@@ -79,7 +94,8 @@ Three views for handling the image model objects
   - :class:`gallery_widget.views.ImageListView`
   - :class:`gallery_widget.views.ImageCropView`
 
-  See :ref:`Built-in Image handling Views <built-in-image-views>` for more detail. We hope users can subclass the views above without much coding work. We think the 3 views
+  See :ref:`Built-in Image handling Views <built-in-image-views>` for more detail. We hope users can subclass
+  the views above without much coding work. We think the 3 views
   handling built-in image model (i.e., :class:`gallery_widget.views.BuiltInImageCreateView`,
   :class:`gallery_widget.views.BuiltInImageListView` and
   :class:`gallery_widget.views.BuiltInImageCropView` were good examples of how to used them.
@@ -87,18 +103,18 @@ Three views for handling the image model objects
 
 .. _image_handling_url_naming_rule:
 
-Naming rule for image handling views
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Naming rule for urls of image handling views
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generally, the widget need to know the urls for image handling views (see :ref:`GalleryWidget docs <widget_docs>`).
 We may specify the url name manually in gallery modelform fields widget configurations.
 Alternatively, we can also let the widget infer what urls it should use for those views, by
-following a naming rules for those views in `URL_CONF`.
+following a naming rules for those views in ``URL_CONF``.
 The default url names are the lower cased model_name, suffixed by ``-upload``, ``-fetch`` and ``-crop``,
-respectively. For example, if you have a `target_model` named ``my_app.MyImage``, then the default
+respectively. For example, if you have a ``target_model`` named ``my_app.MyImage``, then the default
 url names are ``myimage-upload``, ``myimage-fetch`` and ``myimage-crop``. In this way, you don't
 need to specify in the ``GalleryWidget`` the param ``upload_handler_url`` and ``fetch_request_url``,
-and no need to specify the ``crop_url_name`` in each of the 3 class based views.
+and no need to specify the ``crop_url_name`` in each of the 3 class-based views.
 
 Until now, we were talking about image model instance handling.
 
@@ -106,13 +122,16 @@ Until now, we were talking about image model instance handling.
 GalleryField rendering customization
 --------------------------------------
 
+Now we turn to the customization of gallery model.
 Back to the demo, when dealing with the gallery model instance, there isn't much magic about
 :class:`demo.views.GalleryCreateView` and :class:`demo.views.GalleryUpdateView`.
-Here, we need to address :class:`demo.views.GalleryDetailView`, on how it rendering the ``GalleryField``.
+Here, we need to address :class:`demo.views.GalleryDetailView`, on how it rendering the
+:class:`gallery_widget.fields.GalleryField`.
 
-For example, with the ``MyImage`` in previous example as the ``target_model``, we now have a gallery model named ``MyGallery``:
+With the ``MyImage`` in previous example as the ``target_model``, we can have a gallery model named ``MyGallery``:
 
-.. code-block:: python
+.. snippet:: python
+   :filename: my_app/models.py
 
    class MyGallery(models.Model):
         album = GalleryField(target_model="my_app.MyImage", verbose_name=_('My photos'))
@@ -121,14 +140,53 @@ For example, with the ``MyImage`` in previous example as the ``target_model``, w
                         verbose_name=_('Owner'), on_delete=models.CASCADE)
 
 
-Then rendering the ``album`` can be as simple as (in Django CBS Listview)::
+By subclassing :class:`django.views.generic.detail.DetailView`, we can have a gallery detail view like:
+
+.. snippet:: python
+   :filename: my_app/views.py
+
+    from django.views.generic.detail import DetailView
+    from my_app.models import MyGallery
+
+    class MyGalleryDetailView(DetailView):
+        model = MyGallery
+
+Then we add a template file named ``mygallery_detail.html`` to folder ``my_app/templates/my_app/``,
+with the following code block:
+
+.. snippet:: html
+   :filename: my_app/templates/my_app/mygallery_detail.html
+
+    {% extends 'base.html' %}
+    {% load static %}
+
+    ...
 
     {% for obj in object.album.objects.all %}
         <img src="{{ obj.photo.url}}">
     {% endfor %}
 
-As you might guess from the first line, the ``GalleryField`` provide a ``Queryset`` API
-for the image model instances it related to. No wonder, you can do the following::
+    ...
+
+
+And add the url of the view:
+
+.. snippet:: python
+   :filename: my_app/urls.py
+
+    from my_apps import views
+
+    urlpatterns = [
+        ...
+        path('album-detail/<int:pk>',
+             views.MyGalleryDetailView.as_view(), name='my_gallery-detail'),
+    ]
+
+Then we can navigate to see the images in a specific gallery.
+
+As you might guess from the first line in the template snippet,
+the ``GalleryField`` provide a ``Queryset`` API for the image model
+instances it related to. No wonder, you can do the following::
 
    >>> first_gallery = MyGallery.objects.first()
    >>> photos_in_first_gallery = first_gallery.album.objects.all()
@@ -138,7 +196,7 @@ for the image model instances it related to. No wonder, you can do the following
 More over, the demo provide an  example of `how to render <https://github.com/dzhuang/django-gallery-widget/blob/main/demo/templates/demo/demogallery_detail.html>`__
 the field using ``sorl.thumbnail`` and ``Blueimp Gallery`` package.
 
-Now it's your opportunity to show your skills on customizing the gallery/album frontend, which is beyond the scope of this package.
+Finally, it's your opportunity to show your skills on customizing the gallery/album frontend, which is beyond the scope of this package.
 
 
 Template customization
