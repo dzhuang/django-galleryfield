@@ -16,9 +16,9 @@ import sys
 import django
 
 sys.path.insert(0, os.path.abspath('../..'))
-sys.path.insert(0, os.path.abspath('../../gallery_widget'))
-sys.path.insert(0, os.path.abspath('../../demo'))
-sys.path.insert(0, os.path.abspath('_ext'))
+sys.path.append('../../gallery_widget')
+sys.path.append('../../demo')
+sys.path.append('_ext')
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'demo.settings'
 
@@ -31,7 +31,7 @@ copyright = '2021, Dong Zhuang'
 author = 'Dong Zhuang'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.0'
+release = '1.2.6-beta'
 
 
 # -- General configuration ---------------------------------------------------
@@ -39,8 +39,7 @@ release = '1.1.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.todo',
-              'sphinx.ext.viewcode',
+extensions = ['sphinx.ext.viewcode',
               'sphinx.ext.autodoc',
               'sphinx.ext.autosectionlabel',
               'djangodocs',
@@ -70,3 +69,5 @@ html_static_path = ['_static']
 html_css_files = [
     'css/custom.css',
 ]
+
+master_doc = 'index'
