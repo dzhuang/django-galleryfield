@@ -90,15 +90,15 @@ Three views for handling the image model objects
 - Three views for handling the image model objects (upload, fetch and crop). We provided 3
   class-based-views for these views to enable the built-in views.
 
-  - :class:`galleryfield.views.ImageCreateView`
-  - :class:`galleryfield.views.ImageListView`
-  - :class:`galleryfield.views.ImageCropView`
+  - :class:`galleryfield.image_views.ImageCreateView`
+  - :class:`galleryfield.image_views.ImageListView`
+  - :class:`galleryfield.image_views.ImageCropView`
 
   See :ref:`Built-in Image handling Views <built-in-image-views>` for more detail. We hope users can subclass
   the views above without much coding work. We think the 3 views
-  handling built-in image model (i.e., :class:`galleryfield.views.BuiltInImageCreateView`,
-  :class:`galleryfield.views.BuiltInImageListView` and
-  :class:`galleryfield.views.BuiltInImageCropView` were good examples of how to used them.
+  handling built-in image model (i.e., :class:`galleryfield.image_views.BuiltInImageCreateView`,
+  :class:`galleryfield.image_views.BuiltInImageListView` and
+  :class:`galleryfield.image_views.BuiltInImageCropView` were good examples of how to used them.
 
 
 .. _image_handling_url_naming_rule:

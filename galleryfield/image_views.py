@@ -32,7 +32,7 @@ class ImageCreateView(BaseCreateMixin, CreateView):
         See `the-save-method <https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method>`_
         for detail.
 
-        See :class:`galleryfield.views.BuiltInImageCreateView` for example.
+        See :class:`galleryfield.image_views.BuiltInImageCreateView` for example.
         """  # noqa
         self.object.save()
         return super().form_valid(form)

@@ -20,13 +20,13 @@ image instances.
 Further, If you look into ``galleryfield.urls`` and ``galleryfield.views``,
 you will see 3 class-based views:
 
-- :class:`galleryfield.views.BuiltInImageCreateView` for uploading images,
+- :class:`galleryfield.image_views.BuiltInImageCreateView` for uploading images,
   requires login.
   Following the :ref:`naming rule <image_handling_url_naming_rule>`, The url name is ``builtingalleryimage-upload``.
-- :class:`galleryfield.views.BuiltInImageListView` for fetching existing images,
+- :class:`galleryfield.image_views.BuiltInImageListView` for fetching existing images,
   restricted to the owner of the images or superuser, with url name
   ``builtingalleryimage-fetch``.
-- and :class:`galleryfield.views.BuiltInImageCropView` for server side cropping
+- and :class:`galleryfield.image_views.BuiltInImageCropView` for server side cropping
   of uploaded images, restricted to the owner of the images or superuser, with url
   name ``builtingalleryimage-crop``.
 

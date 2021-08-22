@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils.http import urlencode
 
 from galleryfield import defaults
-from galleryfield import views as built_in_views
+from galleryfield import image_views as built_in_views
 from galleryfield.models import BuiltInGalleryImage
 from tests import factories
 from tests.mixins import UserCreateMixin

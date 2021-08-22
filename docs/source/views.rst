@@ -24,6 +24,6 @@ User should subclass the following Class-based image handling base views for you
     Defaults to ``False``
 
 
-.. autoclass:: galleryfield.views.ImageCreateView
-.. autoclass:: galleryfield.views.ImageListView
-.. autoclass:: galleryfield.views.ImageCropView
+.. autoclass:: galleryfield.image_views.ImageCreateView
+.. autoclass:: galleryfield.image_views.ImageListView
+.. autoclass:: galleryfield.image_views.ImageCropView
