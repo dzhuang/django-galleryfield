@@ -8,7 +8,7 @@ from django.urls import reverse
 from selenium import webdriver
 
 from demo.models import DemoGallery
-from gallery_widget.models import BuiltInGalleryImage
+from galleryfield.models import BuiltInGalleryImage
 from tests.mixins import UserCreateMixin
 from tests.utils import remove_upload_directory, test_media_root
 

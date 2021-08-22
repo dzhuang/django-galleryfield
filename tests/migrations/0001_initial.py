@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 
-import gallery_widget.fields
+import galleryfield.fields
 
 
 class Migration(migrations.Migration):
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='DemoGalleryForTest',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('images', gallery_widget.fields.GalleryField(target_model='tests.FakeValidImageModel')),
+                ('images', galleryfield.fields.GalleryField(target_model='tests.FakeValidImageModel')),
             ],
         ),
         migrations.CreateModel(

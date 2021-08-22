@@ -16,7 +16,7 @@ install_requires = [
 ]
 
 setup(
-    name='django-gallery-widget',
+    name='django-galleryfield',
     version=version,
     description="Django AJAX upload widget and model field for multiple images, featuring drag & drop uploading, upload progress bar, sortable and croppable image gallery",
     long_description_content_type="text/x-rst",
@@ -43,7 +43,7 @@ setup(
              'thumbnails multiple GalleryField admin forms field',
     author='Dong Zhuang',
     author_email='dzhuang.scut@gmail.com',
-    url='https://github.com/dzhuang/django-gallery-widget',
+    url='https://github.com/dzhuang/django-galleryfield',
     license='MIT',
     packages=find_packages(exclude=['tests', 'demo']),
     include_package_data=True,

@@ -22,7 +22,7 @@ DEFAULT_UPLOAD_HANDLER_URL_NAME = "builtingalleryimage-upload"
 DEFAULT_CROP_URL_NAME = "builtingalleryimage-crop"
 DEFAULT_FETCH_URL_NAME = "builtingalleryimage-fetch"
 
-DEFAULT_TARGET_IMAGE_MODEL = "gallery_widget.BuiltInGalleryImage"
+DEFAULT_TARGET_IMAGE_MODEL = "galleryfield.BuiltInGalleryImage"
 DEFAULT_TARGET_IMAGE_FIELD_NAME = "image"
 DEFAULT_CREATOR_FIELD_NAME = "creator"
 
@@ -123,6 +123,6 @@ EXTRA_CSS = []
 DEFAULT_THUMBNAIL_SIZE = "120x120"
 DEFAULT_THUMBNAIL_QUALITY = 80
 
-WIDGET_HIDDEN_INPUT_CSS_CLASS = "django-gallery-widget"
+WIDGET_HIDDEN_INPUT_CSS_CLASS = "django-galleryfield"
 
 PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = True

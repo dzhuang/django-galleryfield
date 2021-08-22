@@ -16,7 +16,7 @@ import sys
 import django
 
 sys.path.insert(0, os.path.abspath('../..'))
-sys.path.insert(0, os.path.abspath('../../gallery_widget'))
+sys.path.insert(0, os.path.abspath('../../galleryfield'))
 sys.path.insert(0, os.path.abspath('../../demo'))
 sys.path.insert(0, os.path.abspath('_ext'))
 
@@ -26,7 +26,7 @@ django.setup()
 
 # -- Project information -----------------------------------------------------
 
-project = 'django-gallery-widget'
+project = 'django-galleryfield'
 copyright = '2021, Dong Zhuang'
 author = 'Dong Zhuang'
 

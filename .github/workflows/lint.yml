@@ -22,7 +22,7 @@ jobs:
           pip install -r tests/requirements_test.txt
           pip install -r demo/requirements.txt
       - name: "Flake8"
-        run: flake8 gallery_widget demo
+        run: flake8 galleryfield demo
 
   isort:
     runs-on: ubuntu-latest

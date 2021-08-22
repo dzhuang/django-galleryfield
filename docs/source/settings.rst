@@ -2,11 +2,11 @@
 Settings
 ========
 
-Settings related to the package were included in a dict named ``DJANGO_GALLERY_WIDGET_CONFIG``.
+Settings related to the package were included in a dict named ``DJANGO_GALLERY_FIELD_CONFIG``.
 
-.. setting:: DJANGO_GALLERY_WIDGET_CONFIG
+.. setting:: DJANGO_GALLERY_FIELD_CONFIG
 
-``DJANGO_GALLERY_WIDGET_CONFIG``
+DJANGO_GALLERY_FIELD_CONFIG
 ---------------------------------
 
 Default:
@@ -27,7 +27,7 @@ Default:
             "quality": 80
         },
 
-        "widget_hidden_input_css_class": "django-gallery-widget",
+        "widget_hidden_input_css_class": "django-galleryfield",
         "prompt_alert_if_changed_on_window_reload": True,
         "jquery_file_upload_ui_options": {
             "autoUpload": False,
@@ -58,24 +58,24 @@ Default:
     }
 
 The first part is the static assets required to render the
-:class:`gallery_widget.widgets.GalleryWidget`.
+:class:`galleryfield.widgets.GalleryWidget`.
 The value includes 2 parts. The second part, i.e., ``extra_js`` and
 ``extra_css`` allow user to add customized static files when customize
 the rendering of the widget. The first part is the static assets required to render
-the :class:`gallery_widget.widgets.GalleryWidget`. The default value for this part
-is listed in ``gallery_widget.defaults.DEFAULT_ASSETS``.
+the :class:`galleryfield.widgets.GalleryWidget`. The default value for this part
+is listed in ``galleryfield.defaults.DEFAULT_ASSETS``.
 
-.. currentmodule:: gallery_widget.default
-.. autodata:: gallery_widget.defaults.DEFAULT_ASSETS
+.. currentmodule:: galleryfield.default
+.. autodata:: galleryfield.defaults.DEFAULT_ASSETS
    :annotation:
-.. pprint:: gallery_widget.defaults.DEFAULT_ASSETS
+.. pprint:: galleryfield.defaults.DEFAULT_ASSETS
 
 
 .. warning::
    This project relies heavily on CSS and JS frameworks/packages, so we strongly
    suggest using ``django-npm`` to manage the static assets for convenience. If
    you have other options, for example, not willing to have a local copy of those assets,
-   you need to make sure ALL the items in ``gallery_widget.defaults.DEFAULT_ASSET``
+   you need to make sure ALL the items in ``galleryfield.defaults.DEFAULT_ASSET``
    properly configure in this setting and
    can be accessed properly.
 
@@ -109,7 +109,7 @@ Currently, we accept the following format of size:
     120  # same as '120x120'
 
 
-The ``size`` can be overridden when initializing :class:`gallery_widget.widgets.GalleryWidget` via
+The ``size`` can be overridden when initializing :class:`galleryfield.widgets.GalleryWidget` via
 :attr:`thumbnail_size`.
 
 For quality, please refer to
@@ -119,13 +119,13 @@ For quality, please refer to
 
 jquery_file_upload_ui_options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The default value is listed in ``gallery_widget.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS``.
+The default value is listed in ``galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS``.
 
-.. autodata:: gallery_widget.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
+.. autodata:: galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
    :annotation:
-.. pprint:: gallery_widget.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
+.. pprint:: galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
 
-The value can be overridden when initializing :class:`gallery_widget.widgets.GalleryWidget` via
+The value can be overridden when initializing :class:`galleryfield.widgets.GalleryWidget` via
 :attr:`jquery_file_upload_ui_options`.
 Please refer to `available options <https://github.com/blueimp/jQuery-File-Upload/wiki/Options#general-options>`__
 for the details and more options.

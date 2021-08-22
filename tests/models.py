@@ -1,6 +1,6 @@
 from django.db import models
 
-from gallery_widget.fields import GalleryField
+from galleryfield.fields import GalleryField
 
 
 class FakeValidImageModel(models.Model):

@@ -1,10 +1,10 @@
 from django.conf import settings
 
-from gallery_widget import defaults
-from gallery_widget.utils import get_formatted_thumbnail_size
+from galleryfield import defaults
+from galleryfield.utils import get_formatted_thumbnail_size
 
 """
-DJANGO_GALLERY_WIDGET_CONFIG = {
+DJANGO_GALLERY_FIELD_CONFIG = {
     "assets": {
         "jquery.js": 'http://example.com/jquery.js',
         "bootstrap.css": "/my/local/bootstrap.css",
@@ -15,14 +15,14 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
         "size": 120,
         "quality": 80
     },
-    "widget_hidden_input_css_class": "django-gallery-widget",
+    "widget_hidden_input_css_class": "django-galleryfield",
     "prompt_alert_if_changed_on_window_reload": True,
     "jquery_file_upload_ui_options": {}
 }
 """
 
 
-_APP_CONFIG = getattr(settings, "DJANGO_GALLERY_WIDGET_CONFIG", {})
+_APP_CONFIG = getattr(settings, "DJANGO_GALLERY_FIELD_CONFIG", {})
 
 # {{{ Generating js and css assets for GalleryWidget
 

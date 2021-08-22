@@ -8,9 +8,9 @@ from django.db.models import ImageField
 from django.urls import (NoReverseMatch, Resolver404, resolve, reverse,
                          reverse_lazy)
 
-from gallery_widget import defaults
+from galleryfield import defaults
 
-logger = logging.getLogger('django-gallery-widget')
+logger = logging.getLogger('django-galleryfield')
 
 
 class DJGalleryCriticalCheckMessage(Critical):

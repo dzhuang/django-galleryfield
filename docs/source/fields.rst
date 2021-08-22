@@ -4,14 +4,14 @@ Model field and form field
 GalleryField
 -------------
 
-.. autoclass:: gallery_widget.fields.GalleryField
+.. autoclass:: galleryfield.fields.GalleryField
    :show-inheritance:
 
 
 ``GalleryField`` and ``GalleryImages``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. currentmodule:: gallery_widget.fields
+.. currentmodule:: galleryfield.fields
 
 .. class:: GalleryImages
 
@@ -69,10 +69,10 @@ where ``object`` is an instance of :class:`demo.models.DemoGallery`.
 GalleryFormField
 ---------------------
 
-.. autoclass:: gallery_widget.fields.GalleryFormField
+.. autoclass:: galleryfield.fields.GalleryFormField
    :show-inheritance:
 
-.. note:: :class:`gallery_widget.fields.GalleryFormField` is not supposed to be used independently
+.. note:: :class:`galleryfield.fields.GalleryFormField` is not supposed to be used independently
    (i.e., as a non-modelform field). The most possible cases for us to access the formfield are
    in the modelform configurations. For example:
 
@@ -93,8 +93,8 @@ GalleryFormField
                 # self.fields["images"].widget = Textarea()  # Use Textarea as widget
 
 
-.. warning:: If you want to use :class:`gallery_widget.fields.GalleryFormField` as a non-modelform
+.. warning:: If you want to use :class:`galleryfield.fields.GalleryFormField` as a non-modelform
    field, remember to initialize the
    field with a key word argument like ``target_model="my_app.MyImage"``, otherwise it will use
-   ``gallery_widget.BuiltInGalleryImage`` as the ``target_model``. Also, keep in mind that
+   ``galleryfield.BuiltInGalleryImage`` as the ``target_model``. Also, keep in mind that
    the ``cleaned_data`` of the field only contains the ``pk`` of the image model instances.

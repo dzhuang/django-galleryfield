@@ -1,4 +1,4 @@
-"""gallery_widget URL Configuration
+"""galleryfield URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -27,7 +27,7 @@ urlpatterns = [
     path('gallery-detail/<int:pk>',
          views.GalleryDetailView.as_view(), name='gallery-detail'),
 
-    path(r"images-handler/", include("gallery_widget.urls")),
+    path(r"images-handler/", include("galleryfield.urls")),
     path('admin/', admin.site.urls),
 ]
 

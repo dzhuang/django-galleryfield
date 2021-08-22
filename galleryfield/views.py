@@ -2,7 +2,7 @@ from django.core.exceptions import PermissionDenied
 from django.views.generic import CreateView, UpdateView
 from django.views.generic.list import BaseListView
 
-from gallery_widget.mixins import (BaseCreateMixin, BaseCropViewMixin,
+from galleryfield.mixins import (BaseCreateMixin, BaseCropViewMixin,
                                    BaseListViewMixin)
 
 
@@ -32,7 +32,7 @@ class ImageCreateView(BaseCreateMixin, CreateView):
         See `the-save-method <https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method>`_
         for detail.
 
-        See :class:`gallery_widget.views.BuiltInImageCreateView` for example.
+        See :class:`galleryfield.views.BuiltInImageCreateView` for example.
         """  # noqa
         self.object.save()
         return super().form_valid(form)
@@ -96,7 +96,7 @@ class ImageCropView(BaseCropViewMixin, UpdateView):
 
 
 class BuiltInImageCreateView(ImageCreateView):
-    target_model = "gallery_widget.BuiltInGalleryImage"
+    target_model = "galleryfield.BuiltInGalleryImage"
     crop_url_name = "builtingalleryimage-crop"
     disable_server_side_crop = False
 
@@ -108,7 +108,7 @@ class BuiltInImageCreateView(ImageCreateView):
 
 
 class BuiltInImageListView(ImageListView):
-    target_model = "gallery_widget.BuiltInGalleryImage"
+    target_model = "galleryfield.BuiltInGalleryImage"
     crop_url_name = "builtingalleryimage-crop"
     disable_server_side_crop = False
 
@@ -120,7 +120,7 @@ class BuiltInImageListView(ImageListView):
 
 
 class BuiltInImageCropView(ImageCropView):
-    target_model = "gallery_widget.BuiltInGalleryImage"
+    target_model = "galleryfield.BuiltInGalleryImage"
     crop_url_name = "builtingalleryimage-crop"
     disable_server_side_crop = False
 
