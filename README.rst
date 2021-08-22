@@ -81,7 +81,7 @@ Usage
 
 - In ``settings.py``, add 3 lines in you ``INSTALLED_APP``:
 
-.. code-block:: python
+::
 
     INSTALLED_APPS = (
         ...,
@@ -92,10 +92,11 @@ Usage
 
     DJANGO_GALLERY_CONFIG = ...
 
+
 - We strongly propose using ``django-npm`` to manage the static dependencies,
   add the following lines in ``settings.py``:
 
-.. code-block:: python
+::
 
     from django.conf.global_settings import STATICFILES_FINDERS
 
@@ -104,7 +105,8 @@ Usage
 
 - In ``urls.py``, add the following lines:
 
-.. code-block:: bash
+::
+
     from django.urls import include, path
 
     urlpatterns += [path(r"gallery-handler/", include("galleryfield.urls"))]
@@ -114,7 +116,7 @@ Usage
 Run the demo
 ~~~~~~~~~~~~~~~~~~
 
-.. code-block:: bash
+::
 
     git clone https://github.com/dzhuang/django-galleryfield.git
     cd django-galleryfield
