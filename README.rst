@@ -9,6 +9,10 @@ django-galleryfield
    :target: https://badge.fury.io/py/django-galleryfield
 .. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
    :target: https://pycqa.github.io/isort/
+.. image:: https://readthedocs.org/projects/django-galleryfield/badge/?version=latest
+   :target: https://django-galleryfield.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
 
 Django model fields ``GalleryField`` with AJAX form widgets and for multiple images upload with progress bar.
 This package is **NOT** about how to elegantly render multiple images in a page, but how to CRUD multiple
