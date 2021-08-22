@@ -5,7 +5,7 @@ from django.test.utils import override_settings
 class CheckSettingsBase(SimpleTestCase):
     @property
     def func(self):
-        from gallery_widget.checks import check_settings
+        from galleryfield.checks import check_settings
         return check_settings
 
     @property
@@ -73,35 +73,35 @@ class CheckSettingsBase(SimpleTestCase):
 
 
 class CheckConfigs(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget"
+    msg_id_prefix = "django-galleryfield"
     VALID_CONF_None = None
     VALID_CONF_Dict = {}
     INVALID_CONF_EMPTY_LIST = []
     INVALID_CONF_SPACES = " "
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_None)
     def test_valid_config1(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_Dict)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_Dict)
     def test_valid_config2(self):
         self.assertCheckMessages([])
 
-    @override_settings(INSTALLED_APPS=['gallery_widget', 'demo'])
+    @override_settings(INSTALLED_APPS=['galleryfield', 'demo'])
     def test_invalid_config1(self):
-        self.assertCheckMessages(["django-gallery-widget.E001"])
+        self.assertCheckMessages(["django-galleryfield.E001"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EMPTY_LIST)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EMPTY_LIST)
     def test_invalid_config2(self):
-        self.assertCheckMessages(["django-gallery-widget.E002"])
+        self.assertCheckMessages(["django-galleryfield.E002"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_SPACES)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_SPACES)
     def test_invalid_config3(self):
-        self.assertCheckMessages(["django-gallery-widget.E002"])
+        self.assertCheckMessages(["django-galleryfield.E002"])
 
 
 """
-DJANGO_GALLERY_WIDGET_CONFIG = {
+DJANGO_GALLERY_FIELD_CONFIG = {
     "assets": {
         "bootstrap.js": 'vendor/bootstrap/dist/js/bootstrap.min.js',
         "bootstrap.css": "vendor/bootstrap/dist/css/bootstrap.min.css",
@@ -113,14 +113,14 @@ DJANGO_GALLERY_WIDGET_CONFIG = {
         "quality": 80
     },
     jquery_file_upload_ui_options: {},
-    "widget_hidden_input_css_class": "django-gallery-widget",
+    "widget_hidden_input_css_class": "django-galleryfield",
     "prompt_alert_if_changed_on_window_reload": True,
 }
 """
 
 
 class CheckAssets(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget-assets"
+    msg_id_prefix = "django-galleryfield-assets"
 
     VALID_CONF_None = {"assets": None}
 
@@ -182,51 +182,51 @@ class CheckAssets(CheckSettingsBase):
         },
     }
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_None)
     def test_valid_config1(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_Dict)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_Dict)
     def test_valid_config2(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF)
     def test_valid_config3(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_EXTRA_None)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_EXTRA_None)
     def test_valid_config4(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=NOT_LISTED_ASSET)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=NOT_LISTED_ASSET)
     def test_item_not_listed_warned_config(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.W001"])
+        self.assertCheckMessages(["django-galleryfield-assets.W001"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=CONF_SET_NONE_WARNED)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=CONF_SET_NONE_WARNED)
     def test_item_set_none_warned_config(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.W002"])
+        self.assertCheckMessages(["django-galleryfield-assets.W002"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_Dict)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NOT_Dict)
     def test_invalid_config01(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E001"])
+        self.assertCheckMessages(["django-galleryfield-assets.E001"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_JS)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EXTRA_JS)
     def test_invalid_config02(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E005"])
+        self.assertCheckMessages(["django-galleryfield-assets.E005"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_CSS)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EXTRA_CSS)
     def test_invalid_config03(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E007"])
+        self.assertCheckMessages(["django-galleryfield-assets.E007"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_JS_ELE)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EXTRA_JS_ELE)
     def test_invalid_config04(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E006",
-                                  "django-gallery-widget-assets.E006"])
+        self.assertCheckMessages(["django-galleryfield-assets.E006",
+                                  "django-galleryfield-assets.E006"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EXTRA_CSS_ELE)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EXTRA_CSS_ELE)
     def test_invalid_config05(self):
-        self.assertCheckMessages(["django-gallery-widget-assets.E008",
-                                  "django-gallery-widget-assets.E008"])
+        self.assertCheckMessages(["django-galleryfield-assets.E008",
+                                  "django-galleryfield-assets.E008"])
 
 
 """
@@ -238,7 +238,7 @@ class CheckAssets(CheckSettingsBase):
 
 
 class CheckThumbnails(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget-thumbnails"
+    msg_id_prefix = "django-galleryfield-thumbnails"
 
     VALID_CONF_None = {"thumbnails": None}
 
@@ -361,101 +361,101 @@ class CheckThumbnails(CheckSettingsBase):
         },
     }
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_None)
     def test_valid_config1(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_Dict)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_Dict)
     def test_valid_config2(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF)
     def test_valid_config3(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_ALL_None)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_ALL_None)
     def test_valid_config4(self):
         self.assertCheckMessages([])
 
     @override_settings(
-        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_CAN_CONVERT_TO_NUMBER)
+        DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_CAN_CONVERT_TO_NUMBER)
     def test_valid_config5(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_int_tuple)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_int_tuple)
     def test_valid_config6(self):
         self.assertCheckMessages([])
 
     @override_settings(
-        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_str_list)
+        DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_str_list)
     def test_valid_config7(self):
         self.assertCheckMessages([])
 
     @override_settings(
-        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_int_list)
+        DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_int_list)
     def test_valid_config8(self):
         self.assertCheckMessages([])
 
     @override_settings(
-        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_x)
+        DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_x)
     def test_valid_config9(self):
         self.assertCheckMessages([])
 
     @override_settings(
-        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_X)
+        DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_X)
     def test_valid_config10(self):
         self.assertCheckMessages([])
 
     @override_settings(
-        DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_CONTAINS_SPACES)
+        DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_CONTAINS_SPACES)
     def test_valid_config11(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_Dict)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NOT_Dict)
     def test_invalid_config1(self):
-        self.assertCheckMessages(["django-gallery-widget-thumbnails.E001"])
+        self.assertCheckMessages(["django-galleryfield-thumbnails.E001"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_NUMBER)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NOT_NUMBER)
     def test_invalid_config2(self):
         self.assertCheckMessages([
-            "django-gallery-widget-thumbnails.E003",
-            "django-gallery-widget-thumbnails.E004"])
+            "django-galleryfield-thumbnails.E003",
+            "django-galleryfield-thumbnails.E004"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NEGATIVE)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NEGATIVE)
     def test_invalid_config3(self):
         self.assertCheckMessages([
-            "django-gallery-widget-thumbnails.E003",
-            "django-gallery-widget-thumbnails.E005"])
+            "django-galleryfield-thumbnails.E003",
+            "django-galleryfield-thumbnails.E005"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NEGATIVE_LIST)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NEGATIVE_LIST)
     def test_invalid_config4(self):
         self.assertCheckMessages([
-            "django-gallery-widget-thumbnails.E003"])
+            "django-galleryfield-thumbnails.E003"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NEGATIVE_TUPLE)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NEGATIVE_TUPLE)
     def test_invalid_config5(self):
         self.assertCheckMessages([
-            "django-gallery-widget-thumbnails.E003"])
+            "django-galleryfield-thumbnails.E003"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NEGATIVE_STR_LIST)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NEGATIVE_STR_LIST)
     def test_invalid_config6(self):
         self.assertCheckMessages([
-            "django-gallery-widget-thumbnails.E003"])
+            "django-galleryfield-thumbnails.E003"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_EMPT_STR)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EMPT_STR)
     def test_invalid_config7(self):
         self.assertCheckMessages([
-            "django-gallery-widget-thumbnails.E002"])
+            "django-galleryfield-thumbnails.E002"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_CONTAINS_3_tuple)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_CONTAINS_3_tuple)
     def test_invalid_config8(self):
         self.assertCheckMessages([
-            "django-gallery-widget-thumbnails.E003"])
+            "django-galleryfield-thumbnails.E003"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_CONTAINS_2_x)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_CONTAINS_2_x)
     def test_invalid_config9(self):
         self.assertCheckMessages([
-            "django-gallery-widget-thumbnails.E003"])
+            "django-galleryfield-thumbnails.E003"])
 
 
 """
@@ -469,7 +469,7 @@ PREVIEW_MAX_HEIGHT = "previewMaxHeight"
 
 
 class CheckJqueryFileUploadUiOptions(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget-jquery_file_upload_ui_options"
+    msg_id_prefix = "django-galleryfield-jquery_file_upload_ui_options"
 
     VALID_CONF_None = {"jquery_file_upload_ui_options": None}
 
@@ -519,63 +519,63 @@ class CheckJqueryFileUploadUiOptions(CheckSettingsBase):
 
     INVALID_CONF_NOT_Dict = {"jquery_file_upload_ui_options": object}
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_None)
     def test_valid_config1(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_Dict)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_Dict)
     def test_valid_config2(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF)
     def test_valid_config3(self):
         self.assertCheckMessages([])
 
     @override_settings(
-        DJANGO_GALLERY_WIDGET_CONFIG=NO_WARN_CONF_SINGLE_FILE_UPLOADS_TRUE)
+        DJANGO_GALLERY_FIELD_CONFIG=NO_WARN_CONF_SINGLE_FILE_UPLOADS_TRUE)
     def test_valid_config4(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_Dict)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NOT_Dict)
     def test_item_not_dict(self):
         self.assertCheckMessages(
-            ["django-gallery-widget-jquery_file_upload_ui_options.E001"])
+            ["django-galleryfield-jquery_file_upload_ui_options.E001"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_MAX_NUMBER_OF_FILES)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=WARN_CONF_MAX_NUMBER_OF_FILES)
     def test_item_warned_max_number_of_files(self):
         self.assertCheckMessages(
-            ["django-gallery-widget-jquery_file_upload_ui_options.W001"])
+            ["django-galleryfield-jquery_file_upload_ui_options.W001"])
 
     @override_settings(
-        DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_SINGLE_FILE_UPLOADS_FALSE)
+        DJANGO_GALLERY_FIELD_CONFIG=WARN_CONF_SINGLE_FILE_UPLOADS_FALSE)
     def test_warn_single_upload_false_1(self):
         self.assertCheckMessages(
-            ["django-gallery-widget-jquery_file_upload_ui_options.W002"])
+            ["django-galleryfield-jquery_file_upload_ui_options.W002"])
 
     @override_settings(
-        DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_SINGLE_FILE_UPLOADS_FALSE_STRING)
+        DJANGO_GALLERY_FIELD_CONFIG=WARN_CONF_SINGLE_FILE_UPLOADS_FALSE_STRING)
     def test_warn_single_upload_false_2(self):
         self.assertCheckMessages(
-            ["django-gallery-widget-jquery_file_upload_ui_options.W002"])
+            ["django-galleryfield-jquery_file_upload_ui_options.W002"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_PREVIEW_MAX_HEIGHT)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=WARN_CONF_PREVIEW_MAX_HEIGHT)
     def test_warn_preview_max_height(self):
         self.assertCheckMessages(
-            ["django-gallery-widget-jquery_file_upload_ui_options.W003"])
+            ["django-galleryfield-jquery_file_upload_ui_options.W003"])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=WARN_CONF_PREVIEW_MAX_WIDTH)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=WARN_CONF_PREVIEW_MAX_WIDTH)
     def test_warn_preview_max_width(self):
         self.assertCheckMessages(
-            ["django-gallery-widget-jquery_file_upload_ui_options.W003"])
+            ["django-galleryfield-jquery_file_upload_ui_options.W003"])
 
 
 """
-    "widget_hidden_input_css_class": "django-gallery-widget",
+    "widget_hidden_input_css_class": "django-galleryfield",
 """
 
 
 class CheckMultifieldCssClassBasename(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget-widget_hidden_input_css_class"
+    msg_id_prefix = "django-galleryfield-widget_hidden_input_css_class"
 
     VALID_CONF_None = {"widget_hidden_input_css_class": None}
 
@@ -583,18 +583,18 @@ class CheckMultifieldCssClassBasename(CheckSettingsBase):
 
     INVALID_CONF_NOT_str = {"widget_hidden_input_css_class": object}
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_None)
     def test_valid_config1(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_str)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_str)
     def test_valid_config2(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_str)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NOT_str)
     def test_invalid_config1(self):
         self.assertCheckMessages([
-            "django-gallery-widget-widget_hidden_input_css_class.E001"])
+            "django-galleryfield-widget_hidden_input_css_class.E001"])
 
 
 """
@@ -603,7 +603,7 @@ class CheckMultifieldCssClassBasename(CheckSettingsBase):
 
 
 class CheckPromptAlert(CheckSettingsBase):
-    msg_id_prefix = "django-gallery-widget-prompt_alert_if_changed_on_window_reload"
+    msg_id_prefix = "django-galleryfield-prompt_alert_if_changed_on_window_reload"
 
     VALID_CONF_None = {"prompt_alert_if_changed_on_window_reload": None}
 
@@ -611,15 +611,15 @@ class CheckPromptAlert(CheckSettingsBase):
 
     INVALID_CONF_NOT_bool = {"prompt_alert_if_changed_on_window_reload": object}
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_None)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_None)
     def test_valid_config1(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=VALID_CONF_bool)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_bool)
     def test_valid_config2(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_WIDGET_CONFIG=INVALID_CONF_NOT_bool)
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NOT_bool)
     def test_invalid_config1(self):
         self.assertCheckMessages([
-            "django-gallery-widget-prompt_alert_if_changed_on_window_reload.E001"])
+            "django-galleryfield-prompt_alert_if_changed_on_window_reload.E001"])

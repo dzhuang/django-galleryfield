@@ -7,10 +7,10 @@ from django.forms.renderers import DjangoTemplates
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
-from gallery_widget import conf, defaults
-from gallery_widget.fields import GalleryFormField
-from gallery_widget.utils import get_formatted_thumbnail_size
-from gallery_widget.widgets import GalleryWidget
+from galleryfield import conf, defaults
+from galleryfield.fields import GalleryFormField
+from galleryfield.utils import get_formatted_thumbnail_size
+from galleryfield.widgets import GalleryWidget
 from tests import factories
 from tests.test_fields import DemoTestGalleryModelForm
 
@@ -44,13 +44,13 @@ class GalleryWidgetTest(SimpleTestCase):
 
         self.assertFieldRendersIn(
             f, '<input type="hidden" name="f" value="null"'
-               ' class="django-gallery-widget-files-field '
+               ' class="django-galleryfield-files-field '
                ' hiddeninput" required id="id_f">')
 
         f = GalleryFormField(required=False)
         self.assertFieldRendersIn(
             f, '<input type="hidden" name="f" value="null"'
-               ' class="django-gallery-widget-files-field '
+               ' class="django-galleryfield-files-field '
                ' hiddeninput" id="id_f">')
 
     def _render_widget(self, widget, name, value=None, attrs=None, **kwargs):
@@ -355,7 +355,7 @@ class GalleryWidgetTest(SimpleTestCase):
             str(mock_render.call_args),
         )
 
-    @mock.patch('gallery_widget.widgets.logger.warning')
+    @mock.patch('galleryfield.widgets.logger.warning')
     @mock.patch("django.forms.renderers.DjangoTemplates.render")
     def test_widget_set_jquery_file_upload_ui_options_configured_maxNumberOfFiles(
             self, mock_render, mock_log):
@@ -375,7 +375,7 @@ class GalleryWidgetTest(SimpleTestCase):
             str(mock_render.call_args.kwargs),
         )
 
-    @mock.patch('gallery_widget.widgets.logger.warning')
+    @mock.patch('galleryfield.widgets.logger.warning')
     @mock.patch("django.forms.renderers.DjangoTemplates.render")
     def test_widget_set_jquery_file_upload_ui_options_configured_preview_size(  # noqa
             self, mock_render, mock_log):
@@ -403,7 +403,7 @@ class GalleryWidgetTest(SimpleTestCase):
                 mock_render.reset_mock()
                 mock_log.reset_mock()
 
-    @mock.patch('gallery_widget.widgets.logger.warning')
+    @mock.patch('galleryfield.widgets.logger.warning')
     @mock.patch("django.forms.renderers.DjangoTemplates.render")
     def test_widget_set_jquery_file_upload_ui_options_configured_singleFileUploads_true(  # noqa
             self, mock_render, mock_log):

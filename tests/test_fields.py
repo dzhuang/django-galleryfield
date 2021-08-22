@@ -10,8 +10,8 @@ from django.test import TestCase
 from django.test.utils import isolate_apps, override_settings
 
 from demo.models import DemoGallery
-from gallery_widget.fields import GalleryField, GalleryFormField
-from gallery_widget.widgets import GalleryWidget
+from galleryfield.fields import GalleryField, GalleryFormField
+from galleryfield.widgets import GalleryWidget
 from tests import factories
 from tests.factories import DemoGalleryFactory
 
@@ -271,12 +271,12 @@ class GalleryFormFieldTest(TestCase):
         with self.assertRaises(ImproperlyConfigured):
             GalleryFormField(target_model="tests.FakeInvalidImageModel1")
 
-    @mock.patch('gallery_widget.fields.logger.info')
+    @mock.patch('galleryfield.fields.logger.info')
     def test_gallery_form_field_target_image_model_configured_none(self, mock_log):
         GalleryFormField()
         self.assertEqual(mock_log.call_count, 1)
 
-    @mock.patch('gallery_widget.fields.logger.info')
+    @mock.patch('galleryfield.fields.logger.info')
     @override_settings(SILENCED_SYSTEM_CHECKS=["gallery_form_field.I001"])
     def test_gallery_form_field_target_image_model_configured_none_log_suppressed(self, mock_log):  # noqa
         GalleryFormField()
@@ -442,7 +442,7 @@ class GalleryFieldCheckTest(TestCase):
 
     @isolate_apps("tests")
     # Here we are not loading "demo", while use MyImageModel
-    @override_settings(INSTALLED_APPS=['gallery_widget', 'tests'])
+    @override_settings(INSTALLED_APPS=['galleryfield', 'tests'])
     def test_field_checks_app_not_in_installed_apps(self):
         class MyModel(models.Model):
             field = GalleryField("demo.MyImageModel")

@@ -1,9 +1,9 @@
-.. django-gallery-widget documentation master file, created by
+.. django-galleryfield documentation master file, created by
    sphinx-quickstart on Thu Aug  5 19:19:30 2021.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to django-gallery-widget's documentation!
+Welcome to django-galleryfield's documentation!
 =================================================
 
 .. toctree::

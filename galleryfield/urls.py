@@ -1,18 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
 
-from gallery_widget import views
+from galleryfield import image_views
 
 # The default view names also follow the form of "model_name-upload".
 
 urlpatterns = [
     path('upload/',
-         login_required(views.BuiltInImageCreateView.as_view()),
+         login_required(image_views.BuiltInImageCreateView.as_view()),
          name="builtingalleryimage-upload"),
     path('fetch/',
-         login_required((views.BuiltInImageListView.as_view())),
+         login_required((image_views.BuiltInImageListView.as_view())),
          name="builtingalleryimage-fetch"),
     path('crop/<int:pk>',
-         login_required(views.BuiltInImageCropView.as_view()),
+         login_required(image_views.BuiltInImageCropView.as_view()),
          name="builtingalleryimage-crop"),
 ]

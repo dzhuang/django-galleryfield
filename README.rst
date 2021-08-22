@@ -1,18 +1,18 @@
-django-gallery-widget
+django-galleryfield
 =====================
 
-.. image:: https://codecov.io/gh/dzhuang/django-gallery-widget/branch/main/graph/badge.svg?token=W9BWM4A4RI
-   :target: https://codecov.io/gh/dzhuang/django-gallery-widget
-.. image:: https://github.com/dzhuang/django-gallery-widget/actions/workflows/ci.yml/badge.svg?branch=main
-   :target: https://github.com/dzhuang/django-gallery-widget/tree/main
-.. image:: https://badge.fury.io/py/django-gallery-widget.svg
-   :target: https://badge.fury.io/py/django-gallery-widget
+.. image:: https://codecov.io/gh/dzhuang/django-galleryfield/branch/main/graph/badge.svg?token=W9BWM4A4RI
+   :target: https://codecov.io/gh/dzhuang/django-galleryfield
+.. image:: https://github.com/dzhuang/django-galleryfield/actions/workflows/ci.yml/badge.svg?branch=main
+   :target: https://github.com/dzhuang/django-galleryfield/tree/main
+.. image:: https://badge.fury.io/py/django-galleryfield.svg
+   :target: https://badge.fury.io/py/django-galleryfield
 .. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
    :target: https://pycqa.github.io/isort/
 
-Django AJAX form widgets and model fields for multiple images upload with progress bar. This package is **NOT** about
-how to elegantly render multiple images in a page, but how to CRUD multiple images in a model field, which makes
-it possible for easy permission control.
+Django model fields ``GalleryField`` with AJAX form widgets and for multiple images upload with progress bar.
+This package is **NOT** about how to elegantly render multiple images in a page, but how to CRUD multiple
+images in a model field, which makes it possible for easy permission control.
 
 
 Features
@@ -31,19 +31,19 @@ ScreenShots
 
 -  Multiple image upload, sortable
 
-.. image:: https://raw.githubusercontent.com/dzhuang/django-gallery-widget/main/demo/static/demo/screen_upload.png
+.. image:: https://raw.githubusercontent.com/dzhuang/django-galleryfield/main/demo/static/demo/screen_upload.png
    :width: 70%
    :align: center
 
 -  Client/Server side crop
 
-.. image:: https://raw.githubusercontent.com/dzhuang/django-gallery-widget/main/demo/static/demo/screen_crop.png
+.. image:: https://raw.githubusercontent.com/dzhuang/django-galleryfield/main/demo/static/demo/screen_crop.png
    :width: 70%
    :align: center
 
 -  Easy Gallery render
 
-.. image:: https://raw.githubusercontent.com/dzhuang/django-gallery-widget/main/demo/static/demo/screen_detail.png
+.. image:: https://raw.githubusercontent.com/dzhuang/django-galleryfield/main/demo/static/demo/screen_detail.png
    :width: 70%
    :align: center
 
@@ -70,7 +70,7 @@ Install
 
 ::
 
-    pip install django-gallery-widget
+    pip install django-galleryfield
 
 Usage
 ~~~~~~~~~~~~~~~~~~
@@ -82,7 +82,7 @@ Usage
     INSTALLED_APPS = (
         ...,
         'sorl.thumbnail',
-        'gallery_widget',
+        'galleryfield',
         ...,
     )
 
@@ -103,7 +103,7 @@ Usage
 .. code-block:: bash
     from django.urls import include, path
 
-    urlpatterns += [path(r"gallery-handler/", include("gallery_widget.urls"))]
+    urlpatterns += [path(r"gallery-handler/", include("galleryfield.urls"))]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
@@ -112,8 +112,8 @@ Run the demo
 
 .. code-block:: bash
 
-    git clone https://github.com/dzhuang/django-gallery-widget.git
-    cd django-gallery-widget
+    git clone https://github.com/dzhuang/django-galleryfield.git
+    cd django-galleryfield
     cd demo
     pip install -r requirements.txt
     cd ..
@@ -128,7 +128,7 @@ Run the demo
 
 Online documentation
 ~~~~~~~~~~~~~~~~~~~~~~
-Please visit https://django-gallery-widget.readthedocs.io for the documentation.
+Please visit https://django-galleryfield.readthedocs.io for the documentation.
 
 
 License

@@ -21,7 +21,7 @@ The first obstacle we met is: how to map the ``pks`` to the actual image model i
 Our workaround is saving the
 `app_label.model_name <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_
 of the image model (which we called ``target_model`` throughout the app and docs)
-in :class:`gallery_widget.fields.GalleryField`.
+in :class:`galleryfield.fields.GalleryField`.
 
 Following that, there should be three basic views to handle image model instances,
 before saving their ``pks`` to the ``GalleryField``:
@@ -74,13 +74,13 @@ it need to meet one of the following 2 requirements:
    returns a :class:`django.db.models.fields.files.ImageFieldFile`
    object instead of a :class:`django.db.models.ImageField` object.
 
-The :class:`gallery_widget.models.BuiltInGalleryImage` is using the first style (
+The :class:`galleryfield.models.BuiltInGalleryImage` is using the first style (
 with ``target_model="garllery_widget.BuiltInGalleryImage"``).
 However, if you don't want to do much change to your existing models
 (e.g., avoiding migrations of existing model),
 the second style is more sounding.
 
-In the following, we will use the above model in a :class:`gallery_widget.fields.GalleryField`
+In the following, we will use the above model in a :class:`galleryfield.fields.GalleryField`
 with ``target_model = "my_app.MyImage"``.
 
 
@@ -90,15 +90,15 @@ Three views for handling the image model objects
 - Three views for handling the image model objects (upload, fetch and crop). We provided 3
   class-based-views for these views to enable the built-in views.
 
-  - :class:`gallery_widget.views.ImageCreateView`
-  - :class:`gallery_widget.views.ImageListView`
-  - :class:`gallery_widget.views.ImageCropView`
+  - :class:`galleryfield.image_views.ImageCreateView`
+  - :class:`galleryfield.image_views.ImageListView`
+  - :class:`galleryfield.image_views.ImageCropView`
 
   See :ref:`Built-in Image handling Views <built-in-image-views>` for more detail. We hope users can subclass
   the views above without much coding work. We think the 3 views
-  handling built-in image model (i.e., :class:`gallery_widget.views.BuiltInImageCreateView`,
-  :class:`gallery_widget.views.BuiltInImageListView` and
-  :class:`gallery_widget.views.BuiltInImageCropView` were good examples of how to used them.
+  handling built-in image model (i.e., :class:`galleryfield.image_views.BuiltInImageCreateView`,
+  :class:`galleryfield.image_views.BuiltInImageListView` and
+  :class:`galleryfield.image_views.BuiltInImageCropView` were good examples of how to used them.
 
 
 .. _image_handling_url_naming_rule:
@@ -126,7 +126,7 @@ Now we turn to the customization of gallery model.
 Back to the demo, when dealing with the gallery model instance, there isn't much magic about
 :class:`demo.views.GalleryCreateView` and :class:`demo.views.GalleryUpdateView`.
 Here, we need to address :class:`demo.views.GalleryDetailView`, on how it rendering the
-:class:`gallery_widget.fields.GalleryField`.
+:class:`galleryfield.fields.GalleryField`.
 
 With the ``MyImage`` in previous example as the ``target_model``, we can have a gallery model named ``MyGallery``:
 
@@ -193,7 +193,7 @@ instances it related to. No wonder, you can do the following::
    >>> photos_before_2021 = photos_in_first_gallery.filter(creation_time__lt=datetime(2021, 01, 01))
 
 
-More over, the demo provide an  example of `how to render <https://github.com/dzhuang/django-gallery-widget/blob/main/demo/templates/demo/demogallery_detail.html>`__
+More over, the demo provide an  example of `how to render <https://github.com/dzhuang/django-galleryfield/blob/main/demo/templates/demo/demogallery_detail.html>`__
 the field using ``sorl.thumbnail`` and ``Blueimp Gallery`` package.
 
 Finally, it's your opportunity to show your skills on customizing the gallery/album frontend, which is beyond the scope of this package.

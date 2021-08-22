@@ -9,9 +9,9 @@ from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.http import urlencode
 
-from gallery_widget import defaults
-from gallery_widget import views as built_in_views
-from gallery_widget.models import BuiltInGalleryImage
+from galleryfield import defaults
+from galleryfield import image_views as built_in_views
+from galleryfield.models import BuiltInGalleryImage
 from tests import factories
 from tests.mixins import UserCreateMixin
 from tests.utils import (get_upload_file_path, remove_upload_directory,
@@ -558,7 +558,7 @@ class GalleryWidgetFetchViewTest(ViewTestMixin, TestCase):
             HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         request.user = self.user
 
-        with mock.patch("gallery_widget.mixins.get_thumbnail") as mock_get_thumb:
+        with mock.patch("galleryfield.mixins.get_thumbnail") as mock_get_thumb:
             mock_get_thumb.side_effect = RuntimeError("Unexpected error")
             resp = built_in_views.BuiltInImageListView.as_view()(request)
 

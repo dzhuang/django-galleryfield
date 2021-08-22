@@ -2,11 +2,11 @@ from django.core.exceptions import ImproperlyConfigured
 from django.test import SimpleTestCase
 from django.urls import NoReverseMatch, reverse
 
-from gallery_widget.utils import get_url_from_str
+from galleryfield.utils import get_url_from_str
 
 
 class GetUrlFromStrTest(SimpleTestCase):
-    # Test gallery_widget.utils.get_url_from_str
+    # Test galleryfield.utils.get_url_from_str
 
     def test_None(self):
         self.assertIsNone(get_url_from_str(None))

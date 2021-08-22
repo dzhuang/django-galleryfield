@@ -5,7 +5,7 @@ import tempfile
 from django.conf import settings
 
 FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'resource')
-test_media_root = os.path.join(tempfile.gettempdir(), "gallery_widget_media")
+test_media_root = os.path.join(tempfile.gettempdir(), "galleryfield_media")
 
 
 def get_upload_file_path(file_name, fixture_path=FIXTURE_PATH):

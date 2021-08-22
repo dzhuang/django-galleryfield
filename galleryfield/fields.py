@@ -8,10 +8,10 @@ from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
 
-from gallery_widget import conf
-from gallery_widget import defaults as _defaults
-from gallery_widget.utils import apps, get_or_check_image_field, logger
-from gallery_widget.widgets import GalleryWidget
+from galleryfield import conf
+from galleryfield import defaults as _defaults
+from galleryfield.utils import apps, get_or_check_image_field, logger
+from galleryfield.widgets import GalleryWidget
 
 
 @deconstructible
@@ -77,7 +77,7 @@ class GalleryField(models.JSONField):
     :param target_model: A string in the form of ``"app_label.model_name"``,
            which can be loaded by :meth:`django.apps.get_model` (see 
            `Django docs <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_),
-           defaults to `None`. If `None`, :class:`gallery_widget.BuiltInGalleryImage` will be used.
+           defaults to `None`. If `None`, :class:`galleryfield.BuiltInGalleryImage` will be used.
            If set, it should be :ref:`a valid image model <customize-valid-image-model>`.
 
     :type target_model: str, optional.
@@ -141,7 +141,7 @@ class GalleryField(models.JSONField):
 
 
 class GalleryFormField(forms.JSONField):
-    """The default formfield for :class:`gallery_widget.fields.GalleryField`.
+    """The default formfield for :class:`galleryfield.fields.GalleryField`.
 
     :param max_number_of_images: Max allowed number of images, defaults
            to `None`, which means unlimited.
@@ -155,7 +155,7 @@ class GalleryFormField(forms.JSONField):
 
              However, if this field is used as a non-model form field, when
              not specified, it will use the built-in default target image
-             model ``gallery_widget.BuiltInGalleryImage``.
+             model ``galleryfield.BuiltInGalleryImage``.
 
            * widget: if not specified, defaults to ``GalleryWidget`` with default
              values.

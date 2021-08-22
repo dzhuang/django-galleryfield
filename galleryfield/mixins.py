@@ -18,9 +18,9 @@ from django.views.generic.list import BaseListView
 from PIL import Image
 from sorl.thumbnail import get_thumbnail
 
-from gallery_widget import conf, defaults
-from gallery_widget.utils import (get_formatted_thumbnail_size,
-                                  get_or_check_image_field)
+from galleryfield import conf, defaults
+from galleryfield.utils import (get_formatted_thumbnail_size,
+                                get_or_check_image_field)
 
 
 class BaseImageModelMixin:

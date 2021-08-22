@@ -1,9 +1,9 @@
 Introduction
 ============
 
-In this Django reusable app, we introduced a model field :class:`gallery_widget.fields.GalleryField`
-along with a corresponding formfield :class:`gallery_widget.fields.GalleryFormField` and default
-widget :class:`gallery_widget.widgets.GalleryWidget`. The model field
+In this Django reusable app, we introduced a model field :class:`galleryfield.fields.GalleryField`
+along with a corresponding formfield :class:`galleryfield.fields.GalleryFormField` and default
+widget :class:`galleryfield.widgets.GalleryWidget`. The model field
 make it easy for image management at a collection level (i.e., what we called gallery or album),
 while the widget make it easy to upload images via AJAX, allowing order the sequence arbitrarily,
 and cropping images at both client and server side.
@@ -67,7 +67,7 @@ Limitations
 Compared to peer apps
 **********************
 
-Just name a few popular apps that have similar functionality with django-gallery-widget.
+Just name a few popular apps that have similar functionality with django-galleryfield.
 Please correct me if I am wrong.
 
 - `django-photologue <https://github.com/richardbarran/django-photologue>`_
@@ -86,7 +86,7 @@ Please correct me if I am wrong.
    to the server. Moreover, its working logic need to conduct physical operations with image
    files, which make it impossible to store the files on storage like S3.
 
-   In django-gallery-widget, images are stored in :class:`django.db.models.ImageField`, which
+   In django-galleryfield, images are stored in :class:`django.db.models.ImageField`, which
    means we can store the images to various kind of storage (not just :class:`FileSystemStorage`),
    and it possible for better permission management with regards to
    who can CRUD which images through views, and that expand the use case of the widget.

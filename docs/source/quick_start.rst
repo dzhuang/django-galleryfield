@@ -3,13 +3,13 @@ Quick Start
 
 Installation
 ~~~~~~~~~~~~~~
-You can install with pip from `PyPi <https://pypi.org/project/django-gallery-widget/>`_ via::
+You can install with pip from `PyPi <https://pypi.org/project/django-galleryfield/>`_ via::
 
-    pip install django-gallery-widget
+    pip install django-galleryfield
 
 Or for the latest dev version, via::
 
-    pip install git+https://github.com/dzhuang/django-gallery-widget.git
+    pip install git+https://github.com/dzhuang/django-galleryfield.git
 
 
 Python version
@@ -47,7 +47,7 @@ Configurations
     INSTALLED_APPS = (
         ...,
         'sorl.thumbnail',
-        'gallery_widget',
+        'galleryfield',
         ...,
     )
 
@@ -69,23 +69,23 @@ Configurations
 
     from django.urls import include, path
 
-    urlpatterns += [path(r"images-handler/", include("gallery_widget.urls"))]
+    urlpatterns += [path(r"images-handler/", include("galleryfield.urls"))]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 - The sync the database::
 
-    python manage.py migrate gallery_widget
+    python manage.py migrate galleryfield
 
 
 
 Run the demo
 ~~~~~~~~~~~~~
-The best way to have a glance of how django-gallery-widget works is to run the demo:
+The best way to have a glance of how django-galleryfield works is to run the demo:
 
 .. code-block:: bash
 
-    git clone https://github.com/dzhuang/django-gallery-widget.git
-    cd django-gallery-widget
+    git clone https://github.com/dzhuang/django-galleryfield.git
+    cd django-galleryfield
     cd demo
     pip install -r requirements.txt
     cd ..

@@ -1,7 +1,7 @@
 {
   "repository": {
     "type": "git",
-    "url": "http://github.com/dzhuang/django-gallery-widget.git"
+    "url": "http://github.com/dzhuang/django-galleryfield.git"
   },
   "license": "MIT",
   "dependencies": {
