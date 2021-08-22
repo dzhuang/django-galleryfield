@@ -31,7 +31,7 @@ copyright = '2021, Dong Zhuang'
 author = 'Dong Zhuang'
 
 # The full version, including alpha/beta/rc tags
-release = '1.2.6-beta'
+release = '1.2.7-beta'
 
 
 # -- General configuration ---------------------------------------------------
