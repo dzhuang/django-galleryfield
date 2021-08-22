@@ -20,7 +20,7 @@ from sorl.thumbnail import get_thumbnail
 
 from galleryfield import conf, defaults
 from galleryfield.utils import (get_formatted_thumbnail_size,
-                                  get_or_check_image_field)
+                                get_or_check_image_field)
 
 
 class BaseImageModelMixin:

@@ -3,8 +3,7 @@ from django.conf import settings
 from django.core import checks
 
 from galleryfield import defaults
-from galleryfield.utils import (GENERIC_ERROR_PATTERN,
-                                INSTANCE_ERROR_PATTERN,
+from galleryfield.utils import (GENERIC_ERROR_PATTERN, INSTANCE_ERROR_PATTERN,
                                 DJGalleryCriticalCheckMessage,
                                 InvalidThumbnailFormat,
                                 get_formatted_thumbnail_size)

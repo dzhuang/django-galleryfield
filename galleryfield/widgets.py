@@ -5,8 +5,8 @@ from django.core.exceptions import ImproperlyConfigured
 
 from galleryfield import conf, defaults
 from galleryfield.utils import (convert_dict_to_plain_text,
-                                  get_formatted_thumbnail_size,
-                                  get_url_from_str, logger)
+                                get_formatted_thumbnail_size, get_url_from_str,
+                                logger)
 
 
 class GalleryWidget(forms.HiddenInput):
