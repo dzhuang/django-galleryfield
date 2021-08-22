@@ -173,10 +173,10 @@ class GalleryWidgetTest(SimpleTestCase):
         file_upload_button = (
             '<input type="file" class="django-gallery-image-input" '
             'id="%(field_name)s-files" multiple accept="image/*" '
-            'data-action="%(upload_handler_url)s">'
+            'data-action="%(upload_url)s">'
             % {"field_name": "image",
-               "upload_handler_url":
-                   reverse(defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
+               "upload_url":
+                   reverse(defaults.DEFAULT_UPLOAD_URL_NAME)}
         )
         self.check_in_html(
             f.widget, "image", '',
@@ -194,16 +194,16 @@ class GalleryWidgetTest(SimpleTestCase):
         file_upload_button = (
             '<input type="file" class="django-gallery-image-input" '
             'id="%(field_name)s-files" multiple accept="image/*" '
-            'data-action="%(upload_handler_url)s">'
+            'data-action="%(upload_url)s">'
             % {"field_name": "image",
-               "upload_handler_url":
-                   reverse(defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)}
+               "upload_url":
+                   reverse(defaults.DEFAULT_UPLOAD_URL_NAME)}
         )
         self.check_in_html(
             f.widget, "image", '',
             html=[file_upload_button])
 
-        f.widget.upload_handler_url = None
+        f.widget.upload_url = None
         self.check_not_in_html(
             f.widget, "image", '',
             # The css class of file input button
@@ -212,7 +212,7 @@ class GalleryWidgetTest(SimpleTestCase):
     def test_disabled_widget_render(self):
         f = GalleryFormField()
         self.assertFieldRendersIn(
-            f, 'django-gallery-image-input', strict=True)
+            f, 'django-gallery-image-input', strict=True, print_output=True)
 
         f = GalleryFormField(disabled=True)
         self.assertFieldRendersNotIn(f, 'django-gallery-image-input')
@@ -224,17 +224,17 @@ class GalleryWidgetTest(SimpleTestCase):
 
         test_case = {
             "builtingalleryimage-upload":
-                {"upload_handler_url": "test_image_upload"},
+                {"upload_url": "test_image_upload"},
             "builtingalleryimage-crop":
                 {"crop_request_url": "test_image_crop"},
             "builtingalleryimage-fetch":
-                {"fetch_request_url": "test_images_fetch"}
+                {"fetch_url": "test_images_fetch"}
         }
 
         default_urls = {
-            "upload_handler_url": "builtingalleryimage-upload",
+            "upload_url": "builtingalleryimage-upload",
             "crop_request_url": "builtingalleryimage-crop",
-            "fetch_request_url": "builtingalleryimage-fetch"
+            "fetch_url": "builtingalleryimage-fetch"
         }
 
         for default, kwargs in test_case.items():
@@ -258,9 +258,8 @@ class GalleryWidgetTest(SimpleTestCase):
         field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         kwargs = {
-            "upload_handler_url": "test_image_upload",
-            "crop_request_url": "builtingalleryimage-crop",  # a conflict url
-            "fetch_request_url": "test_images_fetch",
+            "upload_url": "test_image_upload",
+            "fetch_url": "test_images_fetch",
             "disable_server_side_crop": True
         }
 
@@ -271,9 +270,8 @@ class GalleryWidgetTest(SimpleTestCase):
         field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         kwargs = {
-            "upload_handler_url": "test_image_upload",
-            "crop_request_url": "test_image_crop",
-            "fetch_request_url": "builtingalleryimage-fetch",  # a conflict url
+            "upload_url": "test_image_upload",
+            "fetch_url": "builtingalleryimage-fetch",  # a conflict URL
             "disable_fetch": True
         }
 
@@ -285,9 +283,9 @@ class GalleryWidgetTest(SimpleTestCase):
         field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         kwargs = {
-            "upload_handler_url": "test_image_upload",
+            "upload_url": "test_image_upload",
             "crop_request_url": "test_image_crop",
-            "fetch_request_url": "test_images_fetch"
+            "fetch_url": "test_images_fetch"
         }
 
         field.widget = GalleryWidget(**kwargs)
@@ -299,8 +297,8 @@ class GalleryWidgetTest(SimpleTestCase):
         field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         kwargs = {
-            "upload_handler_url": "test_image_upload",
-            "fetch_request_url": "test_images_fetch"
+            "upload_url": "test_image_upload",
+            "fetch_url": "test_images_fetch"
         }
 
         invalid_url_name = "invalid-url-name"
@@ -315,8 +313,8 @@ class GalleryWidgetTest(SimpleTestCase):
                     self._render_widget(field.widget, "field", "")
 
                 expected_error_str = (
-                        "'%s' is invalid: %s is neither a valid url "
-                        "nor a valid url name." % (k, invalid_url_name)
+                        "'%s' is invalid: %s is neither a valid URL "
+                        "nor a valid URL name." % (k, invalid_url_name)
                 )
 
                 self.assertIn(
@@ -445,7 +443,7 @@ class GalleryWidgetTestExtra(TestCase):
         self.user = factories.UserFactory()
         super().setUp()
 
-    def test_no_fetch_request_url(self):
+    def test_no_fetch_url(self):
         gallery_obj = factories.DemoGalleryFactory.create(
             creator=self.user, number_of_images=5, shuffle=True)
         pks = list(gallery_obj.images)
@@ -457,8 +455,8 @@ class GalleryWidgetTestExtra(TestCase):
         self.assertIn(rendered_js_content, form.as_table())
         self.assertIn(rendered_js_instance_data, form.as_table())
 
-        # now we set fetch_request_url=None to the widget
-        form.fields["images"].widget.fetch_request_url = None
+        # now we set fetch_url=None to the widget
+        form.fields["images"].widget.fetch_url = None
 
         self.assertNotIn(rendered_js_content, form.as_table())
         self.assertNotIn(rendered_js_instance_data, form.as_table())

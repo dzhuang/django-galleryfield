@@ -12,7 +12,7 @@ The ``GalleryWidget`` class
    with ``galleryfield.BuiltInGalleryImage``, the widget instance will
    automatically use URL names ``builtingalleryimage-upload``
    ``builtingalleryimage-fetch`` and ``builtingalleryimage-crop`` for
-   :attr:`upload_handler_url`, :attr:`fetch_request_url` and :attr:`crop_request_url`,
+   :attr:`upload_url`, :attr:`fetch_url` and :attr:`crop_request_url`,
    respectively.
 
 The url params can be assigned after the formfield is initialized. For example:
@@ -26,7 +26,7 @@ The url params can be assigned after the formfield is initialized. For example:
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            self.fields["images"].widget.upload_handler_url = "my-upload-handler"
+            self.fields["images"].widget.upload_url = "my-upload-handler"
 
 The validity of the url params will be checked during rendering.
 

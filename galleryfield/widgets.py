@@ -12,22 +12,22 @@ from galleryfield.utils import (convert_dict_to_plain_text,
 class GalleryWidget(forms.HiddenInput):
     """This is the default widget used by :class:`galleryfield.fields.GalleryFormField`.
 
-    :param upload_handler_url: An URL name or an url of the upload handler
+    :param upload_url: An URL name or an URL of the upload handler
            view used by the widget instance, defaults to `None`. If `None`, 
            upload ui won't show upload buttons. When the parent 
            :class:`galleryfield.fields.GalleryFormField` is used by
-           a :class:`galleryfield.fields.GalleryField`, that url will be auto-configured,
+           a :class:`galleryfield.fields.GalleryField`, that URL will be auto-configured,
            with the value in the form of ``model_name-upload`` in lower case.
            For example, if ``target_model`` is ``myapp.MyImageModel``, then
-           the `upload_handler_url` is auto-configured to ``myimagemodel-upload``.
+           the `upload_url` is auto-configured to ``myimagemodel-upload``.
            You need to make sure you had that URL name in your URL_CONF and 
            related views exists.
-    :type upload_handler_url: str, optional
-    :param fetch_request_url: An URL name or an url for fetching the existing
+    :type upload_url: str, optional
+    :param fetch_url: An URL name or an URL for fetching the existing
            images in the gallery instance, defaults to `None`. If `None`, 
-           upload ui won't load existing images. Like ``upload_handler_url``,
+           upload ui won't load existing images. Like ``upload_url``,
            this param will be auto-configured in the form of ``model_name-fetch``.
-    :type fetch_request_url: str, optional
+    :type fetch_url: str, optional
     :param multiple: Whether allow to select multiple image files in the 
            file picker.
     :type multiple: bool, optional
@@ -62,7 +62,7 @@ class GalleryWidget(forms.HiddenInput):
     :type jquery_file_upload_ui_options: dict, optional
     :param disable_fetch: Whether disable fetching existing images of the
            form instance (if any), defaults to `False`. If True, the validity of
-           ``fetch_request_url`` will not be checked.
+           ``fetch_url`` will not be checked.
     :type disable_fetch: bool, optional
     :param disable_server_side_crop: Whether disable server side cropping of 
            uploaded images, defaults to `False`. If True, the validity of
@@ -73,8 +73,8 @@ class GalleryWidget(forms.HiddenInput):
 
     def __init__(
             self,
-            upload_handler_url=None,
-            fetch_request_url=None,
+            upload_url=None,
+            fetch_url=None,
             multiple=True,
             thumbnail_size=conf.DEFAULT_THUMBNAIL_SIZE,
             template="galleryfield/widget.html",
@@ -93,10 +93,10 @@ class GalleryWidget(forms.HiddenInput):
         self.disable_fetch = disable_fetch
         self.disable_server_side_crop = disable_server_side_crop
 
-        self.upload_handler_url = upload_handler_url
+        self.upload_url = upload_url
 
-        self.fetch_request_url = (
-            None if disable_fetch else fetch_request_url)
+        self.fetch_url = (
+            None if disable_fetch else fetch_url)
 
         self.jquery_file_upload_ui_options = jquery_file_upload_ui_options or {}
 
@@ -161,31 +161,31 @@ class GalleryWidget(forms.HiddenInput):
         self._jquery_file_upload_ui_options = ju_settings
 
     def set_and_check_urls(self):
-        # We now then the url names into an actual url, that
+        # We now then the URL names into an actual URL, that
         # can't be down in __init__ because url_conf is not
         # loaded when doing the system check, and will result
         # in failure to start.
         try:
-            self.upload_handler_url = get_url_from_str(
-                    self.upload_handler_url, require_urlconf_ready=True)
+            self.upload_url = get_url_from_str(
+                    self.upload_url, require_urlconf_ready=True)
         except Exception:
             raise ImproperlyConfigured(
-                "'upload_handler_url' is invalid: %s is neither "
-                "a valid url nor a valid url name."
-                % self.upload_handler_url)
+                "'upload_url' is invalid: %s is neither "
+                "a valid URL nor a valid URL name."
+                % self.upload_url)
 
         if self.disable_fetch:
-            self.fetch_request_url = None
+            self.fetch_url = None
         else:
             try:
-                self.fetch_request_url = get_url_from_str(
-                        self.fetch_request_url, require_urlconf_ready=True)
+                self.fetch_url = get_url_from_str(
+                        self.fetch_url, require_urlconf_ready=True)
 
             except Exception:
                 raise ImproperlyConfigured(
-                    "'fetch_request_url' is invalid: %s is neither "
-                    "a valid url nor a valid url name."
-                    % self.fetch_request_url)
+                    "'fetch_url' is invalid: %s is neither "
+                    "a valid URL nor a valid URL name."
+                    % self.fetch_url)
 
         # In the following we validate update the urls from url names (if it is
         # not an url) and check the potential conflicts of init params
@@ -212,25 +212,25 @@ class GalleryWidget(forms.HiddenInput):
             return
 
         conflict_config = []
-        upload_handler_url_is_default = (
-            self.upload_handler_url
-            == get_url_from_str(defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME,
+        upload_url_is_default = (
+            self.upload_url
+            == get_url_from_str(defaults.DEFAULT_UPLOAD_URL_NAME,
                                 require_urlconf_ready=True))
 
-        if upload_handler_url_is_default:
+        if upload_url_is_default:
             conflict_config.append(
-                {"param": "upload_handler_url",
-                 "value": self.upload_handler_url})
+                {"param": "upload_url",
+                 "value": self.upload_url})
 
-        if self.fetch_request_url:
-            fetch_request_url_is_default = (
-                self.fetch_request_url
+        if self.fetch_url:
+            fetch_url_is_default = (
+                self.fetch_url
                 == get_url_from_str(defaults.DEFAULT_FETCH_URL_NAME,
                                     require_urlconf_ready=True))
-            if fetch_request_url_is_default:
+            if fetch_url_is_default:
                 conflict_config.append(
-                    {"param": "fetch_request_url",
-                     "value": self.fetch_request_url})
+                    {"param": "fetch_url",
+                     "value": self.fetch_url})
 
         if not conflict_config:
             return
@@ -319,7 +319,7 @@ class GalleryWidget(forms.HiddenInput):
         # Do not fill in empty value to hidden inputs
         if value:
             context["pks"] = json.loads(value)
-            context["fetch_request_url"] = self.fetch_request_url
+            context["fetch_url"] = self.fetch_url
 
         _context = self.get_context(name, value, attrs)
 
@@ -328,7 +328,7 @@ class GalleryWidget(forms.HiddenInput):
             context["uploader_disabled"] = True
         else:
             context.update({
-                "upload_handler_url": self.upload_handler_url,
+                "upload_url": self.upload_url,
                 "accepted_mime_types": self.options["accepted_mime_types"],
                 "disable_server_side_crop": self.disable_server_side_crop
             })

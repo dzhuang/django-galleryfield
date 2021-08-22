@@ -40,7 +40,7 @@ class ViewTestMixin(UserCreateMixin):
 
     @staticmethod
     def get_demo_upload_url():
-        return reverse(defaults.DEFAULT_UPLOAD_HANDLER_URL_NAME)
+        return reverse(defaults.DEFAULT_UPLOAD_URL_NAME)
 
     @staticmethod
     def get_demo_fetch_url(params=None):
@@ -462,8 +462,8 @@ class GalleryWidgetFetchViewTest(ViewTestMixin, TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_cbv_crop_url_conflict(self):
-        # target_model not built-in while crop url name is
-        # using built-in crop url name
+        # target_model not built-in while crop URL name is
+        # using crop url name of built-in image model
         gallery = factories.DemoGalleryFactory.create(
             creator=self.user, number_of_images=5,
             shuffle=True)

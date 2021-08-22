@@ -22,7 +22,7 @@
 
     {{ input_string }}
 
-    {% if not uploader_disabled and upload_handler_url %}
+    {% if not uploader_disabled and upload_url %}
     {% block UPLOAD_FORM_BUTTON_BAR %}
     <div class="row fileupload-buttonbar">
     {% comment %}
@@ -64,7 +64,7 @@
                     {% if accepted_mime_types %}
                         accept = '{{ accepted_mime_types|join:"," }}'
                     {% endif %}
-                    data-action="{{ upload_handler_url }}"
+                    data-action="{{ upload_url }}"
 
                    {% if uploader_disabled %}disabled{% endif %}
                 >
@@ -334,12 +334,12 @@
                 },
             });
 
-            {% if pks and fetch_request_url %}
+            {% if pks and fetch_url %}
                 {# Do not remove the comment below, we are using it for tests. #}
                 // fetching existing images
                 $fileupload.find(".hiddeninput").addClass("initializing");
                 $.ajax({
-                    url: "{{ fetch_request_url }}",
+                    url: "{{ fetch_url }}",
                     dataType: 'json',
                     data: {"pks": encodeURIComponent(JSON.stringify({{pks}}))},
                     context: $fileupload[0]
@@ -360,7 +360,7 @@
         });
 </script>
 
-{% if not uploader_disabled and upload_handler_url %}
+{% if not uploader_disabled and upload_url %}
 <script>
 {# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
 {# https://blog.csdn.net/candy_home/article/details/74440519 #}

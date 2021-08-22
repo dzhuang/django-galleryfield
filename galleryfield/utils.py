@@ -196,7 +196,7 @@ def get_url_from_str(url_str, require_urlconf_ready=False):
      Ref: https://docs.djangoproject.com/en/dev/ref/urlresolvers/#reverse-lazy
      And that means wen url_str will only be evaluated and validate
      before requests.
-    :return: an url string or a lazy reverse object
+    :return: an URL string or a lazy reverse object
     """
     if not url_str:
         return None
@@ -209,7 +209,7 @@ def get_url_from_str(url_str, require_urlconf_ready=False):
             return reverse(url_str)
         except NoReverseMatch:
             raise ImproperlyConfigured(
-                "'%s' is neither a valid url nor a valid url name" % url_str)
+                "'%s' is neither a valid URL nor a valid URL name" % url_str)
     return url_str
 
 

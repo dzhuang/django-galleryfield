@@ -26,7 +26,7 @@ from galleryfield.utils import (get_formatted_thumbnail_size,
 class BaseImageModelMixin:
     """
     :attr:`target_model`: A valid target image model used by the view.
-    :attr:`crop_url_name`: str, An URL name or an url for handling server side
+    :attr:`crop_url_name`: str, An URL name or an URL for handling server side
        cropping of uploaded images, if configured None, it will used the value
        in the form of ``model_name-crop`` in lower case, where the modelname is
        the second part of ``self.target_model``. For example, if

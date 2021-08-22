@@ -113,7 +113,7 @@ following a naming rules for those views in ``URL_CONF``.
 The default url names are the lower cased model_name, suffixed by ``-upload``, ``-fetch`` and ``-crop``,
 respectively. For example, if you have a ``target_model`` named ``my_app.MyImage``, then the default
 url names are ``myimage-upload``, ``myimage-fetch`` and ``myimage-crop``. In this way, you don't
-need to specify in the ``GalleryWidget`` the param ``upload_handler_url`` and ``fetch_request_url``,
+need to specify in the ``GalleryWidget`` the param ``upload_url`` and ``fetch_url``,
 and no need to specify the ``crop_url_name`` in each of the 3 class-based views.
 
 Until now, we were talking about image model instance handling.

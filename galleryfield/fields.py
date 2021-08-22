@@ -127,7 +127,7 @@ class GalleryField(models.JSONField):
 
             # The following 2 params will be passed to GalleryWidget
             # to check if there're potential conflicts between
-            # target_model and upload_handler_url and fetch_request_url.
+            # target_model and upload_url and fetch_url.
             # see GalleryWidget.set_and_check_urls()
             "target_model": self.target_model,
             "model_field": self.__class__.__name__
@@ -233,31 +233,31 @@ class GalleryFormField(forms.JSONField):
         if not isinstance(self.widget, GalleryWidget):
             return
 
-        # We set the upload_handler_url and fetch_request_url
+        # We set the upload_url and fetch_url
         # when the widget didn't specify them.
-        self._set_widget_upload_handler_url()
-        self._set_widget_fetch_request_url()
+        self._set_widget_upload_url()
+        self._set_widget_fetch_url()
 
     @property
     def _target_model_name(self):
         return self._image_model.split(".")[-1]
 
-    def _set_widget_upload_handler_url(self):
-        if self.widget.upload_handler_url:
+    def _set_widget_upload_url(self):
+        if self.widget.upload_url:
             return
 
-        # Here we required a target_model should have a upload_handler_url
+        # Here we required a target_model should have a upload_url
         # name in url_conf in the form of modelname-upload in lower case
-        self.widget.upload_handler_url = (
+        self.widget.upload_url = (
                 "%s-upload" % self._target_model_name.lower())
 
-    def _set_widget_fetch_request_url(self):
-        if self.widget.disable_fetch or self.widget.fetch_request_url:
+    def _set_widget_fetch_url(self):
+        if self.widget.disable_fetch or self.widget.fetch_url:
             return
 
-        # Here we required a target_model should have a fetch_request_url
+        # Here we required a target_model should have a fetch_url
         # name in url_conf in the form of modelname-fetch in lower case
-        self.widget.fetch_request_url = (
+        self.widget.fetch_url = (
                 "%s-fetch" % self._target_model_name.lower())
 
     @property
