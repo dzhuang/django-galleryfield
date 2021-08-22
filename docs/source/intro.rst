@@ -58,7 +58,7 @@ Limitations
 
 - Currently, no actual delete of image model instance will be done through the web UI.
   However, as each image saved as an image model instance, we propose a workaround
-  strategy to identify and delete the `orphan` images instances (see in FAQ).
+  strategy to identify and delete the `orphaned` images instances (see in FAQ).
 
 - There's no direct way to add an image in a gallery to another gallery through the web
   UI, although the data models allow doing so.
@@ -100,3 +100,7 @@ Please correct me if I am wrong.
 - `django-upload-form <https://github.com/morlandi/django-upload-form>`_
    It solved the problem of uploading multiple images from the frontend via a form.
    But the form is handling images, not the collection of images.
+
+- `django-imaging <https://github.com/pielgrzym/django-imaging>`_
+   It also introduced a new type of field called ``ImagingField``, however, it doesn't
+   support more than one ``ImagingField`` per model.

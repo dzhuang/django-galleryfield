@@ -17,7 +17,7 @@ field is needed because that's the basis for the server to determine the
 whether requested users are qualified to modify or potentially delete existing
 image instances.
 
-Further, If you look into ``galleryfield.urls`` and ``galleryfield.views``,
+Further, If you look into ``galleryfield.urls`` and ``galleryfield.image_views``,
 you will see 3 class-based views:
 
 - :class:`galleryfield.image_views.BuiltInImageCreateView` for uploading images,

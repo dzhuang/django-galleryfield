@@ -13,23 +13,26 @@ class GalleryWidget(forms.HiddenInput):
     """This is the default widget used by :class:`galleryfield.fields.GalleryFormField`.
 
     :param upload_url: An URL name or an URL of the upload handler
-           view used by the widget instance, defaults to `None`. If `None`, 
-           upload ui won't show upload buttons. When the parent 
+           view used by the widget instance, defaults to `None`.
+           When not set, this param will be auto-configured if the parent
            :class:`galleryfield.fields.GalleryFormField` is used by
-           a :class:`galleryfield.fields.GalleryField`, that URL will be auto-configured,
-           with the value in the form of ``model_name-upload`` in lower case.
-           For example, if ``target_model`` is ``myapp.MyImageModel``, then
-           the `upload_url` is auto-configured to ``myimagemodel-upload``.
-           You need to make sure you had that URL name in your URL_CONF and 
-           related views exists.
+           a :class:`galleryfield.fields.GalleryField`, and the value will follow
+           the :ref:`naming rule <image_handling_url_naming_rule>`. 
+           The value can also be `None` if set explicitly by::
+           
+               self.fields["images"].widget.upload_url = None
+
+           In this case, upload ui won't show upload buttons.
     :type upload_url: str, optional
     :param fetch_url: An URL name or an URL for fetching the existing
-           images in the gallery instance, defaults to `None`. If `None`, 
-           upload ui won't load existing images. Like ``upload_url``,
-           this param will be auto-configured in the form of ``model_name-fetch``.
+           images in the gallery instance, defaults to `None`.
+           When not set, this param will be auto-configured if the parent
+           :class:`galleryfield.fields.GalleryFormField` is used by
+           a :class:`galleryfield.fields.GalleryField`, the value wil. follow
+           the :ref:`naming rule <image_handling_url_naming_rule>`.
     :type fetch_url: str, optional
     :param multiple: Whether allow to select multiple image files in the 
-           file picker.
+           file picker. Defaults to ``True``.
     :type multiple: bool, optional
     :param thumbnail_size: The thumbnail size (both width and height), defaults 
            to ``defaults.DEFAULT_THUMBNAIL_SIZE``, which can be overridden by
@@ -39,7 +42,7 @@ class GalleryWidget(forms.HiddenInput):
     :param template: The path of template which is used to render the widget.
            defaults to ``galleryfield/widget.html``, which support template 
            inheritance.
-    :type template: str, optional     
+    :type template: str, optional
     :param attrs: Html attribute when rendering the field (Which is a 
            :class:`django.forms.HiddenInput`), defaults to `None`. See 
            `Django docs <https://docs.djangoproject.com/en/dev/ref/forms/widgets/#django.forms.Widget.attrs>`_.
@@ -51,22 +54,14 @@ class GalleryWidget(forms.HiddenInput):
     :type options: dict, optional
     :param jquery_file_upload_ui_options: The default template is using 
            blueimp/jQuery-File-Upload package to render the ui and dealing with
-           AJAX upload. This param can be used to set the options. See
-           `jQuery-File-Upload Wiki <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`_
-           for all the available options. The default options can be 
-           seen in ``defaults.GALLERY_WIDGET_UI_DEFAULT_OPTIONS``. Notice that
-           ``maxNumberOfFiles`` is overridden by the ``max_number_of_images`` param
-           when initializing :class:`galleryfield.fields.GalleryFormField`, and
-           ``previewMaxWidth`` and ``previewMaxHeight`` are overridden by
-           param ``thumbnail_size``.
+           AJAX upload. See :setting:`jquery_file_upload_ui_options` for more information.
     :type jquery_file_upload_ui_options: dict, optional
     :param disable_fetch: Whether disable fetching existing images of the
            form instance (if any), defaults to `False`. If True, the validity of
            ``fetch_url`` will not be checked.
     :type disable_fetch: bool, optional
     :param disable_server_side_crop: Whether disable server side cropping of 
-           uploaded images, defaults to `False`. If True, the validity of
-           ``crop_request_url`` will not be checked.
+           uploaded images, defaults to `False`.
     :type disable_server_side_crop: bool, optional
     
     """  # noqa

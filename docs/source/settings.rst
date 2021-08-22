@@ -117,6 +117,8 @@ For quality, please refer to
 `sorl.thumbnail <https://github.com/jazzband/sorl-thumbnail>`_.
 
 
+.. setting:: jquery_file_upload_ui_options
+
 jquery_file_upload_ui_options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The default value is listed in ``galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS``.
@@ -133,6 +135,8 @@ for the details and more options.
 .. warning::
    Options ``previewMaxWidth`` and ``previewMaxHeight`` were ignored in favor of
    :setting:`thumbnail settings <settings_thumbnails>`.
+   Option ``maxNumberOfFiles`` will be ignored and should be configured in the formfield.
+   See example in :class:`galleryfield.fields.GalleryFormField`.
    Options ``fileInput``, ``paramName`` and ``singleFileUploads`` were also
    ignored (overridden).
 

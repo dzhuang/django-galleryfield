@@ -1,5 +1,8 @@
+MISC
+======
+
 Credits
-===============
+**********
 
 -  `jQuery File
    Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`_
@@ -14,7 +17,7 @@ Beside that, some of the ideas/code are inspired by `Django-jfu <https://github.
 
 
 FAQs
-===============
+**********
 - Q: Why there isn't a delete view for image in the widget?
 
 - A: Image upload behavior is much more complex than generic form views. Actually, the `jQuery File Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`__ has a     working delete button, but we changed its behavior to just an UI behavior, considered the following situations:
@@ -27,24 +30,25 @@ FAQs
   and the gallery model won't be updated. However, since all the image instances has been deleted, the form will then display broken images
   after reloading.
 
+  Further more, when an image presents in different galleries/albums, deletion of the image from one gallery via the widget
+  will make it a broken image when navigating other galleries contains it.
+
   To avoid such situations, our suggestion is not to provide a delete view, but a strategy to identify orphan image model instances, and
   delete them with a cron task: trying to create an M2M connection between the image models and the gallery models.
   Through ``post-save`` signals of the gallery model, we are able to update the M2M relationship
   between all image model instance and related gallery model instances. In this way, image model instances which were not
-  involved in any M2M relationship can be identified as what we called ``orphans``, the deletion of which are accurate and easy.
+  involved in any M2M relationship can be identified as what we called ``orphaned`` images, the deletion of which are accurate and easy.
 
 
 TODOs
-===============
+**********
 
--  Detailed Documentation
--  More demos
+-  More detailed Documentation with more demos
 -  Gif not client side croppable (don't show crop button)
--  Full tests
 -  Scale large images in crop UI
 
 Known issues
-===============
+********************
 
 -  Currently, it's hard (although not impossible) to used the widget in a Non-model formfield.
 -  Css rendering of buttons in Admin.
@@ -53,5 +57,5 @@ Known issues
 
 
 License
-===============
+**********
 Released under the `MIT license <https://opensource.org/licenses/MIT>`__.
