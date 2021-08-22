@@ -10,9 +10,9 @@ django-galleryfield
 .. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
    :target: https://pycqa.github.io/isort/
 
-Django AJAX form widgets and model fields for multiple images upload with progress bar. This package is **NOT** about
-how to elegantly render multiple images in a page, but how to CRUD multiple images in a model field, which makes
-it possible for easy permission control.
+Django model fields ``GalleryField`` with AJAX form widgets and for multiple images upload with progress bar.
+This package is **NOT** about how to elegantly render multiple images in a page, but how to CRUD multiple
+images in a model field, which makes it possible for easy permission control.
 
 
 Features
