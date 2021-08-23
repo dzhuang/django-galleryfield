@@ -2,7 +2,7 @@ import os
 
 from setuptools import find_packages, setup
 
-version = '1.2.7'
+import galleryfield
 
 
 def read(fname):
@@ -17,7 +17,7 @@ install_requires = [
 
 setup(
     name='django-galleryfield',
-    version=version,
+    version=galleryfield.__version__,
     description="Django AJAX upload widget and model field for multiple images, featuring drag & drop uploading, upload progress bar, sortable and croppable image gallery",
     long_description_content_type="text/x-rst",
     long_description=read('README.rst'),

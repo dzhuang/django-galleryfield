@@ -25,13 +25,16 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'demo.settings'
 django.setup()
 
 # -- Project information -----------------------------------------------------
+import galleryfield
 
 project = 'django-galleryfield'
 copyright = '2021, Dong Zhuang'
 author = 'Dong Zhuang'
 
+version = '.'.join(galleryfield.__version__.split('.')[:1])
+
 # The full version, including alpha/beta/rc tags
-release = '1.2.7-beta'
+release = galleryfield.__version__
 
 
 # -- General configuration ---------------------------------------------------
