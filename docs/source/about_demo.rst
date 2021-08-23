@@ -24,13 +24,13 @@ you will see 3 class-based views handling image instances:
 - :class:`galleryfield.image_views.BuiltInImageCreateView` for uploading images,
   requires login.
   Following the :ref:`naming rule <image_handling_url_naming_rule>`, The URL name is
-  ``builtingalleryimage-upload``.
+  ``galleryfield-builtingalleryimage-upload``.
 - :class:`galleryfield.image_views.BuiltInImageListView` for fetching existing images,
   restricted to the owner of the images or superuser, with URL name
-  ``builtingalleryimage-fetch``.
+  ``galleryfield-builtingalleryimage-fetch``.
 - and :class:`galleryfield.image_views.BuiltInImageCropView` for server side cropping
   of uploaded images, restricted to the owner of the images or superuser, with URL
-  name ``builtingalleryimage-crop``.
+  name ``galleryfield-builtingalleryimage-crop``.
 
 
 Handling the gallery

@@ -117,12 +117,12 @@ Alternatively, we can also let the widget infer what URLs it should use for thos
 following a naming rules for those views in ``URL_CONF``.
 
 For a valid image model, the default URL names for the image handling views are the lower cased
-``model_name``, suffixed by ``-upload``, ``-fetch`` and ``-crop``,
+``app_label-model_name``, suffixed by ``-upload``, ``-fetch`` and ``-crop``,
 respectively.
 
 For example, if you have a ``target_model`` named ``my_app.MyImage``, then the default
-URL names for the image handling views are ``myimage-upload``, ``myimage-fetch`` and
-``myimage-crop``. In this way, you don't need to specify in the ``GalleryWidget``
+URL names for the image handling views are ``my_app-myimage-upload``, ``my_app-myimage-fetch`` and
+``my_app-myimage-crop``. In this way, you don't need to specify in the ``GalleryWidget``
 the param ``upload_url`` and ``fetch_url``, and no need to specify the ``crop_url_name``
 in each of the 3 class-based views.
 

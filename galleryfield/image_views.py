@@ -97,7 +97,7 @@ class ImageCropView(BaseCropViewMixin, UpdateView):
 
 class BuiltInImageCreateView(ImageCreateView):
     target_model = "galleryfield.BuiltInGalleryImage"
-    crop_url_name = "builtingalleryimage-crop"  # This line can be commented
+    crop_url_name = "galleryfield-builtingalleryimage-crop"  # Can be omitted
     disable_server_side_crop = False
 
     def form_valid(self, form):
@@ -109,7 +109,7 @@ class BuiltInImageCreateView(ImageCreateView):
 
 class BuiltInImageListView(ImageListView):
     target_model = "galleryfield.BuiltInGalleryImage"
-    crop_url_name = "builtingalleryimage-crop"  # This line can be commented
+    crop_url_name = "galleryfield-builtingalleryimage-crop"  # Can be omitted
     disable_server_side_crop = False
 
     def get_queryset(self):
@@ -121,7 +121,7 @@ class BuiltInImageListView(ImageListView):
 
 class BuiltInImageCropView(ImageCropView):
     target_model = "galleryfield.BuiltInGalleryImage"
-    crop_url_name = "builtingalleryimage-crop"  # This line can be commented
+    crop_url_name = "galleryfield-builtingalleryimage-crop"  # Can be commented
     disable_server_side_crop = False
 
     def get_object(self, queryset=None):
