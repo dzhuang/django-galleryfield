@@ -31,8 +31,10 @@ class MaxNumberOfImageValidator(BaseValidator):
 
 class GalleryDescriptor(DeferredAttribute):
     """
-    Used django.db.models.fields.files.FileDescriptor as an example.
+    A collections of pks of image model instances
     """
+
+    # Used django.db.models.fields.files.FileDescriptor as an example.
 
     def __set__(self, instance, value):
         instance.__dict__[self.field.attname] = value
@@ -86,6 +88,8 @@ class GalleryField(models.JSONField):
 
     attr_class = GalleryImages
     descriptor_class = GalleryDescriptor
+
+    description = "A collections pks of Image"
 
     def contribute_to_class(self, cls, name, private_only=False):
         super().contribute_to_class(cls, name, private_only)

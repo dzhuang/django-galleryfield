@@ -15,29 +15,34 @@ This package can be views a Django package which tries to fully utilize `jQuery 
 Beside that, some of the ideas/code are inspired by `Django-jfu <https://github.com/Alem/django-jfu>`_ and `Django-files-widget <https://github.com/TND/django-files-widget>`_.
 
 
+.. _faq:
 
 FAQs
 **********
 - Q: Why there isn't a delete view for image in the widget?
 
-- A: Image upload behavior is much more complex than generic form views. Actually, the `jQuery File Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`__ has a     working delete button, but we changed its behavior to just an UI behavior, considered the following situations:
+- A: Image upload behavior is much more complex than generic form views. Actually, the `jQuery File Upload <https://github.com/blueimp/jQuery-File-Upload/wiki/Options>`_
+  has a working delete button, but we changed it to an UI behavior of remove an instance from the gallery (no physical deletion),
+  considered the following situations:
 
-  For a simpler case, when a user navigate away before saving the pks of the images they have just uploaded,
-  it's almost impossible to delete those images from client side.
+  - For the simplest case, when a user navigate away before saving the gallery they have just uploaded,
+    it's almost impossible to delete those images from client side.
 
-  Another situations happens when a gallery field is a required field. If there exists a delete view, when a user tries to delete ALL
-  the images he/she had previously saved, from the ui, and then he/she submit the form. Undoubtedly, the form will raise an invalid error,
-  and the gallery model won't be updated. However, since all the image instances has been deleted, the form will then display broken images
-  after reloading.
+  - Another situations happens when a gallery field is a required field. If there exists a delete view for the image instance,
+    when a user tries to delete ALL the images he/she had previously saved, from the UI, and then he/she submit the form.
+    Undoubtedly, the form will raise an invalid error, and the ``GalleryField`` of the gallery instance won't get updated.
+    However, since all the image instances have been deleted before form submission,
+    the form will then display broken images after reloading.
 
-  Further more, when an image presents in different galleries/albums, deletion of the image from one gallery via the widget
-  will make it a broken image when navigating other galleries contains it.
+  - When an image presents in different galleries/albums, deletion of the image from one gallery
+    will make it a broken image when view other galleries which contain it.
 
-  To avoid such situations, our suggestion is not to provide a delete view, but a strategy to identify orphan image model instances, and
-  delete them with a cron task: trying to create an M2M connection between the image models and the gallery models.
-  Through ``post-save`` signals of the gallery model, we are able to update the M2M relationship
-  between all image model instance and related gallery model instances. In this way, image model instances which were not
-  involved in any M2M relationship can be identified as what we called ``orphaned`` images, the deletion of which are accurate and easy.
+  To avoid such situations, our suggestion is not to provide a delete view,
+  but a strategy to identify ``orphaned`` image model instances, and
+  delete them with a cron task: create an ``M2M`` relationship between the image models and the
+  gallery models. Through ``post-save`` signals of the gallery model, we are able to update the ``M2M`` relationship
+  between all image model instances and related gallery model instances. In this way, image model instances which were not
+  involved in any ``M2M`` relationship can be identified as ``orphaned`` images, the deletion of which are accurate and easy.
 
 
 TODOs

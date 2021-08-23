@@ -13,29 +13,32 @@ Image model and views
 ----------------------
 
 Until now, Django didn't supply any type of `Field` which can store unknown
-length of images or files. However, the introduction of ``JsonField``
-(since Django 3) made it possible workaround the issue by storing the ``pk``
-of image model instances as a Json list in a custom ``JsonField``.
+length of images or files. However, the introduction of :class:`JsonField`
+(in Django 3) made it possible workaround the issue by storing the ``pks``
+of image model instances as a Json list in a customized :class:`JsonField`.
+That's the :class:`galleryfield.fields.GalleryField`.
 
-The first obstacle we met is: how to map the ``pks`` to the actual image model instances?
-Our workaround is saving the
+To facilitate the access of image model instances, we need to map the ``pks``
+to the actual image model instances. So, we introduced an optional :class:`string`
+param ``target_model``, the
 `app_label.model_name <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_
-of the image model (which we called ``target_model`` throughout the app and docs)
-in :class:`galleryfield.fields.GalleryField`.
+of the image model, defaults to ``garlleryfield.BuiltInGalleryImage``.
 
-Following that, there should be three basic views to handle image model instances,
-before saving their ``pks`` to the ``GalleryField``:
-Create (which we called **upload** operation),
-List (which we called **fetch** operation)
-and Update (which we mean **crop** operation).
-The potential problems include: users will have to write 3 image handling views each time when
-a new ``target_model`` is introduced for a new type of gallery/album,
-is there any shortcut that we don't need to write much code to achieve that?
-And, can a image model automatically know what default url name they should look for
-(to find the views) when trying to do the 3 operations?
-We finally introduced a class-based views for each operation, and
-set a :ref:`naming rule <image_handling_url_naming_rule>` for the naming of the url names
-for the 3 operations.
+Following that, there should be three basic views to handle image model instances:
+Create (the **upload** operation), List (the **fetch** operation)
+and Update (the **crop** operation).
+
+The next problem is, when customizing, image models varies because
+they can have more fields besides an :class:`ImageField` and an :class:`User` field,
+e.g., a :class:`DatetimeField` to store the upload time of the image.
+And, we will never being able to know how other developers will name those fields.
+Inevitably, developers will have to write those 3 views for their ``target_models``.
+Moreover, the widget should be able to know where to find those views, i.e.,
+it need to know the URLs of those views.
+
+To solve the problems, We finally introduced a class-based views for
+each operation, and specified a :ref:`naming rule <image_handling_url_naming_rule>`
+for the URL names of the 3 views for a ``target_model``.
 
 Therefore, a model level customization (for image model) involves:
 
@@ -75,7 +78,7 @@ it need to meet one of the following 2 requirements:
    object instead of a :class:`django.db.models.ImageField` object.
 
 The :class:`galleryfield.models.BuiltInGalleryImage` is using the first style (
-with ``target_model="garllery_widget.BuiltInGalleryImage"``).
+with ``target_model="garlleryfield.BuiltInGalleryImage"``).
 However, if you don't want to do much change to your existing models
 (e.g., avoiding migrations of existing model),
 the second style is more sounding.
@@ -107,14 +110,21 @@ Naming rule for urls of image handling views
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generally, the widget need to know the urls for image handling views (see :ref:`GalleryWidget docs <widget_docs>`).
-We may specify the url name manually in gallery modelform fields widget configurations.
-Alternatively, we can also let the widget infer what urls it should use for those views, by
+We may specify the explicitly specify the URL names manually in the widget of gallery modelform
+fields. For example,
+
+Alternatively, we can also let the widget infer what URLs it should use for those views, by
 following a naming rules for those views in ``URL_CONF``.
-The default url names are the lower cased model_name, suffixed by ``-upload``, ``-fetch`` and ``-crop``,
-respectively. For example, if you have a ``target_model`` named ``my_app.MyImage``, then the default
-url names are ``myimage-upload``, ``myimage-fetch`` and ``myimage-crop``. In this way, you don't
-need to specify in the ``GalleryWidget`` the param ``upload_url`` and ``fetch_url``,
-and no need to specify the ``crop_url_name`` in each of the 3 class-based views.
+
+For a valid image model, the default URL names for the image handling views are the lower cased
+``model_name``, suffixed by ``-upload``, ``-fetch`` and ``-crop``,
+respectively.
+
+For example, if you have a ``target_model`` named ``my_app.MyImage``, then the default
+URL names for the image handling views are ``myimage-upload``, ``myimage-fetch`` and
+``myimage-crop``. In this way, you don't need to specify in the ``GalleryWidget``
+the param ``upload_url`` and ``fetch_url``, and no need to specify the ``crop_url_name``
+in each of the 3 class-based views.
 
 Until now, we were talking about image model instance handling.
 
@@ -128,7 +138,8 @@ Back to the demo, when dealing with the gallery model instance, there isn't much
 Here, we need to address :class:`demo.views.GalleryDetailView`, on how it rendering the
 :class:`galleryfield.fields.GalleryField`.
 
-With the ``MyImage`` in previous example as the ``target_model``, we can have a gallery model named ``MyGallery``:
+With ``my_app.MyImage`` in previous example as the ``target_model``,
+we can have a gallery model named ``MyGallery``:
 
 .. snippet:: python
    :filename: my_app/models.py
@@ -169,7 +180,7 @@ with the following code block:
     ...
 
 
-And add the url of the view:
+And add the URL of the view:
 
 .. snippet:: python
    :filename: my_app/urls.py

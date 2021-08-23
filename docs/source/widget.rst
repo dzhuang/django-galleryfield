@@ -11,24 +11,26 @@ The ``GalleryWidget`` class
 .. note:: When a :class:`galleryfield.fields.GalleryField` instance is initialized
    with ``galleryfield.BuiltInGalleryImage``, the widget instance will
    automatically use URL names ``builtingalleryimage-upload``
-   ``builtingalleryimage-fetch`` and ``builtingalleryimage-crop`` for
-   :attr:`upload_url`, :attr:`fetch_url` and :attr:`crop_request_url`,
+   ``builtingalleryimage-fetch`` for :attr:`upload_url`, :attr:`fetch_url`,
    respectively.
 
-The url params can be assigned after the formfield is initialized. For example:
+The URL params can be assigned after the formfield is initialized. For example:
 
-.. code-block:: python
+.. snippet:: python
+   :filename: my_app/forms.py
+
+    from my_app.models import MyGallery
 
     class MyGalleryForm(forms.ModelForm):
         class Meta:
             model = MyGallery
-            fields = ["images"]
+            fields = ["album"]
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            self.fields["images"].widget.upload_url = "my-upload-handler"
+            self.fields["album"].widget.upload_url = "/path/to/my-upload-handler"
 
-The validity of the url params will be checked during rendering.
+The validity of the URL params will be checked before rendering.
 
 .. warning:: You NEED to make sure all the urls in the widget are
    handling the corresponding :attr:`target_model` before put into
@@ -37,7 +39,7 @@ The validity of the url params will be checked during rendering.
    or a :class:`galleryfield.fields.GalleryFormField` instance, or image handling views
    ) is
    **NOT** initialized with ``galleryfield.BuiltInGalleryImage`` as the
-   :attr:`target_model`, assigning built-in urls (
+   :attr:`target_model`, assigning built-in URL names (
    i.e., ``builtingalleryimage-upload``, ``builtingalleryimage-fetch``)
    in widget params, or set ``builtingalleryimage-crop`` for `crop_url_name` in
    image handling views, :exc:`ImproperlyConfigured` will be raised
