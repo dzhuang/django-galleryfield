@@ -223,18 +223,18 @@ class GalleryWidgetTest(SimpleTestCase):
         field = GalleryFormField(target_model="tests.FakeValidImageModel")
 
         test_case = {
-            "builtingalleryimage-upload":
+            "galleryfield-builtingalleryimage-upload":
                 {"upload_url": "test_image_upload"},
-            "builtingalleryimage-crop":
+            "galleryfield-builtingalleryimage-crop":
                 {"crop_request_url": "test_image_crop"},
-            "builtingalleryimage-fetch":
+            "galleryfield-builtingalleryimage-fetch":
                 {"fetch_url": "test_images_fetch"}
         }
 
         default_urls = {
-            "upload_url": "builtingalleryimage-upload",
-            "crop_request_url": "builtingalleryimage-crop",
-            "fetch_url": "builtingalleryimage-fetch"
+            "upload_url": "galleryfield-builtingalleryimage-upload",
+            "crop_request_url": "galleryfield-builtingalleryimage-crop",
+            "fetch_url": "galleryfield-builtingalleryimage-fetch"
         }
 
         for default, kwargs in test_case.items():

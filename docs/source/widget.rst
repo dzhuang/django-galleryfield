@@ -10,8 +10,8 @@ The ``GalleryWidget`` class
 
 .. note:: When a :class:`galleryfield.fields.GalleryField` instance is initialized
    with ``galleryfield.BuiltInGalleryImage``, the widget instance will
-   automatically use URL names ``builtingalleryimage-upload``
-   ``builtingalleryimage-fetch`` for :attr:`upload_url`, :attr:`fetch_url`,
+   automatically use URL names ``galleryfield-builtingalleryimage-upload``
+   ``galleryfield-builtingalleryimage-fetch`` for :attr:`upload_url`, :attr:`fetch_url`,
    respectively.
 
 The URL params can be assigned after the formfield is initialized. For example:
@@ -40,8 +40,8 @@ The validity of the URL params will be checked before rendering.
    ) is
    **NOT** initialized with ``galleryfield.BuiltInGalleryImage`` as the
    :attr:`target_model`, assigning built-in URL names (
-   i.e., ``builtingalleryimage-upload``, ``builtingalleryimage-fetch``)
-   in widget params, or set ``builtingalleryimage-crop`` for `crop_url_name` in
+   i.e., ``galleryfield-builtingalleryimage-upload``, ``galleryfield-builtingalleryimage-fetch``)
+   in widget params, or set ``galleryfield-builtingalleryimage-crop`` for `crop_url_name` in
    image handling views, :exc:`ImproperlyConfigured` will be raised
    when rendering. The reason is, those built-in views are handling
    built-in :class:`galleryfield.models.BuiltInGalleryImage` instances.

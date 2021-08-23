@@ -28,10 +28,9 @@ class BaseImageModelMixin:
     :attr:`target_model`: A valid target image model used by the view.
     :attr:`crop_url_name`: str, An URL name or an URL for handling server side
        cropping of uploaded images, if configured None, it will used the value
-       in the form of ``model_name-crop`` in lower case, where the modelname is
-       the second part of ``self.target_model``. For example, if
+       in the form of ``app_label-model_name-crop`` in lower case. For example, if
        ``self.target_model`` is ``my_app.MyImage``, then the `crop_url_name`
-       is auto-configured to ``myimage-crop``. You need to make sure you
+       is auto-configured to ``my_app-myimage-crop``. You need to make sure you
        had that URL name in your URL_CONF and related views exists.
 
     :attr:`disable_server_side_crop`: bool, determining whether server side crop
@@ -71,8 +70,8 @@ class BaseImageModelMixin:
         if self.disable_server_side_crop:
             return
         if self.crop_url_name is None:
-            model_name = self.target_model.split(".")[-1].lower()
-            self.crop_url_name = "%s-crop" % model_name
+            app_model_name = "-".join(self.target_model.split(".")).lower()
+            self.crop_url_name = "%s-crop" % app_model_name
         try:
             reverse(self.crop_url_name, kwargs={"pk": 1})
         except Exception as e:
