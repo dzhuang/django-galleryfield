@@ -7,6 +7,10 @@ from galleryfield.fields import GalleryField
 
 
 class DemoGallery(models.Model):
+    """
+    The gallery model used in demo.
+
+    """
     images = GalleryField(verbose_name=_('Photos'), blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True,

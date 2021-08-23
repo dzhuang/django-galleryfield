@@ -4,8 +4,8 @@ Introduction
 In this Django reusable app, we introduced a model field :class:`galleryfield.fields.GalleryField`
 along with a corresponding formfield :class:`galleryfield.fields.GalleryFormField` and default
 widget :class:`galleryfield.widgets.GalleryWidget`. The model field
-make it easy for image management at a collection level (i.e., what we called gallery or album),
-while the widget make it easy to upload images via AJAX, allowing order the sequence arbitrarily,
+makes it easy for image management at a collection level (i.e., what we called gallery or album),
+while the widget makes it easy to upload images via AJAX, allowing order the sequence arbitrarily,
 and cropping images at both client and server side.
 
 Features
@@ -14,8 +14,8 @@ Features
 - A model field ``GalleryField``, and its formfield ``GalleryFormField`` along with the default
   widget ``GalleryWidget``.
 - Drag & drop file uploading via AJAX
+- Drag & drop ordering of images
 - Uploading multiple images with progress bar
-- Drag & drop reordering
 - Client / server side cropping (before/after upload).
 - Integrates with Django Admin
 - Admin user-proof, i.e., allowing non-staff user upload and manage gallery.
@@ -24,12 +24,12 @@ Features
 Motivation
 **********
 
-This package was created for some scenarios, when users were required to upload
-multiple images by a form, where the images can be **arbitrarily** ordered, and can
-be cropped before or after uploaded.
+This package was created for some scenarios, where users were required to upload
+multiple images by forms, and where the images can be **arbitrarily** ordered.
 
-For instance, students were required to upload limited number of hand-written photos on an
-CMS platform as assignments. That requires:
+The original intended use case is: a type of assignment which requires students
+to upload limited number of hand-written photos onto a Course Management Systems (CMS).
+That requires:
 
 -  Students can upload images through web UI (not Admin) and preview instantly.
 -  Students can order the uploaded images as they will, instead of upload time or file name.
@@ -53,12 +53,13 @@ Limitations
   field to save the information of the images, and that require write more views
   by users.
 
-- Kind of hard to use, for fresh developers in django, in terms of customization.
+- Compared to other Django apps, this app is relatively difficult to use, and it's
+  not friendly for new developers in Django, in terms of customization.
   We've tried hard to design some class-based views to make that easier.
 
-- Currently, no actual delete of image model instance will be done through the web UI.
-  However, as each image saved as an image model instance, we propose a workaround
-  strategy to identify and delete the `orphaned` images instances (see in FAQ).
+- Currently, no actual deletion of image model instance will be done through the web UI.
+  With each image saved as an image model instance, user need to
+  identify and delete the `orphaned` images instances (see our suggestion in :ref:`FAQ <faq>`).
 
 - There's no direct way to add an image in a gallery to another gallery through the web
   UI, although the data models allow doing so.
@@ -81,15 +82,13 @@ Please correct me if I am wrong.
 
 - `django-files-widget <https://github.com/TND/django-files-widget>`_
    In this app, images/files are managed and stored as :class:`string` objects,
-   which is actually the relative path of the files in the ``MEDIA_ROOT``. That means only a
-   few user with granted permissions can upload files to the server, or delete files uploaded
-   to the server. Moreover, its working logic need to conduct physical operations with image
+   which is actually the relative path of the files in the ``MEDIA_ROOT``.
+   Moreover, its working logic need to conduct physical operations with image
    files, which make it impossible to store the files on storage like S3.
 
    In django-galleryfield, images are stored in :class:`django.db.models.ImageField`, which
-   means we can store the images to various kind of storage (not just :class:`FileSystemStorage`),
-   and it possible for better permission management with regards to
-   who can CRUD which images through views, and that expand the use case of the widget.
+   means we can store the images to various kind of storage
+   (not just :class:`FileSystemStorage`).
 
 - `django-jfu <https://github.com/Alem/django-jfu>`_
    A good demo on how to use ``blueimp/jQuery-File-Upload`` widget in Django. However,
@@ -99,7 +98,8 @@ Please correct me if I am wrong.
 
 - `django-upload-form <https://github.com/morlandi/django-upload-form>`_
    It solved the problem of uploading multiple images from the frontend via a form.
-   But the form is handling images, not the collection of images.
+   But the form is expecting to handling individual images, not the collection of images
+   (gallery).
 
 - `django-imaging <https://github.com/pielgrzym/django-imaging>`_
    It also introduced a new type of field called ``ImagingField``, however, it doesn't

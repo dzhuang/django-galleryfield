@@ -18,12 +18,12 @@ Gallery-widget is compatible with Python 3 (3.6 or later were tested).
 
 Dependencies
 ~~~~~~~~~~~~~~~~
-Python dependencies include:
+Python dependencies:
 
 -  Django 3.1 or later
 -  `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`_ (auto installed)
 -  `pillow <https://github.com/python-imaging/Pillow>`_ (auto installed)
--  django-npm (for managing statics, you need to have ``npm`` installed in your OS)
+-  django-npm (optional, for managing statics, you need to have ``npm`` installed in your OS)
 
 Static dependencies:
 

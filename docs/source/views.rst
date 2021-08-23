@@ -17,7 +17,7 @@ User should subclass the following Class-based image handling base views for you
 .. |view_crop_url_name| replace::
 
     When :attr:`disable_server_side_crop` is False, if ``None`` or
-    an invalid url_name will raise an ``ImproperlyConfigured`` error.
+    an invalid URL name will raise an :exc:`ImproperlyConfigured` error.
 
 .. |view_disable_server_side_crop| replace::
 
