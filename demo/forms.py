@@ -11,7 +11,7 @@ class GalleryForm(forms.ModelForm):
         fields = ["images"]
 
         # Remove label
-        labels = {'images': ""}
+        labels = {"images": ""}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,5 +27,5 @@ class GalleryForm(forms.ModelForm):
 
         self.helper = FormHelper(self)
         self.helper.layout.append(
-            Submit("Submit", "submit",
-                   css_class="gallery-widget-submit-button"))
+            Submit("Submit", "submit", css_class="gallery-widget-submit-button")
+        )

@@ -32,8 +32,7 @@ class GalleryFieldTest(TestCase):
 
     def test_form_save(self):
         image = factories.BuiltInGalleryImageFactory(creator=self.user)
-        form = DemoTestGalleryModelForm(
-            data={"images": [image.pk]})
+        form = DemoTestGalleryModelForm(data={"images": [image.pk]})
         self.assertTrue(form.is_valid())
         form.save()
         self.assertEqual(DemoGallery.objects.count(), 1)
@@ -45,8 +44,7 @@ class GalleryFieldTest(TestCase):
         self.assertEqual(len(DemoGallery.objects.first().images), 1)
 
         form = DemoTestGalleryModelForm(
-            data={"images": instance.images + [image2.pk]},
-            instance=instance
+            data={"images": instance.images + [image2.pk]}, instance=instance
         )
         self.assertTrue(form.is_valid())
         form.save()
@@ -61,10 +59,7 @@ class GalleryFieldTest(TestCase):
         self.assertEqual(len(DemoGallery.objects.first().images), 1)
         image2 = factories.BuiltInGalleryImageFactory(creator=self.user)
 
-        form = DemoTestGalleryModelForm(
-            data={"images": [image2.pk]},
-            instance=instance
-        )
+        form = DemoTestGalleryModelForm(data={"images": [image2.pk]}, instance=instance)
         self.assertTrue(form.is_valid())
         form.save()
 
@@ -74,7 +69,7 @@ class GalleryFieldTest(TestCase):
 
     def test_form_save_null(self):
         form = DemoTestGalleryModelForm(
-            data={"images": ''},
+            data={"images": ""},
         )
         form.fields["images"].required = False
 
@@ -90,10 +85,7 @@ class GalleryFieldTest(TestCase):
         self.assertEqual(DemoGallery.objects.count(), 1)
         self.assertEqual(len(DemoGallery.objects.first().images), 1)
 
-        form = DemoTestGalleryModelForm(
-            data={"images": ''},
-            instance=instance
-        )
+        form = DemoTestGalleryModelForm(data={"images": ""}, instance=instance)
         form.fields["images"].required = False
 
         self.assertTrue(form.is_valid(), form.errors)
@@ -108,10 +100,7 @@ class GalleryFieldTest(TestCase):
         self.assertEqual(DemoGallery.objects.count(), 1)
         self.assertEqual(len(DemoGallery.objects.first().images), 1)
 
-        form = DemoTestGalleryModelForm(
-            data={"images": ''},
-            instance=instance
-        )
+        form = DemoTestGalleryModelForm(data={"images": ""}, instance=instance)
         form.fields["images"].required = True
 
         self.assertFalse(form.is_valid())
@@ -144,7 +133,7 @@ class GalleryFormFieldTest(TestCase):
     def test_gallery_form_field_clean_null_required(self):
         field = GalleryFormField(required=True)
         inputs = [
-            '',
+            "",
             [],
         ]
 
@@ -157,19 +146,14 @@ class GalleryFormFieldTest(TestCase):
 
     def test_gallery_form_field_clean_null_not_required(self):
         field = GalleryFormField(required=False)
-        inputs = [
-            '',
-            None,
-            'null',
-            []
-        ]
+        inputs = ["", None, "null", []]
 
         for data in inputs:
             with self.subTest(data=data):
                 self.assertIsNone(field.clean(data))
 
     def test_gallery_form_field_clean_invalid_image_json(self):
-        inputs = ['invalid-image']
+        inputs = ["invalid-image"]
         msg = "The submitted images are invalid."
 
         for required in [True, False]:
@@ -179,7 +163,7 @@ class GalleryFormFieldTest(TestCase):
                     field.clean(inputs)
 
     def test_gallery_form_field_clean_not_null_not_list(self):
-        input_str = 'invalid-image'
+        input_str = "invalid-image"
         msg = "The submitted images are invalid."
 
         for required in [True, False]:
@@ -190,7 +174,7 @@ class GalleryFormFieldTest(TestCase):
 
     def test_gallery_form_field_clean_disabled_invalid(self):
         field = GalleryFormField(disabled=True)
-        input_str = 'invalid-image'
+        input_str = "invalid-image"
         msg = "The submitted images are invalid."
 
         with self.assertRaisesMessage(ValidationError, msg):
@@ -198,13 +182,7 @@ class GalleryFormFieldTest(TestCase):
 
     def test_gallery_form_field_assign_max_number_of_images(self):
         field = GalleryFormField(required=False)
-        max_number_of_images_list = [
-            0,
-            "1",
-            "123",
-            1234,
-            None
-        ]
+        max_number_of_images_list = [0, "1", "123", 1234, None]
 
         for n in max_number_of_images_list:
             with self.subTest(max_number_of_images=n):
@@ -236,7 +214,8 @@ class GalleryFormFieldTest(TestCase):
         field.max_number_of_images = n
 
         images = factories.BuiltInGalleryImageFactory.create_batch(
-            size=2, creator=self.user)
+            size=2, creator=self.user
+        )
 
         msg = "Number of images exceeded, only %i allowed" % n
 
@@ -257,7 +236,8 @@ class GalleryFormFieldTest(TestCase):
         field.max_number_of_images = 0
 
         images = factories.BuiltInGalleryImageFactory.create_batch(
-            size=2, creator=self.user)
+            size=2, creator=self.user
+        )
 
         data = [images[0].pk, images[1].pk]
 
@@ -271,14 +251,16 @@ class GalleryFormFieldTest(TestCase):
         with self.assertRaises(ImproperlyConfigured):
             GalleryFormField(target_model="tests.FakeInvalidImageModel1")
 
-    @mock.patch('galleryfield.fields.logger.info')
+    @mock.patch("galleryfield.fields.logger.info")
     def test_gallery_form_field_target_image_model_configured_none(self, mock_log):
         GalleryFormField()
         self.assertEqual(mock_log.call_count, 1)
 
-    @mock.patch('galleryfield.fields.logger.info')
+    @mock.patch("galleryfield.fields.logger.info")
     @override_settings(SILENCED_SYSTEM_CHECKS=["gallery_form_field.I001"])
-    def test_gallery_form_field_target_image_model_configured_none_log_suppressed(self, mock_log):  # noqa
+    def test_gallery_form_field_target_image_model_configured_none_log_suppressed(
+        self, mock_log
+    ):  # noqa
         GalleryFormField()
         self.assertEqual(mock_log.call_count, 0)
 
@@ -287,7 +269,8 @@ class GalleryFormFieldTest(TestCase):
         field = GalleryFormField(
             target_model="tests.FakeValidImageModel",
             max_number_of_images=max_number_of_images,
-            required=False)
+            required=False,
+        )
         old_widget = field.widget
         self.assertEqual(old_widget.max_number_of_images, max_number_of_images)
 
@@ -317,12 +300,14 @@ class GalleryFormFieldTest(TestCase):
         form.fields["images"].widget = Textarea()
 
         self.assertEqual(
-            form.fields["images"].widget.max_number_of_images, max_n_of_images)
+            form.fields["images"].widget.max_number_of_images, max_n_of_images
+        )
 
     def test_gallery_form_field_textarea_widget_max_number_of_images_validate(self):
         # create a gallery with 5 images pk randomized
         my_gallery = factories.DemoGalleryFactory.create(
-            creator=self.user, number_of_images=5, shuffle=True)
+            creator=self.user, number_of_images=5, shuffle=True
+        )
 
         form = DemoTestGalleryModelForm(data={"images": my_gallery.images})
 
@@ -336,7 +321,8 @@ class GalleryFormFieldTest(TestCase):
     def test_gallery_form_field_textarea_widget_value_render(self):
         # create a gallery with 5 images pk randomized
         my_gallery = factories.DemoGalleryFactory.create(
-            creator=self.user, number_of_images=5, shuffle=True)
+            creator=self.user, number_of_images=5, shuffle=True
+        )
 
         form = DemoTestGalleryModelForm(instance=my_gallery)
 
@@ -346,7 +332,8 @@ class GalleryFormFieldTest(TestCase):
     def test_gallery_form_field_textarea_widget_value_sequence(self):
         # create a gallery with 5 images pk randomized
         my_gallery = factories.DemoGalleryFactory.create(
-            creator=self.user, number_of_images=5, shuffle=True)
+            creator=self.user, number_of_images=5, shuffle=True
+        )
 
         image_pks = my_gallery.images
         original_image_pks = image_pks[:]
@@ -364,7 +351,6 @@ class GalleryFormFieldTest(TestCase):
 
 class GalleryFieldCheckTest(TestCase):
     def test_field_checks_valid(self):
-
         class MyModel(models.Model):
             field = GalleryField(target_model="tests.FakeInvalidImageModel1")
 
@@ -375,7 +361,6 @@ class GalleryFieldCheckTest(TestCase):
 
     @isolate_apps("tests")
     def test_field_checks_use_default_target(self):
-
         class MyModel(models.Model):
             field = GalleryField()
 
@@ -386,7 +371,6 @@ class GalleryFieldCheckTest(TestCase):
 
     @isolate_apps("tests")
     def test_field_checks_use_invalid_target(self):
-
         class MyModel(models.Model):
             field = GalleryField(target_model="non-exist.model")
 
@@ -409,7 +393,6 @@ class GalleryFieldCheckTest(TestCase):
 
     @isolate_apps("tests")
     def test_field_checks_use_invalid_get_image_field_method(self):
-
         class MyModel(models.Model):
             field = GalleryField(target_model="tests.FakeInvalidImageModel5")
 
@@ -420,7 +403,6 @@ class GalleryFieldCheckTest(TestCase):
 
     @isolate_apps("tests")
     def test_field_checks_use_get_image_field_method_not_callable(self):
-
         class MyModel(models.Model):
             field = GalleryField(target_model="tests.FakeInvalidImageModel4")
 
@@ -431,7 +413,6 @@ class GalleryFieldCheckTest(TestCase):
 
     @isolate_apps("tests")
     def test_field_checks_use_get_image_field_method_not_imagefield(self):
-
         class MyModel(models.Model):
             field = GalleryField(target_model="tests.FakeInvalidImageModel3")
 
@@ -442,7 +423,7 @@ class GalleryFieldCheckTest(TestCase):
 
     @isolate_apps("tests")
     # Here we are not loading "demo", while use MyImageModel
-    @override_settings(INSTALLED_APPS=['galleryfield', 'tests'])
+    @override_settings(INSTALLED_APPS=["galleryfield", "tests"])
     def test_field_checks_app_not_in_installed_apps(self):
         class MyModel(models.Model):
             field = GalleryField("demo.MyImageModel")

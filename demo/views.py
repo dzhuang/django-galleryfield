@@ -11,8 +11,7 @@ from demo.models import DemoGallery
 class GalleryCreateView(LoginRequiredMixin, CreateView):
     form_class = GalleryForm
     template_name = "form.html"
-    extra_context = {
-        "form_description": "Create a new gallery"}
+    extra_context = {"form_description": "Create a new gallery"}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -38,12 +37,15 @@ class GalleryUpdateView(UserPassesTestMixin, LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context["form_description"] = "Update gallery"
         context["detail_view_url"] = reverse(
-            "gallery-detail", kwargs={"pk": self.object.pk})
+            "gallery-detail", kwargs={"pk": self.object.pk}
+        )
         return context
 
     def test_func(self):
-        return (self.request.user == self.get_object().owner
-                or self.request.user.is_superuser)
+        return (
+            self.request.user == self.get_object().owner
+            or self.request.user.is_superuser
+        )
 
 
 class GalleryDetailView(DetailView):
@@ -55,5 +57,6 @@ class GalleryDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["form_description"] = "Gallery Detail"
         context["update_view_url"] = reverse(
-            "gallery-update", kwargs={"pk": self.object.pk})
+            "gallery-update", kwargs={"pk": self.object.pk}
+        )
         return context

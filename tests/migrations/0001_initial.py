@@ -9,57 +9,117 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='DemoGalleryForTest',
+            name="DemoGalleryForTest",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('images', galleryfield.fields.GalleryField(target_model='tests.FakeValidImageModel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "images",
+                    galleryfield.fields.GalleryField(
+                        target_model="tests.FakeValidImageModel"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='FakeInvalidImageModel1',
+            name="FakeInvalidImageModel1",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.CharField(max_length=250)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("image", models.CharField(max_length=250)),
             ],
         ),
         migrations.CreateModel(
-            name='FakeInvalidImageModel2',
+            name="FakeInvalidImageModel2",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('photo', models.ImageField(upload_to='')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("photo", models.ImageField(upload_to="")),
             ],
         ),
         migrations.CreateModel(
-            name='FakeInvalidImageModel3',
+            name="FakeInvalidImageModel3",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('photo', models.CharField(max_length=250)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("photo", models.CharField(max_length=250)),
             ],
         ),
         migrations.CreateModel(
-            name='FakeInvalidImageModel4',
+            name="FakeInvalidImageModel4",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('photo', models.CharField(max_length=250)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("photo", models.CharField(max_length=250)),
             ],
         ),
         migrations.CreateModel(
-            name='FakeInvalidImageModel5',
+            name="FakeInvalidImageModel5",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('photo', models.ImageField(upload_to='')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("photo", models.ImageField(upload_to="")),
             ],
         ),
         migrations.CreateModel(
-            name='FakeValidImageModel',
+            name="FakeValidImageModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to='')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("image", models.ImageField(upload_to="")),
             ],
         ),
     ]

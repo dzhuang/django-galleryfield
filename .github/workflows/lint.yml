@@ -25,6 +25,7 @@ jobs:
         run: flake8 galleryfield demo
 
   isort:
+    name: Isort
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,3 +38,12 @@ jobs:
       - uses: jamescurtin/isort-action@master
         with:
             requirementsFiles: "demo/requirements.txt, tests/requirements_test.txt"
+
+  black:
+    name: black formatter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: rickstaa/action-black@v1
+        with:
+          black_args: ". --check"

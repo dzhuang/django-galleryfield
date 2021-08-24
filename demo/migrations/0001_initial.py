@@ -17,18 +17,50 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='MyImageModel',
+            name="MyImageModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('photo', models.ImageField(upload_to='')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("photo", models.ImageField(upload_to="")),
             ],
         ),
         migrations.CreateModel(
-            name='DemoGallery',
+            name="DemoGallery",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('images', galleryfield.fields.GalleryField(blank=True, null=True, target_model='galleryfield.BuiltInGalleryImage', verbose_name='Photos')),
-                ('owner', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Owner')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "images",
+                    galleryfield.fields.GalleryField(
+                        blank=True,
+                        null=True,
+                        target_model="galleryfield.BuiltInGalleryImage",
+                        verbose_name="Photos",
+                    ),
+                ),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Owner",
+                    ),
+                ),
             ],
         ),
     ]

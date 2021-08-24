@@ -17,10 +17,11 @@ from galleryfield.widgets import GalleryWidget
 @deconstructible
 class MaxNumberOfImageValidator(BaseValidator):
     message = ngettext_lazy(
-        'Number of images exceeded, only %(limit_value)d allowed',
-        'Number of images exceeded, only %(limit_value)d allowed',
-        'limit_value')
-    code = 'max_number_of_images'
+        "Number of images exceeded, only %(limit_value)d allowed",
+        "Number of images exceeded, only %(limit_value)d allowed",
+        "limit_value",
+    )
+    code = "max_number_of_images"
 
     def compare(self, a, b):
         return a > b
@@ -69,7 +70,7 @@ class GalleryImages(list):
         case = Case(*cases, output_field=IntegerField())
         filter_kwargs = {"id__in": self._value}
         queryset = model.objects.filter(**filter_kwargs)
-        queryset = queryset.annotate(_order=case).order_by('_order')
+        queryset = queryset.annotate(_order=case).order_by("_order")
         return queryset
 
 
@@ -77,7 +78,7 @@ class GalleryField(models.JSONField):
     """This is a model field which saves the id of images.
 
     :param target_model: A string in the form of ``"app_label.model_name"``,
-           which can be loaded by :meth:`django.apps.get_model` (see 
+           which can be loaded by :meth:`django.apps.get_model` (see
            `Django docs <https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.apps.get_model>`_),
            defaults to `None`. If `None`, :class:`galleryfield.BuiltInGalleryImage` will be used.
            If set, it should be :ref:`a valid image model <customize-valid-image-model>`.
@@ -100,8 +101,7 @@ class GalleryField(models.JSONField):
         if target_model is None:
             self.target_model = _defaults.DEFAULT_TARGET_IMAGE_MODEL
 
-        self.target_model_image_field = (
-            self._get_image_field_or_test(is_checking=False))
+        self.target_model_image_field = self._get_image_field_or_test(is_checking=False)
 
         super().__init__(*args, **kwargs)
 
@@ -110,7 +110,8 @@ class GalleryField(models.JSONField):
             obj=self,
             target_model=self._init_target_model,
             check_id_prefix="gallery_field",
-            is_checking=is_checking)
+            is_checking=is_checking,
+        )
 
     def check(self, **kwargs):
         errors = super().check(**kwargs)
@@ -122,25 +123,26 @@ class GalleryField(models.JSONField):
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        kwargs['target_model'] = self.target_model
+        kwargs["target_model"] = self.target_model
         return name, path, args, kwargs
 
     def formfield(self, **kwargs):
-        defaults = ({
+        defaults = {
             "required": True,
-
             # The following 2 params will be passed to GalleryWidget
             # to check if there're potential conflicts between
             # target_model and upload_url and fetch_url.
             # see GalleryWidget.set_and_check_urls()
             "target_model": self.target_model,
-            "model_field": self.__class__.__name__
-        })
+            "model_field": self.__class__.__name__,
+        }
         defaults.update(kwargs)
-        formfield = super().formfield(**{
-            'form_class': GalleryFormField,
-            **defaults,
-        })
+        formfield = super().formfield(
+            **{
+                "form_class": GalleryFormField,
+                **defaults,
+            }
+        )
         return formfield
 
 
@@ -172,8 +174,8 @@ class GalleryFormField(forms.JSONField):
     """
 
     default_error_messages = {
-        'required': _("The submitted file is empty."),
-        'invalid': _("The submitted images are invalid."),
+        "required": _("The submitted file is empty."),
+        "invalid": _("The submitted images are invalid."),
     }
 
     def __init__(self, max_number_of_images=None, **kwargs):
@@ -188,14 +190,18 @@ class GalleryFormField(forms.JSONField):
             self._image_model = _defaults.DEFAULT_TARGET_IMAGE_MODEL
 
         # Make sure the model is valid target image model
-        if (self._image_model != _defaults.DEFAULT_TARGET_IMAGE_MODEL
-                or image_model_not_configured):
+        if (
+            self._image_model != _defaults.DEFAULT_TARGET_IMAGE_MODEL
+            or image_model_not_configured
+        ):
             errors = get_or_check_image_field(
                 obj=self,
                 target_model=(
-                    None if image_model_not_configured else self._image_model),
+                    None if image_model_not_configured else self._image_model
+                ),
                 check_id_prefix="gallery_form_field",
-                is_checking=True)
+                is_checking=True,
+            )
             for error in errors:
                 if error.is_serious():
                     raise ImproperlyConfigured(str(error))
@@ -207,7 +213,8 @@ class GalleryFormField(forms.JSONField):
         # This is used for widget to identify which object the widget is servicing.
         # That information will be used when raising errors.
         self._widget_is_servicing = (
-                kwargs.pop("model_field", None) or self.__class__.__name__)
+            kwargs.pop("model_field", None) or self.__class__.__name__
+        )
 
         self._max_number_of_images = max_number_of_images
         super().__init__(**kwargs)
@@ -253,8 +260,7 @@ class GalleryFormField(forms.JSONField):
         # Here we required a target_model should have a upload_url
         # name in url_conf in the form of app_label_model_name-upload
         # in lower case
-        self.widget.upload_url = (
-                "%s-upload" % self._target_app_model_name.lower())
+        self.widget.upload_url = "%s-upload" % self._target_app_model_name.lower()
 
     def _set_widget_fetch_url(self):
         if self.widget.disable_fetch or self.widget.fetch_url:
@@ -263,8 +269,7 @@ class GalleryFormField(forms.JSONField):
         # Here we required a target_model should have a fetch_url
         # name in url_conf in the form of app_label-model_name-fetch
         # in lower case
-        self.widget.fetch_url = (
-                "%s-fetch" % self._target_app_model_name.lower())
+        self.widget.fetch_url = "%s-fetch" % self._target_app_model_name.lower()
 
     @property
     def max_number_of_images(self):
@@ -276,23 +281,20 @@ class GalleryFormField(forms.JSONField):
             if not str(value).isdigit():
                 raise TypeError(
                     "'max_number_of_images' expects a positive integer, "
-                    "got %s." % str(value))
+                    "got %s." % str(value)
+                )
             value = int(value)
         self._max_number_of_images = value
         self._widget.max_number_of_images = value
 
         if value:
-            self.validators.append(
-                MaxNumberOfImageValidator(int(value)))
+            self.validators.append(MaxNumberOfImageValidator(int(value)))
 
     def widget_attrs(self, widget):
         # If BootStrap is loaded, "hiddeninput" is added by BootStrap.
         # However, we need that css class to check changes of the form,
         # so we added it manually.
-        return {
-            "class": " ".join(
-                [conf.FILES_FIELD_CLASS_NAME, "hiddeninput"])
-        }
+        return {"class": " ".join([conf.FILES_FIELD_CLASS_NAME, "hiddeninput"])}
 
     def to_python(self, value):
         converted = super().to_python(value)
@@ -303,24 +305,24 @@ class GalleryFormField(forms.JSONField):
         # Make sure the json is a list of pks
         if not isinstance(converted, list):
             raise ValidationError(
-                self.error_messages['invalid'],
-                code='invalid',
-                params={'value': converted},
+                self.error_messages["invalid"],
+                code="invalid",
+                params={"value": converted},
             )
 
         for _pk in converted:
             if not str(_pk).isdigit():
                 raise ValidationError(
-                    self.error_messages['invalid'],
-                    code='invalid',
-                    params={'value': converted},
+                    self.error_messages["invalid"],
+                    code="invalid",
+                    params={"value": converted},
                 )
 
         # Make sure all pks exists
         image_model = apps.get_model(self._image_model)
-        if (image_model.objects.filter(
-                pk__in=list(map(int, converted))).count()
-                != len(converted)):
+        if image_model.objects.filter(pk__in=list(map(int, converted))).count() != len(
+            converted
+        ):
             converted_copy = converted[:]
             converted = []
             for pk in converted_copy:

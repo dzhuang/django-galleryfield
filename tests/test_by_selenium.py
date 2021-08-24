@@ -91,8 +91,7 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
         sleep(0.5)
 
     def _get_first_button_bar_delete_button(self):
-        return self.selenium.find_element_by_css_selector(
-            "a.delete.fileinput-button")
+        return self.selenium.find_element_by_css_selector("a.delete.fileinput-button")
 
     def _delete_one_image(self):
         delete_button = self._get_first_button_bar_delete_button()
