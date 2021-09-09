@@ -28,7 +28,7 @@ class GalleryWidget(forms.HiddenInput):
            images in the gallery instance, defaults to `None`.
            When not set, this param will be auto-configured if the parent
            :class:`galleryfield.fields.GalleryFormField` is used by
-           a :class:`galleryfield.fields.GalleryField`, the value wil. follow
+           a :class:`galleryfield.fields.GalleryField`, the value will follow
            the :ref:`naming rule <image_handling_url_naming_rule>`.
     :type fetch_url: str, optional
     :param multiple: Whether allow to select multiple image files in the 
