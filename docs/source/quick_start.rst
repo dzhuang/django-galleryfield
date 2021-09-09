@@ -54,7 +54,7 @@ Configurations
     DJANGO_GALLERY_CONFIG = ...
 
 - We strongly propose using ``django-npm`` to manage the static dependencies,
-  add the following lines in ``settings.py``:
+  by adding the following lines in ``settings.py``:
 
 .. code-block:: python
 
@@ -72,7 +72,7 @@ Configurations
     urlpatterns += [path(r"images-handler/", include("galleryfield.urls"))]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-- The sync the database::
+- Sync the database::
 
     python manage.py migrate galleryfield
 
@@ -94,7 +94,7 @@ The best way to have a glance of how django-galleryfield works is to run the dem
     python manage.py createsuperuser # Create a superuser account so that you can upload images
     python manage.py runserver
 
-- In your browser navigate to http://127.0.0.1:8000/admin, login and navigate to  http://127.0.0.1:8000/.
+- In your browser navigate to http://127.0.0.1:8000/admin, login and then navigate back to  http://127.0.0.1:8000/.
 
 .. note:: You might need to install JSON1 extension for SQLite for this the demo to run properly.
    See `Enabling JSON1 extension on SQLite <https://code.djangoproject.com/wiki/JSON1Extension>`_.

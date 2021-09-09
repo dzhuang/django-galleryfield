@@ -1,25 +1,25 @@
 About the demo
 ================
 
-The code in the demo seems very simple, with only a model field :class:`galleryfield.fields.GalleryField`
-used in ``demo.models`` to construct the gallery model. Actually, there're some logic falls behind the
+The code in the demo seems simple, with only a model field :class:`galleryfield.fields.GalleryField`
+used in ``demo.models`` to construct the gallery model. Actually, there're some logic fall behind the
 code.
 
 Handling the image instances
 -----------------------------
 
-Although we didn't explicitly specified in the code, the demo is actually using
+Although we didn't explicitly specify in the code, the demo is actually using
 built-in :class:`galleryfield.models.BuiltInGalleryImage` as the image model for
 creating, listing, and updating images.
 The image model has 2 fields: a :class:`galleryfield.fields.GalleryField` named ``image``
 and an ``User`` field named ``creator``. We think whatever it called, an ``User``
 field is needed because that's the basis for the server to determine the
-whether requested users are qualified to modify the image instances, viewing the
-image instances from a form listview,  or potentially delete existing
+whether requested users are qualified to modify the image instances, or to view the
+image instances in a form listview,  or to potentially delete existing
 image instances.
 
 Further, If you look into ``galleryfield.urls`` and ``galleryfield.image_views``,
-you will see 3 class-based views handling image instances:
+you will see 3 class-based views which are handling images (or image instances):
 
 - :class:`galleryfield.image_views.BuiltInImageCreateView` for uploading images,
   requires login.

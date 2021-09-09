@@ -76,7 +76,7 @@ is listed in ``galleryfield.defaults.DEFAULT_ASSETS``.
    suggest using ``django-npm`` to manage the static assets for convenience. If
    you have other options, for example, not willing to have a local copy of those assets,
    you need to make sure ALL the items in ``galleryfield.defaults.DEFAULT_ASSET``
-   properly configure in this setting and
+   were properly configured in this setting and
    can be accessed properly.
 
    BTW, trying to ignore some commonly used framework such as

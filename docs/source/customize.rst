@@ -14,7 +14,7 @@ Image model and views
 
 Until now, Django didn't supply any type of `Field` which can store unknown
 length of images or files. However, the introduction of :class:`JsonField`
-(in Django 3) made it possible workaround the issue by storing the ``pks``
+(in Django 3) made it possible to store the ``pks``
 of image model instances as a Json list in a customized :class:`JsonField`.
 That's the :class:`galleryfield.fields.GalleryField`.
 
@@ -106,12 +106,12 @@ Three views for handling the image model objects
 
 .. _image_handling_url_naming_rule:
 
-Naming rule for urls of image handling views
+Naming rule for URLs of image handling views
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Generally, the widget need to know the urls for image handling views (see :ref:`GalleryWidget docs <widget_docs>`).
+Generally, the widget need to know the URLs for image handling views (see :ref:`GalleryWidget docs <widget_docs>`).
 We may specify the explicitly specify the URL names manually in the widget of gallery modelform
-fields. For example,
+fields.
 
 Alternatively, we can also let the widget infer what URLs it should use for those views, by
 following a naming rules for those views in ``URL_CONF``.
@@ -135,7 +135,7 @@ GalleryField rendering customization
 Now we turn to the customization of gallery model.
 Back to the demo, when dealing with the gallery model instance, there isn't much magic about
 :class:`demo.views.GalleryCreateView` and :class:`demo.views.GalleryUpdateView`.
-Here, we need to address :class:`demo.views.GalleryDetailView`, on how it rendering the
+Here, we need to address :class:`demo.views.GalleryDetailView`, on how it renders the
 :class:`galleryfield.fields.GalleryField`.
 
 With ``my_app.MyImage`` in previous example as the ``target_model``,
@@ -204,7 +204,7 @@ instances it related to. No wonder, you can do the following::
    >>> photos_before_2021 = photos_in_first_gallery.filter(creation_time__lt=datetime(2021, 01, 01))
 
 
-More over, the demo provide an  example of `how to render <https://github.com/dzhuang/django-galleryfield/blob/main/demo/templates/demo/demogallery_detail.html>`__
+More over, the demo provides an  example of `how to render <https://github.com/dzhuang/django-galleryfield/blob/main/demo/templates/demo/demogallery_detail.html>`__
 the field using ``sorl.thumbnail`` and ``Blueimp Gallery`` package.
 
 Finally, it's your opportunity to show your skills on customizing the gallery/album frontend, which is beyond the scope of this package.

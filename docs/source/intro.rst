@@ -1,11 +1,11 @@
 Introduction
 ============
 
-In this Django reusable app, we introduced a model field :class:`galleryfield.fields.GalleryField`
-along with a corresponding formfield :class:`galleryfield.fields.GalleryFormField` and default
+In this Django reusable app, we introduced a model field :class:`galleryfield.fields.GalleryField`,
+a corresponding formfield :class:`galleryfield.fields.GalleryFormField` and the default
 widget :class:`galleryfield.widgets.GalleryWidget`. The model field
-makes it easy for image management at a collection level (i.e., what we called gallery or album),
-while the widget makes it easy to upload images via AJAX, allowing order the sequence arbitrarily,
+makes it easy for image management at a collection level (i.e., a gallery or an album),
+while the widget makes it easy to upload images via AJAX, allowing ordering the sequence arbitrarily,
 and cropping images at both client and server side.
 
 Features
@@ -31,10 +31,10 @@ The original intended use case is: a type of assignment which requires students
 to upload limited number of hand-written photos onto a Course Management Systems (CMS).
 That requires:
 
--  Students can upload images through web UI (not Admin) and preview instantly.
--  Students can order the uploaded images as they will, instead of upload time or file name.
+-  Students can upload images through web UI (not via Admin) and preview instantly.
+-  Students can order the uploaded images as they will, instead of ordering by upload time or file name.
 -  Students can do some basic edit to images, like rotate and cropping.
--  There can be a limit on the number of images, and the number differs between assignments.
+-  There can be a restriction on the number of images, and the number differs between assignments.
 -  The upload widget can be disabled (readonly), in this case, when deadline reaches.
 -  Only the instructor and the student himself may do the CRUD of the images,
    with storage support, for example, via
@@ -68,7 +68,7 @@ Limitations
 Compared to peer apps
 **********************
 
-Just name a few popular apps that have similar functionality with django-galleryfield.
+Just to name a few popular apps that have similar functionality with django-galleryfield.
 Please correct me if I am wrong.
 
 - `django-photologue <https://github.com/richardbarran/django-photologue>`_

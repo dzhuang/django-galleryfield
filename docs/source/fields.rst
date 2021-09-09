@@ -53,8 +53,8 @@ That means we can do chained query to the attribute. Sample usage::
    <QuerySet []>
 
 With the :attr:`objects` attribute, it's also handy to render images
-contained in the field. For example, we use code like to the following snippet
-in the template which renders detailed view of :class:`demo.models.DemoGallery`
+contained in the field. For example, we can use following snippet
+in the template to detailed view of :class:`demo.models.DemoGallery`
 instances:
 
 .. code-block:: html
@@ -64,7 +64,7 @@ instances:
       </a>
     {% endfor %}
 
-where ``object`` is an instance of :class:`demo.models.DemoGallery`.
+where ``object`` in the first line is an instance of :class:`demo.models.DemoGallery`.
 
 GalleryFormField
 ---------------------
