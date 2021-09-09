@@ -11,10 +11,14 @@ class DemoGallery(models.Model):
     The gallery model used in demo.
 
     """
-    images = GalleryField(verbose_name=_('Photos'), blank=True, null=True)
+
+    images = GalleryField(verbose_name=_("Photos"), blank=True, null=True)
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True,
-        verbose_name=_('Owner'), on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL,
+        null=True,
+        verbose_name=_("Owner"),
+        on_delete=models.CASCADE,
+    )
 
     def get_absolute_url(self):
-        return reverse('gallery-update', kwargs={'pk': self.pk})
+        return reverse("gallery-update", kwargs={"pk": self.pk})

@@ -9,6 +9,7 @@ class ResponseContextMixin(object):
     to render the template that produced the response content".
     Ref: https://docs.djangoproject.com/en/dev/topics/testing/tools/#django.test.Response.context  # noqa
     """
+
     def get_response_context_value_by_name(self, response, context_name):
         try:
             value = response.context[context_name]
@@ -47,9 +48,9 @@ class ResponseContextMixin(object):
         except Exception:
             self.assertEqual(value, expected_value)
 
-    def assertResponseContextContains(self, resp,  # noqa
-                                      context_name, expected_value, html=False,
-                                      in_bulk=False):
+    def assertResponseContextContains(
+        self, resp, context_name, expected_value, html=False, in_bulk=False  # noqa
+    ):
         value = self.get_response_context_value_by_name(resp, context_name)
         if in_bulk:
             if not isinstance(expected_value, list):
@@ -67,8 +68,8 @@ class ResponseContextMixin(object):
                 self.assertInHTML(expected_value, value)
 
     def assertResponseContextRegex(  # noqa
-            self, resp,  # noqa
-            context_name, expected_value_regex):
+        self, resp, context_name, expected_value_regex  # noqa
+    ):
         value = self.get_response_context_value_by_name(resp, context_name)
         self.assertRegex(value, expected_value_regex)
 
@@ -78,8 +79,7 @@ class ResponseContextMixin(object):
     def debug_print_response_context_value(self, resp, context_name):
         try:
             value = self.get_response_context_value_by_name(resp, context_name)
-            print("\n-----------context %s-------------"
-                  % context_name)
+            print("\n-----------context %s-------------" % context_name)
             print(value)
             print("-----------context end-------------\n")
         except AssertionError:
@@ -87,7 +87,6 @@ class ResponseContextMixin(object):
 
 
 class UserCreateMixin(ResponseContextMixin):
-
     @classmethod
     def setUpTestData(cls):  # noqa
         # Create superuser

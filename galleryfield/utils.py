@@ -2,15 +2,17 @@ import logging
 
 from django.apps import apps
 from django.core.checks import Critical, Info
-from django.core.exceptions import (AppRegistryNotReady, FieldDoesNotExist,
-                                    ImproperlyConfigured)
+from django.core.exceptions import (
+    AppRegistryNotReady,
+    FieldDoesNotExist,
+    ImproperlyConfigured,
+)
 from django.db.models import ImageField
-from django.urls import (NoReverseMatch, Resolver404, resolve, reverse,
-                         reverse_lazy)
+from django.urls import NoReverseMatch, Resolver404, resolve, reverse, reverse_lazy
 
 from galleryfield import defaults
 
-logger = logging.getLogger('django-galleryfield')
+logger = logging.getLogger("django-galleryfield")
 
 
 class DJGalleryCriticalCheckMessage(Critical):
@@ -22,7 +24,8 @@ class DJGalleryCriticalCheckMessage(Critical):
 INSTANCE_ERROR_PATTERN = "%(location)s must be an instance of %(types)s."
 GENERIC_ERROR_PATTERN = "Error in %(location)s: %(error_type)s: %(error_str)s"
 REQUIRED_CONF_ERROR_PATTERN = (
-    "You must configure %(location)s for RELATE to run properly.")
+    "You must configure %(location)s for RELATE to run properly."
+)
 
 
 def convert_dict_to_plain_text(d, indent=4):
@@ -56,13 +59,15 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
     will_proceed_checking_target_model_image_fields = True
     if target_model is not None:
         if not isinstance(target_model, str):
-            errors.append(DJGalleryCriticalCheckMessage(
-                msg=(INSTANCE_ERROR_PATTERN
-                     % {"location": str(obj),
-                        "types": "str"}),
-                id="%s.E001" % check_id_prefix,
-                obj=obj
-            ))
+            errors.append(
+                DJGalleryCriticalCheckMessage(
+                    msg=(
+                        INSTANCE_ERROR_PATTERN % {"location": str(obj), "types": "str"}
+                    ),
+                    id="%s.E001" % check_id_prefix,
+                    obj=obj,
+                )
+            )
             will_proceed_checking_target_model_image_fields = False
         else:
             try:
@@ -77,18 +82,23 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                     return None
 
                 # todo: add doc ref in the error
-                errors.append(DJGalleryCriticalCheckMessage(
-                    msg=(GENERIC_ERROR_PATTERN
-                         % {"location": str(obj),
-                            "error_type": type(e).__name__,
-                            "error_str": str(e)}
-                         + "\n See "
-                           "https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.get_model"  # noqa
-                           " for more information."
-                         ),
-                    id="%s.E002" % check_id_prefix,
-                    obj=obj
-                ))
+                errors.append(
+                    DJGalleryCriticalCheckMessage(
+                        msg=(
+                            GENERIC_ERROR_PATTERN
+                            % {
+                                "location": str(obj),
+                                "error_type": type(e).__name__,
+                                "error_str": str(e),
+                            }
+                            + "\n See "
+                            "https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.get_model"  # noqa
+                            " for more information."
+                        ),
+                        id="%s.E002" % check_id_prefix,
+                        obj=obj,
+                    )
+                )
                 will_proceed_checking_target_model_image_fields = False
 
     if will_proceed_checking_target_model_image_fields:
@@ -103,27 +113,31 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                 return None
             # Here we assume defaults.DEFAULT_TARGET_IMAGE_MODEL will always work
             else:
-                errors.append(Info(
-                    msg=('"target_model" is set to None, '
-                         '"%(default)s" is used as default.'
-                         % {"default": defaults.DEFAULT_TARGET_IMAGE_MODEL}
-                         ),
-                    id="%s.I001" % check_id_prefix,
-                    obj=obj
-                ))
+                errors.append(
+                    Info(
+                        msg=(
+                            '"target_model" is set to None, '
+                            '"%(default)s" is used as default.'
+                            % {"default": defaults.DEFAULT_TARGET_IMAGE_MODEL}
+                        ),
+                        id="%s.I001" % check_id_prefix,
+                        obj=obj,
+                    )
+                )
 
         get_image_field_class_method = None
         get_image_field_class_method_raised_error = False
         try:
-            image_field = (
-                target_model_klass._meta.get_field(
-                    defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME))
+            image_field = target_model_klass._meta.get_field(
+                defaults.DEFAULT_TARGET_IMAGE_FIELD_NAME
+            )
             if type(image_field) is not ImageField:
                 raise FieldDoesNotExist()
         except FieldDoesNotExist:
             image_field = None
-            get_image_field_class_method = (
-                getattr(target_model_klass, "get_image_field", None))
+            get_image_field_class_method = getattr(
+                target_model_klass, "get_image_field", None
+            )
             if get_image_field_class_method is not None:
                 if callable(get_image_field_class_method):
                     try:
@@ -133,18 +147,23 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                             # Preventing from failing in field initialization
                             # We will raise that in field check
                             return None
-                        errors.append(Critical(
-                            msg=('Error in %(location)s: model %(model)s defined '
-                                 '"get_image_field" method failed with'
-                                 ' %(exception)s: %(str_e)s'
-                                 % {"location": str(obj),
-                                    "model": target_model,
-                                    "exception": type(e).__name__,
-                                    "str_e": str(e)
-                                    }),
-                            id="%s.E003" % check_id_prefix,
-                            obj=obj
-                        ))
+                        errors.append(
+                            Critical(
+                                msg=(
+                                    "Error in %(location)s: model %(model)s defined "
+                                    '"get_image_field" method failed with'
+                                    " %(exception)s: %(str_e)s"
+                                    % {
+                                        "location": str(obj),
+                                        "model": target_model,
+                                        "exception": type(e).__name__,
+                                        "str_e": str(e),
+                                    }
+                                ),
+                                id="%s.E003" % check_id_prefix,
+                                obj=obj,
+                            )
+                        )
                         get_image_field_class_method_raised_error = True
 
         if image_field is not None:
@@ -157,28 +176,32 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                 # We will raise that in field check
                 return None
             if get_image_field_class_method is None:
-                errors.append(Critical(
-                    msg=('Error in %(location)s: model %(model)s must '
-                         'either have a field named "image" '
-                         'or has a classmethod named "get_image_field", '
-                         'which returns the image field of the model'
-                         % {"location": str(obj),
-                            "model": target_model
-                            }),
-                    id="%s.E004" % check_id_prefix,
-                    obj=obj
-                ))
+                errors.append(
+                    Critical(
+                        msg=(
+                            "Error in %(location)s: model %(model)s must "
+                            'either have a field named "image" '
+                            'or has a classmethod named "get_image_field", '
+                            "which returns the image field of the model"
+                            % {"location": str(obj), "model": target_model}
+                        ),
+                        id="%s.E004" % check_id_prefix,
+                        obj=obj,
+                    )
+                )
             elif not get_image_field_class_method_raised_error:
-                errors.append(Critical(
-                    msg=('Error in %(location)s: model %(model)s defined '
-                         '"get_image_field" class method '
-                         'did not return a ImageField type'
-                         % {"location": str(obj),
-                            "model": target_model
-                            }),
-                    id="%s.E005" % check_id_prefix,
-                    obj=obj
-                ))
+                errors.append(
+                    Critical(
+                        msg=(
+                            "Error in %(location)s: model %(model)s defined "
+                            '"get_image_field" class method '
+                            "did not return a ImageField type"
+                            % {"location": str(obj), "model": target_model}
+                        ),
+                        id="%s.E005" % check_id_prefix,
+                        obj=obj,
+                    )
+                )
         else:
             if not is_checking:
                 return image_field
@@ -209,7 +232,8 @@ def get_url_from_str(url_str, require_urlconf_ready=False):
             return reverse(url_str)
         except NoReverseMatch:
             raise ImproperlyConfigured(
-                "'%s' is neither a valid URL nor a valid URL name" % url_str)
+                "'%s' is neither a valid URL nor a valid URL name" % url_str
+            )
     return url_str
 
 
@@ -234,8 +258,7 @@ def get_formatted_thumbnail_size(thumbnail_size, name="thumbnail_size"):
     if not isinstance(thumbnail_size, (list, tuple)):
         thumbnail_size = str(thumbnail_size).strip()
         if not thumbnail_size:
-            raise ValueError(
-                "'%s' can't be an empty string" % name)
+            raise ValueError("'%s' can't be an empty string" % name)
         thumbnail_size = [s.strip() for s in thumbnail_size.lower().split("x")]
 
     return get_thumb_size_from_iterator(thumbnail_size)

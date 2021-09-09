@@ -45,25 +45,26 @@ CSS = [c for c in _css if c]
 
 _APP_CONFIG_THUMBNAILS = _APP_CONFIG.get("thumbnails", {})
 DEFAULT_THUMBNAIL_SIZE = get_formatted_thumbnail_size(
-    _APP_CONFIG_THUMBNAILS.get(
-        "size", defaults.DEFAULT_THUMBNAIL_SIZE))
-DEFAULT_THUMBNAIL_QUALITY = int(_APP_CONFIG_THUMBNAILS.get(
-    "quality", defaults.DEFAULT_THUMBNAIL_QUALITY))
+    _APP_CONFIG_THUMBNAILS.get("size", defaults.DEFAULT_THUMBNAIL_SIZE)
+)
+DEFAULT_THUMBNAIL_QUALITY = int(
+    _APP_CONFIG_THUMBNAILS.get("quality", defaults.DEFAULT_THUMBNAIL_QUALITY)
+)
 
 
 _APP_CONFIG_WIDGET_INPUT_CSS_CLASS = _APP_CONFIG.get(
-    "widget_hidden_input_css_class", defaults.WIDGET_HIDDEN_INPUT_CSS_CLASS)
+    "widget_hidden_input_css_class", defaults.WIDGET_HIDDEN_INPUT_CSS_CLASS
+)
 FILES_FIELD_CLASS_NAME = _APP_CONFIG_WIDGET_INPUT_CSS_CLASS + "-files-field"
 
 
 PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = _APP_CONFIG.get(
-    'prompt_alert_if_changed_on_window_reload',
-    defaults.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED
+    "prompt_alert_if_changed_on_window_reload",
+    defaults.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED,
 )
 
 # todo: allow setting default jquery_fileupload_ui_options in settings.
 
 JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = _APP_CONFIG.get(
-    "jquery_file_upload_ui_options",
-    defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
+    "jquery_file_upload_ui_options", defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
 )

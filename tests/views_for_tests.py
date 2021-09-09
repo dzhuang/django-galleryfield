@@ -10,26 +10,19 @@ from django.views.decorators.http import require_GET, require_POST
 @require_POST
 @login_required
 def fake_upload(request):
-    return JsonResponse(
-        {"files": []},
-        status=200)
+    return JsonResponse({"files": []}, status=200)
 
 
 @login_required
 @require_GET
 def fake_fetch(request):
-    return JsonResponse(
-        {"files": []}, status=200)
+    return JsonResponse({"files": []}, status=200)
 
 
 @login_required
 @require_POST
 def fake_crop(request):
-    return JsonResponse(
-        {
-            "file": {},
-            'message': gettext('Done!')
-        },
-        status=200)
+    return JsonResponse({"file": {}, "message": gettext("Done!")}, status=200)
+
 
 # }}}

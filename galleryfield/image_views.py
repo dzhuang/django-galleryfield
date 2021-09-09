@@ -2,8 +2,7 @@ from django.core.exceptions import PermissionDenied
 from django.views.generic import CreateView, UpdateView
 from django.views.generic.list import BaseListView
 
-from galleryfield.mixins import (BaseCreateMixin, BaseCropViewMixin,
-                                 BaseListViewMixin)
+from galleryfield.mixins import BaseCreateMixin, BaseCropViewMixin, BaseListViewMixin
 
 
 class ImageCreateView(BaseCreateMixin, CreateView):
@@ -24,6 +23,7 @@ class ImageCreateView(BaseCreateMixin, CreateView):
 
     .. automethod:: form_valid
     """
+
     def form_valid(self, form):
         """User should override this method to save the object,
         for example, image model usually has a non-null user field,
@@ -56,6 +56,7 @@ class ImageListView(BaseListViewMixin, BaseListView):
 
     .. automethod:: get_queryset
     """
+
     def get_queryset(self):
         """
         User need to override this method to do some basic filter in terms of
@@ -85,6 +86,7 @@ class ImageCropView(BaseCropViewMixin, UpdateView):
 
     .. automethod:: form_valid
     """
+
     def form_valid(self, form):
         """Save the object from the form. This method should only be overridden
         when the model contains dynamic fields which need to be updated. For

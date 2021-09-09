@@ -10,16 +10,16 @@ from galleryfield.models import BuiltInGalleryImage
 class UserFactory(factory.django.DjangoModelFactory):
     # https://stackoverflow.com/a/54584075/3437454
 
-    first_name = factory.Faker('first_name')
-    last_name = factory.Faker('last_name')
-    username = factory.Sequence(lambda n: 'demo-user-%d' % n)
+    first_name = factory.Faker("first_name")
+    last_name = factory.Faker("last_name")
+    username = factory.Sequence(lambda n: "demo-user-%d" % n)
     is_staff = False
     is_superuser = False
-    password = 'secret'
+    password = "secret"
 
     @factory.lazy_attribute
     def email(self):
-        return '%s@test.com' % self.username
+        return "%s@test.com" % self.username
 
     class Meta:
         model = get_user_model()
@@ -29,7 +29,7 @@ class UserFactory(factory.django.DjangoModelFactory):
         flag_is_superuser = factory.Trait(
             is_superuser=True,
             is_staff=True,
-            username=factory.Sequence(lambda n: 'admin-%d' % n),
+            username=factory.Sequence(lambda n: "admin-%d" % n),
         )
 
     @classmethod
@@ -46,13 +46,14 @@ class BuiltInGalleryImageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = BuiltInGalleryImage
 
-    image = factory.django.ImageField(color='blue')
+    image = factory.django.ImageField(color="blue")
 
 
 class JSONFactory(factory.ListFactory):
     """
     Use with factory.List to make JSON strings.
     """
+
     @classmethod
     def _generate(cls, create, attrs):
         obj = super()._generate(create, attrs)
@@ -82,6 +83,7 @@ class DemoGalleryFactory(factory.django.DjangoModelFactory):
             shuffle = shuffle and number > 1
         else:
             from collections.abc import Iterable
+
             assert isinstance(images, Iterable)
             for image in images:
                 assert isinstance(image, BuiltInGalleryImage)
@@ -90,6 +92,7 @@ class DemoGalleryFactory(factory.django.DjangoModelFactory):
 
         if shuffle:
             import random
+
             random.shuffle(image_list)
 
         obj.images = image_list

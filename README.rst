@@ -12,7 +12,8 @@ django-galleryfield
 .. image:: https://readthedocs.org/projects/django-galleryfield/badge/?version=latest
    :target: https://django-galleryfield.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
-
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
 
 Django model fields ``GalleryField`` with AJAX form widgets and for multiple images upload with progress bar.
 This package is **NOT** about how to elegantly render multiple images in a page, but how to CRUD multiple

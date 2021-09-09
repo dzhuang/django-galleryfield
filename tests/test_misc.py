@@ -15,7 +15,7 @@ class GetUrlFromStrTest(SimpleTestCase):
     def test_valid_url_name(self):
         self.assertEqual(
             get_url_from_str("galleryfield-builtingalleryimage-upload"),
-            reverse("galleryfield-builtingalleryimage-upload")
+            reverse("galleryfield-builtingalleryimage-upload"),
         )
 
     def test_invalid_url_name(self):
@@ -24,15 +24,13 @@ class GetUrlFromStrTest(SimpleTestCase):
             self.assertEqual(get_url_from_str("non-exist-url-name"), "")
         with self.assertRaises(ImproperlyConfigured) as cm:
             get_url_from_str("non-exist-url-name", require_urlconf_ready=True)
-        self.assertIn("is neither a valid URL nor a valid URL name",
-                      cm.exception.args[0])
+        self.assertIn(
+            "is neither a valid URL nor a valid URL name", cm.exception.args[0]
+        )
 
     def test_valid_url(self):
         url = reverse("gallery-update", kwargs={"pk": 1})
-        self.assertEqual(
-            get_url_from_str(url),
-            url
-        )
+        self.assertEqual(get_url_from_str(url), url)
 
     def test_invalid_url(self):
         with self.assertRaises(NoReverseMatch):
@@ -40,5 +38,6 @@ class GetUrlFromStrTest(SimpleTestCase):
             self.assertEqual(get_url_from_str("/foo/bar"), "")
         with self.assertRaises(ImproperlyConfigured) as cm:
             get_url_from_str("/foo/bar", require_urlconf_ready=True)
-        self.assertIn("is neither a valid URL nor a valid URL name",
-                      cm.exception.args[0])
+        self.assertIn(
+            "is neither a valid URL nor a valid URL name", cm.exception.args[0]
+        )

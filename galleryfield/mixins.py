@@ -5,8 +5,11 @@ from urllib.parse import unquote
 
 from django import forms
 from django.apps import apps
-from django.core.exceptions import (ImproperlyConfigured, PermissionDenied,
-                                    SuspiciousOperation)
+from django.core.exceptions import (
+    ImproperlyConfigured,
+    PermissionDenied,
+    SuspiciousOperation,
+)
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Case, When
@@ -19,8 +22,7 @@ from PIL import Image
 from sorl.thumbnail import get_thumbnail
 
 from galleryfield import conf, defaults
-from galleryfield.utils import (get_formatted_thumbnail_size,
-                                get_or_check_image_field)
+from galleryfield.utils import get_formatted_thumbnail_size, get_or_check_image_field
 
 
 class BaseImageModelMixin:
@@ -37,15 +39,15 @@ class BaseImageModelMixin:
        for this view will be enabled, defaults to True. If False, related widget
        ui won't show `Edit` buttons for uploaded images.
     """
+
     target_model = None
     crop_url_name = None
     disable_server_side_crop = True
 
     def setup(self, request, *args, **kwargs):
         # XML request only check
-        if request.META.get('HTTP_X_REQUESTED_WITH') != 'XMLHttpRequest':
-            raise PermissionDenied(
-                gettext("Only XMLHttpRequest requests are allowed"))
+        if request.META.get("HTTP_X_REQUESTED_WITH") != "XMLHttpRequest":
+            raise PermissionDenied(gettext("Only XMLHttpRequest requests are allowed"))
 
         super().setup(request, *args, **kwargs)
         self.setup_model_and_image_field()
@@ -56,14 +58,15 @@ class BaseImageModelMixin:
         if self.target_model is None:
             raise ImproperlyConfigured(
                 "Using BaseImageModelMixin (base class of %s) without "
-                "the 'target_model' attribute is prohibited."
-                % self.__class__.__name__
+                "the 'target_model' attribute is prohibited." % self.__class__.__name__
             )
 
-        self._image_field_name = (get_or_check_image_field(
-            obj=self, target_model=self.target_model,
+        self._image_field_name = get_or_check_image_field(
+            obj=self,
+            target_model=self.target_model,
             check_id_prefix=self.__class__.__name__,
-            is_checking=False).name)
+            is_checking=False,
+        ).name
         self.model = apps.get_model(self.target_model)
 
     def validate_crop_url(self):
@@ -77,17 +80,17 @@ class BaseImageModelMixin:
         except Exception as e:
             raise ImproperlyConfigured(
                 "'crop_url_name' in %s is invalid. The exception is: "
-                "%s: %s."
-                % (self.__class__.__name__,
-                   type(e).__name__,
-                   str(e)))
-        if (self.crop_url_name == defaults.DEFAULT_CROP_URL_NAME
-                and self.target_model != defaults.DEFAULT_TARGET_IMAGE_MODEL):
+                "%s: %s." % (self.__class__.__name__, type(e).__name__, str(e))
+            )
+        if (
+            self.crop_url_name == defaults.DEFAULT_CROP_URL_NAME
+            and self.target_model != defaults.DEFAULT_TARGET_IMAGE_MODEL
+        ):
             raise ImproperlyConfigured(
-                    "'crop_url_name' in %s is using built-in default, while "
-                    "'target_model' is not using built-in default value. They "
-                    "are handling different image models. This is prohibited."
-                    % self.__class__.__name__
+                "'crop_url_name' in %s is using built-in default, while "
+                "'target_model' is not using built-in default value. They "
+                "are handling different image models. This is prohibited."
+                % self.__class__.__name__
             )
 
     def get_and_validate_thumbnail_size_from_request(self):
@@ -100,7 +103,8 @@ class BaseImageModelMixin:
             # 'get' method should be 'getlist'
             # Ref: https://stackoverflow.com/a/30107874/3437454
             thumbnail_size = self.request.GET.getlist(
-                'thumbnail_size', conf.DEFAULT_THUMBNAIL_SIZE)
+                "thumbnail_size", conf.DEFAULT_THUMBNAIL_SIZE
+            )
             error_msg = gettext(
                 "'thumbnail_size' must be an int, or a string of int, "
                 "or a string in the form of '80x60', or a list of"
@@ -109,7 +113,8 @@ class BaseImageModelMixin:
             )
         else:
             thumbnail_size = self.request.POST.get(
-                'thumbnail_size', conf.DEFAULT_THUMBNAIL_SIZE)
+                "thumbnail_size", conf.DEFAULT_THUMBNAIL_SIZE
+            )
             error_msg = gettext(
                 "'thumbnail_size' must be an int, or a string of int, "
                 "or a string in the form of '80x60', or a list or tuple of "
@@ -126,7 +131,8 @@ class BaseImageModelMixin:
             file_=image,
             geometry_string=self.thumbnail_size,
             crop="center",
-            quality=conf.DEFAULT_THUMBNAIL_QUALITY)
+            quality=conf.DEFAULT_THUMBNAIL_QUALITY,
+        )
 
     def get_serialized_image(self, obj):
         # This is used to construct return value file dict in
@@ -134,9 +140,9 @@ class BaseImageModelMixin:
         image = getattr(obj, self._image_field_name)
 
         result = {
-            'pk': obj.pk,
-            'name': os.path.basename(image.path),
-            'url': image.url,
+            "pk": obj.pk,
+            "name": os.path.basename(image.path),
+            "url": image.url,
         }
 
         error = []
@@ -144,22 +150,23 @@ class BaseImageModelMixin:
         try:
             image_size = image.size
         except OSError:
-            error.append(gettext(
-                "image: The image was unexpectedly deleted from server"))
+            error.append(
+                gettext("image: The image was unexpectedly deleted from server")
+            )
         else:
-            result.update({
-                "size": image_size,
-            })
+            result.update(
+                {
+                    "size": image_size,
+                }
+            )
 
         if not self.disable_server_side_crop:
             result["cropUrl"] = reverse(self.crop_url_name, kwargs={"pk": obj.pk})
 
         try:
-            result['thumbnailUrl'] = self.get_thumbnail(image).url
+            result["thumbnailUrl"] = self.get_thumbnail(image).url
         except Exception as e:
-            error.append(
-                gettext("thumbnail: %s: %s" % (type(e).__name__, str(e)))
-            )
+            error.append(gettext("thumbnail: %s: %s" % (type(e).__name__, str(e))))
 
         if error:
             result["error"] = "; ".join(error)
@@ -172,7 +179,8 @@ class BaseImageModelMixin:
         safe = response_kwargs.pop("safe", True)
         json_dumps_params = response_kwargs.pop("json_dumps_params", None)
         return JsonResponse(
-            context, encoder, safe, json_dumps_params, **response_kwargs)
+            context, encoder, safe, json_dumps_params, **response_kwargs
+        )
 
 
 class ImageFormViewMixin:
@@ -196,7 +204,7 @@ class ImageFormViewMixin:
 
 
 class BaseCreateMixin(ImageFormViewMixin, BaseImageModelMixin):
-    http_method_names = ['post']
+    http_method_names = ["post"]
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -223,8 +231,7 @@ class BaseCreateMixin(ImageFormViewMixin, BaseImageModelMixin):
 
     def form_invalid(self, form):
         """If the form is invalid, render the invalid form error."""
-        return self.render_to_response(
-            self.get_context_data(form=form), status=400)
+        return self.render_to_response(self.get_context_data(form=form), status=400)
 
 
 class BaseListViewMixin(BaseImageModelMixin, BaseListView):
@@ -240,23 +247,26 @@ class BaseListViewMixin(BaseImageModelMixin, BaseListView):
         # image instance "pk".
         pks = self.request.GET.get("pks", None)
         if not pks:
-            raise SuspiciousOperation(
-                gettext("The request doesn't contain pks data"))
+            raise SuspiciousOperation(gettext("The request doesn't contain pks data"))
 
         try:
             pks = json.loads(unquote(pks))
             assert isinstance(pks, list)
         except Exception as e:
             raise SuspiciousOperation(
-                gettext("Invalid format of pks %s: %s: %s" %
-                        (str(pks), type(e).__name__, str(e))))
+                gettext(
+                    "Invalid format of pks %s: %s: %s"
+                    % (str(pks), type(e).__name__, str(e))
+                )
+            )
         else:
             for pk in pks:
                 if not str(pk).isdigit():
                     raise SuspiciousOperation(
                         gettext(
-                            "pks should only contain integers, while got %s"
-                            % str(pk)))
+                            "pks should only contain integers, while got %s" % str(pk)
+                        )
+                    )
         return pks
 
     def get_queryset(self):
@@ -275,15 +285,14 @@ class BaseListViewMixin(BaseImageModelMixin, BaseListView):
     def get_ordering(self):
         # Preserving the sequence while filter by (id__in=pks)
         # See https://stackoverflow.com/a/37648265/3437454
-        preserved = Case(
-            *[When(pk=pk, then=pos) for pos, pk in enumerate(self._pks)])
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(self._pks)])
         return preserved
 
     def get_context_data(self, **kwargs):
         # Return a list of serialized files
         context = {
-            "files":  [self.get_serialized_image(obj)
-                       for obj in self.get_queryset()]}
+            "files": [self.get_serialized_image(obj) for obj in self.get_queryset()]
+        }
         context.update(kwargs)
 
         return context
@@ -294,7 +303,7 @@ class CropError(Exception):
 
 
 class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
-    http_method_names = ['post']
+    http_method_names = ["post"]
 
     def get_form_class(self):
         # Here we were simulating the request is done through
@@ -318,8 +327,7 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
 
     def setup(self, request, *args, **kwargs):
         if self.disable_server_side_crop:
-            raise SuspiciousOperation(
-                gettext("Server side crop is not enabled."))
+            raise SuspiciousOperation(gettext("Server side crop is not enabled."))
         super().setup(request, *args, **kwargs)
         self._cropped_result = self.get_and_validate_cropped_result_from_request()
 
@@ -329,30 +337,33 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
         except Exception as e:
             if isinstance(e, KeyError):
                 raise SuspiciousOperation(
-                    gettext("The request doesn't contain cropped_result"))
+                    gettext("The request doesn't contain cropped_result")
+                )
             raise SuspiciousOperation(
-                gettext("Error while getting cropped_result: %s: %s"
-                        % (type(e).__name__, str(e))))
+                gettext(
+                    "Error while getting cropped_result: %s: %s"
+                    % (type(e).__name__, str(e))
+                )
+            )
         else:
             try:
-                x = int(float(cropped_result['x']))
-                y = int(float(cropped_result['y']))
-                width = int(float(cropped_result['width']))
-                height = int(float(cropped_result['height']))
-                rotate = int(float(cropped_result['rotate']))
+                x = int(float(cropped_result["x"]))
+                y = int(float(cropped_result["y"]))
+                width = int(float(cropped_result["width"]))
+                height = int(float(cropped_result["height"]))
+                rotate = int(float(cropped_result["rotate"]))
 
                 # todo: allow show resized image in model ui
                 try:
-                    scale_x = float(cropped_result['scaleX'])
+                    scale_x = float(cropped_result["scaleX"])
                 except KeyError:
                     scale_x = None
                 try:
-                    scale_y = float(cropped_result['scaleY'])
+                    scale_y = float(cropped_result["scaleY"])
                 except KeyError:
                     scale_y = None
             except Exception:
-                raise SuspiciousOperation(
-                    gettext('Wrong format of crop_result data.'))
+                raise SuspiciousOperation(gettext("Wrong format of crop_result data."))
 
         return x, y, width, height, rotate, scale_x, scale_y
 
@@ -366,7 +377,8 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
             new_image = Image.open(old_image.path)
         except IOError:
             raise SuspiciousOperation(
-                gettext('File not found，please re-upload the image'))
+                gettext("File not found，please re-upload the image")
+            )
 
         image_format = new_image.format
 
@@ -389,6 +401,6 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
             name=old_image.name,
             content_type=Image.MIME[image_format],
             size=new_image_io.tell(),
-            charset=None
+            charset=None,
         )
         return upload_file

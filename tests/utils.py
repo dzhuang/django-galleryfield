@@ -4,7 +4,7 @@ import tempfile
 
 from django.conf import settings
 
-FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'resource')
+FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "resource")
 test_media_root = os.path.join(tempfile.gettempdir(), "galleryfield_media")
 
 

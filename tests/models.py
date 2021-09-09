@@ -13,6 +13,7 @@ class DemoGalleryForTest(models.Model):
 
 # {{{ invalid models
 
+
 class FakeInvalidImageModel1(models.Model):
     image = models.CharField(max_length=250)
 
