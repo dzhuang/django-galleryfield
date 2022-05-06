@@ -297,7 +297,7 @@ class GalleryWidget(forms.HiddenInput):
              # This is used as a CSS selector to fine the input field
              "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
 
-             "csrfCookieName": getattr(settings, "CSRF_COOKIE_NAME")
+             "csrfCookieName": "'%s'" % getattr(settings, "CSRF_COOKIE_NAME")
              })
 
         return convert_dict_to_plain_text(ui_options, indent=16)
