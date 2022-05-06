@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
 from galleryfield import conf, defaults
@@ -295,6 +296,8 @@ class GalleryWidget(forms.HiddenInput):
 
              # This is used as a CSS selector to fine the input field
              "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
+
+             "csrfCookieName": "'%s'" % getattr(settings, "CSRF_COOKIE_NAME")
              })
 
         return convert_dict_to_plain_text(ui_options, indent=16)

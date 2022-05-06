@@ -29,6 +29,7 @@
         'cropperButtonSelector',
         'statusDataName',
         'filesDataToInputDataFunction',
+        'csrfCookieName',
         'is_initializing',
     );
 
@@ -48,6 +49,7 @@
                 sortableHandleSelector: undefined,
                 sortableOptions:undefined,
                 statusDataName: undefined,
+                csrfCookieName: undefined,
 
                 getNumberOfUploadedFiles: function () {
                     return this.filesContainer.children('.template-download')
@@ -95,7 +97,7 @@
 
                     data.formData = {
                         "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
-                        "csrfmiddlewaretoken": get_cookie("csrftoken")
+                        "csrfmiddlewaretoken": get_cookie(options.csrfCookieName)
                     };
                 },
 
@@ -287,7 +289,7 @@
                             data: {
                                 "cropped_result": JSON.stringify(result),
                                 "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
-                                "csrfmiddlewaretoken": get_cookie("csrftoken")
+                                "csrfmiddlewaretoken": get_cookie(options.csrfCookieName)
                             },
                         })
                             .always(function () {
@@ -594,6 +596,13 @@
                 }
             },
 
+            _initCsrfCookieName: function () {
+                var options = this.options;
+                if (options.csrfCookieName === undefined) {
+                    options.csrfCookieName = "csrftoken";
+                }
+            },
+
             _initSpecialOptions: function () {
                 this._super();
                 this._initStatusDataName();
@@ -601,6 +610,7 @@
                 this._initEditModal();
                 this._initWidgetHiddenInput();
                 this._initFilesDataToInputDataFunction();
+                this._initCsrfCookieName();
             },
 
             _initWidgetHiddenInput: function () {
