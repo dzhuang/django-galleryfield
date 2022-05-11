@@ -66,6 +66,9 @@ class BaseImageModelMixin:
             is_checking=False).name)
         self.model = apps.get_model(self.target_model)
 
+    def get_crop_url(self, pk):
+        return reverse(self.crop_url_name, kwargs={"pk": pk})
+
     def validate_crop_url(self):
         if self.disable_server_side_crop:
             return
@@ -73,7 +76,7 @@ class BaseImageModelMixin:
             app_model_name = "-".join(self.target_model.split(".")).lower()
             self.crop_url_name = "%s-crop" % app_model_name
         try:
-            reverse(self.crop_url_name, kwargs={"pk": 1})
+            self.get_crop_url(pk=1)
         except Exception as e:
             raise ImproperlyConfigured(
                 "'crop_url_name' in %s is invalid. The exception is: "
@@ -128,13 +131,16 @@ class BaseImageModelMixin:
             crop="center",
             quality=conf.DEFAULT_THUMBNAIL_QUALITY)
 
+    def get_image_url(self, obj):  # noqa
+        return obj.pk
+
     def get_serialized_image(self, obj):
         # This is used to construct return value file dict in
         # upload list and crop views.
         image = getattr(obj, self._image_field_name)
 
         result = {
-            'pk': obj.pk,
+            'pk': self.get_image_url(obj),
             'name': os.path.basename(image.path),
             'url': image.url,
         }
@@ -152,7 +158,7 @@ class BaseImageModelMixin:
             })
 
         if not self.disable_server_side_crop:
-            result["cropUrl"] = reverse(self.crop_url_name, kwargs={"pk": obj.pk})
+            result["cropUrl"] = self.get_crop_url(pk=obj.pk)
 
         try:
             result['thumbnailUrl'] = self.get_thumbnail(image).url
