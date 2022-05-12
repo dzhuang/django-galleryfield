@@ -110,6 +110,22 @@ class GalleryWidget(forms.HiddenInput):
         self.options.setdefault("accepted_mime_types", ['image/*'])
 
     @property
+    def upload_template(self):
+        return self._upload_template
+
+    @upload_template.setter
+    def upload_template(self, value):
+        self._upload_template = value
+
+    @property
+    def download_template(self):
+        return self._download_template
+
+    @download_template.setter
+    def download_template(self, value):
+        self._download_template = value
+
+    @property
     def thumbnail_size(self):
         return self._thumbnail_size
 
@@ -322,8 +338,8 @@ class GalleryWidget(forms.HiddenInput):
             'thumbnail_size': str(self.thumbnail_size),
             'prompt_alert_on_window_reload_if_changed':
                 conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED,
-            'upload_template': self._upload_template,
-            'download_template': self._download_template
+            'upload_template': self.upload_template,
+            'download_template': self.download_template
         }
 
         # Do not fill in empty value to hidden inputs
