@@ -19,24 +19,25 @@
 
         {% block JS_DOWNLOAD_TEMPLATE_DOWNLOAD %}
         <td>
-            <p class="name">
-                {% templatetag openbrace %}% if (file.url) { %{% templatetag closebrace %}
-                    <a href="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
-                     download="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
-                     {% templatetag openbrace %}%=file.thumbnailUrl?'data-gallery':''%{% templatetag closebrace %}>
-                     {% templatetag openbrace %}%=file.name%{% templatetag closebrace %}
-                    </a>
-                {% templatetag openbrace %}% } else { %{% templatetag closebrace %}
-                    <span>{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}</span>
-                {% templatetag openbrace %}% } %{% templatetag closebrace %}
-            </p>
+            {% block JS_DOWNLOAD_TEMPLATE_NAME %}
+                <p class="name">
+                    {% templatetag openbrace %}% if (file.url) { %{% templatetag closebrace %}
+                        <a href="{% templatetag openbrace %}%=file.url%{% templatetag closebrace %}"
+                         download="{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}"
+                         {% templatetag openbrace %}%=file.thumbnailUrl?'data-gallery':''%{% templatetag closebrace %}>
+                         {% templatetag openbrace %}%=file.name%{% templatetag closebrace %}
+                        </a>
+                    {% templatetag openbrace %}% } else { %{% templatetag closebrace %}
+                        <span>{% templatetag openbrace %}%=file.name%{% templatetag closebrace %}</span>
+                    {% templatetag openbrace %}% } %{% templatetag closebrace %}
+                </p>
+            {% endblock %}
 
             {% block JS_DOWNLOAD_TEMPLATE_ERROR %}
                 {% templatetag openbrace %}% if (file.error) { %{% templatetag closebrace %}
                     <div><span class="label label-danger">Error</span> {% templatetag openbrace %}%=file.error%{% templatetag closebrace %}</div>
                 {% templatetag openbrace %}% } %{% templatetag closebrace %}
             {% endblock %}
-
         </td>
         {% endblock %}
 
