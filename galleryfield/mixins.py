@@ -132,7 +132,8 @@ class BaseImageModelMixin:
             quality=conf.DEFAULT_THUMBNAIL_QUALITY)
 
     def get_image_url(self, obj):  # noqa
-        return obj.pk
+        image = getattr(obj, self._image_field_name)
+        return image.url
 
     def get_serialized_image(self, obj):
         # This is used to construct return value file dict in
@@ -140,9 +141,9 @@ class BaseImageModelMixin:
         image = getattr(obj, self._image_field_name)
 
         result = {
-            'pk': self.get_image_url(obj),
+            'pk': obj.pk,
             'name': os.path.basename(image.path),
-            'url': image.url,
+            'url': self.get_image_url(obj),
         }
 
         error = []
