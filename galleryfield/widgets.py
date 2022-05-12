@@ -44,6 +44,12 @@ class GalleryWidget(forms.HiddenInput):
            defaults to ``galleryfield/widget.html``, which support template 
            inheritance.
     :type template: str, optional
+    :param upload_template: The path of upload template used in the widget,
+           defaults to ``galleryfield/upload_template.html``.
+    :type upload_template: str, optional
+    :param download_template: The path of download template used in the widget,
+           defaults to ``galleryfield/download_template.html``.
+    :type download_template: str, optional
     :param attrs: Html attribute when rendering the field (Which is a 
            :class:`django.forms.HiddenInput`), defaults to `None`. See 
            `Django docs <https://docs.djangoproject.com/en/dev/ref/forms/widgets/#django.forms.Widget.attrs>`_.
@@ -74,6 +80,8 @@ class GalleryWidget(forms.HiddenInput):
             multiple=True,
             thumbnail_size=conf.DEFAULT_THUMBNAIL_SIZE,
             template="galleryfield/widget.html",
+            upload_template="galleryfield/upload_template.html",
+            download_template="galleryfield/download_template.html",
             attrs=None, options=None,
             jquery_file_upload_ui_options=None,
             disable_fetch=False,
@@ -85,6 +93,8 @@ class GalleryWidget(forms.HiddenInput):
         self.multiple = multiple
         self._thumbnail_size = get_formatted_thumbnail_size(thumbnail_size)
         self.template = template
+        self._upload_template = upload_template
+        self._download_template = download_template
 
         self.disable_fetch = disable_fetch
         self.disable_server_side_crop = disable_server_side_crop
@@ -311,7 +321,9 @@ class GalleryWidget(forms.HiddenInput):
             'multiple': self.multiple and 1 or 0,
             'thumbnail_size': str(self.thumbnail_size),
             'prompt_alert_on_window_reload_if_changed':
-                conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED
+                conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED,
+            'upload_template': self._upload_template,
+            'download_template': self._download_template
         }
 
         # Do not fill in empty value to hidden inputs
