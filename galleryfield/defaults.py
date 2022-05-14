@@ -48,8 +48,6 @@ VENDER_JS_NAMES = (
     'jquery.fileupload-validate.js',
     'jquery.fileupload-ui.js',
     'jquery.blueimp-gallery.js',
-    'blueimp-gallery-indicator.js',
-    'blueimp-gallery-fullscreen.js',
     'cropper.js')
 
 VENDER_CSS_NAMES = (
@@ -58,7 +56,6 @@ VENDER_CSS_NAMES = (
     'jquery.fileupload.css',
     'jquery.fileupload-ui.css',
     'blueimp-gallery.css',
-    'blueimp-gallery-indicator.css',
     'font-awesome.css',
     'cropper.css')
 
@@ -93,10 +90,6 @@ DEFAULT_ASSETS = {
         "blueimp-file-upload/js/jquery.fileupload-ui.js",
     "jquery.blueimp-gallery.js":
         "blueimp-gallery/js/jquery.blueimp-gallery.min.js",
-    "blueimp-gallery-fullscreen.js":
-        "blueimp-gallery/js/blueimp-gallery-fullscreen.js",
-    "blueimp-gallery-indicator.js":
-        "blueimp-gallery/js/blueimp-gallery-indicator.js",
     "cropper.js": "cropper/dist/cropper.min.js",
 
     # css assets
@@ -106,8 +99,6 @@ DEFAULT_ASSETS = {
     "jquery.fileupload-ui.css":
         "blueimp-file-upload/css/jquery.fileupload-ui.css",
     "blueimp-gallery.css": "blueimp-gallery/css/blueimp-gallery.min.css",
-    "blueimp-gallery-indicator.css":
-        "blueimp-gallery/css/blueimp-gallery-indicator.css",
     "font-awesome.css": "font-awesome/css/font-awesome.min.css",
     "cropper.css": "cropper/dist/cropper.min.css",
 }
