@@ -49,39 +49,18 @@ Default:
 .. code-block:: python
 
     {
-
-        "jquery.js": "jquery/dist/jquery.min.js",
-        "jquery-ui.js": "jquery-ui-dist/jquery-ui.min.js",
-        ...
         "extra_js": [],
         "extra_css": []
     }
 
-The first part is the static assets required to render the
-:class:`galleryfield.widgets.GalleryWidget`.
-The value includes 2 parts. The second part, i.e., ``extra_js`` and
-``extra_css`` allow user to add customized static files when customize
-the rendering of the widget. The first part is the static assets required to render
-the :class:`galleryfield.widgets.GalleryWidget`. The default value for this part
-is listed in ``galleryfield.defaults.DEFAULT_ASSETS``.
+``extra_js`` and ``extra_css`` allow user to add customized static files when customize
+the rendering of the widget.
 
 .. currentmodule:: galleryfield.default
 .. autodata:: galleryfield.defaults.DEFAULT_ASSETS
    :annotation:
 .. pprint:: galleryfield.defaults.DEFAULT_ASSETS
 
-
-.. warning::
-   This project relies heavily on CSS and JS frameworks/packages, so we strongly
-   suggest using ``django-npm`` to manage the static assets for convenience. If
-   you have other options, for example, not willing to have a local copy of those assets,
-   you need to make sure ALL the items in ``galleryfield.defaults.DEFAULT_ASSET``
-   were properly configured in this setting and
-   can be accessed properly.
-
-   BTW, trying to ignore some commonly used framework such as
-   `Bootstrap` (because you already has it in your instance) will result in failure in
-   rendering the widget in Admin.
 
 .. setting:: settings_thumbnails
 

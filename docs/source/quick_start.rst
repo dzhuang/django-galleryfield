@@ -23,18 +23,20 @@ Python dependencies:
 -  Django 3.1 or later
 -  `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`_ (auto installed)
 -  `pillow <https://github.com/python-imaging/Pillow>`_ (auto installed)
--  django-npm (optional, for managing statics, you need to have ``npm`` installed in your OS)
+
 
 Static dependencies:
 
--  Bootstrap 3
--  jQuery 1.7 or later
--  jQuery UI
--  `blueimp/jQuery-File-Upload <https://github.com/blueimp/jQuery-File-Upload>`_
--  `blueimp/Gallery <https://github.com/blueimp/Gallery>`_
--  `cropper <https://fengyuanchen.github.io/cropper>`_ by Chen Fengyuan
+-  Bootstrap 3.4.1 (included)
+-  jQuery 3.6 (included)
+-  jQuery UI (included)
+-  `blueimp/jQuery-File-Upload <https://github.com/blueimp/jQuery-File-Upload>`__
+   (included)
+-  `blueimp/Gallery <https://github.com/blueimp/Gallery>`__ (included)
 
-The static dependencies can be installed by command ``npm install``.
+-  `cropper <https://fengyuanchen.github.io/cropper>`_ by Chen Fengyuan (included)
+
+The static dependencies were already included in the package.
 
 
 Configurations
@@ -52,16 +54,6 @@ Configurations
     )
 
     DJANGO_GALLERY_CONFIG = ...
-
-- We strongly propose using ``django-npm`` to manage the static dependencies,
-  by adding the following lines in ``settings.py``:
-
-.. code-block:: python
-
-    from django.conf.global_settings import STATICFILES_FINDERS
-
-    STATICFILES_FINDERS = tuple(STATICFILES_FINDERS) + ("npm.finders.NpmFinder",)
-
 
 - In ``urls.py``, add the following lines:
 
@@ -89,7 +81,6 @@ The best way to have a glance of how django-galleryfield works is to run the dem
     cd demo
     pip install -r requirements.txt
     cd ..
-    npm install  # or yarn, install the CSS and JS modules
     python manage.py migrate
     python manage.py createsuperuser # Create a superuser account so that you can upload images
     python manage.py runserver
