@@ -2,7 +2,6 @@ from django.apps import apps
 from django.conf import settings
 from django.core import checks
 
-from galleryfield import defaults
 from galleryfield.utils import (GENERIC_ERROR_PATTERN, INSTANCE_ERROR_PATTERN,
                                 DJGalleryCriticalCheckMessage,
                                 InvalidThumbnailFormat,
@@ -81,7 +80,7 @@ def check_settings(app_configs, **kwargs):
                                     EXTRA_JS, ASSETS,
                                     DJANGO_GALLERY_FIELD_CONFIG),
                                 "types": "str"}),
-                        id="django-galleryfield-assets.E005"
+                        id="django-galleryfield-assets.E002"
                     ))
                 else:
                     for js in extra_js:
@@ -94,7 +93,7 @@ def check_settings(app_configs, **kwargs):
                                             EXTRA_JS, ASSETS,
                                             DJANGO_GALLERY_FIELD_CONFIG),
                                     "types": "str"}),
-                                id="django-galleryfield-assets.E006"
+                                id="django-galleryfield-assets.E003"
                             ))
 
             extra_css = assets_copy.pop(EXTRA_CSS, None)
@@ -106,7 +105,7 @@ def check_settings(app_configs, **kwargs):
                                     EXTRA_CSS, ASSETS,
                                     DJANGO_GALLERY_FIELD_CONFIG),
                                 "types": "str"}),
-                        id="django-galleryfield-assets.E007"
+                        id="django-galleryfield-assets.E004"
                     ))
                 else:
                     for css in extra_css:
@@ -119,43 +118,8 @@ def check_settings(app_configs, **kwargs):
                                             EXTRA_CSS, ASSETS,
                                             DJANGO_GALLERY_FIELD_CONFIG),
                                     "types": "str"}),
-                                id="django-galleryfield-assets.E008"
+                                id="django-galleryfield-assets.E005"
                             ))
-
-            for asset_name, asset_value in assets_copy.items():
-                if asset_name not in (
-                        defaults.VENDER_CSS_NAMES + defaults.VENDER_JS_NAMES):
-                    errors.append(checks.Warning(
-                        msg=("%(location)s is not in the required assets, it"
-                             "you want to use it, put it in %(extra_css)s or "
-                             "%(extra_js)s"
-                             % {"location": (
-                                        "Asset '%s' in '%s' in '%s'" % (
-                                            str(asset_name), ASSETS,
-                                            DJANGO_GALLERY_FIELD_CONFIG)),
-                                 "extra_js": EXTRA_JS,
-                                 "extra_css": EXTRA_CSS}
-                             ),
-                        id="django-galleryfield-assets.W001"
-                    ))
-                    continue
-
-                if asset_value is None:
-                    errors.append(checks.Warning(
-                        msg=("%(location)s is set to None, that might "
-                             "cause unexpected result in views as well "
-                             "as in admin."
-                             % {"location": (
-                                        "Asset '%s' in '%s' in '%s'" % (
-                                            str(asset_name), ASSETS,
-                                            DJANGO_GALLERY_FIELD_CONFIG))}
-                             ),
-                        id="django-galleryfield-assets.W002"
-                    ))
-                    continue
-
-                # Note the asset_value is not necessary a str, it can be a
-                # JS object (see django-js-asset).
 
     thumbnails = conf.get(THUMBNAILS, None)
     if thumbnails is not None:

@@ -28,21 +28,6 @@ DEFAULT_CREATOR_FIELD_NAME = "creator"
 
 # }}}
 
-VENDER_JS_NAMES = (
-
-)
-
-VENDER_CSS_NAMES = (
-    'font-awesome.css',
-)
-
-DEFAULT_ASSETS = {
-    "font-awesome.css": "vendor/font-awesome/css/font-awesome.min.css",
-}
-
-"""dict: The default assets used to render the :class:`GalleryWidget` instance.
-"""
-
 BUILT_IN_JS = ["js/galleryfield-ui.js"]
 BUILT_IN_CSS = []
 

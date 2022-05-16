@@ -30,16 +30,9 @@ _APP_CONFIG_ASSETS = _APP_CONFIG.get("assets", {})
 EXTRA_JS = _APP_CONFIG_ASSETS.pop("extra_js", defaults.EXTRA_JS)
 EXTRA_CSS = _APP_CONFIG_ASSETS.pop("extra_css", defaults.EXTRA_CSS)
 
-_assets = defaults.DEFAULT_ASSETS.copy()
-_assets.update(_APP_CONFIG_ASSETS)
+JS = [j for j in defaults.BUILT_IN_JS + EXTRA_JS if j]
 
-_js = [_assets.get(v) for v in defaults.VENDER_JS_NAMES]
-_js.extend(defaults.BUILT_IN_JS + EXTRA_JS)
-JS = [j for j in _js if j]
-
-_css = [_assets.get(v) for v in defaults.VENDER_CSS_NAMES] + EXTRA_CSS
-_css.extend(defaults.BUILT_IN_CSS + EXTRA_CSS)
-CSS = [c for c in _css if c]
+CSS = [c for c in defaults.BUILT_IN_CSS + EXTRA_CSS if c]
 
 # }}}
 
