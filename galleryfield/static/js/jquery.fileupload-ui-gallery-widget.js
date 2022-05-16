@@ -257,7 +257,7 @@
                         return;
                     }
 
-                    $editImg.prop('src', loadImage.createObjectURL(orig));
+                    $editImg.prop('src', window.loadImage.createObjectURL(orig));
                     $editImg.processCroppedCanvas = function (result) {
                         $editModal.modal('hide');
                         options.cropperButtonSelector.prop("disabled", true);

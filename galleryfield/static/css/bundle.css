@@ -1,0 +1,7 @@
+@import "bootstrap/dist/css/bootstrap";
+@import "jquery-ui-dist/jquery-ui.theme";
+@import "blueimp-file-upload/css/jquery.fileupload";
+@import "blueimp-file-upload/css/jquery.fileupload-ui";
+@import "blueimp-gallery/css/blueimp-gallery";
+@import "font-awesome/css/font-awsome";
+@import "cropper/dist/cropper";

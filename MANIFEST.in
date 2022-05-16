@@ -1,6 +1,8 @@
 include LICENSE
 include README.rst
 recursive-include galleryfield/locale *
-recursive-include galleryfield/static *
+recursive-include galleryfield/static/img *
+recursive-include galleryfield/static/vendor *
+recursive-include galleryfield/static/js galleryfield-ui.*
 recursive-include galleryfield/templates *
 recursive-include docs *

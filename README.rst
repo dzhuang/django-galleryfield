@@ -61,13 +61,7 @@ Requirements
 -  Django 3.1 or later
 -  `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`__
 -  `pillow <https://github.com/python-imaging/Pillow>`__ (or PIL)
--  npm and django-npm (for managing statics)
--  Bootstrap 3 or later (included)
--  jQuery 1.7 or later (included)
--  jQuery UI (included)
--  `blueimp/jQuery-File-Upload <https://github.com/blueimp/jQuery-File-Upload>`__
-   (included)
--  `blueimp/Gallery <https://github.com/blueimp/Gallery>`__ (included)
+
 
 Install
 ~~~~~~~
@@ -93,16 +87,6 @@ Usage
     DJANGO_GALLERY_CONFIG = ...
 
 
-- We strongly propose using ``django-npm`` to manage the static dependencies,
-  add the following lines in ``settings.py``:
-
-::
-
-    from django.conf.global_settings import STATICFILES_FINDERS
-
-    STATICFILES_FINDERS = tuple(STATICFILES_FINDERS) + ("npm.finders.NpmFinder",)
-
-
 - In ``urls.py``, add the following lines:
 
 ::
@@ -123,7 +107,6 @@ Run the demo
     cd demo
     pip install -r requirements.txt
     cd ..
-    npm install  # or yarn, install the CSS and JS modules
     python manage.py migrate
     python manage.py createsuperuser # Create a superuser account so that you can upload images
     python manage.py runserver

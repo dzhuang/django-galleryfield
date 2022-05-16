@@ -128,8 +128,6 @@ class CheckAssets(CheckSettingsBase):
 
     VALID_CONF = {
         "assets": {
-            "jquery.js": "jquery/dist/jquery.min.js",
-            "bootstrap.css": "bootstrap/dist/css/bootstrap.min.css",
             "extra_js": ["some/js"],
             "extra_css": ["some/css"],
         },
@@ -142,20 +140,8 @@ class CheckAssets(CheckSettingsBase):
         },
     }
 
-    CONF_SET_NONE_WARNED = {
-        "assets": {
-            "jquery.js": None,
-        },
-    }
-
     INVALID_CONF_NOT_Dict = {
         "assets": object
-    }
-
-    NOT_LISTED_ASSET = {
-        "assets": {
-            "bootstrap4.css": "bootstrap/dist/css/bootstrap.min.css",
-        },
     }
 
     INVALID_CONF_EXTRA_JS = {
@@ -198,35 +184,27 @@ class CheckAssets(CheckSettingsBase):
     def test_valid_config4(self):
         self.assertCheckMessages([])
 
-    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=NOT_LISTED_ASSET)
-    def test_item_not_listed_warned_config(self):
-        self.assertCheckMessages(["django-galleryfield-assets.W001"])
-
-    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=CONF_SET_NONE_WARNED)
-    def test_item_set_none_warned_config(self):
-        self.assertCheckMessages(["django-galleryfield-assets.W002"])
-
     @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NOT_Dict)
     def test_invalid_config01(self):
         self.assertCheckMessages(["django-galleryfield-assets.E001"])
 
     @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EXTRA_JS)
     def test_invalid_config02(self):
-        self.assertCheckMessages(["django-galleryfield-assets.E005"])
+        self.assertCheckMessages(["django-galleryfield-assets.E002"])
 
     @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EXTRA_CSS)
     def test_invalid_config03(self):
-        self.assertCheckMessages(["django-galleryfield-assets.E007"])
+        self.assertCheckMessages(["django-galleryfield-assets.E004"])
 
     @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EXTRA_JS_ELE)
     def test_invalid_config04(self):
-        self.assertCheckMessages(["django-galleryfield-assets.E006",
-                                  "django-galleryfield-assets.E006"])
+        self.assertCheckMessages(["django-galleryfield-assets.E003",
+                                  "django-galleryfield-assets.E003"])
 
     @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_EXTRA_CSS_ELE)
     def test_invalid_config05(self):
-        self.assertCheckMessages(["django-galleryfield-assets.E008",
-                                  "django-galleryfield-assets.E008"])
+        self.assertCheckMessages(["django-galleryfield-assets.E005",
+                                  "django-galleryfield-assets.E005"])
 
 
 """
