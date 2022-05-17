@@ -1,14 +1,13 @@
 import './jquery-importer';
 
-import 'jquery-ui-dist/jquery-ui';
+/* This is necessary for sortable */
+import 'jquery-ui-dist/jquery-ui.min';
 
-import 'blueimp-file-upload/js/vendor/jquery.ui.widget';
-
-import 'blueimp-tmpl/js/tmpl';
+import 'blueimp-tmpl/js/tmpl.min';
 
 import 'blueimp-load-image/js/load-image.all.min';
 
-import 'blueimp-canvas-to-blob/js/canvas-to-blob';
+import 'blueimp-canvas-to-blob/js/canvas-to-blob.min';
 
 import 'blueimp-gallery/js/jquery.blueimp-gallery.min';
 
@@ -30,7 +29,7 @@ import 'blueimp-file-upload/js/jquery.fileupload-validate';
 
 import 'blueimp-file-upload/js/jquery.fileupload-ui';
 
-import 'cropper/dist/cropper';
+import 'cropper/dist/cropper.min';
 
 import './jquery.fileupload-ui-gallery-widget';
 
