@@ -66,23 +66,23 @@ class BaseImageModelMixin:
             is_checking=False).name)
         self.model = apps.get_model(self.target_model)
 
-        self._model_crop_url_method = None
+        self._model_crop_url_method_exists = False
         model_crop_url_method = getattr(self.model, "get_crop_url", None)
         if model_crop_url_method is not None:
             if not callable(model_crop_url_method):
                 # todo: throw a warning
                 pass
             else:
-                self._model_crop_url_method = model_crop_url_method
+                self._model_crop_url_method_exists = True
 
     def get_default_crop_url(self, pk):
         return reverse(self.crop_url_name, kwargs={"pk": pk})
 
     def _get_crop_url(self, obj):
-        if self._model_crop_url_method is None:
+        if not self._model_crop_url_method_exists:
             return self.get_default_crop_url(obj.pk)
 
-        return self._model_crop_url_method(obj)
+        return obj.get_crop_url()
 
     def get_default_image_url(self, obj):  # noqa
         image = getattr(obj, self._image_field_name)
@@ -99,7 +99,7 @@ class BaseImageModelMixin:
         if self.disable_server_side_crop:
             return
 
-        if self._model_crop_url_method:
+        if self._model_crop_url_method_exists:
             return
 
         # fallback to default crop_url
@@ -162,54 +162,82 @@ class BaseImageModelMixin:
             crop="center",
             quality=conf.DEFAULT_THUMBNAIL_QUALITY)
 
-    def get_serialized_image(self, obj):
+    def get_default_image_data(self, obj):
         # This is used to construct return value file dict in
         # upload list and crop views.
         image = getattr(obj, self._image_field_name)
 
-        result = {
+        image_data = {
             'pk': obj.pk,
             'name': os.path.basename(image.path),
             'url': self._get_image_url(obj),
         }
 
-        error = []
+        errors = []
 
         try:
-            result["url"] = self._get_image_url(obj)
+            image_data["url"] = self._get_image_url(obj)
         except Exception as e:
-            error.append(
+            errors.append(
                 gettext("image url: %s: %s" % (type(e).__name__, str(e)))
             )
 
         if not self.disable_server_side_crop:
             try:
-                result["cropUrl"] = self._get_crop_url(obj)
+                image_data["cropUrl"] = self._get_crop_url(obj)
             except Exception as e:
-                error.append(
+                errors.append(
                     gettext("crop url: %s: %s" % (type(e).__name__, str(e)))
                 )
 
         try:
             image_size = image.size
         except OSError:
-            error.append(gettext(
+            errors.append(gettext(
                 "image: The image was unexpectedly deleted from server"))
         else:
-            result.update({
+            image_data.update({
                 "size": image_size,
             })
 
         try:
-            result['thumbnailUrl'] = self.get_thumbnail(image).url
+            image_data['thumbnailUrl'] = self.get_thumbnail(image).url
         except Exception as e:
-            error.append(
+            errors.append(
                 gettext("thumbnail: %s: %s" % (type(e).__name__, str(e)))
             )
 
-        if error:
-            result["error"] = "; ".join(error)
-        return result
+        return image_data, errors
+
+    def get_serialized_image_data(self, obj):
+        image_data, errors = self.get_default_image_data(obj)
+
+        model_serialize_extra_method = (
+            getattr(self.model, "serialize_extra", None))
+        if model_serialize_extra_method is not None:
+            if not callable(model_serialize_extra_method):
+                # todo: throw a warning
+                pass
+            else:
+                try:
+                    extra_data = obj.serialize_extra(self.request)
+                    if not isinstance(extra_data, dict):
+                        raise ValueError(
+                            "'serialize_extra' method of %s did not return a dict."
+                            % self.model.__name__
+                        )
+                except Exception as e:
+                    errors.append(
+                        gettext(
+                            "extra serialize: %s: %s" % (type(e).__name__, str(e)))
+                    )
+                else:
+                    image_data.update(extra_data)
+
+        if errors:
+            image_data["error"] = "; ".join(errors)
+
+        return image_data
 
     def render_to_response(self, context, **response_kwargs):
         # Overriding the method from template view, we don't need
@@ -233,7 +261,7 @@ class ImageFormViewMixin:
         context = {}
         if form.is_valid():
             if self.object:
-                context["files"] = [self.get_serialized_image(self.object)]
+                context["files"] = [self.get_serialized_image_data(self.object)]
                 context["message"] = gettext("Done")
         else:
             context["errors"] = form.errors
@@ -328,7 +356,7 @@ class BaseListViewMixin(BaseImageModelMixin, BaseListView):
     def get_context_data(self, **kwargs):
         # Return a list of serialized files
         context = {
-            "files":  [self.get_serialized_image(obj)
+            "files":  [self.get_serialized_image_data(obj)
                        for obj in self.get_queryset()]}
         context.update(kwargs)
 
