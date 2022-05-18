@@ -6,6 +6,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 from demo.models import DemoGallery
 from galleryfield.models import BuiltInGalleryImage
@@ -57,11 +58,12 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
     def _login_to_admin(self):
         # We do this because we need to login
         self.selenium.get(self.admin_url)
-        username_input = self.selenium.find_element_by_name("username")
+        username_input = self.selenium.find_element(by=By.NAME, value="username")
         username_input.send_keys(self.superuser.username)
-        password_input = self.selenium.find_element_by_name("password")
+        password_input = self.selenium.find_element(by=By.NAME, value="password")
         password_input.send_keys("secret")
-        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
+        self.selenium.find_element(
+            by=By.XPATH, value='//input[@value="Log in"]').click()
         sleep(1)
 
     def _go_to_new_gallery(self):
@@ -73,26 +75,26 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
 
     def _assert_widget_loaded(self):
         sleep(1)
-        self.selenium.find_element_by_id("images-files")
+        self.selenium.find_element(by=By.ID, value="images-files")
 
     def _add_and_upload_image(self, static_file_path):
-        input_ele = self.selenium.find_element_by_id("images-files")
+        input_ele = self.selenium.find_element(by=By.ID, value="images-files")
         input_ele.send_keys(self._get_upload_image(static_file_path))
         sleep(0.5)
-        self.selenium.find_element_by_class_name("start").click()
+        self.selenium.find_element(by=By.CLASS_NAME, value="start").click()
         sleep(1)
 
     def _get_upload_image(self, static_file_path):
         return find(static_file_path)
 
     def _submit_page(self):
-        submit_ele = self.selenium.find_element_by_id("submit-id-submit")
+        submit_ele = self.selenium.find_element(by=By.ID, value="submit-id-submit")
         submit_ele.click()
         sleep(0.5)
 
     def _get_first_button_bar_delete_button(self):
-        return self.selenium.find_element_by_css_selector(
-            "a.delete.fileinput-button")
+        return self.selenium.find_element(by=By.CSS_SELECTOR,
+                                          value="a.delete.fileinput-button")
 
     def _delete_one_image(self):
         delete_button = self._get_first_button_bar_delete_button()
