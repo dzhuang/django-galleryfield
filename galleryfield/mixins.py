@@ -66,17 +66,48 @@ class BaseImageModelMixin:
             is_checking=False).name)
         self.model = apps.get_model(self.target_model)
 
-    def get_crop_url(self, pk):
+        self._model_crop_url_method = None
+        model_crop_url_method = getattr(self.model, "get_crop_url", None)
+        if model_crop_url_method is not None:
+            if not callable(model_crop_url_method):
+                # todo: throw a warning
+                pass
+            else:
+                self._model_crop_url_method = model_crop_url_method
+
+    def get_default_crop_url(self, pk):
         return reverse(self.crop_url_name, kwargs={"pk": pk})
+
+    def _get_crop_url(self, obj):
+        if self._model_crop_url_method is None:
+            return self.get_default_crop_url(obj.pk)
+
+        return self._model_crop_url_method(obj)
+
+    def get_default_image_url(self, obj):  # noqa
+        image = getattr(obj, self._image_field_name)
+        return image.url
+
+    def _get_image_url(self, obj):  # noqa
+        if (hasattr(obj, "get_image_url")
+                and callable(getattr(obj, "get_image_url"))):
+            return obj.get_image_url()
+
+        return self.get_default_image_url(obj)
 
     def validate_crop_url(self):
         if self.disable_server_side_crop:
             return
+
+        if self._model_crop_url_method:
+            return
+
+        # fallback to default crop_url
         if self.crop_url_name is None:
             app_model_name = "-".join(self.target_model.split(".")).lower()
             self.crop_url_name = "%s-crop" % app_model_name
         try:
-            self.get_crop_url(pk=1)
+            self.get_default_crop_url(pk=1)
         except Exception as e:
             raise ImproperlyConfigured(
                 "'crop_url_name' in %s is invalid. The exception is: "
@@ -131,10 +162,6 @@ class BaseImageModelMixin:
             crop="center",
             quality=conf.DEFAULT_THUMBNAIL_QUALITY)
 
-    def get_image_url(self, obj):  # noqa
-        image = getattr(obj, self._image_field_name)
-        return image.url
-
     def get_serialized_image(self, obj):
         # This is used to construct return value file dict in
         # upload list and crop views.
@@ -143,10 +170,25 @@ class BaseImageModelMixin:
         result = {
             'pk': obj.pk,
             'name': os.path.basename(image.path),
-            'url': self.get_image_url(obj),
+            'url': self._get_image_url(obj),
         }
 
         error = []
+
+        try:
+            result["url"] = self._get_image_url(obj)
+        except Exception as e:
+            error.append(
+                gettext("image url: %s: %s" % (type(e).__name__, str(e)))
+            )
+
+        if not self.disable_server_side_crop:
+            try:
+                result["cropUrl"] = self._get_crop_url(obj)
+            except Exception as e:
+                error.append(
+                    gettext("crop url: %s: %s" % (type(e).__name__, str(e)))
+                )
 
         try:
             image_size = image.size
@@ -157,9 +199,6 @@ class BaseImageModelMixin:
             result.update({
                 "size": image_size,
             })
-
-        if not self.disable_server_side_crop:
-            result["cropUrl"] = self.get_crop_url(pk=obj.pk)
 
         try:
             result['thumbnailUrl'] = self.get_thumbnail(image).url

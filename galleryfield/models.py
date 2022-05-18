@@ -15,3 +15,10 @@ class BuiltInGalleryImage(models.Model):
     # @classmethod
     # def get_image_field(cls):
     #     return cls._meta.get_field("image")
+
+    # def get_image_url(self):
+    #     return self.image.url
+    #
+    # def get_crop_url(self):
+    #     from django.urls import reverse
+    #     return reverse("galleryfield-builtingalleryimage-crop", args=(self.pk,))
