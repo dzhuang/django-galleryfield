@@ -29,7 +29,8 @@
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.43.5",
     "serve": "^11.3.2",
-    "font-awesome": "^4.7.0"
+    "fontawesome-subset": "^3.0.0",
+    "@fortawesome/fontawesome-free": "^5.15.4"
   },
   "scripts": {
     "build": "rollup --config"

@@ -1,6 +1,13 @@
-@import "bootstrap/dist/css/bootstrap.min";
+/*@import "bootstrap/dist/css/bootstrap.min";*/
 @import "blueimp-file-upload/css/jquery.fileupload";
 @import "blueimp-file-upload/css/jquery.fileupload-ui";
 @import "blueimp-gallery/css/blueimp-gallery.min";
-@import "font-awesome/css/font-awesome";
+
+/*@import "@fortawesome/fontawesome-free/css/all";*/
+/*@import "@fortawesome/fontawesome-free/css/solid.min";*/
+
+/* minimized fontawesome 5.15.4 */
+@import "../dev/@fortawesome/fontawesome-free/css/all";
+@import "../dev/@fortawesome/fontawesome-free/css/solid.min";
+
 @import "cropper/dist/cropper.min";

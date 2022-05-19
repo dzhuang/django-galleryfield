@@ -6,6 +6,13 @@ import { terser } from 'rollup-plugin-terser';
 import styles from 'rollup-plugin-styles';
 import gzipPlugin from 'rollup-plugin-gzip';
 
+// import { fontawesomeSubset } from "fontawesome-subset";
+//
+// fontawesomeSubset(
+//     ['check','share', 'reply', 'times', 'sync-alt'],
+//     'galleryfield/static/dev/@fortawesome/fontawesome-free/webfonts'
+// );
+
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
 const production = !process.env.ROLLUP_WATCH;
@@ -32,7 +39,11 @@ export default [
       format: 'iife',
       sourcemap: true,
       name: 'galleryFieldUI',
+      globals: {
+        jquery: "$"
+      }
     },
     plugins: defaultPlugins,
+    external: ["jquery", "bootstrap"]
   },
 ];

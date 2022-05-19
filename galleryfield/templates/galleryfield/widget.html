@@ -203,25 +203,25 @@
                                 <div class="btn-group cropper-rotate-btns">
                                     <button type="button" class="btn btn-primary" disabled
                                             data-method="rotate" data-option="-90">
-                                        <i class="fa fa-rotate-left"></i>
+                                        <i class="fa fa-reply"></i>
                                         <span>90&deg;</span>
                                     </button>
                                     <button type="button" class="btn btn-primary" disabled
                                             data-method="rotate" data-option="90">
-                                        <i class="fa fa-rotate-right"></i>
+                                        <i class="fa fa-share"></i>
                                         <span>90&deg;</span>
                                     </button>
                                     {% if ALLOW_ROTATE_TUNE %}
                                     <button type="button"
                                             class="btn btn-primary" disabled
                                             data-method="rotate" data-option="-0.5">
-                                        <i class="fa fa-reply"></i>
+                                        <i class="fa-flip-vertical fa-share"></i>
                                         <span>0.5&deg;</span>
                                     </button>
                                     <button type="button"
                                             class="btn btn-primary" disabled
                                             data-method="rotate" data-option="0.5">
-                                        <i class="fa fa-share"></i>
+                                        <i class="fas fa-share"></i>
                                         <span>0.5&deg;</span>
                                     </button>
                                 {% endif %}
@@ -230,19 +230,19 @@
                                 <button type="button"
                                         class="btn btn-success" disabled
                                         data-method="commit">
-                                    <i class="fa fa-check"></i>
+                                    <i class="fas fa-check"></i>
                                     <span>{% trans "Submit" %}</span></button>
                                 <button type="button"
                                         class="btn btn-warning" disabled
                                         data-method="reset">
-                                    <i class="fa fa-refresh"></i>
+                                    <i class="fas fa-sync-alt"></i>
                                     <span>{% trans "Reset" %}</span></button>
                                 </div>
                             </div>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-danger"
                                             data-dismiss="modal">
-                                        <i class="fa fa-remove"></i>
+                                        <i class="fas fa-times"></i>
                                         <span>{% trans "Close" %}</span>
                                     </button>
                                 </div>
@@ -259,6 +259,15 @@
 
 
 <script type="text/javascript">
+(function (factory) {
+  if (typeof define === 'function' && define.amd)
+  define(['jquery'], factory)
+  else if (typeof module === 'object' && module.exports)
+  module.exports = factory(require('jquery'))
+  else
+  factory(jQuery)
+}(function ($) {
+
     {% if prompt_alert_on_window_reload_if_changed %}
       var input_changed = false;
 
@@ -347,22 +356,22 @@
                 that.closest("form").on("submit", before_submit);
             }
         });
-</script>
 
-{% if not uploader_disabled and upload_url %}
-    <script>
-    {# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
-    {# https://blog.csdn.net/candy_home/article/details/74440519 #}
-    {# https://gist.github.com/wjp2013/fff34c063cf0cf227d65#gistcomment-1705685 #}
-    $(document).ready(function () {
-      var isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
-      if (isWeixinBrowser)
-        $('.django-gallery-image-input')
-          .removeAttr('multiple')
-          .attr("accept", "image/*");
-    })
-    </script>
-{% endif %}
+        {% if not uploader_disabled and upload_url %}
+            {# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
+            {# https://blog.csdn.net/candy_home/article/details/74440519 #}
+            {# https://gist.github.com/wjp2013/fff34c063cf0cf227d65#gistcomment-1705685 #}
+            $(document).ready(function () {
+              var isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
+              if (isWeixinBrowser)
+                $('.django-gallery-image-input')
+                  .removeAttr('multiple')
+                  .attr("accept", "image/*");
+            })
+        {% endif %}
+
+}));
+</script>
 
 {% block JS_EXTRA %}
 {% endblock %}
