@@ -207,9 +207,10 @@ def get_url_from_str(url_str, require_urlconf_ready=False):
             return reverse_lazy(url_str)
         try:
             return reverse(url_str)
-        except NoReverseMatch:
+        except NoReverseMatch as e:
             raise ImproperlyConfigured(
-                "'%s' is neither a valid URL nor a valid URL name" % url_str)
+                "'%s' is invalid: '%s': '%s'." % (
+                    url_str, type(e).__name__, str(e)))
     return url_str
 
 

@@ -2,7 +2,6 @@ django<=3.3
 sorl-thumbnail
 pillow
 django-crispy-forms
-django-npm
 
 codecov
 factory_boy

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'galleryfield',
     'sorl.thumbnail',
     'demo',
+    'demo_custom',
     'tests',
 ]
 
@@ -137,3 +138,11 @@ from django.conf.global_settings import STATICFILES_FINDERS
 
 STATICFILES_FINDERS = tuple(STATICFILES_FINDERS) + (
     "npm.finders.NpmFinder",)
+
+
+SENDFILE_URL = "/protected"
+
+# SENDFILE_BACKEND = "django_sendfile.backends.nginx"  # production
+SENDFILE_BACKEND = "django_sendfile.backends.development"
+
+SENDFILE_ROOT = BASE_DIR / 'protected'

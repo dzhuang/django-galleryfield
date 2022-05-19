@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'galleryfield',
     'sorl.thumbnail',
     'demo',
+    'demo_custom'
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # }
 
 LOGIN_URL = "/admin/login/"
+
+SENDFILE_URL = "/protected"
+
+# SENDFILE_BACKEND = "django_sendfile.backends.nginx"  # production
+SENDFILE_BACKEND = "django_sendfile.backends.development"
+
+SENDFILE_ROOT = BASE_DIR / 'protected'

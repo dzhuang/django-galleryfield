@@ -6,13 +6,13 @@ from django.core.exceptions import ImproperlyConfigured
 from django.forms.renderers import DjangoTemplates
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
+from tests import factories
+from tests.test_fields import DemoTestGalleryModelForm
 
 from galleryfield import conf, defaults
 from galleryfield.fields import GalleryFormField
 from galleryfield.utils import get_formatted_thumbnail_size
 from galleryfield.widgets import GalleryWidget
-from tests import factories
-from tests.test_fields import DemoTestGalleryModelForm
 
 
 class GalleryWidgetTest(SimpleTestCase):
@@ -312,14 +312,11 @@ class GalleryWidgetTest(SimpleTestCase):
                 with self.assertRaises(ImproperlyConfigured) as cm:
                     self._render_widget(field.widget, "field", "")
 
-                expected_error_str = (
-                        "'%s' is invalid: %s is neither a valid URL "
-                        "nor a valid URL name." % (k, invalid_url_name)
-                )
+                expected_error_str = "is not a valid view function or pattern name"
 
                 self.assertIn(
                     expected_error_str,
-                    cm.exception.args[0], cm.exception)
+                    str(cm.exception))
 
     def test_widget_set_jquery_file_upload_ui_options_None_get_default(self):
         f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)

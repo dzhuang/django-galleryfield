@@ -190,11 +190,9 @@ class GalleryWidget(forms.HiddenInput):
         try:
             self.upload_url = get_url_from_str(
                     self.upload_url, require_urlconf_ready=True)
-        except Exception:
+        except Exception as e:
             raise ImproperlyConfigured(
-                "'upload_url' is invalid: %s is neither "
-                "a valid URL nor a valid URL name."
-                % self.upload_url)
+                "'upload_url' is invalid: '%s': '%s'" % (type(e).__name__, str(e)))
 
         if self.disable_fetch:
             self.fetch_url = None
@@ -203,11 +201,10 @@ class GalleryWidget(forms.HiddenInput):
                 self.fetch_url = get_url_from_str(
                         self.fetch_url, require_urlconf_ready=True)
 
-            except Exception:
+            except Exception as e:
                 raise ImproperlyConfigured(
-                    "'fetch_url' is invalid: %s is neither "
-                    "a valid URL nor a valid URL name."
-                    % self.fetch_url)
+                    "'fetch_url' is invalid: '%s': '%s'" % (
+                        type(e).__name__, str(e)))
 
         # In the following we validate update the urls from url names (if it is
         # not an url) and check the potential conflicts of init params
