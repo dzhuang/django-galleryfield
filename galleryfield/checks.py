@@ -64,7 +64,7 @@ def check_settings(app_configs, **kwargs):
         if not isinstance(assets, dict):
             errors.append(DJGalleryCriticalCheckMessage(
                 msg=(INSTANCE_ERROR_PATTERN
-                     % {"location": "'%s' in '%s'" % (
+                     % {"location": "'{}' in '{}'".format(
                             ASSETS, DJANGO_GALLERY_FIELD_CONFIG),
                         "types": "dict"}),
                 id="django-galleryfield-assets.E001"
@@ -76,7 +76,7 @@ def check_settings(app_configs, **kwargs):
                 if not isinstance(extra_js, list):
                     errors.append(DJGalleryCriticalCheckMessage(
                         msg=(INSTANCE_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
+                             % {"location": "'{}' in '{}' in '{}'".format(
                                     EXTRA_JS, ASSETS,
                                     DJANGO_GALLERY_FIELD_CONFIG),
                                 "types": "str"}),
@@ -88,7 +88,7 @@ def check_settings(app_configs, **kwargs):
                             errors.append(DJGalleryCriticalCheckMessage(
                                 msg=(INSTANCE_ERROR_PATTERN % {
                                     "location":
-                                        "'%s' in '%s' in '%s' in '%s'" % (
+                                        "'{}' in '{}' in '{}' in '{}'".format(
                                             str(js),
                                             EXTRA_JS, ASSETS,
                                             DJANGO_GALLERY_FIELD_CONFIG),
@@ -101,7 +101,7 @@ def check_settings(app_configs, **kwargs):
                 if not isinstance(extra_css, list):
                     errors.append(DJGalleryCriticalCheckMessage(
                         msg=(INSTANCE_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
+                             % {"location": "'{}' in '{}' in '{}'".format(
                                     EXTRA_CSS, ASSETS,
                                     DJANGO_GALLERY_FIELD_CONFIG),
                                 "types": "str"}),
@@ -113,7 +113,7 @@ def check_settings(app_configs, **kwargs):
                             errors.append(DJGalleryCriticalCheckMessage(
                                 msg=(INSTANCE_ERROR_PATTERN % {
                                     "location":
-                                        "'%s' in '%s' in '%s' in '%s'" % (
+                                        "'{}' in '{}' in '{}' in '{}'".format(
                                             str(css),
                                             EXTRA_CSS, ASSETS,
                                             DJANGO_GALLERY_FIELD_CONFIG),
@@ -126,7 +126,7 @@ def check_settings(app_configs, **kwargs):
         if not isinstance(thumbnails, dict):
             errors.append(DJGalleryCriticalCheckMessage(
                 msg=(INSTANCE_ERROR_PATTERN
-                     % {"location": "'%s' in '%s'" % (
+                     % {"location": "'{}' in '{}'".format(
                             THUMBNAILS, DJANGO_GALLERY_FIELD_CONFIG),
                         "types": "dict"}),
                 id="django-galleryfield-thumbnails.E001"
@@ -140,22 +140,22 @@ def check_settings(app_configs, **kwargs):
                 if isinstance(e, InvalidThumbnailFormat):
                     errors.append(DJGalleryCriticalCheckMessage(
                         msg=(GENERIC_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
+                             % {"location": "'{}' in '{}' in '{}'".format(
                                     THUMBNAIL_SIZE, THUMBNAILS,
                                     DJANGO_GALLERY_FIELD_CONFIG),
                                 "error_type": type(e).__name__,
                                 "error_str": (
-                                        "'%s' must be an int, or a string of int, "
+                                        f"'{THUMBNAIL_SIZE}' must be an int, "
+                                        f"or a string of int, "
                                         "or in the form of 80x60, or a list, e.g,"
-                                        " [80, 60], or a tuple (80, 60)"
-                                        % THUMBNAIL_SIZE)}
+                                        " [80, 60], or a tuple (80, 60)")}
                              ),
                         id="django-galleryfield-thumbnails.E003"
                     ))
                 else:
                     errors.append(DJGalleryCriticalCheckMessage(
                         msg=(GENERIC_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
+                             % {"location": "'{}' in '{}' in '{}'".format(
                                     THUMBNAIL_SIZE, THUMBNAILS,
                                     DJANGO_GALLERY_FIELD_CONFIG),
                                 "error_type": type(e).__name__,
@@ -171,7 +171,7 @@ def check_settings(app_configs, **kwargs):
                 except Exception as e:
                     errors.append(DJGalleryCriticalCheckMessage(
                         msg=(GENERIC_ERROR_PATTERN
-                             % {"location": "'%s' in '%s' in '%s'" % (
+                             % {"location": "'{}' in '{}' in '{}'".format(
                                     THUMBNAIL_QUALITY, THUMBNAILS,
                                     DJANGO_GALLERY_FIELD_CONFIG),
                                 "error_type": type(e).__name__,
@@ -183,7 +183,7 @@ def check_settings(app_configs, **kwargs):
                     if quality < 0 or quality > 100:
                         errors.append(DJGalleryCriticalCheckMessage(
                             msg=(GENERIC_ERROR_PATTERN
-                                 % {"location": "'%s' in '%s' in '%s'" % (
+                                 % {"location": "'{}' in '{}' in '{}'".format(
                                         THUMBNAIL_QUALITY, THUMBNAILS,
                                         DJANGO_GALLERY_FIELD_CONFIG),
                                     "error_type": TypeError.__name__,
@@ -199,7 +199,7 @@ def check_settings(app_configs, **kwargs):
         if not isinstance(jfu_options, dict):
             errors.append(DJGalleryCriticalCheckMessage(
                 msg=(INSTANCE_ERROR_PATTERN
-                     % {"location": "'%s' in '%s'" % (
+                     % {"location": "'{}' in '{}'".format(
                             JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS,
                             DJANGO_GALLERY_FIELD_CONFIG),
                         "types": "dict"}),
@@ -212,7 +212,7 @@ def check_settings(app_configs, **kwargs):
                          "the formfield the GalleryWidget is serving, with the "
                          "param name `max_number_of_images`"
                          % {"location": (
-                                    "option '%s' in '%s' in '%s'" % (
+                                    "option '{}' in '{}' in '{}'".format(
                                         MAX_NUMBER_OF_FILES,
                                         JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS,
                                         DJANGO_GALLERY_FIELD_CONFIG))}),
@@ -226,7 +226,7 @@ def check_settings(app_configs, **kwargs):
                     msg=("%(location)s set to False is not allowed and will"
                          "be ignored. "
                          % {"location": (
-                                    "option '%s' in '%s' in '%s'" % (
+                                    "option '{}' in '{}' in '{}'".format(
                                         SINGLE_FILE_UPLOADS,
                                         JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS,
                                         DJANGO_GALLERY_FIELD_CONFIG))}),
@@ -239,11 +239,11 @@ def check_settings(app_configs, **kwargs):
                          "the thumbnail size in the GalleryWidget UI, so you should "
                          "set the value in %(right_place)s."
                          % {"location": (
-                                    "option '%s' or '%s' in '%s' in '%s'" % (
+                                    "option '{}' or '{}' in '{}' in '{}'".format(
                                         PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT,
                                         JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS,
                                         DJANGO_GALLERY_FIELD_CONFIG)),
-                             "right_place": "'%s' in '%s' in '%s'" % (
+                             "right_place": "'{}' in '{}' in '{}'".format(
                                  THUMBNAIL_SIZE, THUMBNAILS,
                                  DJANGO_GALLERY_FIELD_CONFIG)}),
                     id="django-galleryfield-jquery_file_upload_ui_options.W003"
@@ -255,7 +255,7 @@ def check_settings(app_configs, **kwargs):
         if not isinstance(widget_hidden_input_css_class, str):
             errors.append(DJGalleryCriticalCheckMessage(
                 msg=(INSTANCE_ERROR_PATTERN
-                     % {"location": "'%s' in '%s'" % (
+                     % {"location": "'{}' in '{}'".format(
                             WIDGET_HIDDEN_INPUT_CSS_CLASS,
                             DJANGO_GALLERY_FIELD_CONFIG),
                         "types": "str"}),
@@ -269,7 +269,7 @@ def check_settings(app_configs, **kwargs):
         if not isinstance(prompt_alert_if_changed_on_window_reload, bool):
             errors.append(DJGalleryCriticalCheckMessage(
                 msg=(INSTANCE_ERROR_PATTERN
-                     % {"location": "'%s' in '%s'" % (
+                     % {"location": "'{}' in '{}'".format(
                             PROMPT_ALERT_IF_CHANGED_ON_WINDOW_RELOAD,
                             DJANGO_GALLERY_FIELD_CONFIG),
                         "types": "bool"}),

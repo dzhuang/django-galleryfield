@@ -192,7 +192,7 @@ class GalleryWidget(forms.HiddenInput):
                     self.upload_url, require_urlconf_ready=True)
         except Exception as e:
             raise ImproperlyConfigured(
-                "'upload_url' is invalid: '%s': '%s'" % (type(e).__name__, str(e)))
+                f"'upload_url' is invalid: '{type(e).__name__}': '{str(e)}'")
 
         if self.disable_fetch:
             self.fetch_url = None
@@ -203,8 +203,7 @@ class GalleryWidget(forms.HiddenInput):
 
             except Exception as e:
                 raise ImproperlyConfigured(
-                    "'fetch_url' is invalid: '%s': '%s'" % (
-                        type(e).__name__, str(e)))
+                    f"'fetch_url' is invalid: '{type(e).__name__}': '{str(e)}'")
 
         # In the following we validate update the urls from url names (if it is
         # not an url) and check the potential conflicts of init params
@@ -318,9 +317,9 @@ class GalleryWidget(forms.HiddenInput):
              "previewMaxHeight": _height,
 
              # This is used as a CSS selector to fine the input field
-             "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
+             "hiddenFileInput": "'.{}'".format(conf.FILES_FIELD_CLASS_NAME),
 
-             "csrfCookieName": "'%s'" % getattr(settings, "CSRF_COOKIE_NAME")
+             "csrfCookieName": "'{}'".format(getattr(settings, "CSRF_COOKIE_NAME"))
              })
 
         return convert_dict_to_plain_text(ui_options, indent=16)

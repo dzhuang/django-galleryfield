@@ -55,9 +55,9 @@ class BaseImageModelMixin:
     def setup_model_and_image_field(self):
         if self.target_model is None:
             raise ImproperlyConfigured(
-                "Using BaseImageModelMixin (base class of %s) without "
+                f"Using BaseImageModelMixin (base class of "
+                f"{self.__class__.__name__}) without "
                 "the 'target_model' attribute is prohibited."
-                % self.__class__.__name__
             )
 
         self._image_field_name = (get_or_check_image_field(
@@ -105,23 +105,21 @@ class BaseImageModelMixin:
         # fallback to default crop_url
         if self.crop_url_name is None:
             app_model_name = "-".join(self.target_model.split(".")).lower()
-            self.crop_url_name = "%s-crop" % app_model_name
+            self.crop_url_name = f"{app_model_name}-crop"
         try:
             self.get_default_crop_url(pk=1)
         except Exception as e:
             raise ImproperlyConfigured(
-                "'crop_url_name' in %s is invalid. The exception is: "
-                "%s: %s."
-                % (self.__class__.__name__,
-                   type(e).__name__,
-                   str(e)))
+                f"'crop_url_name' in {self.__class__.__name__} is invalid. "
+                f"The exception is: {type(e).__name__}: {str(e)}.")
+
         if (self.crop_url_name == defaults.DEFAULT_CROP_URL_NAME
                 and self.target_model != defaults.DEFAULT_TARGET_IMAGE_MODEL):
             raise ImproperlyConfigured(
-                    "'crop_url_name' in %s is using built-in default, while "
+                    f"'crop_url_name' in {self.__class__.__name__} "
+                    "is using built-in default, while "
                     "'target_model' is not using built-in default value. They "
                     "are handling different image models. This is prohibited."
-                    % self.__class__.__name__
             )
 
     def get_and_validate_thumbnail_size_from_request(self):
@@ -223,8 +221,8 @@ class BaseImageModelMixin:
                     extra_data = obj.serialize_extra(self.request)
                     if not isinstance(extra_data, dict):
                         raise ValueError(
-                            "'serialize_extra' method of %s did not return a dict."
-                            % self.model.__name__
+                            f"'serialize_extra' method of {self.model.__name__} "
+                            f"did not return a dict."
                         )
                 except Exception as e:
                     errors.append(

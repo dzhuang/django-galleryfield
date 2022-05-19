@@ -12,7 +12,7 @@ class ResponseContextMixin(object):
         try:
             value = response.context[context_name]
         except KeyError:
-            self.fail("%s does not exist in given response" % context_name)
+            self.fail(f"{context_name} does not exist in given response")
         else:
             return value
 
@@ -23,7 +23,7 @@ class ResponseContextMixin(object):
         except KeyError:
             has_context = False
         if has_context:
-            self.fail("%s unexpectedly exist in given response" % context_name)
+            self.fail(f"{context_name} unexpectedly exist in given response")
 
     def assertResponseContextIsNone(self, resp, context_name):  # noqa
         try:
@@ -77,12 +77,11 @@ class ResponseContextMixin(object):
     def debug_print_response_context_value(self, resp, context_name):
         try:
             value = self.get_response_context_value_by_name(resp, context_name)
-            print("\n-----------context %s-------------"
-                  % context_name)
+            print(f"\n-----------context {context_name}-------------")
             print(value)
             print("-----------context end-------------\n")
         except AssertionError:
-            print("\n-------no value for context %s----------" % context_name)
+            print(f"\n-------no value for context {context_name}----------")
 
 
 class UserCreateMixin(ResponseContextMixin):
