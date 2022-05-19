@@ -1,272 +1,260 @@
 {% load static i18n %}
 
-{% block CSS_HTML5_SHIM %}
-
-    {% comment %}
-     Shim to make HTML5 elements usable in older Internet Explorer versions
-    {% endcomment %}
-
-    <!--[if lt IE 9]>
-        <script src="{% static 'vendor/html5shiv.min.js' %}"></script>
-    <![endif]-->
-
-{% endblock %}
-
 {% block CSS_EXTRA %}
 {% endblock %}
 
 
 {% block UPLOAD_FORM %}
 
-<div class="files-widget" id="id-{{ name }}-gallery-widget">
+    <div class="files-widget" id="id-{{ name }}-gallery-widget">
 
-    {{ input_string }}
+        {{ input_string }}
 
-    {% if not uploader_disabled and upload_url %}
-    {% block UPLOAD_FORM_BUTTON_BAR %}
-    <div class="row fileupload-buttonbar">
-    {% comment %}
-     The fileupload-buttonbar contains buttons to add/delete files and
-     start/cancel the upload
-    {% endcomment %}
+        {% if not uploader_disabled and upload_url %}
+            {% block UPLOAD_FORM_BUTTON_BAR %}
+                <div class="row fileupload-buttonbar">
 
-        <div class="col-lg-7">
-
-            {% comment %}
-             The fileinput-button span is used to style the file input field as button
-            {% endcomment %}
-
-
-            {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
-            <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
-                <i class="glyphicon glyphicon-plus"></i>
-                <span>{% trans "Add files..." %}</span>
-
-
-                {% block UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT %}
                 {% comment %}
-                    UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT and FILE_INPUT
-                    control the same block.
-
-                    FILE_INPUT is the original and shorter block name that has
-                    been kept to function as a convenient alias as well as to
-                    allow backward-compatibility with dependent projects.
-
-                    Note: Only one should be overriden in the inheriting templates.
+                 The fileupload-buttonbar contains buttons to add/delete files and
+                 start/cancel the upload
                 {% endcomment %}
-                {% block FILE_INPUT %}
-                {% comment %}
-                    The file input for the upload form.
-                {% endcomment %}
-                <input
-                    type="file" class="django-gallery-image-input" id="{{ name }}-files" {% if multiple %} multiple {% endif%}
 
-                    {% if accepted_mime_types %}
-                        accept = '{{ accepted_mime_types|join:"," }}'
-                    {% endif %}
-                    data-action="{{ upload_url }}"
+                <div class="col-lg-7">
 
-                   {% if uploader_disabled %}disabled{% endif %}
-                >
-                {% endblock %}
-                {% endblock %}
-
-            </span>
-
-            {% block UPLOAD_FORM_BUTTON_BAR_ADD_EXTRA %}
-            {% endblock %}
-
-            {% endblock %}
+                    {% comment %}
+                     The fileinput-button span is used to style the file input field as button
+                    {% endcomment %}
 
 
-            {% block UPLOAD_FORM_BUTTON_BAR_CONTROL %}
-            <button type="submit" class="btn btn-primary start {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                <i class="glyphicon glyphicon-upload"></i>
-                <span>{% trans "Start upload" %}</span>
-            </button>
-            <button type="reset" class="btn btn-warning cancel {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                <i class="glyphicon glyphicon-ban-circle"></i>
-                <span>{% trans "Cancel upload" %}</span>
-            </button>
-            <button type="button" class="btn btn-danger delete {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                <i class="glyphicon glyphicon-trash"></i>
-                <span>{% trans "Delete" %}</span>
-            </button>
-            <input type="checkbox" class="toggle {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-            {% endblock %}
+                    {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
+                        <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
+                            <i class="glyphicon glyphicon-plus"></i>
+                            <span>{% trans "Add files..." %}</span>
 
-            {% block UPLOAD_FORM_BUTTON_BAR_EXTRA %}
-            {% endblock %}
+                            {% block UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT %}
+                                {% comment %}
+                                    UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT and FILE_INPUT
+                                    control the same block.
 
-        </div>
+                                    FILE_INPUT is the original and shorter block name that has
+                                    been kept to function as a convenient alias as well as to
+                                    allow backward-compatibility with dependent projects.
 
-        {% block UPLOAD_FORM_PROGRESS_BAR %}
-        {% comment %}
-         The global progress information
-        {% endcomment %}
-        <div class="col-lg-5 fileupload-progress fade">
-            {% comment %}
-             The global progress bar
-            {% endcomment %}
-            <div
-                class="progress progress-striped active"
-                role="progressbar"
-                aria-valuemin="0" aria-valuemax="100"
-            >
-                <div class="progress-bar progress-bar-success" style="width:0%;">
+                                    Note: Only one should be overriden in the inheriting templates.
+                                {% endcomment %}
+                                {% block FILE_INPUT %}
+                                    {% comment %}
+                                        The file input for the upload form.
+                                    {% endcomment %}
+                                    <input
+                                        type="file" class="django-gallery-image-input" id="{{ name }}-files" {% if multiple %} multiple {% endif%}
+
+                                        {% if accepted_mime_types %}
+                                            accept = '{{ accepted_mime_types|join:"," }}'
+                                        {% endif %}
+                                        data-action="{{ upload_url }}"
+
+                                       {% if uploader_disabled %}disabled{% endif %}
+                                    >
+                                {% endblock %}
+
+                            {% endblock %}
+
+                        </span>
+
+                        {% block UPLOAD_FORM_BUTTON_BAR_ADD_EXTRA %}
+                        {% endblock %}
+
+                    {% endblock %}
+
+
+                    {% block UPLOAD_FORM_BUTTON_BAR_CONTROL %}
+                        <button type="submit" class="btn btn-primary start {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
+                            <i class="glyphicon glyphicon-upload"></i>
+                            <span>{% trans "Start upload" %}</span>
+                        </button>
+                        <button type="reset" class="btn btn-warning cancel {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
+                            <i class="glyphicon glyphicon-ban-circle"></i>
+                            <span>{% trans "Cancel upload" %}</span>
+                        </button>
+                        <button type="button" class="btn btn-danger delete {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
+                            <i class="glyphicon glyphicon-trash"></i>
+                            <span>{% trans "Delete" %}</span>
+                        </button>
+                        <input type="checkbox" class="toggle {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
+                    {% endblock %}
+
+                    {% block UPLOAD_FORM_BUTTON_BAR_EXTRA %}
+                    {% endblock %}
+
                 </div>
+
+                {% block UPLOAD_FORM_PROGRESS_BAR %}
+                    {% comment %}
+                     The global progress information
+                    {% endcomment %}
+                    <div class="col-lg-5 fileupload-progress fade">
+                        {% comment %}
+                         The global progress bar
+                        {% endcomment %}
+                        <div
+                            class="progress progress-striped active"
+                            role="progressbar"
+                            aria-valuemin="0" aria-valuemax="100"
+                        >
+                            <div class="progress-bar progress-bar-success" style="width:0%;">
+                            </div>
+                        </div>
+                        {% comment %}
+                         The extended global progress information
+                        {% endcomment %}
+                        <div class="progress-extended">&nbsp;</div>
+                    </div>
+                {% endblock %}
+
             </div>
+            {% endblock %}
+
             {% comment %}
-             The extended global progress information
+             The loading indicator is shown during file processing
             {% endcomment %}
-            <div class="progress-extended">&nbsp;</div>
-        </div>
+
+            {% block UPLOAD_FORM_LINDICATOR %}
+                <div class="fileupload-loading"></div>
+                <br>
+            {% endblock %}
+
+        {% endif %}
+
+        {% block UPLOAD_FORM_LISTING %}
+            {% comment %}
+             The table listing the files available for upload/download
+            {% endcomment %}
+            <table role="presentation" class="table table-striped">
+                <tbody class="files"></tbody>
+            </table>
         {% endblock %}
 
-    </div>
-    {% endblock %}
-
-    {% comment %}
-     The loading indicator is shown during file processing
-    {% endcomment %}
-
-    {% block UPLOAD_FORM_LINDICATOR %}
-    <div class="fileupload-loading"></div>
-    <br>
-    {% endblock %}
-    {% endif %}
-
-    {% block UPLOAD_FORM_LISTING %}
-    {% comment %}
-     The table listing the files available for upload/download
-    {% endcomment %}
-    <table role="presentation" class="table table-striped">
-        <tbody class="files"></tbody>
-    </table>
-
-    {% endblock %}
-
-    {% block UPLOAD_FORM_EXTRA %}
-    {% endblock %}
+        {% block UPLOAD_FORM_EXTRA %}
+        {% endblock %}
 
 
-    {% block MODAL_GALLERY %}
-<div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
-    <div class="slides"></div>
-    <h3 class="title"></h3>
-    <a class="prev"></a>
-    <a class="next"></a>
-    <a class="close"></a>
-    <a class="play-pause"></a>
-    <ol class="indicator"></ol>
-</div>
-{% endblock %}
-
-
-{% block JS_TEMPLATES %}
-{% comment %}
- The template to display files available for upload
-{% endcomment %}
-
-{% block JS_UPLOAD_TEMPLATE %}
-<script id="template-upload" type="text/x-tmpl">
-{% include upload_template %}
-</script>
-{% endblock %}
-
-
-{% block JS_DOWNLOAD_TEMPLATE %}
-{% comment %}
- The template to display files available for download
-{% endcomment %}
-
-<script id="template-download" type="text/x-tmpl">
-{% include download_template %}
-</script>
-{% endblock %}
-
-{% endblock %}
-
-
-
-{# editModal #}
-<div class="modal fade edit-modal" role="dialog" aria-labelledby="modalLabel"
-     tabindex="-1">
-    <div class="modal-dialog modal-lg modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-header visible-lg">
-                <button type="button" class="close" data-dismiss="modal"
-                        aria-label="Close"><span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title" id="modalLabel">{% trans "Edit image" %}</h4>
-                <!--[if lt IE 9]>
-                    <div class="browser alert alert-danger warning"><i class="fa fa-warning"></i> {% trans "This page requires a modern browser so that it can work properly" %}. {% trans "Chrome/Firefox are prefered browsers. If you want use Internet Explorer, please install one with version higher than 10." %}</div>
-                <![endif]-->
+        {% block MODAL_GALLERY %}
+            <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
+                <div class="slides"></div>
+                <h3 class="title"></h3>
+                <a class="prev"></a>
+                <a class="next"></a>
+                <a class="close"></a>
+                <a class="play-pause"></a>
+                <ol class="indicator"></ol>
             </div>
-            <div class="modal-body">
-                <div class="img-container">
-                    <img class="img-responsive modal-image" src="" alt="" data-ajax-url="">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="cropper-message" style="padding: 0; margin-bottom: 0; margin-left: 0; float: left;"></div>
-                <div class="row">
-                    <div class="col-lg-8 col-md-10 col-sm-9 col-xs-9" style="float: right">
-                        <div class="btn-group cropper-btns">
-                        <div class="btn-group cropper-rotate-btns">
-                            <button type="button" class="btn btn-primary" disabled
-                                    data-method="rotate" data-option="-90">
-                                <i class="fa fa-rotate-left"></i>
-                                <span>90&deg;</span>
-                            </button>
-                            <button type="button" class="btn btn-primary" disabled
-                                    data-method="rotate" data-option="90">
-                                <i class="fa fa-rotate-right"></i>
-                                <span>90&deg;</span>
-                            </button>
-                            {% if ALLOW_ROTATE_TUNE %}
-                            <button type="button"
-                                    class="btn btn-primary" disabled
-                                    data-method="rotate" data-option="-0.5">
-                                <i class="fa fa-reply"></i>
-                                <span>0.5&deg;</span>
-                            </button>
-                            <button type="button"
-                                    class="btn btn-primary" disabled
-                                    data-method="rotate" data-option="0.5">
-                                <i class="fa fa-share"></i>
-                                <span>0.5&deg;</span>
-                            </button>
-                        {% endif %}
-                        </div>
-                        <div class="btn-group cropper-status-btns">
-                        <button type="button"
-                                class="btn btn-success" disabled
-                                data-method="commit">
-                            <i class="fa fa-check"></i>
-                            <span>{% trans "Submit" %}</span></button>
-                        <button type="button"
-                                class="btn btn-warning" disabled
-                                data-method="reset">
-                            <i class="fa fa-refresh"></i>
-                            <span>{% trans "Reset" %}</span></button>
+        {% endblock %}
+
+
+        {% block JS_TEMPLATES %}
+            {% comment %}
+             The template to display files available for upload
+            {% endcomment %}
+
+            {% block JS_UPLOAD_TEMPLATE %}
+                <script id="template-upload" type="text/x-tmpl">
+                    {% include upload_template %}
+                </script>
+            {% endblock %}
+
+            {% block JS_DOWNLOAD_TEMPLATE %}
+                {% comment %}
+                 The template to display files available for download
+                {% endcomment %}
+
+                <script id="template-download" type="text/x-tmpl">
+                    {% include download_template %}
+                </script>
+            {% endblock %}
+
+        {% endblock %}
+
+
+        {# editModal #}
+        <div class="modal fade edit-modal" role="dialog" aria-labelledby="modalLabel"
+             tabindex="-1">
+            <div class="modal-dialog modal-lg modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header visible-lg">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close"><span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="modalLabel">{% trans "Edit image" %}</h4>
+                        <!--[if lt IE 9]>
+                            <div class="browser alert alert-danger warning"><i class="fa fa-warning"></i> {% trans "This page requires a modern browser so that it can work properly" %}. {% trans "Chrome/Firefox are prefered browsers. If you want use Internet Explorer, please install one with version higher than 10." %}</div>
+                        <![endif]-->
+                    </div>
+                    <div class="modal-body">
+                        <div class="img-container">
+                            <img class="img-responsive modal-image" src="" alt="" data-ajax-url="">
                         </div>
                     </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-danger"
-                                    data-dismiss="modal">
-                                <i class="fa fa-remove"></i>
-                                <span>{% trans "Close" %}</span>
-                            </button>
+                    <div class="modal-footer">
+                        <div class="cropper-message" style="padding: 0; margin-bottom: 0; margin-left: 0; float: left;"></div>
+                        <div class="row">
+                            <div class="col-lg-8 col-md-10 col-sm-9 col-xs-9" style="float: right">
+                                <div class="btn-group cropper-btns">
+                                <div class="btn-group cropper-rotate-btns">
+                                    <button type="button" class="btn btn-primary" disabled
+                                            data-method="rotate" data-option="-90">
+                                        <i class="fa fa-rotate-left"></i>
+                                        <span>90&deg;</span>
+                                    </button>
+                                    <button type="button" class="btn btn-primary" disabled
+                                            data-method="rotate" data-option="90">
+                                        <i class="fa fa-rotate-right"></i>
+                                        <span>90&deg;</span>
+                                    </button>
+                                    {% if ALLOW_ROTATE_TUNE %}
+                                    <button type="button"
+                                            class="btn btn-primary" disabled
+                                            data-method="rotate" data-option="-0.5">
+                                        <i class="fa fa-reply"></i>
+                                        <span>0.5&deg;</span>
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-primary" disabled
+                                            data-method="rotate" data-option="0.5">
+                                        <i class="fa fa-share"></i>
+                                        <span>0.5&deg;</span>
+                                    </button>
+                                {% endif %}
+                                </div>
+                                <div class="btn-group cropper-status-btns">
+                                <button type="button"
+                                        class="btn btn-success" disabled
+                                        data-method="commit">
+                                    <i class="fa fa-check"></i>
+                                    <span>{% trans "Submit" %}</span></button>
+                                <button type="button"
+                                        class="btn btn-warning" disabled
+                                        data-method="reset">
+                                    <i class="fa fa-refresh"></i>
+                                    <span>{% trans "Reset" %}</span></button>
+                                </div>
+                            </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-danger"
+                                            data-dismiss="modal">
+                                        <i class="fa fa-remove"></i>
+                                        <span>{% trans "Close" %}</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>{# /editModal #}
 
-</div>
+    </div>
+
 {% endblock %}
 
 
@@ -292,6 +280,7 @@
       function before_submit(evt){
         input_changed = false;
 
+        {# todo: document submit button class #}
         $(".gallery-widget-submit-button").each(
             function(){
               var clone = $(this).clone();
@@ -361,23 +350,19 @@
 </script>
 
 {% if not uploader_disabled and upload_url %}
-<script>
-{# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
-{# https://blog.csdn.net/candy_home/article/details/74440519 #}
-{# https://gist.github.com/wjp2013/fff34c063cf0cf227d65#gistcomment-1705685 #}
-$(document).ready(function () {
-  var isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
-  if (isWeixinBrowser)
-    $('.django-gallery-image-input')
-      .removeAttr('multiple')
-      .attr("accept", "image/*");
-})
-</script>
+    <script>
+    {# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
+    {# https://blog.csdn.net/candy_home/article/details/74440519 #}
+    {# https://gist.github.com/wjp2013/fff34c063cf0cf227d65#gistcomment-1705685 #}
+    $(document).ready(function () {
+      var isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
+      if (isWeixinBrowser)
+        $('.django-gallery-image-input')
+          .removeAttr('multiple')
+          .attr("accept", "image/*");
+    })
+    </script>
 {% endif %}
-
-<!--[if gte IE 8]>
-<script src="{% static 'js/cors/jquery.xdr-transport.js' %}"></script>
-<![endif]-->
 
 {% block JS_EXTRA %}
 {% endblock %}
