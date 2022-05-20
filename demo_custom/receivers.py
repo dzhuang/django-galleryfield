@@ -7,7 +7,6 @@ from demo_custom.models import CustomDemoGallery, CustomImage
 
 @receiver(pre_save, sender=CustomDemoGallery)
 def send_to_sendfile_on_gallery_save(sender, instance: CustomDemoGallery, **kwargs):
-    print("here!!!!!!")
     for image in instance.images.objects.all():
         image.save_to_protected_storage()
 

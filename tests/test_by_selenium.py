@@ -11,6 +11,7 @@ from tests.mixins import UserCreateMixin
 from tests.utils import remove_upload_directory, test_media_root
 
 from demo.models import DemoGallery
+from demo_custom.models import CustomDemoGallery, CustomImage
 from galleryfield.models import BuiltInGalleryImage
 
 CHROMIUM = "chromium"
@@ -18,8 +19,24 @@ FIREFOX = "firefox"
 SELENIUM_BROWSER = CHROMIUM
 
 
-@override_settings(MEDIA_ROOT=test_media_root)
-class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
+class SeleniumTestMixin(UserCreateMixin):
+
+    @property
+    def gallery_create_url_name(self):
+        raise NotImplementedError
+
+    @property
+    def gallery_detail_url_name(self):
+        raise NotImplementedError
+
+    @property
+    def image_model(self):
+        raise NotImplementedError
+
+    @property
+    def gallery_model(self):
+        raise NotImplementedError
+
     @classmethod
     def setUpClass(cls):
         if SELENIUM_BROWSER == CHROMIUM:
@@ -50,10 +67,11 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
 
     @property
     def new_gallery_url(self):
-        return self.get_full_url(reverse("gallery"))
+        return self.get_full_url(reverse(self.gallery_create_url_name))
 
     def get_gallery_detail_url(self, pk):
-        return self.get_full_url(reverse("gallery-detail", kwargs={"pk": pk}))
+        return self.get_full_url(reverse(
+            self.gallery_detail_url_name, kwargs={"pk": pk}))
 
     def _login_to_admin(self):
         # We do this because we need to login
@@ -102,22 +120,23 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
         sleep(0.5)
 
     def test_upload_image(self):
-        self.assertEqual(DemoGallery.objects.count(), 0)
+        self.assertEqual(self.gallery_model.objects.count(), 0)
         self._login_to_admin()
         self._go_to_new_gallery()
         self._assert_widget_loaded()
         self._add_and_upload_image("demo/screen_upload.png")
-        self.assertEqual(BuiltInGalleryImage.objects.count(), 1)
+        self.assertEqual(self.image_model.objects.count(), 1)
         self._submit_page()
         self._add_and_upload_image("demo/screen_crop.png")
-        self.assertEqual(BuiltInGalleryImage.objects.count(), 2)
+        self.assertEqual(self.image_model.objects.count(), 2)
         self._submit_page()
-        self.assertEqual(DemoGallery.objects.count(), 1)
-        self.assertEqual(DemoGallery.objects.first().images.objects.count(), 2)
-        self._go_to_gallery_detail(DemoGallery.objects.first().pk)
+        self.assertEqual(self.gallery_model.objects.count(), 1)
+        self.assertEqual(
+            self.gallery_model.objects.first().images.objects.count(), 2)
+        self._go_to_gallery_detail(self.gallery_model.objects.first().pk)
 
     def test_delete_image(self):
-        self.assertEqual(DemoGallery.objects.count(), 0)
+        self.assertEqual(self.gallery_model.objects.count(), 0)
         self._login_to_admin()
         self._go_to_new_gallery()
         self._assert_widget_loaded()
@@ -126,18 +145,20 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
 
         self._delete_one_image()
         self._submit_page()
-        self.assertEqual(DemoGallery.objects.count(), 1)
-        self.assertEqual(DemoGallery.objects.first().images.objects.count(), 1)
+        self.assertEqual(self.gallery_model.objects.count(), 1)
+        self.assertEqual(
+            self.gallery_model.objects.first().images.objects.count(), 1)
 
         self._delete_one_image()
         self._submit_page()
-        self.assertEqual(DemoGallery.objects.count(), 1)
+        self.assertEqual(self.gallery_model.objects.count(), 1)
         # Because this is the last image, delete is not allowed
         # because this field is required
-        self.assertEqual(DemoGallery.objects.first().images.objects.count(), 1)
+        self.assertEqual(
+            self.gallery_model.objects.first().images.objects.count(), 1)
 
     def test_delete_one_before_saving(self):
-        self.assertEqual(DemoGallery.objects.count(), 0)
+        self.assertEqual(self.gallery_model.objects.count(), 0)
         self._login_to_admin()
         self._go_to_new_gallery()
         self._assert_widget_loaded()
@@ -145,10 +166,35 @@ class TestWidgetBySelenium(UserCreateMixin, StaticLiveServerTestCase):
         self._add_and_upload_image("demo/screen_crop.png")
 
         # Delete the first uploaded image
-        self.assertEqual(BuiltInGalleryImage.objects.count(), 2)
-        BuiltInGalleryImage.objects.first().delete()
-        self.assertEqual(BuiltInGalleryImage.objects.count(), 1)
+        self.assertEqual(self.image_model.objects.count(), 2)
+        self.image_model.objects.first().delete()
+        self.assertEqual(self.image_model.objects.count(), 1)
 
         self._submit_page()
-        self.assertEqual(DemoGallery.objects.count(), 1)
-        self.assertEqual(DemoGallery.objects.first().images.objects.count(), 1)
+        self.assertEqual(self.gallery_model.objects.count(), 1)
+        self.assertEqual(
+            self.gallery_model.objects.first().images.objects.count(), 1)
+
+
+@override_settings(MEDIA_ROOT=test_media_root)
+class TestDemoApp(SeleniumTestMixin, StaticLiveServerTestCase):
+
+    gallery_create_url_name = "gallery"
+
+    gallery_detail_url_name = "gallery-detail"
+
+    image_model = BuiltInGalleryImage
+
+    gallery_model = DemoGallery
+
+
+@override_settings(MEDIA_ROOT=test_media_root)
+class TestCustomDemoApp(SeleniumTestMixin, StaticLiveServerTestCase):
+
+    gallery_create_url_name = "custom-gallery"
+
+    gallery_detail_url_name = "custom-gallery-detail"
+
+    image_model = CustomImage
+
+    gallery_model = CustomDemoGallery
