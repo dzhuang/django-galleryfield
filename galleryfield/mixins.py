@@ -464,3 +464,17 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
             charset=None
         )
         return upload_file
+
+
+class GalleryFormMediaMixin:
+    # todo: docs about how to use the widget in admin
+    # todo: testcase (both settings and render)
+    class Media:
+        css = {
+            "all": (conf.BOOTSTRAP_CSS_LOCATION,)
+        }
+
+        js = (
+            conf.JQUERY_LOCATION,
+            conf.BOOTSTRAP_JS_LOCATION
+        )

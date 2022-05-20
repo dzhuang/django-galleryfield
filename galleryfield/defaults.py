@@ -40,3 +40,12 @@ DEFAULT_THUMBNAIL_QUALITY = 80
 WIDGET_HIDDEN_INPUT_CSS_CLASS = "django-galleryfield"
 
 PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = True
+
+DEFAULT_BOOTSTRAP_CSS_LOCATION = (
+    "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css")  # noqa
+
+DEFAULT_BOOTSTRAP_JS_LOCATION = (
+    "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js")  # noqa
+
+DEFAULT_JQUERY_LOCATION = (
+    "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js")

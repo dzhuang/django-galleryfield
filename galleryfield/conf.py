@@ -6,8 +6,9 @@ from galleryfield.utils import get_formatted_thumbnail_size
 """
 DJANGO_GALLERY_FIELD_CONFIG = {
     "assets": {
-        "jquery.js": 'http://example.com/jquery.js',
-        "bootstrap.css": "/my/local/bootstrap.css",
+        "jquery": '/path/to/my/local/jquery.js/or/cdn',
+        "bootstrap_css": "/path/to/my/local/bootstrap.css/or/cdn",
+        "bootstrap_js": "/path/to/my/local/bootstrap.js/or/cdn",
         "extra_js": [],
         "extra_css": [],
     },
@@ -27,8 +28,8 @@ _APP_CONFIG = getattr(settings, "DJANGO_GALLERY_FIELD_CONFIG", {})
 # {{{ Generating js and css assets for GalleryWidget
 
 _APP_CONFIG_ASSETS = _APP_CONFIG.get("assets", {})
-EXTRA_JS = _APP_CONFIG_ASSETS.pop("extra_js", defaults.EXTRA_JS)
-EXTRA_CSS = _APP_CONFIG_ASSETS.pop("extra_css", defaults.EXTRA_CSS)
+EXTRA_JS = _APP_CONFIG_ASSETS.pop("extra_js", None) or defaults.EXTRA_JS
+EXTRA_CSS = _APP_CONFIG_ASSETS.pop("extra_css", None) or defaults.EXTRA_CSS
 
 JS = [j for j in defaults.BUILT_IN_JS + EXTRA_JS if j]
 
@@ -60,3 +61,17 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = _APP_CONFIG.get(
     "jquery_file_upload_ui_options",
     defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
 )
+
+# todo: docs the following settings.
+
+JQUERY_LOCATION = (
+        _APP_CONFIG_ASSETS.get("jquery")
+        or defaults.DEFAULT_JQUERY_LOCATION)
+
+BOOTSTRAP_CSS_LOCATION = (
+        _APP_CONFIG_ASSETS.get("bootstrap_css")
+        or defaults.DEFAULT_BOOTSTRAP_CSS_LOCATION)
+
+BOOTSTRAP_JS_LOCATION = (
+        _APP_CONFIG_ASSETS.get("bootstrap_js")
+        or defaults.DEFAULT_BOOTSTRAP_JS_LOCATION)

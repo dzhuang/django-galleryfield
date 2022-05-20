@@ -1,11 +1,11 @@
 from django import forms
 from django.contrib import admin
 
-from demo.admin import GalleryAdminFormMixin
 from demo_custom.models import CustomDemoGallery, CustomImage
+from galleryfield.mixins import GalleryFormMediaMixin
 
 
-class CustomDemoGalleryAdminForm(GalleryAdminFormMixin, forms.ModelForm):
+class CustomDemoGalleryAdminForm(GalleryFormMediaMixin, forms.ModelForm):
     class Meta:
         model = CustomDemoGallery
         exclude = ()
