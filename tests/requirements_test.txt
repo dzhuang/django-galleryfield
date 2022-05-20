@@ -11,4 +11,4 @@ pytest-factoryboy
 pytest-cov
 selenium
 flake8
-
+django-sendfile2
