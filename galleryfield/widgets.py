@@ -299,7 +299,7 @@ class GalleryWidget(forms.HiddenInput):
             ui_options.pop(option, None)
 
         # Fixme: this is hardcoded
-        ui_options["paramName"] = "'files[]'"
+        ui_options["paramName"] = "files[]"
 
         # override maxNumberOfFiles
         ui_options.pop("maxNumberOfFiles", None)
@@ -317,12 +317,21 @@ class GalleryWidget(forms.HiddenInput):
              "previewMaxHeight": _height,
 
              # This is used as a CSS selector to fine the input field
-             "hiddenFileInput": "'.{}'".format(conf.FILES_FIELD_CLASS_NAME),
+             "hiddenFileInput": f".{conf.FILES_FIELD_CLASS_NAME}",
 
-             "csrfCookieName": "'{}'".format(getattr(settings, "CSRF_COOKIE_NAME"))
+             "csrfCookieName": getattr(settings, "CSRF_COOKIE_NAME"),
              })
 
-        return convert_dict_to_plain_text(ui_options, indent=16)
+        # Compatibility with Bootstrap 4.5
+        # https://github.com/blueimp/jQuery-File-Upload/issues/3662
+
+        if conf.BOOTSTRAP_VERSION > 3:
+            ui_options["showElementClass"] = "show"
+
+        return convert_dict_to_plain_text(
+            ui_options, indent=16,
+            no_wrap_keys=["loadImageFileTypes", "acceptFileTypes",
+                          "disableImageResize"])
 
     def render(self, name, value, attrs=None, renderer=None):
         self.set_and_check_urls()

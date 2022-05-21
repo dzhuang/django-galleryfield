@@ -3,7 +3,7 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = {
     "imageMaxWidth": 1024,
     "imageMaxHeight": 1024,
     "loadImageFileTypes": r"/^image\/(gif|jpeg|png|bmp|svg\+xml)$/",
-    "sequentialUploads": "true",
+    "sequentialUploads": True,
     "acceptFileTypes": r"/(\.|\/)(png|gif|bmp|jpe?g)$/i",
     "imageOrientation": True,
     "maxFileSize": 1.5 * 1024 ** 2,  # 1.5Mb
@@ -41,11 +41,26 @@ WIDGET_HIDDEN_INPUT_CSS_CLASS = "django-galleryfield"
 
 PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = True
 
-DEFAULT_BOOTSTRAP_CSS_LOCATION = (
-    "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css")  # noqa
+DEFAULT_BOOTSTRAP_VERSION = 3
 
-DEFAULT_BOOTSTRAP_JS_LOCATION = (
-    "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js")  # noqa
+_BOOTSTRAP_CSS_PATTERN = (
+    "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/"
+    "{}/css/bootstrap.min.css")
 
-DEFAULT_JQUERY_LOCATION = (
+_BOOTSTRAP_JS_PATTERN = (
+    "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/"
+    "{}/js/bootstrap.min.js")
+
+_JQUERY_LOCATION = (
     "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+
+DEFAULT_STATICS = {
+    "jquery": _JQUERY_LOCATION,
+    "bootstrap_css": {3: _BOOTSTRAP_CSS_PATTERN.format("3.4.1"),
+                      4: _BOOTSTRAP_CSS_PATTERN.format("4.6.1"),
+                      5: _BOOTSTRAP_CSS_PATTERN.format("5.1.3"),
+                      },
+    "bootstrap_js": {3: _BOOTSTRAP_JS_PATTERN.format("3.4.1"),
+                     4: _BOOTSTRAP_JS_PATTERN.format("4.6.1"),
+                     5: _BOOTSTRAP_JS_PATTERN.format("5.1.3")},
+}

@@ -25,13 +25,23 @@ REQUIRED_CONF_ERROR_PATTERN = (
     "You must configure %(location)s for RELATE to run properly.")
 
 
-def convert_dict_to_plain_text(d, indent=4):
+def convert_dict_to_plain_text(d, indent=4, no_wrap_keys=None):
+    # For items whose value are javascript regex,
+    # which should not be treated as text
+    no_wrap_keys = no_wrap_keys or []
+
     result = []
     for k, v in d.items():
-        if v is not None:
-            if v in [True, False]:
-                v = str(v).lower()
-            result.append(" " * indent + f"{k}: {str(v)},")
+        if v is None:
+            continue
+
+        if (v in [True, False]
+                or (isinstance(v, str) and v.lower() in ["true", "false"])):
+            v = str(v).lower()
+        elif isinstance(v, str) and k not in no_wrap_keys:
+            v = f"'{v}'"
+
+        result.append(" " * indent + f"{k}: {v},")
     return "\n".join(result)
 
 

@@ -5,6 +5,7 @@ from galleryfield.utils import get_formatted_thumbnail_size
 
 """
 DJANGO_GALLERY_FIELD_CONFIG = {
+    "bootstrap_version": 3,
     "assets": {
         "jquery": '/path/to/my/local/jquery.js/or/cdn',
         "bootstrap_css": "/path/to/my/local/bootstrap.css/or/cdn",
@@ -62,16 +63,18 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = _APP_CONFIG.get(
     defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
 )
 
-# todo: docs the following settings.
+# # todo: docs the following settings.
+BOOTSTRAP_VERSION = _APP_CONFIG.get(
+    "bootstrap_version", defaults.DEFAULT_BOOTSTRAP_VERSION)
 
 JQUERY_LOCATION = (
         _APP_CONFIG_ASSETS.get("jquery")
-        or defaults.DEFAULT_JQUERY_LOCATION)
+        or defaults.DEFAULT_STATICS["jquery"])
 
 BOOTSTRAP_CSS_LOCATION = (
         _APP_CONFIG_ASSETS.get("bootstrap_css")
-        or defaults.DEFAULT_BOOTSTRAP_CSS_LOCATION)
+        or defaults.DEFAULT_STATICS["bootstrap_css"][BOOTSTRAP_VERSION])
 
 BOOTSTRAP_JS_LOCATION = (
         _APP_CONFIG_ASSETS.get("bootstrap_js")
-        or defaults.DEFAULT_BOOTSTRAP_JS_LOCATION)
+        or defaults.DEFAULT_STATICS["bootstrap_js"][BOOTSTRAP_VERSION])

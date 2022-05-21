@@ -2,6 +2,7 @@ from django.apps import apps
 from django.conf import settings
 from django.core import checks
 
+from galleryfield import defaults
 from galleryfield.utils import (GENERIC_ERROR_PATTERN, INSTANCE_ERROR_PATTERN,
                                 DJGalleryCriticalCheckMessage,
                                 InvalidThumbnailFormat,
@@ -11,6 +12,7 @@ DJANGO_GALLERY_FIELD_CONFIG = "DJANGO_GALLERY_FIELD_CONFIG"
 
 ASSETS = "assets"
 JQUERY = "jquery"
+BOOTSTRAP_VERSION = "bootstrap_version"
 BOOTSTRAP_CSS = "bootstrap_css"
 BOOTSTRAP_JS = "bootstrap_js"
 EXTRA_JS = "extra_js"
@@ -61,6 +63,27 @@ def check_settings(app_configs, **kwargs):
             id="django-galleryfield.E002"
         ))
         return errors
+
+    bootstrap_version = conf.get(BOOTSTRAP_VERSION, None)
+    if bootstrap_version is not None:
+        try:
+            ver = int(bootstrap_version)
+        except Exception:
+            errors.append(DJGalleryCriticalCheckMessage(
+                msg=f"'{BOOTSTRAP_VERSION}' in {DJANGO_GALLERY_FIELD_CONFIG}: "
+                    f"'{bootstrap_version}' is not a valid version number. "
+                    f"Please use 3, 4 or 5",
+                id="django-galleryfield-bootstrap_version.E001"
+            ))
+        else:
+            if ver < defaults.DEFAULT_BOOTSTRAP_VERSION:
+                errors.append(DJGalleryCriticalCheckMessage(
+                    msg=f"'{BOOTSTRAP_VERSION}' in {DJANGO_GALLERY_FIELD_CONFIG}: "
+                        f"version number should not be lower than "
+                        f"{defaults.DEFAULT_BOOTSTRAP_VERSION}, "
+                        f"while got '{bootstrap_version}'.",
+                    id="django-galleryfield-bootstrap_version.E002"
+                ))
 
     assets = conf.get(ASSETS, None)
     if assets is not None:
