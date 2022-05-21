@@ -102,6 +102,7 @@ class CheckConfigs(CheckSettingsBase):
 
 """
 DJANGO_GALLERY_FIELD_CONFIG = {
+    "bootstrap_version": 3,
     "assets": {
         "jquery": 'vendor/jquery/dist/js/jquery.min.js'
         "bootstrap_js": 'vendor/bootstrap/dist/js/bootstrap.min.js',
@@ -120,8 +121,62 @@ DJANGO_GALLERY_FIELD_CONFIG = {
 """
 
 
+class CheckBootstrapVersion(CheckSettingsBase):
+    msg_id_prefix = "django-galleryfield-bootstrap_version"
+
+    VALID_CONF_not_configured = {}
+
+    VALID_CONF_None = {"bootstrap_version": None}
+
+    VALID_CONF_3 = {"bootstrap_version": 3}
+
+    VALID_CONF_3_str = {"bootstrap_version": "3"}
+
+    VALID_CONF_5 = {"bootstrap_version": 5}
+
+    INVALID_CONF_not_int = {"bootstrap_version": 3.4}
+
+    INVALID_CONF_not_number = {"bootstrap_version": "3.4.1"}
+
+    INVALID_CONF_2 = {"bootstrap_version": 2}
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_not_configured)
+    def test_valid_config1(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_None)
+    def test_valid_config2(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_3)
+    def test_valid_config3(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_3_str)
+    def test_valid_config4(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_5)
+    def test_valid_config6(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_not_int)
+    def test_invalid_config1(self):
+        self.assertCheckMessages(['django-galleryfield-bootstrap_version.E001'])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_not_number)
+    def test_invalid_config2(self):
+        self.assertCheckMessages(['django-galleryfield-bootstrap_version.E001'])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_2)
+    def test_invalid_config3(self):
+        self.assertCheckMessages(['django-galleryfield-bootstrap_version.E002'])
+
+
 class CheckAssets(CheckSettingsBase):
     msg_id_prefix = "django-galleryfield-assets"
+
+    VALID_CONF_not_configured = {}
 
     VALID_CONF_None = {"assets": None}
 
@@ -204,6 +259,10 @@ class CheckAssets(CheckSettingsBase):
 
     @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_EXTRA_None)
     def test_valid_config5(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_not_configured)
+    def test_valid_config6(self):
         self.assertCheckMessages([])
 
     @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NOT_Dict)

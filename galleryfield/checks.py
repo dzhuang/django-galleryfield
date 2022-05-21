@@ -68,6 +68,7 @@ def check_settings(app_configs, **kwargs):
     if bootstrap_version is not None:
         try:
             ver = int(bootstrap_version)
+            assert ver == float(bootstrap_version)
         except Exception:
             errors.append(DJGalleryCriticalCheckMessage(
                 msg=f"'{BOOTSTRAP_VERSION}' in {DJANGO_GALLERY_FIELD_CONFIG}: "
