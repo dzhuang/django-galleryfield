@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from tempfile import tempdir
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -118,7 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = BASE_DIR / 'media/'
+MEDIA_ROOT = os.path.join(tempdir, 'media')
 MEDIA_URL = "media/"
 
 # Default primary key field type
@@ -134,15 +136,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_URL = "/admin/login/"
 
-from django.conf.global_settings import STATICFILES_FINDERS
-
-STATICFILES_FINDERS = tuple(STATICFILES_FINDERS) + (
-    "npm.finders.NpmFinder",)
-
-
 SENDFILE_URL = "/protected"
 
 # SENDFILE_BACKEND = "django_sendfile.backends.nginx"  # production
 SENDFILE_BACKEND = "django_sendfile.backends.development"
 
-SENDFILE_ROOT = BASE_DIR / 'protected'
+SENDFILE_ROOT = os.path.join(tempdir, 'protected')
