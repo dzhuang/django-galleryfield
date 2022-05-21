@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django_sendfile import sendfile
 
+from demo_custom.models import CustomImage
 from galleryfield.image_views import (ImageCreateView, ImageCropView,
                                       ImageListView)
 
@@ -33,7 +34,7 @@ class CustomImageCropView(LoginRequiredMixin, ImageCropView):
     disable_server_side_crop = False
 
     def create_cropped_instance_from_form(self, form):
-        self.object = form.save(commit=False)
+        self.object: CustomImage = form.save(commit=False)
         self.object.save()
 
 

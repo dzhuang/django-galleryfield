@@ -4,6 +4,7 @@ import factory
 from django.contrib.auth import get_user_model
 
 from demo.models import DemoGallery
+from demo_custom.models import CustomDemoGallery, CustomImage
 from galleryfield.models import BuiltInGalleryImage
 
 
@@ -93,5 +94,50 @@ class DemoGalleryFactory(factory.django.DjangoModelFactory):
             random.shuffle(image_list)
 
         obj.images = image_list
+        obj.save()
+        return obj
+
+
+class CustomImageFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CustomImage
+
+    photo = factory.django.ImageField(color='green')
+
+
+class CustomGalleryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CustomDemoGallery
+
+    images = factory.List([], list_factory=JSONFactory)
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        photos = kwargs.pop("photos", None)
+        number = kwargs.pop("number_of_images", 1)
+        shuffle = kwargs.pop("shuffle", False)
+        obj = super()._create(model_class, *args, **kwargs)
+        if not photos:
+            _kwargs = {}
+            if user is not None:
+                _kwargs = {"user": user}
+            _kwargs["size"] = number
+            photos = CustomImageFactory.create_batch(**_kwargs)
+            photo_list = [photo.pk for photo in photos]
+            shuffle = shuffle and number > 1
+        else:
+            from collections.abc import Iterable
+            assert isinstance(photos, Iterable)
+            for photo in photos:
+                assert isinstance(photo, CustomImage)
+            photo_list = [photo.pk for photo in photos]
+            shuffle = shuffle and len(photos) > 1
+
+        if shuffle:
+            import random
+            random.shuffle(photo_list)
+
+        obj.images = photo_list
         obj.save()
         return obj

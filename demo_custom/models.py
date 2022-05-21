@@ -1,5 +1,3 @@
-import os
-
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.db import models
@@ -9,6 +7,22 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 from galleryfield.fields import GalleryField
+
+
+class CustomDemoGallery(models.Model):
+    """
+    The gallery model used in demo_custom.
+
+    """
+    images = GalleryField(
+        verbose_name=_('Photos'), target_model='demo_custom.CustomImage',
+        blank=True, null=True)
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True,
+        verbose_name=_('Creator'), on_delete=models.CASCADE)
+
+    def get_absolute_url(self):
+        return reverse('custom-gallery-update', kwargs={'pk': self.pk})
 
 
 @deconstructible
@@ -21,9 +35,6 @@ storage = UserImageStorage()
 
 
 def user_img_path(instance, filename):
-    if instance.is_temp_image:
-        return "user_images/user_{}/temp/{}".format(instance.user_id, filename)
-
     return "user_images/user_{}/{}".format(instance.user_id, filename)
 
 
@@ -37,27 +48,10 @@ class CustomImage(models.Model):
 
     added_at = models.DateTimeField(default=now)
 
-    is_temp_image = models.BooleanField(
-        default=True, help_text=_("Is this a temp image?"))
-
-    def save_to_protected_storage(self):
-
-        if not self.is_temp_image:
-            return
-
-        filename = os.path.split(self.photo.name)[-1]
-        self.is_temp_image = False
-        name = user_img_path(self, filename)
-
-        try:
-            new_img_name = storage.save(
-                name=name,
-                content=self.photo
-            )
-            self.image = new_img_name
-            self.save(update_fields=["photo", "is_temp_image"])
-        except OSError:
-            raise
+    # This is used to determine where the image is an orphan
+    gallery = models.ManyToManyField(
+        CustomDemoGallery, blank=True,
+        verbose_name=_("Gallery belongs to"), related_name="related_images")
 
     def get_image_url(self):
         import os
@@ -86,19 +80,3 @@ class CustomImage(models.Model):
     @classmethod
     def get_image_field(cls):
         return cls._meta.get_field("photo")
-
-
-class CustomDemoGallery(models.Model):
-    """
-    The gallery model used in demo_custom.
-
-    """
-    images = GalleryField(
-        verbose_name=_('Photos'), target_model='demo_custom.CustomImage',
-        blank=True, null=True)
-    creator = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True,
-        verbose_name=_('Creator'), on_delete=models.CASCADE)
-
-    def get_absolute_url(self):
-        return reverse('custom-gallery-update', kwargs={'pk': self.pk})
