@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-from tempfile import tempdir
+from tempfile import mkdtemp
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -120,7 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(tempdir, 'media')
+MEDIA_ROOT = os.path.join(mkdtemp(), 'media')
 MEDIA_URL = "media/"
 
 # Default primary key field type
@@ -141,4 +141,4 @@ SENDFILE_URL = "/protected"
 # SENDFILE_BACKEND = "django_sendfile.backends.nginx"  # production
 SENDFILE_BACKEND = "django_sendfile.backends.development"
 
-SENDFILE_ROOT = os.path.join(tempdir, 'protected')
+SENDFILE_ROOT = os.path.join(mkdtemp(), 'protected')
