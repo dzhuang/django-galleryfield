@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import FileField
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
@@ -6,7 +7,8 @@ from demo_custom.models import CustomDemoGallery, CustomImage
 
 
 @receiver(post_save, sender=CustomDemoGallery)
-def refresh_gallery_image_set(sender, instance: CustomDemoGallery, **kwargs):
+@transaction.atomic
+def refresh_gallery_image_set(sender, created, instance: CustomDemoGallery, **kwargs):
     related_images = instance.related_images
 
     # CustomImage objects which were in the gallery but now were removed
