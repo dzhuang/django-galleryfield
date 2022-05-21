@@ -313,8 +313,8 @@ class GalleryWidget(forms.HiddenInput):
 
         _width, _height = self.thumbnail_size.split("x")
         ui_options.update(
-            {"previewMaxWidth": _width,
-             "previewMaxHeight": _height,
+            {"previewMaxWidth": int(_width),
+             "previewMaxHeight": int(_height),
 
              # This is used as a CSS selector to fine the input field
              "hiddenFileInput": f".{conf.FILES_FIELD_CLASS_NAME}",
