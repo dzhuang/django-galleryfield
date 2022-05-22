@@ -318,8 +318,6 @@ class GalleryWidget(forms.HiddenInput):
 
              # This is used as a CSS selector to fine the input field
              "hiddenFileInput": f".{conf.FILES_FIELD_CLASS_NAME}",
-
-             "csrfCookieName": getattr(settings, "CSRF_COOKIE_NAME"),
              })
 
         # Compatibility with Bootstrap 4.5
@@ -367,5 +365,7 @@ class GalleryWidget(forms.HiddenInput):
 
         context["jquery_fileupload_ui_options"] = (
             self.get_stringfied_jquery_file_upload_ui_options())
+
+        context["csrfCookieName"] = getattr(settings, "CSRF_COOKIE_NAME")
 
         return renderer.render(template_name=self.template, context=context)

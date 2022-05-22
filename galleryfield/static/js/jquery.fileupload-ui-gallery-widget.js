@@ -1,21 +1,5 @@
-(function ($, window, document, undefined) {
+(function ($) {
     'use strict';
-
-    function get_cookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
 
     $.blueimp.fileupload.prototype._specialOptions.push(
         'mediaUrl',
@@ -29,7 +13,7 @@
         'cropperButtonSelector',
         'statusDataName',
         'filesDataToInputDataFunction',
-        'csrfCookieName',
+        'csrfCookieFunction',
         'is_initializing',
     );
 
@@ -49,7 +33,7 @@
                 sortableHandleSelector: undefined,
                 sortableOptions:undefined,
                 statusDataName: undefined,
-                csrfCookieName: undefined,
+                csrfCookieFunction: undefined,
 
                 getNumberOfUploadedFiles: function () {
                     return this.filesContainer.children('.template-download')
@@ -97,8 +81,10 @@
 
                     data.formData = {
                         "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
-                        "csrfmiddlewaretoken": get_cookie(options.csrfCookieName)
                     };
+                    if (options.csrfCookieFunction !== undefined) {
+                        data.formData.csrfmiddlewaretoken = options.csrfCookieFunction()
+                    }
                 },
 
                 failed: function(e, data) {
@@ -257,7 +243,7 @@
                         return;
                     }
 
-                    $editImg.prop('src', window.loadImage.createObjectURL(orig));
+                    $editImg.prop('src', loadImage.createObjectURL(orig));
                     $editImg.processCroppedCanvas = function (result) {
                         $editModal.modal('hide');
                         options.cropperButtonSelector.prop("disabled", true);
@@ -280,17 +266,22 @@
                 if (editType === "download") {
                     $editImg.attr('src', $button.closest(".template-download").find(".preview").find("a").attr("href"));
                     $editImg.submitData = function (result) {
-                        var messageBox = options.cropperResultMessageBoxSelector;
+                        var messageBox = options.cropperResultMessageBoxSelector,
+                            formData = {
+                                "cropped_result": JSON.stringify(result),
+                                "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
+                            };
+
+                        if (options.csrfCookieFunction !== undefined) {
+                            formData.csrfmiddlewaretoken = options.csrfCookieFunction()
+                        }
+
                         options.cropperButtonSelector.prop("disabled", true);
                         $editImg.cropper('disable');
                         var jqxhr = $.ajax({
                             method: "POST",
                             url: $button.data("action"),
-                            data: {
-                                "cropped_result": JSON.stringify(result),
-                                "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
-                                "csrfmiddlewaretoken": get_cookie(options.csrfCookieName)
-                            },
+                            data: formData,
                         })
                             .always(function () {
                             })
@@ -596,13 +587,6 @@
                 }
             },
 
-            _initCsrfCookieName: function () {
-                var options = this.options;
-                if (options.csrfCookieName === undefined) {
-                    options.csrfCookieName = "csrftoken";
-                }
-            },
-
             _initSpecialOptions: function () {
                 this._super();
                 this._initStatusDataName();
@@ -610,7 +594,6 @@
                 this._initEditModal();
                 this._initWidgetHiddenInput();
                 this._initFilesDataToInputDataFunction();
-                this._initCsrfCookieName();
             },
 
             _initWidgetHiddenInput: function () {
@@ -623,4 +606,4 @@
             },
         }
     );
-})(jQuery, window, document);
+})(jQuery);

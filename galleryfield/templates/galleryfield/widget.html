@@ -268,6 +268,22 @@
   factory(jQuery)
 }(function ($) {
 
+    function get_cookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     {% if prompt_alert_on_window_reload_if_changed %}
       var input_changed = false;
 
@@ -330,6 +346,8 @@
                 inputChanged: function (e, data) {
                     if (typeof on_input_change !== 'undefined') on_input_change();
                 },
+
+                csrfCookieFunction: function() {return get_cookie('{{ csrfCookieName }}')},
             });
 
             {% if pks and fetch_url %}
