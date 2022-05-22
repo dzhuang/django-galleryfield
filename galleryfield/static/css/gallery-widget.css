@@ -1,0 +1,13 @@
+/* SortableJS option */
+
+/* chosenClass */
+.galleryWidget-sortable-chosen {
+  color: #fff!important;
+  background-color: #3c89ea!important;
+}
+
+/* ghostClass */
+.galleryWidget-sortable-ghost {
+  opacity: .5!important;
+  background: #C8EBFB!important;
+}

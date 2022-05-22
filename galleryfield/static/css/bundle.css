@@ -11,3 +11,4 @@
 @import "../dev/@fortawesome/fontawesome-free/css/solid.min";
 
 @import "cropper/dist/cropper.min";
+@import "gallery-widget.css";

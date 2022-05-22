@@ -8,7 +8,8 @@ from demo_custom.models import CustomDemoGallery, CustomImage
 
 @receiver(post_save, sender=CustomDemoGallery)
 @transaction.atomic
-def refresh_gallery_image_set(sender, created, instance: CustomDemoGallery, **kwargs):
+def refresh_gallery_image_set(
+        sender, created, instance: CustomDemoGallery, **kwargs):
     related_images = instance.related_images
 
     # CustomImage objects which were in the gallery but now were removed

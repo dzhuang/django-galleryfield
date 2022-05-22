@@ -10,6 +10,10 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = {
     "minFileSize": 0.0001 * 1024 ** 2,  # 0.0001Mb
     "disableImageResize": "/Android(?!.*Chrome)|Opera/.test(window.navigator "
                           "&& navigator.userAgent)",
+
+    # todo: doc this; add sortable options
+    # ref: https://github.com/SortableJS/Sortable#options
+    "disableSortable": False
 }
 """dict: The default options for jQuery-File-Upload module.
 """

@@ -1,12 +1,13 @@
-(function ($) {
+(function (factory) {
+  'use strict';
+  factory(window.jQuery, window.loadImage, window.Sortable);
+})(function ($, loadImage, Sortable) {
     'use strict';
 
     $.blueimp.fileupload.prototype._specialOptions.push(
-        'mediaUrl',
         'hiddenFileInput',
         'editModalId',
         'editModalImgId',
-        'sortableHandleSelector',
         'sortableOptions',
         'cropperResultMessageBoxSelector',
         'cropperButtonDivSelector',
@@ -14,7 +15,7 @@
         'statusDataName',
         'filesDataToInputDataFunction',
         'csrfCookieFunction',
-        'is_initializing',
+        'disableSortable',
     );
 
     $.widget(
@@ -22,18 +23,16 @@
 
             options: {
                 hiddenFileInput: undefined,
-                mediaUrl: undefined,
                 editModalId: undefined,
                 editModalImgId: undefined,
                 cropperResultMessageBoxSelector: undefined,
                 cropperButtonDivSelector: undefined,
                 cropperStatusBtnSelector: undefined,
                 cropperRotateBtnSelector: undefined,
-                enableSortable: true,
-                sortableHandleSelector: undefined,
                 sortableOptions:undefined,
                 statusDataName: undefined,
                 csrfCookieFunction: undefined,
+                disableSortable: undefined,
 
                 getNumberOfUploadedFiles: function () {
                     return this.filesContainer.children('.template-download')
@@ -58,7 +57,6 @@
                     // todo: check if edit is allowed, for example,
                     // gif is not allowed in chrome.
                     $(data.context).find('.edit').prop('disabled', false);
-                    that.toggleFileuploadSortableHandle();
                     that._toggleFileuploadButtonBarButtonDisplay();
                 },
 
@@ -94,8 +92,7 @@
                     $(data.context).find('.edit').prop('disabled', false).addClass("hidden").end();
 
                     var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
-                    that.toggleFileuploadSortableHandle()
-                        ._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
+                    that._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
                 },
 
                 completed: function (e, data) {
@@ -103,8 +100,7 @@
                         return false;
                     }
                     var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
-                    that.toggleFileuploadSortableHandle()
-                        ._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
+                    that._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
                     that._trigger("post_completed", e, data);
                     that._fillInHiddenInputs(data);
                 },
@@ -119,8 +115,7 @@
                     that._trigger('finished', e, data);
                     that._trigger('post-destroy', e, data);
 
-                    that.toggleFileuploadSortableHandle()
-                        ._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
+                    that._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
                 },
 
                 sortableUpdate: function (e, data) {
@@ -173,20 +168,6 @@
                         'disabled',
                         !(this.element.find('.toggle').is(':checked'))
                     );
-            },
-
-            toggleFileuploadSortableHandle: function() {
-                var $this = $(this),
-                    options = this.options;
-                if (!options.enableSortable) return;
-
-                var filesContainer = options.filesContainer;
-                if (filesContainer.children().length > 1) {
-                    filesContainer.find(options.sortableHandleSelector).removeClass("hidden").end();
-                } else {
-                    filesContainer.find(options.sortableHandleSelector).addClass("hidden").end();
-                }
-                return this;
             },
 
             _toggleFileuploadButtonBarButtonDisplay: function() {
@@ -415,7 +396,7 @@
                             strict: true,
                             movable: false,
                             zoomable: false,
-                            minContainerheight: $(window).height() * 0.8,
+                            minContainerheight: $(window).height() * 0.8,  // fixme: remove window
                             ready: function (e) {
                                 croppStartingData = $image.cropper("getData", "true");
                                 options.cropperRotateBtnSelector.prop("disabled", false);
@@ -535,36 +516,26 @@
                 }
             },
 
-            _initSortableHandleSelector: function () {
-                var options = this.options;
-                if (options.sortableHandleSelector === undefined) {
-                    options.sortableHandleSelector = ".sortableHandle";
-                } else if (options.sortableHandleSelector instanceof $) {
-                    options.sortableHandleSelector = options.sortableHandleSelector.selector;
-                }
-            },
-
             _initSortable: function() {
-                this._initSortableHandleSelector();
-                var options = this.options,
-                    sortableOptions = options.sortableOptions,
+                var options = this.options;
+
+                if (options.disableSortable) return;
+
+                var sortableOptions = options.sortableOptions,
                     that = this,
                     defaultSortableOptions = {
-                        delay: 500,
-                        scrollSpeed: 40,
-                        handle: options.sortableHandleSelector,
-                        helper: "clone",
-                        axis: "y",
-                        opacity: 0.9,
-                        cursor: "move",
-                        start: function(e, ui){
-                            that._trigger("sortableStart", e, ui.item);
-                            },
-                        stop: function(e, ui){
-                            that._trigger("sortableStop", e, ui.item);
-                        },
-                        update: function(e, ui){
-                            that._trigger("sortableUpdate", e, ui.item);
+                        disabled: false,
+                        delay: 200, // fixme: this seems not working
+                        animation: 200,
+                        direction: "vertical",
+                        delayOnTouchOnly: true,
+                        touchStartThreshold: 5,
+                        ghostClass: "galleryWidget-sortable-ghost",
+                        chosenClass: "galleryWidget-sortable-chosen",
+                        filter: ".btn, .toggle, img, a, span, progress",
+
+                        onUpdate: function(evt){
+                            that._trigger("sortableUpdate", evt.item);
                         }
                     };
                 if (sortableOptions) {
@@ -575,9 +546,7 @@
                     sortableOptions = defaultSortableOptions;
                 }
 
-                this.options.filesContainer.sortable(
-                    sortableOptions
-                ).disableSelection();
+                Sortable.create(options.filesContainer.get(0), sortableOptions)
             },
 
             _initFilesDataToInputDataFunction: function () {
@@ -604,6 +573,7 @@
                     options.hiddenFileInput = $(options.hiddenFileInput);
                 }
             },
+
         }
     );
-})(jQuery);
+});

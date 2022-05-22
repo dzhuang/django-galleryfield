@@ -108,6 +108,7 @@ class GalleryWidget(forms.HiddenInput):
 
         self.options = options and options.copy() or {}
         self.options.setdefault("accepted_mime_types", ['image/*'])
+        self._disabled = False
 
     @property
     def upload_template(self):
@@ -326,6 +327,9 @@ class GalleryWidget(forms.HiddenInput):
         if conf.BOOTSTRAP_VERSION > 3:
             ui_options["showElementClass"] = "show"
 
+        if self._disabled:
+            ui_options["disableSortable"] = True
+
         return convert_dict_to_plain_text(
             ui_options, indent=16,
             no_wrap_keys=["loadImageFileTypes", "acceptFileTypes",
@@ -355,6 +359,7 @@ class GalleryWidget(forms.HiddenInput):
         if (_context["widget"]["attrs"].get("disabled", False)
                 or _context["widget"]["attrs"].get("readonly")):
             context["uploader_disabled"] = True
+            self._disabled = True
         else:
             context.update({
                 "upload_url": self.upload_url,

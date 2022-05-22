@@ -13,7 +13,6 @@
     "blueimp-gallery": "^3.3.0",
     "blueimp-tmpl": "^3.19.0",
     "cropper": "^4.1.0",
-    "jquery-ui-dist": "^1.12.1",
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
     "autoprefixer": "^10.4.0",
@@ -30,7 +29,8 @@
     "sass": "^1.43.5",
     "serve": "^11.3.2",
     "fontawesome-subset": "^3.0.0",
-    "@fortawesome/fontawesome-free": "^5.15.4"
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "sortablejs": "^1.15.0"
   },
   "scripts": {
     "build": "rollup --config"

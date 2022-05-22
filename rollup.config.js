@@ -11,8 +11,8 @@ import gzipPlugin from 'rollup-plugin-gzip';
 import { fontawesomeSubset } from "fontawesome-subset";
 fontawesomeSubset(
     [
-        // yes, rotate-left, rotate-right, close, reset, warning, sort
-        'check', 'reply', 'share', 'times', 'sync-alt', 'exclamation-triangle', 'sort',
+        // yes, rotate-left, rotate-right, close, reset, warning
+        'check', 'reply', 'share', 'times', 'sync-alt', 'exclamation-triangle',
         // add, edit, start, cancel, delete
         'plus', 'edit', 'upload', 'ban', 'trash-alt'
     ],
