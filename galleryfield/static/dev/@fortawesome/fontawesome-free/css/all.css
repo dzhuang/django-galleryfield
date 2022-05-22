@@ -187,11 +187,28 @@
 .fa-inverse {
   color: #fff; }
 
+/* fonts */
+
+.fa-ban:before {
+  content: "\f05e"; }
+
 .fa-check:before {
-content: "\f00c"; }
+  content: "\f00c"; }
+
+.fa-edit:before {
+  content: "\f044"; }
+
+.fa-exclamation-triangle:before {
+  content: "\f071"; }
+
+.fa-plus:before {
+  content: "\f067"; }
 
 .fa-share:before {
 content: "\f064"; }
+
+.fa-sort:before {
+  content: "\f0dc"; }
 
 .fa-reply:before {
 content: "\f3e5"; }
@@ -199,8 +216,14 @@ content: "\f3e5"; }
 .fa-times:before {
 content: "\f00d"; }
 
+.fa-trash-alt:before {
+  content: "\f2ed"; }
+
 .fa-sync-alt:before {
 content: "\f2f1"; }
+
+.fa-upload:before {
+  content: "\f093"; }
 
 
 .sr-only {

@@ -6,12 +6,19 @@ import { terser } from 'rollup-plugin-terser';
 import styles from 'rollup-plugin-styles';
 import gzipPlugin from 'rollup-plugin-gzip';
 
-// import { fontawesomeSubset } from "fontawesome-subset";
-//
-// fontawesomeSubset(
-//     ['check','share', 'reply', 'times', 'sync-alt'],
-//     'galleryfield/static/dev/@fortawesome/fontawesome-free/webfonts'
-// );
+// {{{  extra fontawesome subset, need to edit
+// galleryfield/static/dev/@fortawesome/fontawesome-free/css/all.css accordingly after first run.
+import { fontawesomeSubset } from "fontawesome-subset";
+fontawesomeSubset(
+    [
+        // yes, rotate-left, rotate-right, close, reset, warning, sort
+        'check', 'reply', 'share', 'times', 'sync-alt', 'exclamation-triangle', 'sort',
+        // add, edit, start, cancel, delete
+        'plus', 'edit', 'upload', 'ban', 'trash-alt'
+    ],
+    'galleryfield/static/dev/@fortawesome/fontawesome-free/webfonts'
+);
+// }}}
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false

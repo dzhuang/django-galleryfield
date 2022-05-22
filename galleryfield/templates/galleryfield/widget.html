@@ -28,7 +28,7 @@
 
                     {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
                         <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
-                            <i class="glyphicon glyphicon-plus"></i>
+                            <i class="fa fa-plus"></i>
                             <span>{% trans "Add files..." %}</span>
 
                             {% block UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT %}
@@ -70,15 +70,15 @@
 
                     {% block UPLOAD_FORM_BUTTON_BAR_CONTROL %}
                         <button type="submit" class="btn btn-primary start {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                            <i class="glyphicon glyphicon-upload"></i>
+                            <i class="fa fa-upload"></i>
                             <span>{% trans "Start upload" %}</span>
                         </button>
                         <button type="reset" class="btn btn-warning cancel {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                            <i class="glyphicon glyphicon-ban-circle"></i>
+                            <i class="fa fa-ban"></i>
                             <span>{% trans "Cancel upload" %}</span>
                         </button>
                         <button type="button" class="btn btn-danger delete {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                            <i class="glyphicon glyphicon-trash"></i>
+                            <i class="fa fa-trash-alt"></i>
                             <span>{% trans "Delete" %}</span>
                         </button>
                         <input type="checkbox" class="toggle {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
@@ -215,7 +215,7 @@
                                     <button type="button"
                                             class="btn btn-primary" disabled
                                             data-method="rotate" data-option="-0.5">
-                                        <i class="fa-flip-vertical fa-share"></i>
+                                        <i class="fa fa-reply"></i>
                                         <span>0.5&deg;</span>
                                     </button>
                                     <button type="button"

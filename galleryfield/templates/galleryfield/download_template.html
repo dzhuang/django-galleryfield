@@ -61,14 +61,14 @@
                                             data-toggle="modal"
                                             data-action="{% templatetag openbrace %}%=file.cropUrl%{% templatetag closebrace %}"
                                     >
-                                        <i class="glyphicon glyphicon-edit"></i>
+                                        <i class="fa fa-edit"></i>
                                         <span>{% trans "Edit" %}</span>
                                     </a>
                                 {% templatetag openbrace %}% } %{% templatetag closebrace %}
                             {% endif %}
                         <a type="button" class="btn btn-danger delete fileinput-button input {% if uploader_disabled %} hidden disabled {% endif %}"
                                 href="javascript(void(0))">
-                            <i class="glyphicon glyphicon-trash"></i>
+                            <i class="fa fa-trash-alt"></i>
                             <span>{% trans "Delete" %}</span>
                         </a>
                         {% if upload_url %}
