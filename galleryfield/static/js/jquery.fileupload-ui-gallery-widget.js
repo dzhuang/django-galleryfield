@@ -525,10 +525,8 @@
                     that = this,
                     defaultSortableOptions = {
                         disabled: false,
-                        delay: 200, // fixme: this seems not working
+                        delay: 300,
                         animation: 200,
-                        direction: "vertical",
-                        delayOnTouchOnly: true,
                         touchStartThreshold: 5,
                         ghostClass: "galleryWidget-sortable-ghost",
                         chosenClass: "galleryWidget-sortable-chosen",
