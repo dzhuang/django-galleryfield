@@ -5,6 +5,12 @@ import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 import styles from 'rollup-plugin-styles';
 import gzipPlugin from 'rollup-plugin-gzip';
+// import json from '@rollup/plugin-json';
+
+import materialDesignIconSubset from 'material-icons-subset2';
+
+materialDesignIconSubset();
+
 
 // {{{  extra fontawesome subset, need to edit
 // galleryfield/static/dev/@fortawesome/fontawesome-free/css/all.css accordingly after first run.
@@ -30,6 +36,7 @@ const defaultPlugins = [
   resolve(),
   styles(),
   commonjs(),
+  // json(),
   production && terser(), // minify, but only in production
   production && gzipPlugin(),
   production && gzipPlugin({
@@ -51,6 +58,11 @@ export default [
       }
     },
     plugins: defaultPlugins,
-    external: ["jquery", "bootstrap"]
+    external: [
+        "jquery",
+        "bootstrap",
+        // "fabric",
+        // 'tui-code-snippet'
+    ]
   },
 ];

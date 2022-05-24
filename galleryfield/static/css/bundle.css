@@ -12,3 +12,5 @@
 
 @import "cropper/dist/cropper.min";
 @import "gallery-widget.css";
+
+@import '@mdi/font/css/materialdesignicons.css';

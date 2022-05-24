@@ -13,7 +13,7 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = {
 
     # todo: doc this; add sortable options
     # ref: https://github.com/SortableJS/Sortable#options
-    "disableSortable": False
+    "disableSortable": True
 }
 """dict: The default options for jQuery-File-Upload module.
 """
@@ -35,7 +35,7 @@ DEFAULT_CREATOR_FIELD_NAME = "creator"
 BUILT_IN_JS = ["js/galleryfield-ui.js"]
 BUILT_IN_CSS = []
 
-EXTRA_JS = []
+EXTRA_JS = ["js/jquery.fileupload-ui-gallery-widget.js"]
 EXTRA_CSS = []
 
 DEFAULT_THUMBNAIL_SIZE = "120x120"

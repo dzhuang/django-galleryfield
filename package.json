@@ -15,6 +15,7 @@
     "cropper": "^4.1.0",
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
+    "@rollup/plugin-json": "^4.1.0",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.3.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -29,8 +30,15 @@
     "sass": "^1.43.5",
     "serve": "^11.3.2",
     "fontawesome-subset": "^3.0.0",
+    "material-design-icon-subset": "^3.0.0",
     "@fortawesome/fontawesome-free": "^5.15.4",
-    "sortablejs": "^1.15.0"
+    "sortablejs": "^1.15.0",
+    "tui-image-editor": "^3.15.3",
+    "fabric": "^5.2.1",
+    "tui-code-snippet": "^2.3.3",
+    "@mdi/font": "^6.7.96",
+    "material-icons-subset": "^0.5.2",
+    "material-icons-subset2": "^0.5.2"
   },
   "scripts": {
     "build": "rollup --config"
