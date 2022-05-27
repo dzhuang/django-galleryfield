@@ -1,0 +1,18 @@
+// List Icons
+// 6.7.966.7.966.7.966.7.966.7.96
+
+.#{$mdi-css-prefix}-ul {
+  list-style-type: none;
+  margin-left: $mdi-li-width * 5/4;
+  padding-left: 0;
+
+  > li { position: relative; }
+}
+
+.#{$mdi-css-prefix}-li {
+  left: -$mdi-li-width;
+  position: absolute;
+  text-align: center;
+  width: $mdi-li-width;
+  line-height: inherit;
+}

@@ -1,0 +1,20 @@
+// Animated Icons
+// 6.7.966.7.966.7.966.7.966.7.96-
+
+.#{$mdi-css-prefix}-spin {
+  animation: fa-spin 2s infinite linear;
+}
+
+.#{$mdi-css-prefix}-pulse {
+  animation: fa-spin 1s infinite steps(8);
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

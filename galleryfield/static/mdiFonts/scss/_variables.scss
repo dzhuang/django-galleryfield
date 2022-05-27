@@ -1,0 +1,30 @@
+// Variables
+// 6.7.966.7.966.7.966.7.966.7.96-
+$mdi-filename:         "materialdesignicons";
+$mdi-font-name:        "Material Design Icons";
+$mdi-font-family:      "materialdesignicons";
+$mdi-font-weight:      "normal";
+$mdi-font-path:        "../fonts" !default;
+$mdi-font-size-base:   24px !default;
+$mdi-css-prefix:       mdi !default;
+$mdi-version:          "6.7.96" !default;
+$mdi-font-path:         "../webfonts" !default;
+$mdi-font-size-base:    16px !default;
+$mdi-font-display:      block !default;
+$mdi-css-prefix:        mdi !default;
+$mdi-version:           "5.15.4" !default;
+$mdi-border-color:      #eee !default;
+$mdi-inverse:           #fff !default;
+$mdi-li-width:          2em !default;
+$mdi-fw-width:          (20em / 16);
+$mdi-primary-opacity:   1 !default;
+$mdi-secondary-opacity: .4 !default;
+
+// Convenience function used to set content property
+@function fa-content($mdi-var) {
+  @return unquote("\"#{ $mdi-var }\"");
+}
+
+$mdi-icons: (
+  "format-rotate-90": F06AA
+);

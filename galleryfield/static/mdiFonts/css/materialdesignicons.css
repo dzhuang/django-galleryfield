@@ -1,0 +1,259 @@
+/*!
+ * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ */
+/*!
+ * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ */
+@font-face {
+  font-family: 'Font Awesome 5 Free';
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url("../fonts/materialdesignicons-webfont.eot?v=6.7.96");
+  src: url("../fonts/materialdesignicons-webfont.eot?#iefix&v=6.7.96") format("embedded-opentype"), url("../fonts/materialdesignicons-webfont.woff2?v=6.7.96") format("woff2"), url("../fonts/materialdesignicons-webfont.woff?v=6.7.96") format("woff"), url("../fonts/materialdesignicons-webfont.ttf?v=6.7.96") format("truetype");
+}
+
+.mdi {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
+.mdi,
+.fas,
+.far,
+.fal,
+.fad,
+.fab {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+.mdi-lg {
+  font-size: 1.33333em;
+  line-height: 0.75em;
+  vertical-align: -.0667em;
+}
+
+.mdi-xs {
+  font-size: .75em;
+}
+
+.mdi-sm {
+  font-size: .875em;
+}
+
+.mdi-1x {
+  font-size: 1em;
+}
+
+.mdi-2x {
+  font-size: 2em;
+}
+
+.mdi-3x {
+  font-size: 3em;
+}
+
+.mdi-4x {
+  font-size: 4em;
+}
+
+.mdi-5x {
+  font-size: 5em;
+}
+
+.mdi-6x {
+  font-size: 6em;
+}
+
+.mdi-7x {
+  font-size: 7em;
+}
+
+.mdi-8x {
+  font-size: 8em;
+}
+
+.mdi-9x {
+  font-size: 9em;
+}
+
+.mdi-10x {
+  font-size: 10em;
+}
+
+.mdi-fw {
+  text-align: center;
+  width: 1.25em;
+}
+
+.mdi-ul {
+  list-style-type: none;
+  margin-left: 2.5em;
+  padding-left: 0;
+}
+
+.mdi-ul > li {
+  position: relative;
+}
+
+.mdi-li {
+  left: -2em;
+  position: absolute;
+  text-align: center;
+  width: 2em;
+  line-height: inherit;
+}
+
+.mdi-border {
+  border: solid 0.08em #eee;
+  border-radius: .1em;
+  padding: .2em .25em .15em;
+}
+
+.mdi-pull-left {
+  float: left;
+}
+
+.mdi-pull-right {
+  float: right;
+}
+
+.mdi.mdi-pull-left,
+.fas.mdi-pull-left,
+.far.mdi-pull-left,
+.fal.mdi-pull-left,
+.fab.mdi-pull-left {
+  margin-right: .3em;
+}
+
+.mdi.mdi-pull-right,
+.fas.mdi-pull-right,
+.far.mdi-pull-right,
+.fal.mdi-pull-right,
+.fab.mdi-pull-right {
+  margin-left: .3em;
+}
+
+.mdi-spin {
+  animation: fa-spin 2s infinite linear;
+}
+
+.mdi-pulse {
+  animation: fa-spin 1s infinite steps(8);
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.mdi-rotate-90 {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
+  transform: rotate(90deg);
+}
+
+.mdi-rotate-180 {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
+  transform: rotate(180deg);
+}
+
+.mdi-rotate-270 {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
+  transform: rotate(270deg);
+}
+
+.mdi-flip-horizontal {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
+  transform: scale(-1, 1);
+}
+
+.mdi-flip-vertical {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
+  transform: scale(1, -1);
+}
+
+.mdi-flip-both, .mdi-flip-horizontal.mdi-flip-vertical {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
+  transform: scale(-1, -1);
+}
+
+:root .mdi-rotate-90,
+:root .mdi-rotate-180,
+:root .mdi-rotate-270,
+:root .mdi-flip-horizontal,
+:root .mdi-flip-vertical,
+:root .mdi-flip-both {
+  filter: none;
+}
+
+.mdi-stack {
+  display: inline-block;
+  height: 2em;
+  line-height: 2em;
+  position: relative;
+  vertical-align: middle;
+  width: 2.5em;
+}
+
+.mdi-stack-1x,
+.mdi-stack-2x {
+  left: 0;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+.mdi-stack-1x {
+  line-height: inherit;
+}
+
+.mdi-stack-2x {
+  font-size: 2em;
+}
+
+.mdi-inverse {
+  color: #fff;
+}
+
+.mdi-format-rotate-90::before {
+  content: "\F06AA";
+}
+
+.mdi-blank::before {
+  content: "\F68C";
+  visibility: hidden;
+}
+
+.sr-only {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.sr-only-focusable:active, .sr-only-focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+
+/*# sourceMappingURL=materialdesignicons.css.map */

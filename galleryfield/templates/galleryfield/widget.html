@@ -28,7 +28,7 @@
 
                     {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
                         <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
-                        <i class="fa fa-plus"></i>
+                        <i class="mdi mdi-plus"></i>
                             <span>{% trans "Add files..." %}</span>
 
                             {% block UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT %}
@@ -67,18 +67,19 @@
 
                     {% endblock %}
 
+                    {# Fixme: rotate failed 180 instead of 90 #}
 
                     {% block UPLOAD_FORM_BUTTON_BAR_CONTROL %}
                         <button type="submit" class="btn btn-primary start {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                            <i class="fa fa-upload"></i>
+                            <i class="mdi mdi-upload"></i>
                             <span>{% trans "Start upload" %}</span>
                         </button>
                         <button type="reset" class="btn btn-warning cancel {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                            <i class="fa fa-ban"></i>
+                            <i class="mdi mdi-cancel"></i>
                             <span>{% trans "Cancel upload" %}</span>
                         </button>
                         <button type="button" class="btn btn-danger delete {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                            <i class="fa fa-trash-alt"></i>
+                            <i class="mdi mdi-trash-can"></i>
                             <span>{% trans "Delete" %}</span>
                         </button>
                         <input type="checkbox" class="toggle {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
@@ -201,20 +202,14 @@
                             <div class="col-lg-8 col-md-10 col-sm-9 col-xs-9" style="float: right">
                                 <div class="btn-group cropper-btns">
                                 <div class="btn-group cropper-rotate-btns">
-                                        <i class="mdi mdi-format-rotate-90 mdi-18px"></i>
-                                        <span class="mdi mdi-flip-h mdi-format-rotate-90 mdi-18px"></span>
                                     <button type="button" class="btn btn-primary" disabled
                                             data-method="rotate" data-option="-90">
-                                        <i class="mdi mdi-format-rotate-90 mdi-18px"></i>
-                                        <span class="mdi mdi-flip-h mdi-format-rotate-90 mdi-18px"></span>
-
-{#                                        <i class="fa fa-reply"></i>#}
-{#                                        <span>90&deg;</span>#}
+                                        <i class="mdi mdi-format-rotate-90"></i>
                                     </button>
                                     <button type="button" class="btn btn-primary" disabled
                                             data-method="rotate" data-option="90">
-                                        <i class="fa fa-share"></i>
-                                        <span>90&deg;</span>
+                                        <i class="mdi mdi-flip-h mdi-format-rotate-90"></i>
+                                        90
                                     </button>
                                     {% if ALLOW_ROTATE_TUNE %}
                                     <button type="button"
@@ -235,19 +230,19 @@
                                 <button type="button"
                                         class="btn btn-success" disabled
                                         data-method="commit">
-                                    <i class="fas fa-check"></i>
+                                    <i class="mdi mdi-check"></i>
                                     <span>{% trans "Submit" %}</span></button>
                                 <button type="button"
                                         class="btn btn-warning" disabled
                                         data-method="reset">
-                                    <i class="fas fa-sync-alt"></i>
+                                    <i class="mdi mdi-sync"></i>
                                     <span>{% trans "Reset" %}</span></button>
                                 </div>
                             </div>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-danger"
                                             data-dismiss="modal">
-                                        <i class="fas fa-times"></i>
+                                        <i class="mdi mdi-close"></i>
                                         <span>{% trans "Close" %}</span>
                                     </button>
                                 </div>
