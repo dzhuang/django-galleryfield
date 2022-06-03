@@ -1,0 +1,23 @@
+@import 'functions';
+@import 'variables';
+
+:root, :host {
+  --#{$si-css-prefix}-font-normal: normal normal 1em/1 "#{ $si-style-family }";
+}
+
+@font-face {
+  font-family: 'Subset Iconfont Regular';
+  font-weight: 400;
+  font-display: $si-font-display;
+  src: url('#{$si-font-path}/fa-regular-400.woff2?v=5b35c3dbdc9b9283468bfc5dd842fd83') format('woff2'),
+    url('#{$si-font-path}/fa-regular-400.ttf?v=5b35c3dbdc9b9283468bfc5dd842fd83') format('truetype');
+  
+}
+
+.#{$si-css-prefix}-regular {
+  font-family: 'Subset Iconfont Regular';
+  font-weight: 400;
+}
+
+
+

@@ -1,0 +1,896 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="google" content="notranslate" />
+    <title>Subset Iconfont</title>
+    <style>
+      :root {
+          --si-style-family: "Subset Iconfont";
+          --si-style: 100;
+          --si-display: block;
+          --si-border-color: blue;
+          --si-primary-color: blue;
+          --si-secondary-color: red;
+      }
+
+      * {
+          margin: 0;
+          padding: 0;
+      }
+
+      body {
+          margin: 0;
+          padding: 0;
+          background: #fff;
+          color: #222;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      div,
+      blockquote,
+      footer {
+          font-family: "Helvetica Neue", Arial, sans-serif;
+      }
+
+      h1 {
+          padding: 20px 20px 16px 20px;
+          font-size: 26px;
+          line-height: 26px;
+          font-weight: normal;
+          color: #FFF;
+          background-color: #ef1a73;
+      }
+
+      h1 svg {
+          vertical-align: middle;
+          width: 26px;
+          height: 26px;
+          margin: 0 6px 4px 0;
+      }
+
+      h1 svg path {
+          fill: #FFF;
+      }
+
+      h1 .version {
+          font-size: 14px;
+          background: #FFF;
+          padding: 4px 10px;
+          float: right;
+          border-radius: 2px;
+          margin: -3px 0 0 0;
+          color: #666;
+          font-weight: bold;
+      }
+
+      h1 .version::before {
+          content: 'v';
+      }
+
+      h1 code {
+          font-size: 20px;
+          background: rgba(0, 0, 0, 0.5);
+          padding: 4px 12px;
+          border-radius: 3px;
+          float: right;
+          margin: -3px 10px 0 0;
+          border: 1px solid transparent;
+          cursor: pointer;
+      }
+
+      h1 code:hover {
+          border: 1px solid #FFF;
+      }
+
+      h1 code svg {
+          width: 24px;
+          height: 24px;
+          margin: -1px -4px 0 -2px
+      }
+
+      h2 {
+          font-size: 18px;
+          padding: 20px;
+      }
+
+      h2 small {
+          color: #555;
+          font-size: 0.8rem;
+      }
+
+      h2 small::before {
+          content: '(';
+      }
+
+      h2 small::after {
+          content: ')';
+      }
+
+      h2 span {
+          position: relative;
+      }
+
+      h3 {
+          font-size: 14px;
+          padding: 10px 20px 0 20px;
+          font-weight: bold;
+      }
+
+      p {
+          padding: 10px 20px;
+      }
+
+      p code {
+          display: inline-block;
+          vertical-align: middle;
+          background: #F1F1F1;
+          padding: 3px 5px;
+          border-radius: 3px;
+          border: 1px solid #DDD;
+      }
+
+      p i.si {
+          vertical-align: middle;
+          border-radius: 4px;
+          display: inline-block;
+      }
+
+      p.note {
+          color: #999;
+          font-size: 14px;
+          padding: 0 20px 5px 20px;
+      }
+
+      p.extras {
+          margin-top: -0.5rem;
+      }
+
+      div.icons {
+          padding: 0 20px 10px 20px;
+          -webkit-column-count: 5;
+          -moz-column-count: 5;
+          column-count: 5;
+          -webkit-column-gap: 20px;
+          -moz-column-gap: 20px;
+          column-gap: 20px;
+      }
+
+      div.icons div {
+          line-height: 2em;
+      }
+
+      div.icons div span {
+          cursor: pointer;
+          font-size: 14px;
+          text-overflow: ellipsis;
+          display: inline-block;
+          max-width: calc(100% - 90px);
+          overflow: hidden;
+          vertical-align: middle;
+          white-space: nowrap;
+      }
+
+      div.icons div code:hover,
+      div.icons div span:hover,
+      div.icons div i:hover {
+          color: #e13315;
+      }
+
+      div.icons div code:hover {
+          border-color: #e13315;
+      }
+
+      div.icons div code {
+          border: 1px solid #DDD;
+          width: 46px;
+          margin-left: 2px;
+          margin-right: 4px;
+          border-radius: 4px;
+          display: inline-block;
+          vertical-align: middle;
+          text-align: center;
+          line-height: 24px;
+          cursor: pointer;
+      }
+
+      div.icons div i {
+          display: inline-block;
+          width: 32px;
+          height: 24px;
+          text-align: center;
+          vertical-align: middle;
+          cursor: pointer;
+          line-height: 24px;
+      }
+
+      pre {
+          margin: 0 20px;
+          font-family: Consolas, monospace;
+          padding: 10px;
+          border: 1px solid #DDD;
+          background: #F1F1F1;
+      }
+
+      blockquote {
+          position: relative;
+          margin: 1rem 1rem 0 1rem;
+          padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+      }
+
+      blockquote.note::before {
+          content: ' ';
+          width: 0.25rem;
+          height: 100%;
+          background: #DDD;
+          position: absolute;
+          border-radius: 0.25rem;
+          top: 0;
+          left: 0;
+      }
+
+      div.copied {
+          position: fixed;
+          top: 100px;
+          left: 50%;
+          width: 200px;
+          text-align: center;
+          color: #f80a25;
+          background-color: #f3e2ec;
+          border: 1px solid #d6e9c6;
+          padding: 10px 15px;
+          border-radius: 4px;
+          margin-left: -100px;
+          box-shadow: 0 0 10px rgba(128, 3, 3, 0.2);
+      }
+
+      div.examples {
+          display: flex;
+          flex-wrap: wrap;
+          margin: 0.5rem 1.25rem;
+      }
+
+      div.examples > div {
+          display: flex;
+          margin-right: 0.5rem;
+          margin-bottom: 0.5rem;
+      }
+
+      div.examples > div > div:first-child {
+          display: flex;
+          padding: 0.5rem;
+          border-radius: 0.2rem;
+          box-shadow: 0 0 0.25rem rgb(143, 4, 62);
+          background: #FFF;
+          z-index: 1;
+          align-items: center;
+          justify-content: center;
+      }
+
+      div.examples > div > div:first-child + div {
+          display: flex;
+          margin-left: -0.25rem;
+          padding: 0.5rem 0.75rem 0.5rem 1rem;
+          background: #ef1a73;
+          border-radius: 0 0.25rem 0.25rem 0;
+      }
+
+      div.examples > div > div:first-child + div > code {
+          color: #FFF;
+          align-self: center;
+      }
+
+      div.examples i {
+          display: flex;
+      }
+
+      div.examples-size > div > div:first-child {
+          min-width: 3rem;
+      }
+
+      footer {
+          display: flex;
+          padding: 20px;
+          color: #666;
+          border-top: 1px solid #DDD;
+          background: #F1F1F1;
+      }
+
+      footer > div:first-child {
+          flex: 1;
+      }
+
+      footer > div:last-child {
+          text-align: right;
+      }
+
+      footer a {
+          color: #e91e63;
+          text-decoration: none;
+      }
+
+      footer a:hover {
+          text-decoration: underline;
+      }
+    </style>
+    <link
+      href="css/all.css?v=623cc3ab96ad5ddf913c97f819e5f228"
+      media="all"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+
+  <body>
+    <h1>
+      <?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 23.945 23.876" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+        <defs>
+            <filter id="shadow-filter" x="-5" y="-5" width="10" height="10">
+                <feOffset dx="3" dy="2"/><feComponentTransfer result="shad"></feComponentTransfer>
+                <feFlood flood-color="rgba(0,0,0,0.3)"/>
+                <feComposite in2="shad" operator="in"/>
+                <feMerge>
+                    <feMergeNode/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        <path d="M 7.753 10.422 C 7.768 10.384 -1.81 3.206 4.603 3.206 C 6.465 3.206 8.051 9.066 9.94 8.321 C 11.819 7.579 8.638 2.347 9.94 1.093 C 14.449 -3.255 12.972 8.309 13.005 8.321 C 14.978 9.098 16.436 3.206 18.342 3.206 C 24.754 3.206 15.176 10.384 15.193 10.422 C 15.206 10.454 27.242 9.034 22.716 13.368 C 20.448 15.538 14.699 10.535 13.005 15.47 C 12.999 15.487 14.438 27.036 9.94 22.697 C 8.638 21.442 11.819 16.211 9.94 15.47 C 8.051 14.723 6.465 20.586 4.603 20.586 C -1.804 20.586 7.773 13.416 7.753 13.368 C 6.985 11.568 1.532 14.615 0.23 13.368 C -0.796 12.386 6.798 12.65 7.753 10.422 Z" style="filter: url(#shadow-filter);"/>
+</svg> Subset Iconfont
+      <span class="version">0.2.1</span>
+      <code id="npm" title="Copy to Clipboard">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M19,20H5V4H7V7H17V4H19M12,2A1,1 0 0,1 13,3A1,1 0 0,1 12,4A1,1 0 0,1 11,3A1,1 0 0,1 12,2M19,2H14.82C14.4,0.84 13.3,0 12,0C10.7,0 9.6,0.84 9.18,2H5A2,2 0 0,0 3,4V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V4A2,2 0 0,0 19,2Z"
+          />
+        </svg>
+        npm install subset-iconfont
+      </code>
+    </h1>
+
+    <h2 class="usage">Usage</h2>
+    <pre><code id="font-usage">&lt;i class=&quot;si si-&quot;&gt;&lt;/i&gt;</code></pre>
+
+    <blockquote class="note">
+      Click the icon, hex unicode, or name below to copy the value to your
+      clipboard.
+    </blockquote>
+
+    <h2 class="icons">
+      All Icons <small id="iconsCount">11</small>
+    </h2>
+    <div class="icons" id="icons">
+      
+        
+          
+            <div>
+              <i class="
+
+                si si-cancel si-lg clipboard-copy"
+                 data-code='<i class="si si-cancel"></i>'></i>
+              <code class="clipboard-copy" data-code="F073A">F073A</code>
+              <span class="clipboard-copy" data-code="
+
+                si si-cancel'">si si-cancel</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si-solid si-check si-lg clipboard-copy"
+                 data-code='<i class="si-solid si-check"></i>'></i>
+              <code class="clipboard-copy" data-code="f00c">f00c</code>
+              <span class="clipboard-copy" data-code="
+
+                si-solid si-check'">si-solid si-check</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si si-crop-rotate si-lg clipboard-copy"
+                 data-code='<i class="si si-crop-rotate"></i>'></i>
+              <code class="clipboard-copy" data-code="F0696">F0696</code>
+              <span class="clipboard-copy" data-code="
+
+                si si-crop-rotate'">si si-crop-rotate</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si si-format-rotate-90 si-lg clipboard-copy"
+                 data-code='<i class="si si-format-rotate-90"></i>'></i>
+              <code class="clipboard-copy" data-code="F06AA">F06AA</code>
+              <span class="clipboard-copy" data-code="
+
+                si si-format-rotate-90'">si si-format-rotate-90</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si-solid si-plus si-lg clipboard-copy"
+                 data-code='<i class="si-solid si-plus"></i>'></i>
+              <code class="clipboard-copy" data-code="2b">2b</code>
+              <span class="clipboard-copy" data-code="
+
+                si-solid si-plus'">si-solid si-plus</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si si-reload si-lg clipboard-copy"
+                 data-code='<i class="si si-reload"></i>'></i>
+              <code class="clipboard-copy" data-code="F0453">F0453</code>
+              <span class="clipboard-copy" data-code="
+
+                si si-reload'">si si-reload</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si si-sync si-lg clipboard-copy"
+                 data-code='<i class="si si-sync"></i>'></i>
+              <code class="clipboard-copy" data-code="F04E6">F04E6</code>
+              <span class="clipboard-copy" data-code="
+
+                si si-sync'">si si-sync</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si-solid si-trash-can si-lg clipboard-copy"
+                 data-code='<i class="si-solid si-trash-can"></i>'></i>
+              <code class="clipboard-copy" data-code="f2ed">f2ed</code>
+              <span class="clipboard-copy" data-code="
+
+                si-solid si-trash-can'">si-solid si-trash-can</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                si-regular si-trash-can si-lg clipboard-copy"
+                 data-code='<i class="si-regular si-trash-can"></i>'></i>
+              <code class="clipboard-copy" data-code="f2ed">f2ed</code>
+              <span class="clipboard-copy" data-code="
+
+                si-regular si-trash-can'">si-regular si-trash-can</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si-solid si-triangle-exclamation si-lg clipboard-copy"
+                 data-code='<i class="si-solid si-triangle-exclamation"></i>'></i>
+              <code class="clipboard-copy" data-code="f071">f071</code>
+              <span class="clipboard-copy" data-code="
+
+                si-solid si-triangle-exclamation'">si-solid si-triangle-exclamation</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si-solid si-upload si-lg clipboard-copy"
+                 data-code='<i class="si-solid si-upload"></i>'></i>
+              <code class="clipboard-copy" data-code="f093">f093</code>
+              <span class="clipboard-copy" data-code="
+
+                si-solid si-upload'">si-solid si-upload</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                si-solid si-xmark si-lg clipboard-copy"
+                 data-code='<i class="si-solid si-xmark"></i>'></i>
+              <code class="clipboard-copy" data-code="f00d">f00d</code>
+              <span class="clipboard-copy" data-code="
+
+                si-solid si-xmark'">si-solid si-xmark</span>
+            </div>
+          
+        
+      
+    </div>
+
+    
+      
+        
+        
+        
+
+
+        <h2 class="extras">Extras</h2>
+
+        <p class="extras">The helper CSS classes are listed below.</p>
+
+        <section>
+          <h3>Size</h3>
+
+          <div class="examples examples-size">
+             
+            <div>
+              <div>
+                <i class="si si-2xs si-cancel clipboard-copy"
+                   data-class="si-cancel"
+                   data-code='<i class="si si-2xs si-cancel"></i>'></i>
+              </div>
+              <div>
+                <code class="clipboard-copy" data-class="si-cancel"
+                      data-code="si si-2xs si-cancel">si-2xs</code>
+              </div>
+            </div>
+          
+            <div>
+              <div>
+                <i class="si si-sm si-cancel clipboard-copy"
+                   data-class="si-cancel"
+                   data-code='<i class="si si-sm si-cancel"></i>'></i>
+              </div>
+              <div>
+                <code class="clipboard-copy" data-class="si-cancel"
+                      data-code="si si-sm si-cancel">si-sm</code>
+              </div>
+            </div>
+          
+            <div>
+              <div>
+                <i class="si si-1x si-cancel clipboard-copy"
+                   data-class="si-cancel"
+                   data-code='<i class="si si-1x si-cancel"></i>'></i>
+              </div>
+              <div>
+                <code class="clipboard-copy" data-class="si-cancel"
+                      data-code="si si-1x si-cancel">si-1x</code>
+              </div>
+            </div>
+          
+            <div>
+              <div>
+                <i class="si si-lg si-cancel clipboard-copy"
+                   data-class="si-cancel"
+                   data-code='<i class="si si-lg si-cancel"></i>'></i>
+              </div>
+              <div>
+                <code class="clipboard-copy" data-class="si-cancel"
+                      data-code="si si-lg si-cancel">si-lg</code>
+              </div>
+            </div>
+          
+            <div>
+              <div>
+                <i class="si si-2x si-cancel clipboard-copy"
+                   data-class="si-cancel"
+                   data-code='<i class="si si-2x si-cancel"></i>'></i>
+              </div>
+              <div>
+                <code class="clipboard-copy" data-class="si-cancel"
+                      data-code="si si-2x si-cancel">si-2x</code>
+              </div>
+            </div>
+          
+            <div>
+              <div>
+                <i class="si si-3x si-cancel clipboard-copy"
+                   data-class="si-cancel"
+                   data-code='<i class="si si-3x si-cancel"></i>'></i>
+              </div>
+              <div>
+                <code class="clipboard-copy" data-class="si-cancel"
+                      data-code="si si-3x si-cancel">si-3x</code>
+              </div>
+            </div>
+          
+            <div>
+              <div>
+                <i class="si si-5x si-cancel clipboard-copy"
+                   data-class="si-cancel"
+                   data-code='<i class="si si-5x si-cancel"></i>'></i>
+              </div>
+              <div>
+                <code class="clipboard-copy" data-class="si-cancel"
+                      data-code="si si-5x si-cancel">si-5x</code>
+              </div>
+            </div>
+          
+          </div>
+        </section>
+
+        <h3>Rotate</h3>
+
+        <div class="examples">
+          <div>
+            <div>
+              <i
+                class="si si-lg si-cancel"
+                data-class="si-cancel"
+              ></i>
+            </div>
+          </div>
+           
+          <div>
+            <div>
+              <i
+                class="si si-lg si-rotate-90 si-cancel clipboard-copy"
+                data-class="si-cancel"
+                data-code='<i class="si si-rotate-90 si-cancel"></i>'
+              ></i>
+            </div>
+            <div>
+              <code
+                class="clipboard-copy"
+                data-code="si si-rotate-90 si-cancel"
+                data-class="si-cancel"
+              >si-rotate-90</code
+              >
+            </div>
+          </div>
+        
+          <div>
+            <div>
+              <i
+                class="si si-lg si-rotate-180 si-cancel clipboard-copy"
+                data-class="si-cancel"
+                data-code='<i class="si si-rotate-180 si-cancel"></i>'
+              ></i>
+            </div>
+            <div>
+              <code
+                class="clipboard-copy"
+                data-code="si si-rotate-180 si-cancel"
+                data-class="si-cancel"
+              >si-rotate-180</code
+              >
+            </div>
+          </div>
+        
+          <div>
+            <div>
+              <i
+                class="si si-lg si-rotate-270 si-cancel clipboard-copy"
+                data-class="si-cancel"
+                data-code='<i class="si si-rotate-270 si-cancel"></i>'
+              ></i>
+            </div>
+            <div>
+              <code
+                class="clipboard-copy"
+                data-code="si si-rotate-270 si-cancel"
+                data-class="si-cancel"
+              >si-rotate-270</code
+              >
+            </div>
+          </div>
+        
+        </div>
+
+        <h3>Flip</h3>
+
+        <div class="examples">
+          <div>
+            <div>
+              <i
+                class="si si-lg si-cancel"
+                data-class="si-cancel"
+              ></i>
+            </div>
+          </div>
+           
+          <div>
+            <div>
+              <i
+                class="si si-lg si-flip-horizontal si-cancel clipboard-copy"
+                data-code='<i class="si si-flip-horizontal si-cancel"></i>'
+                data-class="si-cancel"
+              ></i>
+            </div>
+            <div>
+              <code
+                class="clipboard-copy"
+                data-code="si si-flip-horizontal si-cancel"
+                data-class="si-cancel"
+              >si-flip-horizontal</code
+              >
+            </div>
+          </div>
+        
+          <div>
+            <div>
+              <i
+                class="si si-lg si-flip-vertical si-cancel clipboard-copy"
+                data-code='<i class="si si-flip-vertical si-cancel"></i>'
+                data-class="si-cancel"
+              ></i>
+            </div>
+            <div>
+              <code
+                class="clipboard-copy"
+                data-code="si si-flip-vertical si-cancel"
+                data-class="si-cancel"
+              >si-flip-vertical</code
+              >
+            </div>
+          </div>
+        
+        </div>
+
+        <h3>Spin</h3>
+
+        <div class="examples">
+          <div>
+            <div>
+              <i
+                class="si si-3x si-spin si-cancel clipboard-copy"
+                data-code='<i class="si si-spin si-cancel"></i>'
+                data-class="si-cancel"
+              ></i>
+            </div>
+            <div>
+              <code
+                data-code="si si-spin si-cancel"
+                class="clipboard-copy"
+              >si-spin</code
+              >
+            </div>
+          </div>
+          <div>
+            <div>
+              <i
+                class="si si-3x si-pulse si-cancel clipboard-copy"
+                data-code='<i class="si si-pulse si-cancel"></i>'
+                data-class="si-cancel"
+              ></i>
+            </div>
+            <div>
+              <code
+                data-code="si si-pulse si-cancel"
+                class="clipboard-copy"
+              >si-pulse</code
+              >
+            </div>
+          </div>
+        </div>
+
+        <h3>Color</h3>
+
+        <div class="examples">
+          <div>
+            <div style="background-color: red">
+              <i
+                class="si si-lg si-inverse si-cancel"
+              ></i>
+            </div>
+            <div>
+              <code>si-inverse</code>
+            </div>
+          </div>
+          <div>
+            <div style="color: red">
+              <i
+                class="si si-lg si-cancel"
+              ></i>
+            </div>
+            <div>
+              <code>si-cancel</code>
+            </div>
+          </div>
+        </div>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    <footer>
+      <div>
+        Generated with <a href="https://github.com/dzhuang/subset-iconfont.git" target="_blank">subset-iconfont</a>
+      </div>
+    </footer>
+
+    <script type="text/javascript">
+      function copyText(text) {
+        let copyFrom = document.createElement("textarea");
+        copyFrom.setAttribute(
+          "style",
+          "position:fixed;opacity:0;top:100px;left:100px;"
+        );
+        copyFrom.value = text;
+        document.body.appendChild(copyFrom);
+        copyFrom.select();
+        navigator.clipboard.writeText(text);
+        let copied = document.createElement("div");
+        copied.setAttribute("class", "copied");
+        copied.setAttribute("style", "z-index:1000!important;");
+        copied.appendChild(document.createTextNode("Copied to Clipboard"));
+        document.body.appendChild(copied);
+        setTimeout(function () {
+          document.body.removeChild(copyFrom);
+          document.body.removeChild(copied);
+        }, 1500);
+      }
+
+      (function () {
+        const copiables = document.getElementsByClassName("clipboard-copy");
+        for (let i = 0; i < copiables.length; i++) {
+          copiables[i].addEventListener("mouseup", function (e) {
+            copyText(e.target.dataset["code"]);
+            document.getElementById("font-usage").innerText =
+              e.target.parentNode.children[0].dataset["code"];
+          });
+        }
+
+        document.getElementById("npm").addEventListener("click", function () {
+          copyText("npm install subset-iconfont");
+        });
+      })();
+    </script>
+  </body>
+</html>

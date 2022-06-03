@@ -1,0 +1,16 @@
+// sizing icons
+// -------------------------
+
+// literal magnification scale
+@for $i from 1 through 10 {
+  .#{$si-css-prefix}-#{$i}x {
+    font-size: $i * 1em;
+  }
+}
+
+// step-based scale (with alignment)
+@each $size, $value in $si-sizes {
+  .#{$si-css-prefix}-#{$size} {
+     @include si-size($value);
+  }
+}

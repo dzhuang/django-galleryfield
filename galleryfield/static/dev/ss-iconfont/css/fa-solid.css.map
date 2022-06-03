@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "fa-solid.css",
+	"sources": [
+		"../scss/fa-solid.scss",
+		"../scss/_functions.scss",
+		"../scss/_variables.scss"
+	],
+	"names": [],
+	"mappings": "AAGA,AAAA,KAAK,EAAE,KAAK,CAAC;EACX,gBAA+B,CAAc,sCAAC;CAC/C;;AAED,UAAU;EACR,WAAW,EAAE,uBAAuB;EACpC,WAAW,EAAE,GAAG;EAChB,YAAY,EEoCY,KAAK;EFnC7B,GAAG,EAAE,wEAA6E,CAAC,eAAe,EAChG,sEAA2E,CAAC,kBAAkB;;;AAIlG,AAAA,SAAS,CAAgB;EACvB,WAAW,EAAE,uBAAuB;EACpC,WAAW,EAAE,GAAG;CACjB"
+}

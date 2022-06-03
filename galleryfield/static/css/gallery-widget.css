@@ -11,3 +11,11 @@
   opacity: .5!important;
   background: #C8EBFB!important;
 }
+
+
+/* Hide modal button text in small screens */
+@media (max-width: 767px) {
+  .cropper-btns .btn span {
+    display: none;
+  }
+}

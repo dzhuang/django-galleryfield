@@ -6,33 +6,33 @@
 
 {% block UPLOAD_FORM %}
 
-    <div class="files-widget" id="id-{{ name }}-gallery-widget">
+  <div class="files-widget" id="id-{{ name }}-gallery-widget">
 
-        {{ input_string }}
+    {{ input_string }}
 
-        {% if not uploader_disabled and upload_url %}
-            {% block UPLOAD_FORM_BUTTON_BAR %}
-                <div class="row fileupload-buttonbar">
+    {% if not uploader_disabled and upload_url %}
+      {% block UPLOAD_FORM_BUTTON_BAR %}
+        <div class="row fileupload-buttonbar">
 
-                {% comment %}
+          {% comment %}
                  The fileupload-buttonbar contains buttons to add/delete files and
                  start/cancel the upload
                 {% endcomment %}
 
-                <div class="col-lg-7">
+          <div class="col-lg-7">
 
-                    {% comment %}
+            {% comment %}
                      The fileinput-button span is used to style the file input field as button
                     {% endcomment %}
 
 
-                    {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
-                        <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
-                        <i class="mdi mdi-plus"></i>
+            {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
+              <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
+                        <i class="si-solid si-plus"></i>
                             <span>{% trans "Add files..." %}</span>
 
-                            {% block UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT %}
-                                {% comment %}
+                {% block UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT %}
+                  {% comment %}
                                     UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT and FILE_INPUT
                                     control the same block.
 
@@ -42,353 +42,352 @@
 
                                     Note: Only one should be overriden in the inheriting templates.
                                 {% endcomment %}
-                                {% block FILE_INPUT %}
-                                    {% comment %}
+                  {% block FILE_INPUT %}
+                    {% comment %}
                                         The file input for the upload form.
                                     {% endcomment %}
-                                    <input
-                                        type="file" class="django-gallery-image-input" id="{{ name }}-files" {% if multiple %} multiple {% endif%}
+                    <input
+                      type="file" class="django-gallery-image-input" id="{{ name }}-files" {% if multiple %}
+                      multiple {% endif %}
 
-                                        {% if accepted_mime_types %}
-                                            accept = '{{ accepted_mime_types|join:"," }}'
-                                        {% endif %}
-                                        data-action="{{ upload_url }}"
+                      {% if accepted_mime_types %}
+                      accept='{{ accepted_mime_types|join:"," }}'
+                      {% endif %}
+                      data-action="{{ upload_url }}"
 
-                                       {% if uploader_disabled %}disabled{% endif %}
-                                    >
-                                {% endblock %}
+                      {% if uploader_disabled %}disabled{% endif %}
+                    >
+                  {% endblock %}
 
-                            {% endblock %}
+                {% endblock %}
 
                         </span>
 
-                        {% block UPLOAD_FORM_BUTTON_BAR_ADD_EXTRA %}
-                        {% endblock %}
+              {% block UPLOAD_FORM_BUTTON_BAR_ADD_EXTRA %}
+              {% endblock %}
 
-                    {% endblock %}
-
-                    {# Fixme: rotate failed 180 instead of 90 #}
-
-                    {% block UPLOAD_FORM_BUTTON_BAR_CONTROL %}
-                        <button type="submit" class="btn btn-primary start {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                            <i class="mdi mdi-upload"></i>
-                            <span>{% trans "Start upload" %}</span>
-                        </button>
-                        <button type="reset" class="btn btn-warning cancel {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                            <i class="mdi mdi-cancel"></i>
-                            <span>{% trans "Cancel upload" %}</span>
-                        </button>
-                        <button type="button" class="btn btn-danger delete {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                            <i class="mdi mdi-trash-can"></i>
-                            <span>{% trans "Delete" %}</span>
-                        </button>
-                        <input type="checkbox" class="toggle {% if uploader_disabled %} hidden disabled {% endif %}" style="display: none;">
-                    {% endblock %}
-
-                    {% block UPLOAD_FORM_BUTTON_BAR_EXTRA %}
-                    {% endblock %}
-
-                </div>
-
-                {% block UPLOAD_FORM_PROGRESS_BAR %}
-                    {% comment %}
-                     The global progress information
-                    {% endcomment %}
-                    <div class="col-lg-5 fileupload-progress fade">
-                        {% comment %}
-                         The global progress bar
-                        {% endcomment %}
-                        <div
-                            class="progress progress-striped active"
-                            role="progressbar"
-                            aria-valuemin="0" aria-valuemax="100"
-                        >
-                            <div class="progress-bar progress-bar-success" style="width:0%;">
-                            </div>
-                        </div>
-                        {% comment %}
-                         The extended global progress information
-                        {% endcomment %}
-                        <div class="progress-extended">&nbsp;</div>
-                    </div>
-                {% endblock %}
-
-            </div>
             {% endblock %}
 
+            {# Fixme: rotate failed 180 instead of 90 #}
+
+            {% block UPLOAD_FORM_BUTTON_BAR_CONTROL %}
+              <button type="submit" class="btn btn-primary start {% if uploader_disabled %} hidden disabled {% endif %}"
+                      style="display: none;">
+                <i class="si-solid si-upload"></i>
+                <span>{% trans "Start upload" %}</span>
+              </button>
+              <button type="reset" class="btn btn-warning cancel {% if uploader_disabled %} hidden disabled {% endif %}"
+                      style="display: none;">
+                <i class="si si-cancel"></i>
+                <span>{% trans "Cancel upload" %}</span>
+              </button>
+              <button type="button" class="btn btn-danger delete {% if uploader_disabled %} hidden disabled {% endif %}"
+                      style="display: none;">
+                <i class="si-regular si-trash-can"></i>
+                <span>{% trans "Delete" %}</span>
+              </button>
+              <input type="checkbox" class="toggle {% if uploader_disabled %} hidden disabled {% endif %}"
+                     style="display: none;">
+            {% endblock %}
+
+            {% block UPLOAD_FORM_BUTTON_BAR_EXTRA %}
+            {% endblock %}
+
+          </div>
+
+          {% block UPLOAD_FORM_PROGRESS_BAR %}
             {% comment %}
+                     The global progress information
+                    {% endcomment %}
+            <div class="col-lg-5 fileupload-progress fade">
+              {% comment %}
+                         The global progress bar
+                        {% endcomment %}
+              <div
+                class="progress progress-striped active"
+                role="progressbar"
+                aria-valuemin="0" aria-valuemax="100"
+              >
+                <div class="progress-bar progress-bar-success" style="width:0%;">
+                </div>
+              </div>
+              {% comment %}
+                         The extended global progress information
+                        {% endcomment %}
+              <div class="progress-extended">&nbsp;</div>
+            </div>
+          {% endblock %}
+
+        </div>
+      {% endblock %}
+
+      {% comment %}
              The loading indicator is shown during file processing
             {% endcomment %}
 
-            {% block UPLOAD_FORM_LINDICATOR %}
-                <div class="fileupload-loading"></div>
-                <br>
-            {% endblock %}
+      {% block UPLOAD_FORM_LINDICATOR %}
+        <div class="fileupload-loading"></div>
+        <br>
+      {% endblock %}
 
-        {% endif %}
+    {% endif %}
 
-        {% block UPLOAD_FORM_LISTING %}
-            {% comment %}
+    {% block UPLOAD_FORM_LISTING %}
+      {% comment %}
              The table listing the files available for upload/download
             {% endcomment %}
-            <table role="presentation" class="table table-striped">
-                <tbody class="files"></tbody>
-            </table>
-        {% endblock %}
+      <table role="presentation" class="table table-striped">
+        <tbody class="files"></tbody>
+      </table>
+    {% endblock %}
 
-        {% block UPLOAD_FORM_EXTRA %}
-        {% endblock %}
-
-
-        {% block MODAL_GALLERY %}
-            <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
-                <div class="slides"></div>
-                <h3 class="title"></h3>
-                <a class="prev"></a>
-                <a class="next"></a>
-                <a class="close"></a>
-                <a class="play-pause"></a>
-                <ol class="indicator"></ol>
-            </div>
-        {% endblock %}
+    {% block UPLOAD_FORM_EXTRA %}
+    {% endblock %}
 
 
-        {% block JS_TEMPLATES %}
-            {% comment %}
+    {% block MODAL_GALLERY %}
+      <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
+        <div class="slides"></div>
+        <h3 class="title"></h3>
+        <a class="prev"></a>
+        <a class="next"></a>
+        <a class="close"></a>
+        <a class="play-pause"></a>
+        <ol class="indicator"></ol>
+      </div>
+    {% endblock %}
+
+
+    {% block JS_TEMPLATES %}
+      {% comment %}
              The template to display files available for upload
             {% endcomment %}
 
-            {% block JS_UPLOAD_TEMPLATE %}
-                <script id="template-upload" type="text/x-tmpl">
+      {% block JS_UPLOAD_TEMPLATE %}
+        <script id="template-upload" type="text/x-tmpl">
                     {% include upload_template %}
-                </script>
-            {% endblock %}
 
-            {% block JS_DOWNLOAD_TEMPLATE %}
-                {% comment %}
+
+        </script>
+      {% endblock %}
+
+      {% block JS_DOWNLOAD_TEMPLATE %}
+        {% comment %}
                  The template to display files available for download
                 {% endcomment %}
 
-                <script id="template-download" type="text/x-tmpl">
+        <script id="template-download" type="text/x-tmpl">
                     {% include download_template %}
-                </script>
-            {% endblock %}
-
-        {% endblock %}
 
 
-        {# editModal #}
-        <div class="modal fade edit-modal" role="dialog" aria-labelledby="modalLabel"
-             tabindex="-1">
-            <div class="modal-dialog modal-lg modal-sm" role="document">
-                <div class="modal-content">
-                    <div class="modal-header visible-lg">
-                        <button type="button" class="close" data-dismiss="modal"
-                                aria-label="Close"><span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title" id="modalLabel">{% trans "Edit image" %}</h4>
-                        <!--[if lt IE 9]>
-                            <div class="browser alert alert-danger warning"><i class="fa fa-warning"></i> {% trans "This page requires a modern browser so that it can work properly" %}. {% trans "Chrome/Firefox are prefered browsers. If you want use Internet Explorer, please install one with version higher than 10." %}</div>
+        </script>
+      {% endblock %}
+
+    {% endblock %}
+
+
+    {# editModal #}
+    <div class="modal fade edit-modal" role="dialog" aria-labelledby="modalLabel"
+         tabindex="-1">
+      <div class="modal-dialog modal-lg modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header visible-lg">
+            <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close"><span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="modalLabel">{% trans "Edit image" %}</h4>
+            <!--[if lt IE 9]>
+                            <div class="browser alert alert-danger warning"><i class="si-solid si-triangle-exclamation"></i> {% trans "This page requires a modern browser so that it can work properly" %}. {% trans "Chrome/Firefox are prefered browsers. If you want use Internet Explorer, please install one with version higher than 10." %}</div>
                         <![endif]-->
-                    </div>
-                    <div class="modal-body">
-                        <div class="img-container">
-                            <img class="img-responsive modal-image" src="" alt="" data-ajax-url="">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="cropper-message" style="padding: 0; margin-bottom: 0; margin-left: 0; float: left;"></div>
-                        <div class="row">
-                            <div class="col-lg-8 col-md-10 col-sm-9 col-xs-9" style="float: right">
-                                <div class="btn-group cropper-btns">
-                                <div class="btn-group cropper-rotate-btns">
-                                    <button type="button" class="btn btn-primary" disabled
-                                            data-method="rotate" data-option="-90">
-                                        <i class="mdi mdi-format-rotate-90"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-primary" disabled
-                                            data-method="rotate" data-option="90">
-                                        <i class="mdi mdi-flip-h mdi-format-rotate-90"></i>
-                                        90
-                                    </button>
-                                    {% if ALLOW_ROTATE_TUNE %}
-                                    <button type="button"
-                                            class="btn btn-primary" disabled
-                                            data-method="rotate" data-option="-0.5">
-                                        <i class="fa fa-reply"></i>
-                                        <span>0.5&deg;</span>
-                                    </button>
-                                    <button type="button"
-                                            class="btn btn-primary" disabled
-                                            data-method="rotate" data-option="0.5">
-                                        <i class="fas fa-share"></i>
-                                        <span>0.5&deg;</span>
-                                    </button>
-                                {% endif %}
-                                </div>
-                                <div class="btn-group cropper-status-btns">
-                                <button type="button"
-                                        class="btn btn-success" disabled
-                                        data-method="commit">
-                                    <i class="mdi mdi-check"></i>
-                                    <span>{% trans "Submit" %}</span></button>
-                                <button type="button"
-                                        class="btn btn-warning" disabled
-                                        data-method="reset">
-                                    <i class="mdi mdi-sync"></i>
-                                    <span>{% trans "Reset" %}</span></button>
-                                </div>
-                            </div>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-danger"
-                                            data-dismiss="modal">
-                                        <i class="mdi mdi-close"></i>
-                                        <span>{% trans "Close" %}</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <div class="modal-body">
+            <div class="img-container">
+              <img class="img-responsive modal-image" src="" alt="" data-ajax-url="">
             </div>
-        </div>
+          </div>
+          <div class="modal-footer">
+            <div class="cropper-message" style="padding: 0; margin-bottom: 0; margin-left: 0; float: left;"></div>
+            <div>
+              <div class="btn-group cropper-btns">
+                <div class="btn-group cropper-rotate-btns">
+                  <button type="button" class="btn btn-primary" disabled
+                          data-method="rotate" data-option="-90">
+                    <i class="si si-format-rotate-90"></i>
+                    <span>-90</span>
+                  </button>
+                  <button type="button" class="btn btn-primary" disabled
+                          data-method="rotate" data-option=90>
+                    <i class="si si-format-rotate-90 si-flip-horizontal"></i>
+                    <span>90</span>
+                  </button>
 
+                </div>
+                <div class="btn-group cropper-status-btns">
+                  <button type="button"
+                          class="btn btn-success" disabled
+                          data-method="commit">
+                    <i class="si-solid si-check"></i>
+                    <span>{% trans "Submit" %}</span></button>
+                  <button type="button"
+                          class="btn btn-warning" disabled
+                          data-method="reset">
+                    <i class="si si-sync"></i>
+                    <span>{% trans "Reset" %}</span></button>
+                </div>
+              </div>
+              <div class="btn-group cropper-btns">
+                <button type="button" class="btn btn-danger"
+                        data-dismiss="modal">
+                  <i class="si-solid si-xmark"></i>
+                  <span>{% trans "Close" %}</span>
+                </button>
+              </div>
+            </div>
+            {#            </div>#}
+          </div>
+        </div>
+      </div>
     </div>
+
+  </div>
 
 {% endblock %}
 
 
 <script type="text/javascript">
-(function (factory) {
-  if (typeof define === 'function' && define.amd)
-  define(['jquery'], factory)
-  else if (typeof module === 'object' && module.exports)
-  module.exports = factory(require('jquery'))
-  else
-  factory(jQuery)
-}(function ($) {
+  (function (factory) {
+    if (typeof define === 'function' && define.amd)
+      define(['jquery'], factory)
+    else if (typeof module === 'object' && module.exports)
+      module.exports = factory(require('jquery'))
+    else
+      factory(jQuery)
+  }(function ($) {
 
     function get_cookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
         }
-        return cookieValue;
+      }
+      return cookieValue;
     }
 
     {% if prompt_alert_on_window_reload_if_changed %}
       var input_changed = false;
 
-      function on_input_change(evt){
+      function on_input_change(evt) {
         input_changed = true;
       }
 
-      $(window).on('beforeunload', function(evt){
-          if (input_changed)
-              return "{% trans 'You have unsaved changes on this page.' %}";
+      $(window).on('beforeunload', function (evt) {
+        if (input_changed)
+          return "{% trans 'You have unsaved changes on this page.' %}";
       });
-    {% block PREVENT_ALERT_JS %}
+      {% block PREVENT_ALERT_JS %}
         // This should be overridden if your form submission button can't be
         // selected by $("input[name=submit]")
 
         // We can't simply set "disabled" on the submitting button here.
         // Otherwise the browser will simply remove that button from the POST
         // data.
-      function before_submit(evt){
-        input_changed = false;
+        function before_submit(evt) {
+          input_changed = false;
 
-        {# todo: document submit button class #}
-        $(".gallery-widget-submit-button").each(
-            function(){
+          {# todo: document submit button class #}
+          $(".gallery-widget-submit-button").each(
+            function () {
               var clone = $(this).clone();
               $(clone).attr("disabled", "1");
               $(this).after(clone);
               $(this).hide();
             });
         }
-    {% endblock %}
+      {% endblock %}
 
     {% endif %}
 
-        $('.files-widget').each(function() {
-            var that = $(this),
-                $fileupload = that,
-                fileInput = $('#{{ name }}-files'),
-                uploadURL = fileInput.data('action');
+    $('.files-widget').each(function () {
+      var that = $(this),
+        $fileupload = that,
+        fileInput = $('#{{ name }}-files'),
+        uploadURL = fileInput.data('action');
 
-            $fileupload.fileupload({
-                singleFileUploads: true,
-                url: uploadURL,
-                type: 'POST',
-                messages: {
-                    maxFileSize: '{% trans "File is too big" %}',
-                    minFileSize: '{% trans "File is too small" %}',
-                    acceptFileTypes: '{% trans "Filetype not allowed" %}',
-            {% if maxNumberOfFiles %}
-                    maxNumberOfFiles: "{% blocktrans trimmed %} Number of images exceeded, only {{ maxNumberOfFiles }} allowed{% endblocktrans %}",
-            {% endif %}
-                    uploadedBytes: '{% trans "Uploaded bytes exceed file size" %}',
-                    emptyResult: '{% trans "Empty file upload result" %}'
-                },
-{{ jquery_fileupload_ui_options|safe }}
+      $fileupload.fileupload({
+        singleFileUploads: true,
+        url: uploadURL,
+        type: 'POST',
+        messages: {
+          maxFileSize: '{% trans "File is too big" %}',
+          minFileSize: '{% trans "File is too small" %}',
+          acceptFileTypes: '{% trans "Filetype not allowed" %}',
+          {% if maxNumberOfFiles %}
+            maxNumberOfFiles: "{% blocktrans trimmed %} Number of images exceeded, only {{ maxNumberOfFiles }}
+              allowed{% endblocktrans %}",
+          {% endif %}
+          uploadedBytes: '{% trans "Uploaded bytes exceed file size" %}',
+          emptyResult: '{% trans "Empty file upload result" %}'
+        },
+        {{ jquery_fileupload_ui_options|safe }}
 
-                change: function(e, data) {
-                    if (typeof on_input_change !== 'undefined') on_input_change();
-                },
-                inputChanged: function (e, data) {
-                    if (typeof on_input_change !== 'undefined') on_input_change();
-                },
+        change: function (e, data) {
+          if (typeof on_input_change !== 'undefined') on_input_change();
+        },
+        inputChanged: function (e, data) {
+          if (typeof on_input_change !== 'undefined') on_input_change();
+        },
 
-                csrfCookieFunction: function() {return get_cookie('{{ csrfCookieName }}')},
-            });
+        csrfCookieFunction: function () {
+          return get_cookie('{{ csrfCookieName }}')
+        },
+      });
 
-            {% if pks and fetch_url %}
-                {# Do not remove the comment below, we are using it for tests. #}
-                // fetching existing images
-                $fileupload.find(".hiddeninput").addClass("initializing");
-                $.ajax({
-                    url: "{{ fetch_url }}",
-                    dataType: 'json',
-                    data: {"pks": encodeURIComponent(JSON.stringify({{pks}}))},
-                    context: $fileupload[0]
-                }).always(function () {
-                    $(this).removeClass('fileupload-processing');
-                    $(".fileupload-loading").remove();
-                }).done(function (result) {
-                    $(this).fileupload('option', 'done')
-                        .call(this, $.Event('done'), {result: result});
-                });
-
-            {% endif %}
-
-            // disable change alert when submit form.
-            if (typeof before_submit !== 'undefined'){
-                that.closest("form").on("submit", before_submit);
-            }
+      {% if pks and fetch_url %}
+        {# Do not remove the comment below, we are using it for tests. #}
+        // fetching existing images
+        $fileupload.find(".hiddeninput").addClass("initializing");
+        $.ajax({
+          url: "{{ fetch_url }}",
+          dataType: 'json',
+          data: {"pks": encodeURIComponent(JSON.stringify({{pks}}))},
+          context: $fileupload[0]
+        }).always(function () {
+          $(this).removeClass('fileupload-processing');
+          $(".fileupload-loading").remove();
+        }).done(function (result) {
+          $(this).fileupload('option', 'done')
+            .call(this, $.Event('done'), {result: result});
         });
 
-        {% if not uploader_disabled and upload_url %}
-            {# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
-            {# https://blog.csdn.net/candy_home/article/details/74440519 #}
-            {# https://gist.github.com/wjp2013/fff34c063cf0cf227d65#gistcomment-1705685 #}
-            $(document).ready(function () {
-              var isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
-              if (isWeixinBrowser)
-                $('.django-gallery-image-input')
-                  .removeAttr('multiple')
-                  .attr("accept", "image/*");
-            })
-        {% endif %}
+      {% endif %}
 
-}));
+      // disable change alert when submit form.
+      if (typeof before_submit !== 'undefined') {
+        that.closest("form").on("submit", before_submit);
+      }
+    });
+
+    {% if not uploader_disabled and upload_url %}
+      {# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
+      {# https://blog.csdn.net/candy_home/article/details/74440519 #}
+      {# https://gist.github.com/wjp2013/fff34c063cf0cf227d65#gistcomment-1705685 #}
+      $(document).ready(function () {
+        var isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
+        if (isWeixinBrowser)
+          $('.django-gallery-image-input')
+            .removeAttr('multiple')
+            .attr("accept", "image/*");
+      })
+    {% endif %}
+
+  }));
 </script>
 
 {% block JS_EXTRA %}
