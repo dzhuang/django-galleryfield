@@ -1,0 +1,14 @@
+// screen-reader utilities
+// -------------------------
+
+// only display content to screen readers
+.sr-only,
+.#{$si-css-prefix}-sr-only {
+  @include si-sr-only;
+}
+
+// use in conjunction with .sr-only to only display content when it's focused
+.sr-only-focusable,
+.#{$si-css-prefix}-sr-only-focusable {
+  @include si-sr-only-focusable;
+}

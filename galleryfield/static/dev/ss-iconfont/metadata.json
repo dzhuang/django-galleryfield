@@ -1,0 +1,409 @@
+{
+  "cancel": {
+    "unicode": "F073A",
+    "styles": [
+      "normal"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "normal",
+        "svgData": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"mdi-cancel\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M12 2C17.5 2 22 6.5 22 12S17.5 22 12 22 2 17.5 2 12 6.5 2 12 2M12 4C10.1 4 8.4 4.6 7.1 5.7L18.3 16.9C19.3 15.5 20 13.8 20 12C20 7.6 16.4 4 12 4M16.9 18.3L5.7 7.1C4.6 8.4 4 10.1 4 12C4 16.4 7.6 20 12 20C13.9 20 15.6 19.4 16.9 18.3Z\" /></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "id": "02F70DD2-E16E-43FD-9C2A-267C965E3919",
+      "codepoint": "F073A",
+      "aliases": [
+        "prohibited",
+        "ban",
+        "do-not-disturb-alt",
+        "denied",
+        "block",
+        "forbid",
+        "no",
+        "clear"
+      ],
+      "tags": [],
+      "author": "Google",
+      "version": "1.9.32",
+      "packageInfo": "@mdi/font@6.9.96"
+    },
+    "originalName": "cancel"
+  },
+  "crop-rotate": {
+    "unicode": "F0696",
+    "styles": [
+      "normal"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "normal",
+        "svgData": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"mdi-crop-rotate\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M7.47,21.5C4.2,19.93 1.86,16.76 1.5,13H0C0.5,19.16 5.66,24 11.95,24C12.18,24 12.39,24 12.61,23.97L8.8,20.15L7.47,21.5M12.05,0C11.82,0 11.61,0 11.39,0.04L15.2,3.85L16.53,2.5C19.8,4.07 22.14,7.24 22.5,11H24C23.5,4.84 18.34,0 12.05,0M16,14H18V8C18,6.89 17.1,6 16,6H10V8H16V14M8,16V4H6V6H4V8H6V16A2,2 0 0,0 8,18H16V20H18V18H20V16H8Z\" /></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "id": "03774672-2612-4A56-9E32-69060B32B94C",
+      "codepoint": "F0696",
+      "aliases": [],
+      "tags": [],
+      "author": "Google",
+      "version": "1.7.12",
+      "packageInfo": "@mdi/font@6.9.96"
+    },
+    "originalName": "crop-rotate"
+  },
+  "format-rotate-90": {
+    "unicode": "F06AA",
+    "styles": [
+      "normal"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "normal",
+        "svgData": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"mdi-format-rotate-90\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M7.34,6.41L0.86,12.9L7.35,19.38L13.84,12.9L7.34,6.41M3.69,12.9L7.35,9.24L11,12.9L7.34,16.56L3.69,12.9M19.36,6.64C17.61,4.88 15.3,4 13,4V0.76L8.76,5L13,9.24V6C14.79,6 16.58,6.68 17.95,8.05C20.68,10.78 20.68,15.22 17.95,17.95C16.58,19.32 14.79,20 13,20C12.03,20 11.06,19.79 10.16,19.39L8.67,20.88C10,21.62 11.5,22 13,22C15.3,22 17.61,21.12 19.36,19.36C22.88,15.85 22.88,10.15 19.36,6.64Z\" /></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "id": "99448D5B-50D3-4F49-8E88-DD75F7DFB231",
+      "codepoint": "F06AA",
+      "aliases": [
+        "rotate-90-degrees-ccw",
+        "format-rotate-ninety"
+      ],
+      "tags": [
+        "Text / Content / Format"
+      ],
+      "author": "Google",
+      "version": "1.7.12",
+      "packageInfo": "@mdi/font@6.9.96"
+    },
+    "originalName": "format-rotate-90"
+  },
+  "reload": {
+    "unicode": "F0453",
+    "styles": [
+      "normal"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "normal",
+        "svgData": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"mdi-reload\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M2 12C2 16.97 6.03 21 11 21C13.39 21 15.68 20.06 17.4 18.4L15.9 16.9C14.63 18.25 12.86 19 11 19C4.76 19 1.64 11.46 6.05 7.05C10.46 2.64 18 5.77 18 12H15L19 16H19.1L23 12H20C20 7.03 15.97 3 11 3C6.03 3 2 7.03 2 12Z\" /></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "id": "8E25B2CE-4DAF-4BD1-9D3F-27F86DA55D21",
+      "codepoint": "F0453",
+      "aliases": [
+        "car-engine-start",
+        "loop",
+        "rotate-clockwise"
+      ],
+      "tags": [
+        "Automotive",
+        "Arrow"
+      ],
+      "author": "Austin Andrews",
+      "version": "1.5.54",
+      "packageInfo": "@mdi/font@6.9.96"
+    },
+    "originalName": "reload"
+  },
+  "sync": {
+    "unicode": "F04E6",
+    "styles": [
+      "normal"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "normal",
+        "svgData": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"mdi-sync\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M12,18A6,6 0 0,1 6,12C6,11 6.25,10.03 6.7,9.2L5.24,7.74C4.46,8.97 4,10.43 4,12A8,8 0 0,0 12,20V23L16,19L12,15M12,4V1L8,5L12,9V6A6,6 0 0,1 18,12C18,13 17.75,13.97 17.3,14.8L18.76,16.26C19.54,15.03 20,13.57 20,12A8,8 0 0,0 12,4Z\" /></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "id": "E8CE455E-8C08-48F4-B989-8D91E185E8AE",
+      "codepoint": "F04E6",
+      "aliases": [
+        "loop",
+        "counterclockwise-arrows",
+        "circular-arrows",
+        "circle-arrows"
+      ],
+      "tags": [],
+      "author": "Google",
+      "version": "1.5.54",
+      "packageInfo": "@mdi/font@6.9.96"
+    },
+    "originalName": "sync"
+  },
+  "check": {
+    "unicode": "f00c",
+    "styles": [
+      "solid"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "solid",
+        "svgData": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d=\"M438.6 105.4C451.1 117.9 451.1 138.1 438.6 150.6L182.6 406.6C170.1 419.1 149.9 419.1 137.4 406.6L9.372 278.6C-3.124 266.1-3.124 245.9 9.372 233.4C21.87 220.9 42.13 220.9 54.63 233.4L159.1 338.7L393.4 105.4C405.9 92.88 426.1 92.88 438.6 105.4H438.6z\"/></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "aliases": {
+        "unicodes": {
+          "composite": [
+            "2714",
+            "2713"
+          ],
+          "secondary": [
+            "10f00c"
+          ]
+        }
+      },
+      "changes": [
+        "1.0.0",
+        "5.0.0",
+        "6.0.0-beta1",
+        "6.0.0"
+      ],
+      "label": "Check",
+      "search": {
+        "terms": []
+      },
+      "styles": [
+        "solid"
+      ],
+      "voted": false,
+      "packageInfo": "@fortawesome/fontawesome-free@6.1.1"
+    },
+    "originalName": "check"
+  },
+  "plus": {
+    "unicode": "2b",
+    "styles": [
+      "solid"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "solid",
+        "svgData": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d=\"M432 256c0 17.69-14.33 32.01-32 32.01H256v144c0 17.69-14.33 31.99-32 31.99s-32-14.3-32-31.99v-144H48c-17.67 0-32-14.32-32-32.01s14.33-31.99 32-31.99H192v-144c0-17.69 14.33-32.01 32-32.01s32 14.32 32 32.01v144h144C417.7 224 432 238.3 432 256z\"/></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "aliases": {
+        "names": [
+          "add"
+        ],
+        "unicodes": {
+          "composite": [
+            "2795",
+            "f067"
+          ],
+          "primary": [
+            "f067"
+          ],
+          "secondary": [
+            "10f067",
+            "102b"
+          ]
+        }
+      },
+      "changes": [
+        "1.0.0",
+        "5.0.0",
+        "5.0.13",
+        "6.0.0-beta1"
+      ],
+      "label": "plus",
+      "search": {
+        "terms": []
+      },
+      "styles": [
+        "solid"
+      ],
+      "voted": false,
+      "packageInfo": "@fortawesome/fontawesome-free@6.1.1"
+    },
+    "originalName": "plus"
+  },
+  "trash-can": {
+    "unicode": "f2ed",
+    "styles": [
+      "solid",
+      "regular"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "solid",
+        "svgData": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d=\"M135.2 17.69C140.6 6.848 151.7 0 163.8 0H284.2C296.3 0 307.4 6.848 312.8 17.69L320 32H416C433.7 32 448 46.33 448 64C448 81.67 433.7 96 416 96H32C14.33 96 0 81.67 0 64C0 46.33 14.33 32 32 32H128L135.2 17.69zM31.1 128H416V448C416 483.3 387.3 512 352 512H95.1C60.65 512 31.1 483.3 31.1 448V128zM111.1 208V432C111.1 440.8 119.2 448 127.1 448C136.8 448 143.1 440.8 143.1 432V208C143.1 199.2 136.8 192 127.1 192C119.2 192 111.1 199.2 111.1 208zM207.1 208V432C207.1 440.8 215.2 448 223.1 448C232.8 448 240 440.8 240 432V208C240 199.2 232.8 192 223.1 192C215.2 192 207.1 199.2 207.1 208zM304 208V432C304 440.8 311.2 448 320 448C328.8 448 336 440.8 336 432V208C336 199.2 328.8 192 320 192C311.2 192 304 199.2 304 208z\"/></svg>"
+      },
+      {
+        "style": "regular",
+        "svgData": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d=\"M160 400C160 408.8 152.8 416 144 416C135.2 416 128 408.8 128 400V192C128 183.2 135.2 176 144 176C152.8 176 160 183.2 160 192V400zM240 400C240 408.8 232.8 416 224 416C215.2 416 208 408.8 208 400V192C208 183.2 215.2 176 224 176C232.8 176 240 183.2 240 192V400zM320 400C320 408.8 312.8 416 304 416C295.2 416 288 408.8 288 400V192C288 183.2 295.2 176 304 176C312.8 176 320 183.2 320 192V400zM317.5 24.94L354.2 80H424C437.3 80 448 90.75 448 104C448 117.3 437.3 128 424 128H416V432C416 476.2 380.2 512 336 512H112C67.82 512 32 476.2 32 432V128H24C10.75 128 0 117.3 0 104C0 90.75 10.75 80 24 80H93.82L130.5 24.94C140.9 9.357 158.4 0 177.1 0H270.9C289.6 0 307.1 9.358 317.5 24.94H317.5zM151.5 80H296.5L277.5 51.56C276 49.34 273.5 48 270.9 48H177.1C174.5 48 171.1 49.34 170.5 51.56L151.5 80zM80 432C80 449.7 94.33 464 112 464H336C353.7 464 368 449.7 368 432V128H80V432z\"/></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "aliases": {
+        "names": [
+          "trash-alt"
+        ],
+        "unicodes": {
+          "composite": [
+            "f014"
+          ],
+          "secondary": [
+            "10f2ed"
+          ]
+        }
+      },
+      "changes": [
+        "5.0.0",
+        "5.7.0",
+        "5.10.2",
+        "6.0.0-beta1",
+        "6.0.0"
+      ],
+      "label": "Trash can",
+      "search": {
+        "terms": []
+      },
+      "styles": [
+        "solid",
+        "regular"
+      ],
+      "voted": false,
+      "packageInfo": "@fortawesome/fontawesome-free@6.1.1"
+    },
+    "originalName": "trash-can"
+  },
+  "triangle-exclamation": {
+    "unicode": "f071",
+    "styles": [
+      "solid"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "solid",
+        "svgData": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d=\"M506.3 417l-213.3-364c-16.33-28-57.54-28-73.98 0l-213.2 364C-10.59 444.9 9.849 480 42.74 480h426.6C502.1 480 522.6 445 506.3 417zM232 168c0-13.25 10.75-24 24-24S280 154.8 280 168v128c0 13.25-10.75 24-23.1 24S232 309.3 232 296V168zM256 416c-17.36 0-31.44-14.08-31.44-31.44c0-17.36 14.07-31.44 31.44-31.44s31.44 14.08 31.44 31.44C287.4 401.9 273.4 416 256 416z\"/></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "aliases": {
+        "names": [
+          "exclamation-triangle",
+          "warning"
+        ],
+        "unicodes": {
+          "composite": [
+            "26a0"
+          ],
+          "secondary": [
+            "10f071"
+          ]
+        }
+      },
+      "changes": [
+        "1.0.0",
+        "5.0.0",
+        "5.6.1",
+        "6.0.0-beta1"
+      ],
+      "label": "Triangle exclamation",
+      "search": {
+        "terms": []
+      },
+      "styles": [
+        "solid"
+      ],
+      "voted": false,
+      "packageInfo": "@fortawesome/fontawesome-free@6.1.1"
+    },
+    "originalName": "triangle-exclamation"
+  },
+  "upload": {
+    "unicode": "f093",
+    "styles": [
+      "solid"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "solid",
+        "svgData": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d=\"M105.4 182.6c12.5 12.49 32.76 12.5 45.25 .001L224 109.3V352c0 17.67 14.33 32 32 32c17.67 0 32-14.33 32-32V109.3l73.38 73.38c12.49 12.49 32.75 12.49 45.25-.001c12.49-12.49 12.49-32.75 0-45.25l-128-128C272.4 3.125 264.2 0 256 0S239.6 3.125 233.4 9.375L105.4 137.4C92.88 149.9 92.88 170.1 105.4 182.6zM480 352h-160c0 35.35-28.65 64-64 64s-64-28.65-64-64H32c-17.67 0-32 14.33-32 32v96c0 17.67 14.33 32 32 32h448c17.67 0 32-14.33 32-32v-96C512 366.3 497.7 352 480 352zM432 456c-13.2 0-24-10.8-24-24c0-13.2 10.8-24 24-24s24 10.8 24 24C456 445.2 445.2 456 432 456z\"/></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "aliases": {
+        "unicodes": {
+          "secondary": [
+            "10f093"
+          ]
+        }
+      },
+      "changes": [
+        "1.0.0",
+        "5.0.0",
+        "6.0.0-beta1"
+      ],
+      "label": "Upload",
+      "search": {
+        "terms": []
+      },
+      "styles": [
+        "solid"
+      ],
+      "voted": false,
+      "packageInfo": "@fortawesome/fontawesome-free@6.1.1"
+    },
+    "originalName": "upload"
+  },
+  "xmark": {
+    "unicode": "f00d",
+    "styles": [
+      "solid"
+    ],
+    "svgDataObjects": [
+      {
+        "style": "solid",
+        "svgData": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 512\"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d=\"M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z\"/></svg>"
+      }
+    ],
+    "metaFromPackage": {
+      "aliases": {
+        "names": [
+          "close",
+          "multiply",
+          "remove",
+          "times"
+        ],
+        "unicodes": {
+          "composite": [
+            "1f5d9",
+            "2715",
+            "2716",
+            "274c",
+            "d7"
+          ],
+          "secondary": [
+            "10f00d"
+          ]
+        }
+      },
+      "changes": [
+        "1.0.0",
+        "5.0.0",
+        "5.0.13",
+        "5.11.0",
+        "5.11.1",
+        "6.0.0-beta1"
+      ],
+      "label": "X Mark",
+      "search": {
+        "terms": []
+      },
+      "styles": [
+        "solid"
+      ],
+      "voted": false,
+      "packageInfo": "@fortawesome/fontawesome-free@6.1.1"
+    },
+    "originalName": "xmark"
+  }
+}

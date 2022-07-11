@@ -1,0 +1,75 @@
+// variables
+// --------------------------
+$si-css-prefix          : si !default;
+$si-style               : 400 !default;
+$si-style-family        : 'Subset Iconfont' !default;
+
+$si-display             : inline-block !default;
+
+$si-fw-width            : si-divide(20em, 16);
+$si-inverse             : #fff !default;
+
+$si-border-color        : #eee !default;
+$si-border-padding      : .2em .25em .15em !default;
+$si-border-radius       : .1em !default;
+$si-border-style        : solid !default;
+$si-border-width        : .08em !default;
+
+$si-size-scale-2xs      : 10 !default;
+$si-size-scale-xs       : 12 !default;
+$si-size-scale-sm       : 14 !default;
+$si-size-scale-base     : 16 !default;
+$si-size-scale-lg       : 20 !default;
+$si-size-scale-xl       : 24 !default;
+$si-size-scale-2xl      : 32 !default;
+
+$si-sizes: (
+  "2xs"                 : $si-size-scale-2xs,
+  "xs"                  : $si-size-scale-xs,
+  "sm"                  : $si-size-scale-sm,
+  "lg"                  : $si-size-scale-lg,
+  "xl"                  : $si-size-scale-xl,
+  "2xl"                 : $si-size-scale-2xl
+) !default;
+
+$si-li-width            : 2em !default;
+$si-li-margin           : $si-li-width * si-divide(5, 4) !default;
+
+$si-pull-margin         : .3em !default;
+
+$si-primary-opacity     : 1 !default;
+$si-secondary-opacity   : .4 !default;
+
+$si-stack-vertical-align: middle !default;
+$si-stack-width         : ($si-fw-width * 2) !default;
+$si-stack-z-index       : auto !default;
+
+$si-font-display        : block !default;
+$si-font-path           : "../webfonts" !default;
+
+
+$si-var-cancel: \F073A;
+$si-var-check: \f00c;
+$si-var-crop-rotate: \F0696;
+$si-var-format-rotate-90: \F06AA;
+$si-var-plus: \2b;
+$si-var-reload: \F0453;
+$si-var-sync: \F04E6;
+$si-var-trash-can: \f2ed;
+$si-var-triangle-exclamation: \f071;
+$si-var-upload: \f093;
+$si-var-xmark: \f00d;
+
+$si-icons: (
+    "cancel": $si-var-cancel,
+    "check": $si-var-check,
+    "crop-rotate": $si-var-crop-rotate,
+    "format-rotate-90": $si-var-format-rotate-90,
+    "plus": $si-var-plus,
+    "reload": $si-var-reload,
+    "sync": $si-var-sync,
+    "trash-can": $si-var-trash-can,
+    "triangle-exclamation": $si-var-triangle-exclamation,
+    "upload": $si-var-upload,
+    "xmark": $si-var-xmark
+);
