@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'galleryfield',
     'sorl.thumbnail',
     'demo',
+    'demo_custom'
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,20 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # }
 
 LOGIN_URL = "/admin/login/"
+
+SENDFILE_URL = "/protected"
+
+# SENDFILE_BACKEND = "django_sendfile.backends.nginx"  # production
+SENDFILE_BACKEND = "django_sendfile.backends.development"
+
+SENDFILE_ROOT = BASE_DIR / 'protected'
+
+DJANGO_GALLERY_FIELD_CONFIG = {
+    # "bootstrap_version": 3
+    # "assets": {
+    #     "bootstrap_css": "https://cdnjs.cloudflare.com/ajax/libs/"
+    #                      "twitter-bootstrap/3.4.1/css/bootstrap.min.css",
+    #     "bootstrap_js": "https://cdnjs.cloudflare.com/ajax/libs/"
+    #                     "twitter-bootstrap/3.4.1/css/bootstrap.min.js"
+    # }
+}

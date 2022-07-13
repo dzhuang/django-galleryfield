@@ -24,7 +24,7 @@ class GetUrlFromStrTest(SimpleTestCase):
             self.assertEqual(get_url_from_str("non-exist-url-name"), "")
         with self.assertRaises(ImproperlyConfigured) as cm:
             get_url_from_str("non-exist-url-name", require_urlconf_ready=True)
-        self.assertIn("is neither a valid URL nor a valid URL name",
+        self.assertIn("is not a valid view function or pattern name",
                       cm.exception.args[0])
 
     def test_valid_url(self):
@@ -40,5 +40,5 @@ class GetUrlFromStrTest(SimpleTestCase):
             self.assertEqual(get_url_from_str("/foo/bar"), "")
         with self.assertRaises(ImproperlyConfigured) as cm:
             get_url_from_str("/foo/bar", require_urlconf_ready=True)
-        self.assertIn("is neither a valid URL nor a valid URL name",
+        self.assertIn("is not a valid view function or pattern name",
                       cm.exception.args[0])

@@ -22,20 +22,24 @@ class ImageCreateView(BaseCreateMixin, CreateView):
 
        |view_disable_server_side_crop|
 
-    .. automethod:: form_valid
+    .. automethod:: create_instance_from_form
     """
     def form_valid(self, form):
-        """User should override this method to save the object,
-        for example, image model usually has a non-null user field,
-        that should be handled here.
+        self.create_instance_from_form(form)
+        return super().form_valid(form)
 
-        See `the-save-method <https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method>`_
-        for detail.
+    def create_instance_from_form(self, form):
+        """User should provide this method to save the object which will be used 
+        in form_valid method. Typically, ``self.object`` is expected to be saved 
+        here with  
+        `the-save-method <https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method>`_.
 
         See :class:`galleryfield.image_views.BuiltInImageCreateView` for example.
         """  # noqa
-        self.object.save()
-        return super().form_valid(form)
+
+        raise NotImplementedError(
+            'subclasses of ImageCreateView must provide '
+            'a create_instance_from_form() method')
 
 
 class ImageListView(BaseListViewMixin, BaseListView):
@@ -69,7 +73,8 @@ class ImageListView(BaseListViewMixin, BaseListView):
 class ImageCropView(BaseCropViewMixin, UpdateView):
     """
     The Class-based view handling server side cropping of an image model
-    instance.
+    instance. Note that a new image model instance will be created rather
+    than updating the cropped instance.
 
     .. attribute:: target_model
 
@@ -83,7 +88,7 @@ class ImageCropView(BaseCropViewMixin, UpdateView):
 
        |view_disable_server_side_crop|
 
-    .. automethod:: form_valid
+    .. automethod:: create_cropped_instance_from_form
     """
     def form_valid(self, form):
         """Save the object from the form. This method should only be overridden
@@ -91,8 +96,26 @@ class ImageCropView(BaseCropViewMixin, UpdateView):
         example, when there is a  ``DateTimeField`` which records the updated
         datetime of the image.
         """
-        self.object = form.save()
+        self.create_cropped_instance_from_form(form)
         return super().form_valid(form)
+
+    def create_cropped_instance_from_form(self, form):
+        """User should provide this method to save the object which will be used 
+        in form_valid method. Typically, self.object is expected to be saved 
+        here with  
+        `the-save-method <https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method>`_.
+
+        See :class:`galleryfield.image_views.BuiltInImageCropView` for example.
+        
+        Note that beside the id (pk) and image field, all other field values of the
+        saved cropped instance will be the same with the original instance. You 
+        need to set those values before calling ``self.object.save()`` method.
+        
+        """  # noqa
+
+        raise NotImplementedError(
+            'subclasses of ImageCropView must provide '
+            'a create_cropped_instance_from_form() method')
 
 
 class BuiltInImageCreateView(ImageCreateView):
@@ -100,11 +123,10 @@ class BuiltInImageCreateView(ImageCreateView):
     crop_url_name = "galleryfield-builtingalleryimage-crop"  # Can be omitted
     disable_server_side_crop = False
 
-    def form_valid(self, form):
+    def create_instance_from_form(self, form):
         self.object = form.save(commit=False)
         self.object.creator = self.request.user
         self.object.save()
-        return super().form_valid(form)
 
 
 class BuiltInImageListView(ImageListView):
@@ -127,5 +149,10 @@ class BuiltInImageCropView(ImageCropView):
     def get_object(self, queryset=None):
         obj = super().get_object(queryset=None)
         if not self.request.user.is_superuser and obj.creator != self.request.user:
-            raise PermissionDenied("May not crop other people's image")
+            raise PermissionDenied("May not crop other user's image")
         return obj
+
+    def create_cropped_instance_from_form(self, form):
+        # we don't need to set self.object.creator here because
+        # it's copied from the original instance.
+        self.object = form.save()

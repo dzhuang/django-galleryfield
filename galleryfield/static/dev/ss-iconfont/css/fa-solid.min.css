@@ -1,0 +1,3 @@
+:root,:host{--si-font-normal: normal normal 1em/1 "Subset Iconfont"}@font-face{font-family:'Subset Iconfont Solid';font-weight:900;font-display:block;src:url("../webfonts/fa-solid-900.woff2?v=63106ec05bc85b0b84fd9b69d3be08b6") format("woff2"),url("../webfonts/fa-solid-900.ttf?v=63106ec05bc85b0b84fd9b69d3be08b6") format("truetype")}.si-solid{font-family:'Subset Iconfont Solid';font-weight:900}
+
+/*# sourceMappingURL=fa-solid.min.css.map */

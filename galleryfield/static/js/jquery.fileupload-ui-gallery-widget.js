@@ -1,36 +1,21 @@
-(function ($, window, document, undefined) {
+(function (factory) {
+  'use strict';
+  factory(window.jQuery, window.loadImage, window.Sortable);
+})(function ($, loadImage, Sortable) {
     'use strict';
 
-    function get_cookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
     $.blueimp.fileupload.prototype._specialOptions.push(
-        'mediaUrl',
         'hiddenFileInput',
         'editModalId',
         'editModalImgId',
-        'sortableHandleSelector',
         'sortableOptions',
         'cropperResultMessageBoxSelector',
         'cropperButtonDivSelector',
         'cropperButtonSelector',
         'statusDataName',
         'filesDataToInputDataFunction',
-        'csrfCookieName',
-        'is_initializing',
+        'csrfCookieFunction',
+        'disableSortable',
     );
 
     $.widget(
@@ -38,18 +23,16 @@
 
             options: {
                 hiddenFileInput: undefined,
-                mediaUrl: undefined,
                 editModalId: undefined,
                 editModalImgId: undefined,
                 cropperResultMessageBoxSelector: undefined,
                 cropperButtonDivSelector: undefined,
                 cropperStatusBtnSelector: undefined,
                 cropperRotateBtnSelector: undefined,
-                enableSortable: true,
-                sortableHandleSelector: undefined,
                 sortableOptions:undefined,
                 statusDataName: undefined,
-                csrfCookieName: undefined,
+                csrfCookieFunction: undefined,
+                disableSortable: undefined,
 
                 getNumberOfUploadedFiles: function () {
                     return this.filesContainer.children('.template-download')
@@ -74,7 +57,6 @@
                     // todo: check if edit is allowed, for example,
                     // gif is not allowed in chrome.
                     $(data.context).find('.edit').prop('disabled', false);
-                    that.toggleFileuploadSortableHandle();
                     that._toggleFileuploadButtonBarButtonDisplay();
                 },
 
@@ -97,8 +79,10 @@
 
                     data.formData = {
                         "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
-                        "csrfmiddlewaretoken": get_cookie(options.csrfCookieName)
                     };
+                    if (options.csrfCookieFunction !== undefined) {
+                        data.formData.csrfmiddlewaretoken = options.csrfCookieFunction()
+                    }
                 },
 
                 failed: function(e, data) {
@@ -108,8 +92,7 @@
                     $(data.context).find('.edit').prop('disabled', false).addClass("hidden").end();
 
                     var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
-                    that.toggleFileuploadSortableHandle()
-                        ._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
+                    that._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
                 },
 
                 completed: function (e, data) {
@@ -117,8 +100,7 @@
                         return false;
                     }
                     var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
-                    that.toggleFileuploadSortableHandle()
-                        ._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
+                    that._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
                     that._trigger("post_completed", e, data);
                     that._fillInHiddenInputs(data);
                 },
@@ -133,8 +115,7 @@
                     that._trigger('finished', e, data);
                     that._trigger('post-destroy', e, data);
 
-                    that.toggleFileuploadSortableHandle()
-                        ._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
+                    that._toggleFileuploadButtonBarButtonDisplay()._toggleFileuploadButtonBarDelete();
                 },
 
                 sortableUpdate: function (e, data) {
@@ -187,20 +168,6 @@
                         'disabled',
                         !(this.element.find('.toggle').is(':checked'))
                     );
-            },
-
-            toggleFileuploadSortableHandle: function() {
-                var $this = $(this),
-                    options = this.options;
-                if (!options.enableSortable) return;
-
-                var filesContainer = options.filesContainer;
-                if (filesContainer.children().length > 1) {
-                    filesContainer.find(options.sortableHandleSelector).removeClass("hidden").end();
-                } else {
-                    filesContainer.find(options.sortableHandleSelector).addClass("hidden").end();
-                }
-                return this;
             },
 
             _toggleFileuploadButtonBarButtonDisplay: function() {
@@ -257,7 +224,7 @@
                         return;
                     }
 
-                    $editImg.prop('src', window.loadImage.createObjectURL(orig));
+                    $editImg.prop('src', loadImage.createObjectURL(orig));
                     $editImg.processCroppedCanvas = function (result) {
                         $editModal.modal('hide');
                         options.cropperButtonSelector.prop("disabled", true);
@@ -280,17 +247,22 @@
                 if (editType === "download") {
                     $editImg.attr('src', $button.closest(".template-download").find(".preview").find("a").attr("href"));
                     $editImg.submitData = function (result) {
-                        var messageBox = options.cropperResultMessageBoxSelector;
+                        var messageBox = options.cropperResultMessageBoxSelector,
+                            formData = {
+                                "cropped_result": JSON.stringify(result),
+                                "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
+                            };
+
+                        if (options.csrfCookieFunction !== undefined) {
+                            formData.csrfmiddlewaretoken = options.csrfCookieFunction()
+                        }
+
                         options.cropperButtonSelector.prop("disabled", true);
                         $editImg.cropper('disable');
                         var jqxhr = $.ajax({
                             method: "POST",
                             url: $button.data("action"),
-                            data: {
-                                "cropped_result": JSON.stringify(result),
-                                "thumbnail_size":  options.previewMaxWidth.toString() + "x" + options.previewMaxHeight.toString(),
-                                "csrfmiddlewaretoken": get_cookie(options.csrfCookieName)
-                            },
+                            data: formData,
                         })
                             .always(function () {
                             })
@@ -424,7 +396,7 @@
                             strict: true,
                             movable: false,
                             zoomable: false,
-                            minContainerheight: $(window).height() * 0.8,
+                            minContainerheight: $(window).height() * 0.8,  // fixme: remove window
                             ready: function (e) {
                                 croppStartingData = $image.cropper("getData", "true");
                                 options.cropperRotateBtnSelector.prop("disabled", false);
@@ -544,36 +516,24 @@
                 }
             },
 
-            _initSortableHandleSelector: function () {
-                var options = this.options;
-                if (options.sortableHandleSelector === undefined) {
-                    options.sortableHandleSelector = ".sortableHandle";
-                } else if (options.sortableHandleSelector instanceof $) {
-                    options.sortableHandleSelector = options.sortableHandleSelector.selector;
-                }
-            },
-
             _initSortable: function() {
-                this._initSortableHandleSelector();
-                var options = this.options,
-                    sortableOptions = options.sortableOptions,
+                var options = this.options;
+
+                if (options.disableSortable) return;
+
+                var sortableOptions = options.sortableOptions,
                     that = this,
                     defaultSortableOptions = {
-                        delay: 500,
-                        scrollSpeed: 40,
-                        handle: options.sortableHandleSelector,
-                        helper: "clone",
-                        axis: "y",
-                        opacity: 0.9,
-                        cursor: "move",
-                        start: function(e, ui){
-                            that._trigger("sortableStart", e, ui.item);
-                            },
-                        stop: function(e, ui){
-                            that._trigger("sortableStop", e, ui.item);
-                        },
-                        update: function(e, ui){
-                            that._trigger("sortableUpdate", e, ui.item);
+                        disabled: false,
+                        delay: 300,
+                        animation: 200,
+                        touchStartThreshold: 5,
+                        ghostClass: "galleryWidget-sortable-ghost",
+                        chosenClass: "galleryWidget-sortable-chosen",
+                        filter: ".btn, .toggle, img, a, span, progress",
+
+                        onUpdate: function(evt){
+                            that._trigger("sortableUpdate", evt.item);
                         }
                     };
                 if (sortableOptions) {
@@ -584,22 +544,13 @@
                     sortableOptions = defaultSortableOptions;
                 }
 
-                this.options.filesContainer.sortable(
-                    sortableOptions
-                ).disableSelection();
+                Sortable.create(options.filesContainer.get(0), sortableOptions)
             },
 
             _initFilesDataToInputDataFunction: function () {
                 var options = this.options;
                 if (options.filesDataToInputDataFunction === undefined) {
                     options.filesDataToInputDataFunction = function(filesData) {return filesData};
-                }
-            },
-
-            _initCsrfCookieName: function () {
-                var options = this.options;
-                if (options.csrfCookieName === undefined) {
-                    options.csrfCookieName = "csrftoken";
                 }
             },
 
@@ -610,7 +561,6 @@
                 this._initEditModal();
                 this._initWidgetHiddenInput();
                 this._initFilesDataToInputDataFunction();
-                this._initCsrfCookieName();
             },
 
             _initWidgetHiddenInput: function () {
@@ -621,6 +571,7 @@
                     options.hiddenFileInput = $(options.hiddenFileInput);
                 }
             },
+
         }
     );
-})(jQuery, window, document);
+});

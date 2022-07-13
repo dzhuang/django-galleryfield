@@ -1,0 +1,20 @@
+// bordered + pulled icons
+// -------------------------
+
+.#{$si-css-prefix}-border {
+  border-color: var(--#{$si-css-prefix}-border-color, #{$si-border-color});
+  border-radius: var(--#{$si-css-prefix}-border-radius, #{$si-border-radius});
+  border-style: var(--#{$si-css-prefix}-border-style, #{$si-border-style});
+  border-width: var(--#{$si-css-prefix}-border-width, #{$si-border-width});
+  padding: var(--#{$si-css-prefix}-border-padding, #{$si-border-padding});
+}
+
+.#{$si-css-prefix}-pull-left {
+  float: left;
+  margin-right: var(--#{$si-css-prefix}-pull-margin, #{$si-pull-margin});
+}
+
+.#{$si-css-prefix}-pull-right {
+  float: right;
+  margin-left: var(--#{$si-css-prefix}-pull-margin, #{$si-pull-margin});
+}

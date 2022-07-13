@@ -4,7 +4,9 @@
 <head>
 
     <title>Django Gallery</title>
-    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+
+    {# todo: Add docs about dependencies of the widget #}
 
     {% block header %}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.css" integrity="sha512-mG7Xo6XLlQ13JGPQLgLxI7bz8QlErrsE9rYQDRgF+6AlQHm9Tn5bh/vaIKxBmM9mULPC6yizAhEmKyGgNHCIvg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -31,6 +33,11 @@
             <ul class="nav navbar-nav">
                 <li><a  href="/">{% trans "Create New" %}</a></li>
             </ul>
+
+            <ul class="nav navbar-nav">
+                <li><a  href="/custom">{% trans "Create New (Customized)" %}</a></li>
+            </ul>
+
             {% if update_view_url %}
             <ul class="nav navbar-nav">
                 <li><a  href="{{ update_view_url }}">{% trans "Update" %}</a></li>

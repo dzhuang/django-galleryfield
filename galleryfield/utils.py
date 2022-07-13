@@ -25,13 +25,23 @@ REQUIRED_CONF_ERROR_PATTERN = (
     "You must configure %(location)s for RELATE to run properly.")
 
 
-def convert_dict_to_plain_text(d, indent=4):
+def convert_dict_to_plain_text(d, indent=4, no_wrap_keys=None):
+    # For items whose value are javascript regex,
+    # which should not be treated as text
+    no_wrap_keys = no_wrap_keys or []
+
     result = []
     for k, v in d.items():
-        if v is not None:
-            if v in [True, False]:
-                v = str(v).lower()
-            result.append(" " * indent + "%s: %s," % (k, str(v)))
+        if v is None:
+            continue
+
+        if (v in [True, False]
+                or (isinstance(v, str) and v.lower() in ["true", "false"])):
+            v = str(v).lower()
+        elif isinstance(v, str) and k not in no_wrap_keys:
+            v = f"'{v}'"
+
+        result.append(" " * indent + f"{k}: {v},")
     return "\n".join(result)
 
 
@@ -60,7 +70,7 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                 msg=(INSTANCE_ERROR_PATTERN
                      % {"location": str(obj),
                         "types": "str"}),
-                id="%s.E001" % check_id_prefix,
+                id=f"{check_id_prefix}.E001",
                 obj=obj
             ))
             will_proceed_checking_target_model_image_fields = False
@@ -86,7 +96,7 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                            "https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.get_model"  # noqa
                            " for more information."
                          ),
-                    id="%s.E002" % check_id_prefix,
+                    id=f"{check_id_prefix}.E002",
                     obj=obj
                 ))
                 will_proceed_checking_target_model_image_fields = False
@@ -108,7 +118,7 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                          '"%(default)s" is used as default.'
                          % {"default": defaults.DEFAULT_TARGET_IMAGE_MODEL}
                          ),
-                    id="%s.I001" % check_id_prefix,
+                    id=f"{check_id_prefix}.I001",
                     obj=obj
                 ))
 
@@ -142,7 +152,7 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                                     "exception": type(e).__name__,
                                     "str_e": str(e)
                                     }),
-                            id="%s.E003" % check_id_prefix,
+                            id=f"{check_id_prefix}.E003",
                             obj=obj
                         ))
                         get_image_field_class_method_raised_error = True
@@ -165,7 +175,7 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                          % {"location": str(obj),
                             "model": target_model
                             }),
-                    id="%s.E004" % check_id_prefix,
+                    id=f"{check_id_prefix}.E004",
                     obj=obj
                 ))
             elif not get_image_field_class_method_raised_error:
@@ -176,7 +186,7 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                          % {"location": str(obj),
                             "model": target_model
                             }),
-                    id="%s.E005" % check_id_prefix,
+                    id=f"{check_id_prefix}.E005",
                     obj=obj
                 ))
         else:
@@ -207,9 +217,9 @@ def get_url_from_str(url_str, require_urlconf_ready=False):
             return reverse_lazy(url_str)
         try:
             return reverse(url_str)
-        except NoReverseMatch:
+        except NoReverseMatch as e:
             raise ImproperlyConfigured(
-                "'%s' is neither a valid URL nor a valid URL name" % url_str)
+                f"'{url_str}' is invalid: '{type(e).__name__}': '{str(e)}'.")
     return url_str
 
 
@@ -235,7 +245,7 @@ def get_formatted_thumbnail_size(thumbnail_size, name="thumbnail_size"):
         thumbnail_size = str(thumbnail_size).strip()
         if not thumbnail_size:
             raise ValueError(
-                "'%s' can't be an empty string" % name)
+                f"'{name}' can't be an empty string")
         thumbnail_size = [s.strip() for s in thumbnail_size.lower().split("x")]
 
     return get_thumb_size_from_iterator(thumbnail_size)

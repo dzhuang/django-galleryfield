@@ -8,12 +8,12 @@ from django.forms import ValidationError
 from django.forms.widgets import Textarea
 from django.test import TestCase
 from django.test.utils import isolate_apps, override_settings
+from tests import factories
+from tests.factories import DemoGalleryFactory
 
 from demo.models import DemoGallery
 from galleryfield.fields import GalleryField, GalleryFormField
 from galleryfield.widgets import GalleryWidget
-from tests import factories
-from tests.factories import DemoGalleryFactory
 
 
 class DemoTestGalleryModelForm(forms.ModelForm):

@@ -1,0 +1,17 @@
+:root, :host {
+  --si-font-normal: normal normal 1em/1 "Subset Iconfont";
+}
+
+@font-face {
+  font-family: 'Subset Iconfont';
+  font-weight: 400;
+  font-display: block;
+  src: url("../webfonts/material-design-icons.woff2?v=edaa0b90ca9cc544609d426f2f386959") format("woff2"), url("../webfonts/material-design-icons.ttf?v=edaa0b90ca9cc544609d426f2f386959") format("truetype");
+}
+
+.si {
+  font-family: 'Subset Iconfont';
+  font-weight: 400;
+}
+
+/*# sourceMappingURL=material-design-icons-font-face.css.map */

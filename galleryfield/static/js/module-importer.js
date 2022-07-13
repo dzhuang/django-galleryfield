@@ -8,3 +8,6 @@ window.jQuery = jQuery;
 
 import loadImage from 'blueimp-load-image';
 window.loadImage = loadImage;
+
+import Sortable from 'sortablejs';
+window.Sortable = Sortable;

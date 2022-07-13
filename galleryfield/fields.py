@@ -254,7 +254,7 @@ class GalleryFormField(forms.JSONField):
         # name in url_conf in the form of app_label_model_name-upload
         # in lower case
         self.widget.upload_url = (
-                "%s-upload" % self._target_app_model_name.lower())
+                "{}-upload".format(self._target_app_model_name.lower()))
 
     def _set_widget_fetch_url(self):
         if self.widget.disable_fetch or self.widget.fetch_url:
@@ -264,7 +264,7 @@ class GalleryFormField(forms.JSONField):
         # name in url_conf in the form of app_label-model_name-fetch
         # in lower case
         self.widget.fetch_url = (
-                "%s-fetch" % self._target_app_model_name.lower())
+                "{}-fetch".format(self._target_app_model_name.lower()))
 
     @property
     def max_number_of_images(self):
@@ -276,7 +276,7 @@ class GalleryFormField(forms.JSONField):
             if not str(value).isdigit():
                 raise TypeError(
                     "'max_number_of_images' expects a positive integer, "
-                    "got %s." % str(value))
+                    f"got {value}.")
             value = int(value)
         self._max_number_of_images = value
         self._widget.max_number_of_images = value

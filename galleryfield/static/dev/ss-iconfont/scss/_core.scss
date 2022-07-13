@@ -1,0 +1,24 @@
+// base icon class definition
+// -------------------------
+
+.#{$si-css-prefix} {
+  font-family: var(--#{$si-css-prefix}-style-family, '#{$si-style-family}');
+  font-weight: var(--#{$si-css-prefix}-style, #{$si-style});
+}
+
+.#{$si-css-prefix},
+.#{$si-css-prefix}-normal,
+.#{$si-css-prefix}-solid,
+.#{$si-css-prefix}-regular{
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: var(--#{$si-css-prefix}-display, #{$si-display});
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-rendering: auto;
+}
+
+%si-icon {
+  @include si-icon;
+}

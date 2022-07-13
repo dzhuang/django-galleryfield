@@ -10,8 +10,3 @@ class BuiltInGalleryImage(models.Model):
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=False, blank=False,
         verbose_name=_('Creator'), on_delete=models.CASCADE)
-
-    # This snippet will not run because we already have the ImageField named 'image'
-    # @classmethod
-    # def get_image_field(cls):
-    #     return cls._meta.get_field("image")

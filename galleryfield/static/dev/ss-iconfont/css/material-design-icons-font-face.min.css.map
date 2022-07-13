@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "material-design-icons-font-face.min.css",
+	"sources": [
+		"../scss/material-design-icons-font-face.scss",
+		"../scss/_functions.scss",
+		"../scss/_variables.scss"
+	],
+	"names": [],
+	"mappings": "AAGA,AAAA,KAAK,CAAE,KAAK,AAAC,CACX,gBAA+B,CAAc,sCAAC,CAC/C,AAED,UAAU,CACR,WAAW,CAAE,iBAAiB,CAC9B,WAAW,CAAE,GAAG,CAChB,YAAY,CEoCY,KAAK,CFnC7B,GAAG,CAAE,iFAAsF,CAAC,eAAe,CACzG,+EAAoF,CAAC,kBAAkB,CAI3G,AAAA,GAAG,AAAgB,CACjB,WAAW,CAAE,iBAAiB,CAC9B,WAAW,CAAE,GAAG,CACjB"
+}

@@ -108,6 +108,7 @@ class GalleryWidget(forms.HiddenInput):
 
         self.options = options and options.copy() or {}
         self.options.setdefault("accepted_mime_types", ['image/*'])
+        self._disabled = False
 
     @property
     def upload_template(self):
@@ -190,11 +191,9 @@ class GalleryWidget(forms.HiddenInput):
         try:
             self.upload_url = get_url_from_str(
                     self.upload_url, require_urlconf_ready=True)
-        except Exception:
+        except Exception as e:
             raise ImproperlyConfigured(
-                "'upload_url' is invalid: %s is neither "
-                "a valid URL nor a valid URL name."
-                % self.upload_url)
+                f"'upload_url' is invalid: '{type(e).__name__}': '{str(e)}'")
 
         if self.disable_fetch:
             self.fetch_url = None
@@ -203,11 +202,9 @@ class GalleryWidget(forms.HiddenInput):
                 self.fetch_url = get_url_from_str(
                         self.fetch_url, require_urlconf_ready=True)
 
-            except Exception:
+            except Exception as e:
                 raise ImproperlyConfigured(
-                    "'fetch_url' is invalid: %s is neither "
-                    "a valid URL nor a valid URL name."
-                    % self.fetch_url)
+                    f"'fetch_url' is invalid: '{type(e).__name__}': '{str(e)}'")
 
         # In the following we validate update the urls from url names (if it is
         # not an url) and check the potential conflicts of init params
@@ -303,7 +300,7 @@ class GalleryWidget(forms.HiddenInput):
             ui_options.pop(option, None)
 
         # Fixme: this is hardcoded
-        ui_options["paramName"] = "'files[]'"
+        ui_options["paramName"] = "files[]"
 
         # override maxNumberOfFiles
         ui_options.pop("maxNumberOfFiles", None)
@@ -317,16 +314,26 @@ class GalleryWidget(forms.HiddenInput):
 
         _width, _height = self.thumbnail_size.split("x")
         ui_options.update(
-            {"previewMaxWidth": _width,
-             "previewMaxHeight": _height,
+            {"previewMaxWidth": int(_width),
+             "previewMaxHeight": int(_height),
 
              # This is used as a CSS selector to fine the input field
-             "hiddenFileInput": "'.%s'" % conf.FILES_FIELD_CLASS_NAME,
-
-             "csrfCookieName": "'%s'" % getattr(settings, "CSRF_COOKIE_NAME")
+             "hiddenFileInput": f".{conf.FILES_FIELD_CLASS_NAME}",
              })
 
-        return convert_dict_to_plain_text(ui_options, indent=16)
+        # Compatibility with Bootstrap 4.5
+        # https://github.com/blueimp/jQuery-File-Upload/issues/3662
+
+        if conf.BOOTSTRAP_VERSION > 3:
+            ui_options["showElementClass"] = "show"
+
+        if self._disabled:
+            ui_options["disableSortable"] = True
+
+        return convert_dict_to_plain_text(
+            ui_options, indent=16,
+            no_wrap_keys=["loadImageFileTypes", "acceptFileTypes",
+                          "disableImageResize"])
 
     def render(self, name, value, attrs=None, renderer=None):
         self.set_and_check_urls()
@@ -352,6 +359,7 @@ class GalleryWidget(forms.HiddenInput):
         if (_context["widget"]["attrs"].get("disabled", False)
                 or _context["widget"]["attrs"].get("readonly")):
             context["uploader_disabled"] = True
+            self._disabled = True
         else:
             context.update({
                 "upload_url": self.upload_url,
@@ -362,5 +370,7 @@ class GalleryWidget(forms.HiddenInput):
 
         context["jquery_fileupload_ui_options"] = (
             self.get_stringfied_jquery_file_upload_ui_options())
+
+        context["csrfCookieName"] = getattr(settings, "CSRF_COOKIE_NAME")
 
         return renderer.render(template_name=self.template, context=context)
