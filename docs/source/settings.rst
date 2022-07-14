@@ -14,10 +14,11 @@ Default:
 .. code-block:: python
 
     {
+        "bootstrap_version": 3,
         "assets": {
-            "jquery.js": "jquery/dist/jquery.min.js",
-            "jquery-ui.js": "jquery-ui-dist/jquery-ui.min.js",
-           ...
+            "jquery": "path/or/url/to/jquery.js",
+            "bootstrap_css": "path/or/url/to/bootstrap.css",
+            "bootstrap_js": "path/or/url/to/bootstrap.js",
             "extra_js": [],
             "extra_css": [],
         },
@@ -39,28 +40,50 @@ Default:
 
 See details below.
 
-.. setting:: settings_default_assets
+.. setting:: settings_bootstrap_version
+
+bootstrap_version
+~~~~~~~~~~~~~~~~~~~
+
+Default: 3
+
+The value denotes the version of twitter bootstrap used by :ref:`GalleryWidget`.  Allow values include 3, 4 or 5.
+
+
+.. setting:: settings_assets
 
 assets
 ~~~~~~~
 
-Default:
+The assets needed for rendering :ref:`GalleryWidget`.
+
+- ``jquery``: The path or url to `jQuery.js`. Defaults to ``https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js``.
+- ``bootstrap_css``: The path or url to `bootstrap.css`, or a `dict` with `bootstrap_version` s as key, and path/url as value. Defaults to:
 
 .. code-block:: python
 
     {
-        "extra_js": [],
-        "extra_css": []
+     3: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css",
+     4: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css",
+     5: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css",
     }
 
-``extra_js`` and ``extra_css`` allow user to add customized static files when customize
-the rendering of the widget.
+- ``bootstrap_js``: The path or url to `bootstrap.js`, or a `dict` with `bootstrap_version` s as key, and path/url as value. Defaults to:
 
-.. currentmodule:: galleryfield.default
-.. autodata:: galleryfield.defaults.DEFAULT_ASSETS
-   :annotation:
-.. pprint:: galleryfield.defaults.DEFAULT_ASSETS
+.. code-block:: python
 
+    {
+     3: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.js",
+     4: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.js",
+     5: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.js",
+    }
+
+- ``extra_js`` and ``extra_css`` allow user to add customized static files when customize
+  the rendering of the widget. Both defaults to `[]`.
+
+
+If you want to serve ``assets`` files locally, you can override those values using the relative path
+of those files in `STATICFILES_DIRS <https://docs.djangoproject.com/en/dev/ref/settings/#std-setting-STATICFILES_DIRS>`__ .
 
 .. setting:: settings_thumbnails
 
@@ -106,10 +129,11 @@ The default value is listed in ``galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEF
    :annotation:
 .. pprint:: galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
 
-The value can be overridden when initializing :class:`galleryfield.widgets.GalleryWidget` via
+The values can be overridden when initializing :class:`galleryfield.widgets.GalleryWidget` via
 :attr:`jquery_file_upload_ui_options`.
 Please refer to `available options <https://github.com/blueimp/jQuery-File-Upload/wiki/Options#general-options>`__
-for the details and more options.
+for the details and more options. Note that ``disableSortable`` is an option introduced in this package which
+determines whether the functionality of sorting uploaded images should be disabled, defaults to ``False``.
 
 .. warning::
    Options ``previewMaxWidth`` and ``previewMaxHeight`` were ignored in favor of

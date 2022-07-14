@@ -2,7 +2,7 @@ About the demo
 ================
 
 The code in the demo seems simple, with only a model field :class:`galleryfield.fields.GalleryField`
-used in ``demo.models`` to construct the gallery model. Actually, there're some logic fall behind the
+used in ``demo.models`` to construct the gallery model. Actually, there are some logic fall behind the
 code.
 
 Handling the image instances

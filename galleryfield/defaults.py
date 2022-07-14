@@ -68,3 +68,5 @@ DEFAULT_STATICS = {
                      4: _BOOTSTRAP_JS_PATTERN.format("4.6.1"),
                      5: _BOOTSTRAP_JS_PATTERN.format("5.1.3")},
 }
+"""dict: The default assets used to render the :class:`GalleryWidget` instance.
+"""

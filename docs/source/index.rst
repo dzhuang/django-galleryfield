@@ -20,6 +20,7 @@ Welcome to django-galleryfield's documentation!
    settings
    misc
    sources
+   changelog
 
 
 Indices and tables
