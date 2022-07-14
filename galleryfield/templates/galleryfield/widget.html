@@ -320,6 +320,10 @@
         fileInput = $('#{{ name }}-files'),
         uploadURL = fileInput.data('action');
 
+      var sortableOptions = {
+        {{ jquery_fileupload_ui_sortable_options|safe }}
+      };
+
       $fileupload.fileupload({
         singleFileUploads: true,
         url: uploadURL,
@@ -336,6 +340,8 @@
           emptyResult: '{% trans "Empty file upload result" %}'
         },
         {{ jquery_fileupload_ui_options|safe }}
+
+        sortableOptions: sortableOptions,
 
         change: function (e, data) {
           if (typeof on_input_change !== 'undefined') on_input_change();

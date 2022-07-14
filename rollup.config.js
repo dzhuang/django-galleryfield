@@ -5,7 +5,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import {terser} from 'rollup-plugin-terser';
 import styles from 'rollup-plugin-styles';
 import gzipPlugin from 'rollup-plugin-gzip';
-import {subsetIconfont, MdiProvider, FaFreeProvider} from 'subset-iconfont';
+// import {subsetIconfont, MdiProvider, FaFreeProvider} from 'subset-iconfont';
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
@@ -13,26 +13,25 @@ const production = !process.env.ROLLUP_WATCH;
 
 const brotliPromise = promisify(brotliCompress);
 
-const mdi = new MdiProvider([
-    "format-rotate-90",
-    "cancel",
-    "reload",
-    "sync",
-    "crop-rotate",
-  ],
-);
-
-const fa = new FaFreeProvider([
-    "plus",
-    "check",
-    "trash-can",
-    "upload",
-    "triangle-exclamation",
-    "xmark",
-  ],
-);
-
-subsetIconfont([mdi, fa], "galleryfield/static/dev/ss-iconfont");
+// const mdi = new MdiProvider([
+//     "format-rotate-90",
+//     "cancel",
+//     "sync",
+//     "crop-rotate",
+//   ],
+// );
+//
+// const fa = new FaFreeProvider([
+//     "plus",
+//     "check",
+//     "trash-can",
+//     "upload",
+//     "triangle-exclamation",
+//     "xmark",
+//   ],
+// );
+//
+// subsetIconfont([mdi, fa], "galleryfield/static/dev/ss-iconfont");
 
 const defaultPlugins = [
   resolve(),

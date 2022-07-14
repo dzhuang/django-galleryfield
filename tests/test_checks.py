@@ -115,6 +115,7 @@ DJANGO_GALLERY_FIELD_CONFIG = {
         "quality": 80
     },
     jquery_file_upload_ui_options: {},
+    "jquery_file_upload_ui_sortable_options": {}
     "widget_hidden_input_css_class": "django-galleryfield",
     "prompt_alert_if_changed_on_window_reload": True,
 }
@@ -630,6 +631,34 @@ class CheckJqueryFileUploadUiOptions(CheckSettingsBase):
     def test_warn_preview_max_width(self):
         self.assertCheckMessages(
             ["django-galleryfield-jquery_file_upload_ui_options.W003"])
+
+
+"""
+    jquery_file_upload_ui_sortable_options: {},
+"""
+
+
+class CheckJqueryFileUploadUiSortableOptions(CheckSettingsBase):
+    msg_id_prefix = "django-galleryfield-jquery_file_upload_ui_sortable_options"
+
+    VALID_CONF_None = {"jquery_file_upload_ui_sortable_options": None}
+
+    VALID_CONF_Dict = {"jquery_file_upload_ui_sortable_options": dict()}
+
+    INVALID_CONF_NOT_Dict = {"jquery_file_upload_ui_sortable_options": object}
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_None)
+    def test_valid_config1(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=VALID_CONF_Dict)
+    def test_valid_config2(self):
+        self.assertCheckMessages([])
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG=INVALID_CONF_NOT_Dict)
+    def test_item_not_dict(self):
+        self.assertCheckMessages(
+            ["django-galleryfield-jquery_file_upload_ui_sortable_options.E001"])
 
 
 """
