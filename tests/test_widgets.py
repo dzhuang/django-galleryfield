@@ -431,6 +431,45 @@ class GalleryWidgetTest(SimpleTestCase):
                 mock_render.reset_mock()
                 mock_log.reset_mock()
 
+    def test_widget_set_jquery_file_upload_ui_sortable_options_None_get_default(self):  # noqa
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        f.widget.jquery_file_upload_ui_sortable_options = None
+        self.assertDictEqual(
+            f.widget.jquery_file_upload_ui_sortable_options,
+            defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS)
+
+    def test_widget_set_jquery_file_upload_ui_sortable_options_not_dict(self):
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        with self.assertRaises(ImproperlyConfigured) as cm:
+            f.widget.jquery_file_upload_ui_sortable_options = "foo-bar"
+
+        expected_error_msg = (
+            "'jquery_file_upload_ui_sortable_options' must be a dict")
+        self.assertIn(expected_error_msg, cm.exception.args[0])
+
+    @mock.patch("django.forms.renderers.DjangoTemplates.render")
+    def test_widget_set_jquery_file_upload_ui_sortable_options_render(
+            self, mock_render):
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+
+        f.widget.jquery_file_upload_ui_sortable_options = {
+            "delay": 400
+        }
+        self._render_widget(f.widget, "image")
+
+        expected_string = "delay: 400"
+        self.assertIn(
+            expected_string,
+            str(mock_render.call_args),
+        )
+
+        self.assertIn(
+            "disabled: false",
+            str(mock_render.call_args),
+        )
+
 
 class GalleryWidgetTestExtra(TestCase):
     # This test cases need db support

@@ -153,7 +153,17 @@ class GalleryWidget(forms.HiddenInput):
     def jquery_file_upload_ui_sortable_options(self, options):
         if options is None:
             return
-        self._jquery_file_upload_ui_sortable_options = options
+        if not isinstance(options, dict):
+            raise ImproperlyConfigured(
+                f"{self.__class__.__name__}: "
+                "'jquery_file_upload_ui_sortable_options' must be a dict"
+            )
+
+        sortable_settings = (
+            conf.JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS.copy())
+        sortable_settings.update(options)
+
+        self._jquery_file_upload_ui_sortable_options = sortable_settings
 
     @property
     def jquery_file_upload_ui_options(self):
@@ -166,9 +176,8 @@ class GalleryWidget(forms.HiddenInput):
             return
         if not isinstance(options, dict):
             raise ImproperlyConfigured(
-                "%(obj)s: 'jquery_file_upload_ui_options' must be a dict" % {
-                    "obj": self.__class__.__name__
-                }
+                f"{self.__class__.__name__}: "
+                "'jquery_file_upload_ui_options' must be a dict"
             )
         ju_settings = (
             conf.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS.copy())
