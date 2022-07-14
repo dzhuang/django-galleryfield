@@ -31,6 +31,9 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = (
     "jquery_file_upload_ui_options"
 )
 
+JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS = (
+    "jquery_file_upload_ui_sortable_options")
+
 MAX_NUMBER_OF_FILES = "maxNumberOfFiles"
 SINGLE_FILE_UPLOADS = "singleFileUploads"
 PREVIEW_MAX_WIDTH = "previewMaxWidth"
@@ -277,6 +280,19 @@ def check_settings(app_configs, **kwargs):
                                            f"in '{DJANGO_GALLERY_FIELD_CONFIG}'"}),
                     id="django-galleryfield-jquery_file_upload_ui_options.W003"
                 ))
+
+    sortable_options = conf.get(JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS, None)
+    if sortable_options is not None:
+        if not isinstance(sortable_options, dict):
+            errors.append(DJGalleryCriticalCheckMessage(
+                msg=(INSTANCE_ERROR_PATTERN
+                     % {
+                         "location":
+                             f"'{JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS}'"
+                             f" in '{DJANGO_GALLERY_FIELD_CONFIG}'",
+                         "types": "dict"}),
+                id="django-galleryfield-jquery_file_upload_ui_sortable_options.E001"
+            ))
 
     widget_hidden_input_css_class = conf.get(WIDGET_HIDDEN_INPUT_CSS_CLASS, None)
 

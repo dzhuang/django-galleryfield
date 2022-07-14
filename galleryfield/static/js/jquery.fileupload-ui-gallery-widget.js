@@ -15,7 +15,6 @@
         'statusDataName',
         'filesDataToInputDataFunction',
         'csrfCookieFunction',
-        'disableSortable',
     );
 
     $.widget(
@@ -32,7 +31,6 @@
                 sortableOptions:undefined,
                 statusDataName: undefined,
                 csrfCookieFunction: undefined,
-                disableSortable: undefined,
 
                 getNumberOfUploadedFiles: function () {
                     return this.filesContainer.children('.template-download')
@@ -517,31 +515,24 @@
             },
 
             _initSortable: function() {
-                var options = this.options;
+                var options = this.options,
+                  sortableOptions = options.sortableOptions || {},
+                  that = this,
+                  defaultSortableOptions = {
+                      disabled: false,
+                      delay: 300,
+                      animation: 200,
+                      touchStartThreshold: 5,
+                      ghostClass: "galleryWidget-sortable-ghost",
+                      chosenClass: "galleryWidget-sortable-chosen",
+                      filter: ".btn, .toggle, img, a, span, progress",
+                  };
 
-                if (options.disableSortable) return;
+                sortableOptions = $.extend(defaultSortableOptions, sortableOptions);
+                delete sortableOptions.handle;
 
-                var sortableOptions = options.sortableOptions,
-                    that = this,
-                    defaultSortableOptions = {
-                        disabled: false,
-                        delay: 300,
-                        animation: 200,
-                        touchStartThreshold: 5,
-                        ghostClass: "galleryWidget-sortable-ghost",
-                        chosenClass: "galleryWidget-sortable-chosen",
-                        filter: ".btn, .toggle, img, a, span, progress",
-
-                        onUpdate: function(evt){
-                            that._trigger("sortableUpdate", evt.item);
-                        }
-                    };
-                if (sortableOptions) {
-                    delete sortableOptions.handle;
-                    sortableOptions = $.extend(defaultSortableOptions, sortableOptions);
-                }
-                else{
-                    sortableOptions = defaultSortableOptions;
+                sortableOptions.onUpdate = function (evt) {
+                    that._trigger("sortableUpdate", evt.item);
                 }
 
                 Sortable.create(options.filesContainer.get(0), sortableOptions)

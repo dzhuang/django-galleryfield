@@ -63,6 +63,12 @@ class GalleryWidget(forms.HiddenInput):
            blueimp/jQuery-File-Upload package to render the ui and dealing with
            AJAX upload. See :setting:`jquery_file_upload_ui_options` for more information.
     :type jquery_file_upload_ui_options: dict, optional
+
+    :param jquery_file_upload_ui_sortable_options: The default template is using 
+           SortableJS/Sortable package to handle sorting of uploaded images in 
+           the UI. See :setting:`jquery_file_upload_ui_sortable_options` for more information.
+    :type jquery_file_upload_ui_sortable_options: dict, optional
+
     :param disable_fetch: Whether disable fetching existing images of the
            form instance (if any), defaults to `False`. If True, the validity of
            ``fetch_url`` will not be checked.
@@ -84,6 +90,7 @@ class GalleryWidget(forms.HiddenInput):
             download_template="galleryfield/download_template.html",
             attrs=None, options=None,
             jquery_file_upload_ui_options=None,
+            jquery_file_upload_ui_sortable_options=None,
             disable_fetch=False,
             disable_server_side_crop=False,
             **kwargs):
@@ -104,7 +111,10 @@ class GalleryWidget(forms.HiddenInput):
         self.fetch_url = (
             None if disable_fetch else fetch_url)
 
-        self.jquery_file_upload_ui_options = jquery_file_upload_ui_options or {}
+        self._jquery_file_upload_ui_options = jquery_file_upload_ui_options or {}
+
+        self._jquery_file_upload_ui_sortable_options = (
+                jquery_file_upload_ui_sortable_options or {})
 
         self.options = options and options.copy() or {}
         self.options.setdefault("accepted_mime_types", ['image/*'])
@@ -133,6 +143,17 @@ class GalleryWidget(forms.HiddenInput):
     @thumbnail_size.setter
     def thumbnail_size(self, value):
         self._thumbnail_size = get_formatted_thumbnail_size(value)
+
+    @property
+    def jquery_file_upload_ui_sortable_options(self):
+        return (self._jquery_file_upload_ui_sortable_options
+                or conf.JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS)
+
+    @jquery_file_upload_ui_sortable_options.setter
+    def jquery_file_upload_ui_sortable_options(self, options):
+        if options is None:
+            return
+        self._jquery_file_upload_ui_sortable_options = options
 
     @property
     def jquery_file_upload_ui_options(self):
@@ -327,9 +348,6 @@ class GalleryWidget(forms.HiddenInput):
         if conf.BOOTSTRAP_VERSION > 3:
             ui_options["showElementClass"] = "show"
 
-        if self._disabled:
-            ui_options["disableSortable"] = True
-
         return convert_dict_to_plain_text(
             ui_options, indent=16,
             no_wrap_keys=["loadImageFileTypes", "acceptFileTypes",
@@ -370,6 +388,15 @@ class GalleryWidget(forms.HiddenInput):
 
         context["jquery_fileupload_ui_options"] = (
             self.get_stringfied_jquery_file_upload_ui_options())
+
+        sortable_options = self.jquery_file_upload_ui_sortable_options.copy()
+
+        if self._disabled:
+            sortable_options["disabled"] = True
+
+        context["jquery_fileupload_ui_sortable_options"] = (
+            convert_dict_to_plain_text(sortable_options, indent=16)
+        )
 
         context["csrfCookieName"] = getattr(settings, "CSRF_COOKIE_NAME")
 
