@@ -20,6 +20,7 @@ DJANGO_GALLERY_FIELD_CONFIG = {
     "widget_hidden_input_css_class": "django-galleryfield",
     "prompt_alert_if_changed_on_window_reload": True,
     "jquery_file_upload_ui_options": {}
+    "jquery_file_upload_ui_sortable_options": {}
 }
 """
 
@@ -61,6 +62,11 @@ PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = _APP_CONFIG.get(
 JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = _APP_CONFIG.get(
     "jquery_file_upload_ui_options",
     defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
+)
+
+JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS = _APP_CONFIG.get(
+    "jquery_file_upload_ui_sortable_options",
+    defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS
 )
 
 # # todo: docs the following settings.

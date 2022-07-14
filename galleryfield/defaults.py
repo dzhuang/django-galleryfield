@@ -10,12 +10,18 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = {
     "minFileSize": 0.0001 * 1024 ** 2,  # 0.0001Mb
     "disableImageResize": "/Android(?!.*Chrome)|Opera/.test(window.navigator "
                           "&& navigator.userAgent)",
-
-    # todo: doc this; add sortable options
-    # ref: https://github.com/SortableJS/Sortable#options
-    "disableSortable": False
 }
-"""dict: The default options for jQuery-File-Upload module.
+"""dict: The default options for jQuery-File-Upload module in jQuery file upload UI.
+"""
+
+
+JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS = {
+    "disabled": False,
+    "delay": 300,
+    "animation": 200,
+}
+"""dict: The default options for SortableJS used in jQuery file upload UI. See
+https://github.com/SortableJS/Sortable#options for details.
 """
 
 
