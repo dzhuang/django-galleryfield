@@ -18,8 +18,8 @@ jobs:
         image: selenium/standalone-chrome
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
-        django-version: ["~=3.1.0", "~=3.2.0"]
+        python-version: [3.8, 3.9]
+        django-version: ["~=3.1.0", "~=3.2.0", "~=4.0.6"]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
@@ -37,7 +37,6 @@ jobs:
           pip install -r tests/requirements_test.txt
           pip uninstall -y Django
           pip install Django${{ matrix.django-version }}
-          npm install
       - name: Install OS dependencies
         env:
           DEBIAN_FRONTEND: noninteractive

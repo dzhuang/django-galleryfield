@@ -1,4 +1,4 @@
-django<=3.3
+django
 sorl-thumbnail
 pillow
 django-crispy-forms
