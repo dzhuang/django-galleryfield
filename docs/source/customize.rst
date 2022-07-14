@@ -98,10 +98,18 @@ Three views for handling the image model objects
   - :class:`galleryfield.image_views.ImageCropView`
 
   See :ref:`Built-in Image handling Views <built-in-image-views>` for more detail. We hope users can subclass
-  the views above without much coding work. We think the 3 views
+  the views above without much coding work. Besides :class:`demo_custom.image_views.CustomImageCreateView`,
+  :class:`demo_custom.image_views.CustomImageListView` and :class:`demo_custom.image_views.CustomImageCropView`,
+  the 3 views
   handling built-in image model (i.e., :class:`galleryfield.image_views.BuiltInImageCreateView`,
   :class:`galleryfield.image_views.BuiltInImageListView` and
-  :class:`galleryfield.image_views.BuiltInImageCropView` were good examples of how to used them.
+  :class:`galleryfield.image_views.BuiltInImageCropView` were also good examples of how to used them.
+
+
+.. note:: Since version 2.0.1, image model customization requires:
+
+   - Subclass of ``ImageCreateView`` must implement a :meth:`create_instance_from_form` method.
+   - Subclass of ``ImageCropView`` must implement a :meth:`create_cropped_instance_from_form` method.
 
 
 .. _image_handling_url_naming_rule:
@@ -209,7 +217,43 @@ the field using ``sorl.thumbnail`` and ``Blueimp Gallery`` package.
 
 Finally, it's your opportunity to show your skills on customizing the gallery/album frontend, which is beyond the scope of this package.
 
+.. _template_customization:
 
 Template customization
 -------------------------------
-TODO
+
+Just like overriding URLs (see example in :ref:`GalleryWidget docs <widget_docs>`), widget template can also be customized after
+after the form is instantiated. The following widget templates can be overridden:
+
+- ``template``, defaults to ``galleryfield/widget.html``. It is the template used to render the whole widget.
+- ``upload_template``, defaults to ``galleryfield/upload_template.html``. It is the template used to render the table of images which were added but have not been uploaded yet.
+- ``download_template``, defaults to ``galleryfield/download_template.html``. It is the template used to render the table of images which have been uploaded.
+
+You can override the templates using the
+`Django template language <https://docs.djangoproject.com/en/dev/ref/templates/language/>`__ .
+Notice that there are mixed using of `Django template language` and
+JavaScript `tmpl <https://github.com/blueimp/JavaScript-Templates>`__ in
+``galleryfield/upload_template.html`` and ``galleryfield/download_template.html``. As both templating languages
+used ``{%`` and ``%}`` templatetags, to avoid conflict, we replaced the ``{%`` and ``%}`` used by `tmpl`
+to ``{% templatetag openblock %}`` and ``{% templatetag closeblock %}``, respectively.
+See `Django templatetags <https://docs.djangoproject.com/en/dev/ref/templates/builtins/#templatetag>`__ for reference.
+
+
+Serializer customization
+---------------------------
+
+By default, the rendered ``download_template`` only show 3 fields, i.e., ``thumbnailUrl``, ``name`` and ``size`` of the images.
+If you want to display more fields in the UI, you can add a :meth:`serialize_extra` method to ``target_model``. Notice that
+correct rendering more fields also requires appropriate :ref:`template customization <template_customization>`.
+See ``demo_custom.models.CustomImage`` and template ``demo_custom/custom_download_template.html`` for an example of how
+to add an ``added_datetime`` field in the rendered UI.
+
+
+URLs customization
+--------------------
+
+The download URL and crop URL can be customized by adding :meth:`get_image_url` and :meth:`get_crop_url`
+method to ``target_model``. In ``demo_custom`` app, we customized the download URL so that
+`django-sendfile2 <https://github.com/moggers87/django-sendfile2>`__
+can be used to restrict user access in visiting images. See model customization ``demo_custom.models.CustomImage`` and
+the view ``demo_custom.image_views.image_download`` .

@@ -17,10 +17,10 @@ DJANGO_GALLERY_FIELD_CONFIG = {
         "size": 120,
         "quality": 80
     },
-    "widget_hidden_input_css_class": "django-galleryfield",
-    "prompt_alert_if_changed_on_window_reload": True,
     "jquery_file_upload_ui_options": {}
     "jquery_file_upload_ui_sortable_options": {}
+    "widget_hidden_input_css_class": "django-galleryfield",
+    "prompt_alert_if_changed_on_window_reload": True,
 }
 """
 
@@ -57,8 +57,6 @@ PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED = _APP_CONFIG.get(
     defaults.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED
 )
 
-# todo: allow setting default jquery_fileupload_ui_options in settings.
-
 JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = _APP_CONFIG.get(
     "jquery_file_upload_ui_options",
     defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
@@ -69,7 +67,6 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS = _APP_CONFIG.get(
     defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS
 )
 
-# # todo: docs the following settings.
 BOOTSTRAP_VERSION = _APP_CONFIG.get(
     "bootstrap_version", defaults.DEFAULT_BOOTSTRAP_VERSION)
 

@@ -28,14 +28,23 @@ Default:
             "quality": 80
         },
 
-        "widget_hidden_input_css_class": "django-galleryfield",
-        "prompt_alert_if_changed_on_window_reload": True,
         "jquery_file_upload_ui_options": {
             "autoUpload": False,
             "imageMaxWidth": 1024,
             "imageMaxHeight": 1024,
             ...
+        },
+
+        "jquery_file_upload_ui_sortable_options": {
+            "disabled": False,
+            "delay": 300,
+            "animation": 200,
+            ...
         }
+
+        "prompt_alert_if_changed_on_window_reload": True,
+        "widget_hidden_input_css_class": "django-galleryfield",
+
     }
 
 See details below.
@@ -129,11 +138,6 @@ The default value is listed in ``galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEF
    :annotation:
 .. pprint:: galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS
 
-The values can be overridden when initializing :class:`galleryfield.widgets.GalleryWidget` via
-:attr:`jquery_file_upload_ui_options`.
-Please refer to `available options <https://github.com/blueimp/jQuery-File-Upload/wiki/Options#general-options>`__
-for the details and more options. Note that ``disableSortable`` is an option introduced in this package which
-determines whether the functionality of sorting uploaded images should be disabled, defaults to ``False``.
 
 .. warning::
    Options ``previewMaxWidth`` and ``previewMaxHeight`` were ignored in favor of
@@ -143,3 +147,27 @@ determines whether the functionality of sorting uploaded images should be disabl
    Options ``fileInput``, ``paramName`` and ``singleFileUploads`` were also
    ignored (overridden).
 
+
+jquery_file_upload_ui_sortable_options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The default value is listed in ``galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS``.
+
+.. autodata:: galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS
+   :annotation:
+.. pprint:: galleryfield.defaults.JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS
+
+prompt_alert_if_changed_on_window_reload
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Default: True
+
+Whether prompt an alert when navigating away or closing the tablet/browser if there were changes
+on ``GalleryField`` in the page.
+
+
+widget_hidden_input_css_class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Default: "django-galleryfield"
+
+The CSS classname of the hidden form field which actually recorded the value and changes of the ``GalleryField``.

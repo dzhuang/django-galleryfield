@@ -43,22 +43,23 @@ FAQs
   gallery models. Through ``post-save`` signals of the gallery model, we are able to update the ``M2M`` relationship
   between all image model instances and related gallery model instances. In this way, image model instances which were not
   involved in any ``M2M`` relationship can be identified as ``orphaned`` images, the deletion of which are accurate and easy.
+  The ``demo_custom.receivers`` might provide a feasible solution for the issue. Other suggestions are also appreciated.
 
 
 TODOs
 **********
 
--  More detailed Documentation with more demos
+-  More detailed Documentation
 -  Gif not client side croppable (don't show crop button)
 -  Scale large images in crop UI
 
 Known issues
 ********************
 
--  Currently, it's hard (although not impossible) to used the widget in a Non-model formfield.
--  Css rendering of buttons in Admin.
+-  Currently, it's hard (although not impossible) to use the widget in a Non-model formfield.
+-  CSS rendering of buttons in Admin.
 -  Gif will be converted to png (to retain gif, you need to set ``disableImageResize`` to ``False`` in ``jquery_fileupload_ui_options`` when initializing ``GalleryWidget``).
--  Doesn't support svg because django ImageField can't handle it for now.
+-  Doesn't support svg because django ImageField can't handle svg images.
 
 
 License

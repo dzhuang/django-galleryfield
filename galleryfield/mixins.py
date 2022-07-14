@@ -467,7 +467,6 @@ class BaseCropViewMixin(ImageFormViewMixin, BaseImageModelMixin, UpdateView):
 
 
 class GalleryFormMediaMixin:
-    # todo: docs about how to use the widget in admin
     # todo: testcase (both settings and render)
     class Media:
         css = {

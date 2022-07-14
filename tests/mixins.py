@@ -1,4 +1,5 @@
 from django.test import Client
+
 from tests.factories import UserFactory
 
 

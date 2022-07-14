@@ -14,7 +14,7 @@ The ``GalleryWidget`` class
    ``galleryfield-builtingalleryimage-fetch`` for :attr:`upload_url`, :attr:`fetch_url`,
    respectively.
 
-The URL params can be assigned after the formfield is initialized. For example:
+The URL params can be overridden after the form is instantiated. For example:
 
 .. snippet:: python
    :filename: my_app/forms.py

@@ -1,10 +1,10 @@
-v2.0.0 (2022-07-14)
+v2.0.1 (2022-07-14)
 ------------------------------------
 
-- Breaking changes (`#25 <https://github.com/dzhuang/django-galleryfield/pull/25>`__):
+- Breaking changes (`#25 <https://github.com/dzhuang/django-galleryfield/pull/25>`__ , `#28 <https://github.com/dzhuang/django-galleryfield/pull/28>`__):
 
-  - Added required method ``create_instance_from_form`` in ``ImageCreateView`` when customizing ``target_model`` .
-  - Added required method ``create_cropped_instance_from_form`` in ``ImageCropView`` when customizing ``target_model`` .
+  - Added required method :meth:`create_instance_from_form` in ``ImageCreateView`` when customizing ``target_model`` .
+  - Added required method :meth:`create_cropped_instance_from_form` in ``ImageCropView`` when customizing ``target_model`` .
   - Allowed customize image URL via :meth:`get_image_url` in ``target_model``.
   - Allowed customize image Crop URL via :meth:`get_crop_url` in ``target_model``.
   - Allowed customize image object serialization by :meth:`serialize_extra` in ``target_model``.
@@ -14,11 +14,10 @@ v2.0.0 (2022-07-14)
       - Added option ``bootstrap_version`` in ``DJANGO_GALLERY_FIELD_CONFIG``, defaults to ``3``.
       - Removed all items in ``DJANGO_GALLERY_FIELD_CONFIG["assets"]`` except ``extra_js`` and ``extra_css``.
       - Added new options ``jquery``, ``bootstrap_css`` and ``bootstrap_js`` to ``DJANGO_GALLERY_FIELD_CONFIG["assets"]``, with
-        CDN url of those assets as default values.
+        CDN URL of those assets as default values.
 
-  - Dropped ``jQuery-UI`` in favor of ``SortableJS`` for sorting uploaded images.
+  - Dropped ``jQuery-UI`` in favor of ``SortableJS`` for sorting uploaded images. Added ``jquery_file_upload_ui_sortable_options`` in ``DJANGO_GALLERY_FIELD_CONFIG`` .
   - Allowed use ``Bootstrap`` 4 and 5 via settings configurations.
-
 
 
 v1.5.1 (2022-05-17)

@@ -1,11 +1,11 @@
 import os
 
 from django.test import TestCase
+
+from demo_custom.models import CustomImage
 from tests import factories
 from tests.mixins import UserCreateMixin
 from tests.utils import remove_upload_directory
-
-from demo_custom.models import CustomImage
 
 
 class CustomDemoTest(UserCreateMixin, TestCase):

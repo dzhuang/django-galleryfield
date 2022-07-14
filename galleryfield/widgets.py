@@ -351,8 +351,8 @@ class GalleryWidget(forms.HiddenInput):
              "hiddenFileInput": f".{conf.FILES_FIELD_CLASS_NAME}",
              })
 
-        # Compatibility with Bootstrap 4.5
-        # https://github.com/blueimp/jQuery-File-Upload/issues/3662
+        # Compatibility with Bootstrap 4 and 5
+        # https://github.com/blueimp/jQuery-File-Upload/wiki/Style-Guide#bootstrap-ui
 
         if conf.BOOTSTRAP_VERSION > 3:
             ui_options["showElementClass"] = "show"

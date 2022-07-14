@@ -86,7 +86,6 @@ def get_or_check_image_field(obj, target_model, check_id_prefix, is_checking=Fal
                 if not is_checking:
                     return None
 
-                # todo: add doc ref in the error
                 errors.append(DJGalleryCriticalCheckMessage(
                     msg=(GENERIC_ERROR_PATTERN
                          % {"location": str(obj),
