@@ -95,9 +95,9 @@ Usage in Views
 
 To correctly render ``GalleryField`` in general views, you are required to include
 ``bootstrap.css``, ``jQuery.js`` and ``bootstrap.js`` (or their minified version),
-with the exact order, in page head. Notice that the major version of twitter bootstrap
+with the exact order, in page head. Notice that the major version of Twitter Bootstrap
 should be of the same version with the version in
-``DJANGO_GALLERY_FIELD_CONFIG["bootstrap_version"]``, defaults to 3.
+``DJANGO_GALLERY_FIELD_CONFIG["bootstrap_version"]``, which defaults to 3.
 
 Note: To prevent multiple click on form submit buttons, you can add ``gallery-widget-submit-button``
 a CSS classname to the submit buttons of the form.

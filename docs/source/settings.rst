@@ -56,7 +56,7 @@ bootstrap_version
 
 Default: 3
 
-The value denotes the version of twitter bootstrap used by :ref:`GalleryWidget`.  Allow values include 3, 4 or 5.
+The value denotes the version of Twitter Bootstrap used by :ref:`GalleryWidget`.  Allow values include 3, 4 or 5.
 
 
 .. setting:: settings_assets
