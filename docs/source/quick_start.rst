@@ -14,7 +14,7 @@ Or for the latest dev version, via::
 
 Python version
 ~~~~~~~~~~~~~~~~
-Gallery-widget is compatible with Python 3 (3.6 or later were tested).
+``django-galleryfield`` is compatible with Python 3 (3.6 or later were tested).
 
 Dependencies
 ~~~~~~~~~~~~~~~~
@@ -27,16 +27,16 @@ Python dependencies:
 
 Static dependencies:
 
--  Bootstrap 3.4.1 (included)
--  jQuery 3.6 (included)
+-  Bootstrap (CDN URLs included)
+-  jQuery 3.6 (CDN URL included)
 -  jQuery UI (included)
--  `blueimp/jQuery-File-Upload <https://github.com/blueimp/jQuery-File-Upload>`__
-   (included)
--  `blueimp/Gallery <https://github.com/blueimp/Gallery>`__ (included)
-
--  `cropper <https://fengyuanchen.github.io/cropper>`_ by Chen Fengyuan (included)
-
-The static dependencies were already included in the package.
+-  `blueimp/jQuery-File-Upload <https://github.com/blueimp/jQuery-File-Upload>`__ by Sebastian Tschan (included)
+-  `blueimp/Gallery <https://github.com/blueimp/Gallery>`__ by Sebastian Tschan (included)
+-  `cropper <https://fengyuanchen.github.io/cropper>`__ by Chen Fengyuan (included)
+-  `SortableJS/Sortable <https://github.com/SortableJS/Sortable>`__ (included)
+-  `FontAwesome Icons <https://github.com/FortAwesome/Font-Awesome>`__ (included)
+-  `Material Design Icons <https://github.com/Templarian/MaterialDesign-Webfont>`__ (included)
+-  `Subset-iconfont <https://github.com/dzhuang/subset-iconfont>`__ by dzhuang (included)
 
 
 Configurations
@@ -89,3 +89,45 @@ The best way to have a glance of how django-galleryfield works is to run the dem
 
 .. note:: You might need to install JSON1 extension for SQLite for this the demo to run properly.
    See `Enabling JSON1 extension on SQLite <https://code.djangoproject.com/wiki/JSON1Extension>`_.
+
+Usage in Views
+~~~~~~~~~~~~~~~
+
+To correctly render ``GalleryField`` in general views, you are required to include
+``bootstrap.css``, ``jQuery.js`` and ``bootstrap.js`` (or their minified version),
+with the exact order, in page head. Notice that the major version of twitter bootstrap
+should be of the same version with the version in
+``DJANGO_GALLERY_FIELD_CONFIG["bootstrap_version"]``, defaults to 3.
+
+Note: To prevent multiple click on form submit buttons, you can add ``gallery-widget-submit-button``
+a CSS classname to the submit buttons of the form.
+
+
+Usage in Admin
+~~~~~~~~~~~~~~~
+
+To correctly render ``GalleryField`` in ``admin``,  the model form should be instantiated with
+``galleryfield.mixins.GalleryFormMediaMixin``. For example, if the Gallery model is ``MyGallery``,
+the snippet follows:
+
+.. snippet:: python
+   :filename: my_app/admin.py
+
+    from django import forms
+    from django.contrib import admin
+
+    from my_app.models import MyGallery
+    from galleryfield.mixins import GalleryFormMediaMixin
+
+
+    class MyGalleryAdminForm(GalleryFormMediaMixin, forms.ModelForm):
+        class Meta:
+            model = MyGallery
+            exclude = ()
+
+
+    class MyGalleryAdmin(admin.ModelAdmin):
+        form = MyGalleryAdminForm
+
+
+    admin.site.register(MyGallery, MyGalleryAdmin)

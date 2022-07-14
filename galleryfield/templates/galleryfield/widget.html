@@ -68,8 +68,6 @@
 
             {% endblock %}
 
-            {# Fixme: rotate failed 180 instead of 90 #}
-
             {% block UPLOAD_FORM_BUTTON_BAR_CONTROL %}
               <button type="submit" class="btn btn-primary start {% if uploader_disabled %} hidden disabled {% endif %}"
                       style="display: none;">
@@ -301,7 +299,6 @@
         function before_submit(evt) {
           input_changed = false;
 
-          {# todo: document submit button class #}
           $(".gallery-widget-submit-button").each(
             function () {
               var clone = $(this).clone();

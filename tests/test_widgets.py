@@ -1,21 +1,23 @@
 import json
+from importlib import reload
 from unittest import mock
 
 from django import forms
 from django.core.exceptions import ImproperlyConfigured
 from django.forms.renderers import DjangoTemplates
-from django.test import SimpleTestCase, TestCase
+from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
-from tests import factories
-from tests.test_fields import DemoTestGalleryModelForm
 
+import galleryfield
 from galleryfield import conf, defaults
 from galleryfield.fields import GalleryFormField
 from galleryfield.utils import get_formatted_thumbnail_size
 from galleryfield.widgets import GalleryWidget
+from tests import factories
+from tests.test_fields import DemoTestGalleryModelForm
 
 
-class GalleryWidgetTest(SimpleTestCase):
+class GalleryWidgetTestMixin:
     @staticmethod
     def _get_rendered_field_html(field, print_output=False):
         class Form(forms.Form):
@@ -34,24 +36,6 @@ class GalleryWidgetTest(SimpleTestCase):
     def assertFieldRendersNotIn(self, field, needle, print_output=False):
         haystack = self._get_rendered_field_html(field, print_output)
         self.assertNotIn(needle, haystack)
-
-    def test_widget(self):
-        field = GalleryFormField()
-        self.assertIsInstance(field.widget, GalleryWidget)
-
-    def test_required_widget_render(self):
-        f = GalleryFormField(required=True)
-
-        self.assertFieldRendersIn(
-            f, '<input type="hidden" name="f" value="null"'
-               ' class="django-galleryfield-files-field '
-               ' hiddeninput" required id="id_f">')
-
-        f = GalleryFormField(required=False)
-        self.assertFieldRendersIn(
-            f, '<input type="hidden" name="f" value="null"'
-               ' class="django-galleryfield-files-field '
-               ' hiddeninput" id="id_f">')
 
     def _render_widget(self, widget, name, value=None, attrs=None, **kwargs):
         django_renderer = DjangoTemplates()
@@ -81,6 +65,27 @@ class GalleryWidgetTest(SimpleTestCase):
             html = [html]
         for _html in html:
             self.assertNotIn(_html, output)
+
+
+class GalleryWidgetTest(GalleryWidgetTestMixin, SimpleTestCase):
+
+    def test_widget(self):
+        field = GalleryFormField()
+        self.assertIsInstance(field.widget, GalleryWidget)
+
+    def test_required_widget_render(self):
+        f = GalleryFormField(required=True)
+
+        self.assertFieldRendersIn(
+            f, '<input type="hidden" name="f" value="null"'
+               ' class="django-galleryfield-files-field '
+               ' hiddeninput" required id="id_f">')
+
+        f = GalleryFormField(required=False)
+        self.assertFieldRendersIn(
+            f, '<input type="hidden" name="f" value="null"'
+               ' class="django-galleryfield-files-field '
+               ' hiddeninput" id="id_f">')
 
     def test_gallery_widget_render_with_value(self):
         f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
@@ -469,6 +474,41 @@ class GalleryWidgetTest(SimpleTestCase):
             "disabled: false",
             str(mock_render.call_args),
         )
+
+
+class GalleryWidgetConfTest(GalleryWidgetTestMixin, SimpleTestCase):
+    @staticmethod
+    def reload_defaults_and_conf():
+        reload(galleryfield.defaults)
+        reload(galleryfield.conf)
+
+    @override_settings(DJANGO_GALLERY_FIELD_CONFIG={"bootstrap_version": 5})
+    @mock.patch("django.forms.renderers.DjangoTemplates.render")
+    def test_widget_bootstrap_version_render(self, mock_render):
+        self.reload_defaults_and_conf()
+
+        f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
+        self._render_widget(f.widget, "image")
+        expected_string = "showElementClass: 'show'"
+        self.assertIn(
+            expected_string,
+            str(mock_render.call_args),
+        )
+
+    def test_conf_static_with_different_bootstrap_versions(self):
+        for bootstrap_version in [3, 4, 5]:
+            with override_settings(
+                    DJANGO_GALLERY_FIELD_CONFIG={
+                        "bootstrap_version": bootstrap_version}):
+                self.reload_defaults_and_conf()
+
+                self.assertEqual(
+                    conf.BOOTSTRAP_CSS_LOCATION,
+                    defaults.DEFAULT_STATICS["bootstrap_css"][bootstrap_version])
+
+                self.assertEqual(
+                    conf.BOOTSTRAP_JS_LOCATION,
+                    defaults.DEFAULT_STATICS["bootstrap_js"][bootstrap_version])
 
 
 class GalleryWidgetTestExtra(TestCase):

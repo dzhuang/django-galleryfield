@@ -12,6 +12,12 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = {
                           "&& navigator.userAgent)",
 }
 """dict: The default options for jQuery-File-Upload module in jQuery file upload UI.
+The values can be overridden when initializing
+:class:`galleryfield.widgets.GalleryWidget`
+via :attr:`jquery_file_upload_ui_options`.
+Please refer to `available options
+<https://github.com/blueimp/jQuery-File-Upload/wiki/Options#general-options>`__
+for the details and more options.
 """
 
 
@@ -19,9 +25,15 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_SORTABLE_OPTIONS = {
     "disabled": False,
     "delay": 300,
     "animation": 200,
+    "touchStartThreshold": 5,
+    "ghostClass": "galleryWidget-sortable-ghost",
+    "chosenClass": "galleryWidget-sortable-chosen",
+    "filter": ".btn, .toggle, img, a, span, progress",
 }
 """dict: The default options for SortableJS used in jQuery file upload UI. See
-https://github.com/SortableJS/Sortable#options for details.
+`available options <https://github.com/SortableJS/Sortable#options>`__
+for details. Notice that, callback options currently can not be configured
+here.
 """
 
 
@@ -74,3 +86,5 @@ DEFAULT_STATICS = {
                      4: _BOOTSTRAP_JS_PATTERN.format("4.6.1"),
                      5: _BOOTSTRAP_JS_PATTERN.format("5.1.3")},
 }
+"""dict: The default assets used to render the :class:`GalleryWidget` instance.
+"""

@@ -8,14 +8,14 @@ from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.http import urlencode
-from tests import factories
-from tests.mixins import UserCreateMixin
-from tests.utils import (get_upload_file_path, remove_upload_directory,
-                         test_media_root)
 
 from galleryfield import defaults
 from galleryfield import image_views as built_in_views
 from galleryfield.models import BuiltInGalleryImage
+from tests import factories
+from tests.mixins import UserCreateMixin
+from tests.utils import (get_upload_file_path, remove_upload_directory,
+                         test_media_root)
 
 
 class ViewTestMixin(UserCreateMixin):
