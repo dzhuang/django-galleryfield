@@ -398,10 +398,6 @@ readers do not read off random characters that represent icons */
   content: "\F06AA";
 }
 
-.si-reload::before {
-  content: "\F0453";
-}
-
 .si-sync::before {
   content: "\F04E6";
 }
