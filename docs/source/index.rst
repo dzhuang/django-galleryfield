@@ -19,7 +19,6 @@ Welcome to django-galleryfield's documentation!
    widget
    settings
    misc
-   sources
    changelog
 
 
