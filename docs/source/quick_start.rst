@@ -100,7 +100,7 @@ should be of the same version with the version in
 ``DJANGO_GALLERY_FIELD_CONFIG["bootstrap_version"]``, which defaults to 3.
 
 Note: To prevent multiple click on form submit buttons, you can add ``gallery-widget-submit-button``
-a CSS classname to the submit buttons of the form.
+CSS classname to the submit buttons of the form.
 
 
 Usage in Admin
