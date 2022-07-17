@@ -394,7 +394,7 @@
                             strict: true,
                             movable: false,
                             zoomable: false,
-                            minContainerheight: $(window).height() * 0.8,  // fixme: remove window
+                            restore: false,
                             ready: function (e) {
                                 croppStartingData = $image.cropper("getData", "true");
                                 options.cropperRotateBtnSelector.prop("disabled", false);
@@ -418,7 +418,8 @@
                         that._trigger("modalhiddenevent", e, true);
                         $image.cropper('destroy');
                         $(this).attr("data-new", false);
-                        options.cropperButtonSelector
+                        options.cropperButtonSelector.prop("disabled", false);
+                        options.cropperStatusBtnSelector
                             .prop("disabled", true);
                         options.cropperResultMessageBoxSelector
                             .empty()
@@ -468,6 +469,7 @@
                                 $(this).data('option', -data.option);
                                 break;
                             case 'reset':
+                                options.cropperButtonSelector.prop("disabled", false);
                                 options.cropperStatusBtnSelector.prop("disabled", true);
                                 break;
                             case 'getData':
