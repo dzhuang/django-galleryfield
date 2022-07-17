@@ -119,7 +119,11 @@ Online documentation
 ~~~~~~~~~~~~~~~~~~~~~~
 Please visit https://django-galleryfield.readthedocs.io for the documentation.
 
+Contribute to the project
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+See `Contribution guide <./docs/source/contribute.rst>`__.
+
 
 License
 -------------
-Released under the `MIT license <https://opensource.org/licenses/MIT>`__.
+Released under the `MIT license <./LICENSE.txt>`__.
