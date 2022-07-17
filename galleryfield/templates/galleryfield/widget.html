@@ -90,12 +90,12 @@
 
           {% block UPLOAD_FORM_PROGRESS_BAR %}
             {% comment %}
-                     The global progress information
-                    {% endcomment %}
+              The global progress information
+            {% endcomment %}
             <div class="col-lg-5 fileupload-progress fade">
               {% comment %}
-                         The global progress bar
-                        {% endcomment %}
+                The global progress bar
+              {% endcomment %}
               <div
                 class="progress progress-striped active"
                 role="progressbar"
@@ -105,8 +105,8 @@
                 </div>
               </div>
               {% comment %}
-                         The extended global progress information
-                        {% endcomment %}
+                The extended global progress information
+              {% endcomment %}
               <div class="progress-extended">&nbsp;</div>
             </div>
           {% endblock %}
@@ -115,8 +115,8 @@
       {% endblock %}
 
       {% comment %}
-             The loading indicator is shown during file processing
-            {% endcomment %}
+        The loading indicator is shown during file processing
+      {% endcomment %}
 
       {% block UPLOAD_FORM_LINDICATOR %}
         <div class="fileupload-loading"></div>
@@ -127,8 +127,8 @@
 
     {% block UPLOAD_FORM_LISTING %}
       {% comment %}
-             The table listing the files available for upload/download
-            {% endcomment %}
+        The table listing the files available for upload/download
+      {% endcomment %}
       <table role="presentation" class="table table-striped">
         <tbody class="files"></tbody>
       </table>
@@ -153,26 +153,22 @@
 
     {% block JS_TEMPLATES %}
       {% comment %}
-             The template to display files available for upload
-            {% endcomment %}
+        The template to display files available for upload
+      {% endcomment %}
 
       {% block JS_UPLOAD_TEMPLATE %}
         <script id="template-upload" type="text/x-tmpl">
-                    {% include upload_template %}
-
-
+          {% include upload_template %}
         </script>
       {% endblock %}
 
       {% block JS_DOWNLOAD_TEMPLATE %}
         {% comment %}
-                 The template to display files available for download
-                {% endcomment %}
+          The template to display files available for download
+        {% endcomment %}
 
         <script id="template-download" type="text/x-tmpl">
-                    {% include download_template %}
-
-
+          {% include download_template %}
         </script>
       {% endblock %}
 
@@ -192,8 +188,10 @@
             {% endif %}
             <h4 class="modal-title" id="modalLabel">{% trans "Edit image" %}</h4>
             {% if bootstrap_version > 3 %}
-              <button type="button" class="{% if bootstrap_version == 4 %}close{% else %}btn-close{% endif %}" {% if bootstrap_version == 4 %}data-dismiss{% else %}data-bs-dismiss{% endif %}="modal"
-                      aria-label="Close"><span aria-hidden="true">{% if bootstrap_version == 4 %}&times;{% endif %}</span>
+              <button type="button" class="{% if bootstrap_version == 4 %}close{% else %}btn-close{% endif %}"
+                      {% if bootstrap_version == 4 %}data-dismiss{% else %}data-bs-dismiss{% endif %}="modal"
+                      aria-label="Close"><span aria-hidden="true">{% if bootstrap_version == 4 %}
+                &times;{% endif %}</span>
               </button>
             {% endif %}
           </div>
