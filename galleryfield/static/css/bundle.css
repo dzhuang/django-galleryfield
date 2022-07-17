@@ -1,8 +1,6 @@
 @import "blueimp-file-upload/css/jquery.fileupload";
 @import "blueimp-file-upload/css/jquery.fileupload-ui";
 @import "blueimp-gallery/css/blueimp-gallery.min";
-
 @import "cropperjs/dist/cropper.min";
 @import "gallery-widget.css";
-
 @import "../dev/ss-iconfont/css/all.css";
