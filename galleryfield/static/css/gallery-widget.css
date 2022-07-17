@@ -21,10 +21,10 @@
 }
 
 /*max height of edit modal*/
-.files-widget .edit-modal .modal-body {
+.gallery-widget .edit-modal .modal-body {
   max-height: calc(100vh - 100px);
 }
 
-.files-widget .img-container {
+.gallery-widget .img-container {
   max-height: calc(100vh - 150px);
 }

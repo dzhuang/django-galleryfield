@@ -176,7 +176,7 @@ class GalleryWidgetTest(GalleryWidgetTestMixin, SimpleTestCase):
         f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         f.widget = GalleryWidget()
         file_upload_button = (
-            '<input type="file" class="django-gallery-image-input" '
+            '<input type="file" class="gallery-widget-image-input" '
             'id="%(field_name)s-files" multiple accept="image/*" '
             'data-action="%(upload_url)s">'
             % {"field_name": "image",
@@ -191,13 +191,13 @@ class GalleryWidgetTest(GalleryWidgetTestMixin, SimpleTestCase):
         self.check_not_in_html(
             f.widget, "image", '',
             # The css class of file input button
-            html=["django-gallery-image-input"])
+            html=["gallery-widget-image-input"])
 
     def test_gallery_widget_upload_handler_url_none(self):
         f = GalleryFormField(target_model=defaults.DEFAULT_TARGET_IMAGE_MODEL)
         f.widget = GalleryWidget()
         file_upload_button = (
-            '<input type="file" class="django-gallery-image-input" '
+            '<input type="file" class="gallery-widget-image-input" '
             'id="%(field_name)s-files" multiple accept="image/*" '
             'data-action="%(upload_url)s">'
             % {"field_name": "image",
@@ -212,15 +212,15 @@ class GalleryWidgetTest(GalleryWidgetTestMixin, SimpleTestCase):
         self.check_not_in_html(
             f.widget, "image", '',
             # The css class of file input button
-            html=["django-gallery-image-input"])
+            html=["gallery-widget-image-input"])
 
     def test_disabled_widget_render(self):
         f = GalleryFormField()
         self.assertFieldRendersIn(
-            f, 'django-gallery-image-input', strict=True, print_output=True)
+            f, 'gallery-widget-image-input', strict=True, print_output=True)
 
         f = GalleryFormField(disabled=True)
-        self.assertFieldRendersNotIn(f, 'django-gallery-image-input')
+        self.assertFieldRendersNotIn(f, 'gallery-widget-image-input')
 
     def test_widget_render_conflict(self):
         # the target image model is not the default,

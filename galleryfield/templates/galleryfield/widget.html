@@ -1,53 +1,46 @@
 {% load static i18n %}
 
-{% block CSS_EXTRA %}
+{% block GALLERY_WIDGET_CSS_EXTRA %}
 {% endblock %}
 
 
-{% block UPLOAD_FORM %}
+{% block GALLERY_WIDGET_HTML %}
 
-  <div class="files-widget" id="id-{{ name }}-gallery-widget">
+  <div class="gallery-widget" id="id-{{ name }}-gallery-widget">
 
     {{ input_string }}
 
     {% if not uploader_disabled and upload_url %}
-      {% block UPLOAD_FORM_BUTTON_BAR %}
+      {% block GALLERY_WIDGET_UPLOAD_FORM_BUTTON_BAR %}
         <div class="row fileupload-buttonbar">
 
-          {% comment %}
-            The fileupload-buttonbar contains buttons to add/delete files and
-            start/cancel the upload
-          {% endcomment %}
+          {# The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload #}
 
           <div class="col-lg-7">
 
-            {% comment %}
-              The fileinput-button span is used to style the file input field as button
-            {% endcomment %}
+            {# The fileinput-button span is used to style the file input field as button #}
 
-            {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
+            {% block GALLERY_WIDGET_BUTTON_BAR_ADD %}
               <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
                 <i class="si-solid si-plus"></i>
                 <span>{% trans "Add files..." %}</span>
 
-                {% block UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT %}
+                {% block GALLERY_WIDGET_BUTTON_BAR_ADD_FILE_INPUT %}
                   {% comment %}
-                    UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT and FILE_INPUT
+                    GALLERY_WIDGET_BUTTON_BAR_ADD_FILE_INPUT and GALLERY_WIDGET_FILE_INPUT
                     control the same block.
 
                     FILE_INPUT is the original and shorter block name that has
                     been kept to function as a convenient alias as well as to
                     allow backward-compatibility with dependent projects.
 
-                    Note: Only one should be overriden in the inheriting templates.
+                    Note: Only one should be overridden in the inheriting templates.
                   {% endcomment %}
 
-                  {% block FILE_INPUT %}
-                    {% comment %}
-                      The file input for the upload form.
-                    {% endcomment %}
+                  {% block GALLERY_WIDGET_FILE_INPUT %}
+                    {# The file input for the upload form. #}
                     <input
-                      type="file" class="django-gallery-image-input" id="{{ name }}-files"
+                      type="file" class="gallery-widget-image-input" id="{{ name }}-files"
                       {% if multiple %}multiple{% endif %}
 
                       {% if accepted_mime_types %}accept='{{ accepted_mime_types|join:"," }}'{% endif %}
@@ -58,12 +51,12 @@
                 {% endblock %}
               </span>
 
-              {% block UPLOAD_FORM_BUTTON_BAR_ADD_EXTRA %}
+              {% block GALLERY_WIDGET_BUTTON_BAR_ADD_EXTRA %}
               {% endblock %}
 
             {% endblock %}
 
-            {% block UPLOAD_FORM_BUTTON_BAR_CONTROL %}
+            {% block GALLERY_WIDGET_BUTTON_BAR_CONTROL %}
               <button type="submit" class="btn btn-primary start {% if uploader_disabled %} hidden disabled {% endif %}"
                       style="display: none;">
                 <i class="si-solid si-upload"></i>
@@ -83,19 +76,17 @@
                      style="display: none;">
             {% endblock %}
 
-            {% block UPLOAD_FORM_BUTTON_BAR_EXTRA %}
+            {% block GALLERY_WIDGET_BUTTON_BAR_EXTRA %}
             {% endblock %}
 
           </div>
 
-          {% block UPLOAD_FORM_PROGRESS_BAR %}
-            {% comment %}
-              The global progress information
-            {% endcomment %}
+          {% block GALLERY_WIDGET_PROGRESS_BAR %}
+            {# The global progress information #}
+
             <div class="col-lg-5 fileupload-progress fade">
-              {% comment %}
-                The global progress bar
-              {% endcomment %}
+
+              {# The global progress bar#}
               <div
                 class="progress progress-striped active"
                 role="progressbar"
@@ -104,9 +95,8 @@
                 <div class="progress-bar progress-bar-success" style="width:0;">
                 </div>
               </div>
-              {% comment %}
-                The extended global progress information
-              {% endcomment %}
+
+              {# The extended global progress information #}
               <div class="progress-extended">&nbsp;</div>
             </div>
           {% endblock %}
@@ -114,31 +104,27 @@
         </div>
       {% endblock %}
 
-      {% comment %}
-        The loading indicator is shown during file processing
-      {% endcomment %}
+      {# The loading indicator is shown during file processing #}
 
-      {% block UPLOAD_FORM_LINDICATOR %}
+      {% block GALLERY_WIDGET_LINDICATOR %}
         <div class="fileupload-loading"></div>
         <br>
       {% endblock %}
 
     {% endif %}
 
-    {% block UPLOAD_FORM_LISTING %}
-      {% comment %}
-        The table listing the files available for upload/download
-      {% endcomment %}
+    {% block GALLERY_WIDGET_LISTING %}
+      {# The table listing the files available for upload/download #}
       <table role="presentation" class="table table-striped">
         <tbody class="files"></tbody>
       </table>
     {% endblock %}
 
-    {% block UPLOAD_FORM_EXTRA %}
+    {% block GALLERY_WIDGET_EXTRA %}
     {% endblock %}
 
 
-    {% block MODAL_GALLERY %}
+    {% block GALLERY_WIDGET_MODAL_GALLERY %}
       <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
         <div class="slides"></div>
         <h3 class="title"></h3>
@@ -151,21 +137,17 @@
     {% endblock %}
 
 
-    {% block JS_TEMPLATES %}
-      {% comment %}
-        The template to display files available for upload
-      {% endcomment %}
+    {% block GALLERY_WIDGET_TMPL_TEMPLATES %}
+      {# The template to display files available for upload #}
 
-      {% block JS_UPLOAD_TEMPLATE %}
+      {% block GALLERY_WIDGET_TMPL_UPLOAD_TEMPLATE %}
         <script id="template-upload" type="text/x-tmpl">
           {% include upload_template %}
         </script>
       {% endblock %}
 
-      {% block JS_DOWNLOAD_TEMPLATE %}
-        {% comment %}
-          The template to display files available for download
-        {% endcomment %}
+      {% block GALLERY_WIDGET_TMPL_DOWNLOAD_TEMPLATE %}
+        {# The template to display files available for download #}
 
         <script id="template-download" type="text/x-tmpl">
           {% include download_template %}
@@ -175,8 +157,9 @@
     {% endblock %}
 
 
-    {# editModal #}
-    <div class="modal fade edit-modal" role="dialog" aria-labelledby="modalLabel"
+    {% block GALLERY_WIDGET_EDIT_MODAL %}
+      {# editModal #}
+      <div class="modal fade edit-modal" role="dialog" aria-labelledby="modalLabel"
          tabindex="-1">
       <div class="modal-dialog modal-lg modal-sm" role="document">
         <div class="modal-content">
@@ -242,151 +225,151 @@
         </div>
       </div>
     </div>
+    {% endblock %}
 
   </div>
 
 {% endblock %}
 
+{% block GALLERY_WIDGET_JS %}
+  <script type="text/javascript">
+    (function (factory) {
+      if (typeof define === 'function' && define.amd)
+        define(['jquery'], factory)
+      else if (typeof module === 'object' && module.exports)
+        module.exports = factory(require('jquery'))
+      else
+        factory(jQuery)
+    }(function ($) {
 
-<script type="text/javascript">
-  (function (factory) {
-    if (typeof define === 'function' && define.amd)
-      define(['jquery'], factory)
-    else if (typeof module === 'object' && module.exports)
-      module.exports = factory(require('jquery'))
-    else
-      factory(jQuery)
-  }(function ($) {
-
-    function get_cookie(name) {
-      let cookieValue;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = jQuery.trim(cookies[i]);
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
+      function get_cookie(name) {
+        let cookieValue;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
           }
         }
-      }
-      return cookieValue;
-    }
-
-    {% if prompt_alert_on_window_reload_if_changed %}
-      let input_changed = false;
-
-      function on_input_change(evt) {
-        input_changed = true;
+        return cookieValue;
       }
 
-      $(window).on('beforeunload', function (evt) {
-        if (input_changed)
-          return "{% trans 'You have unsaved changes on this page.' %}";
-      });
-      {% block PREVENT_ALERT_JS %}
-        // This should be overridden if your form submission button can't be
-        // selected by $("input[name=submit]")
+      {% if prompt_alert_on_window_reload_if_changed %}
+        let input_changed = false;
 
-        // We can't simply set "disabled" on the submitting button here.
-        // Otherwise the browser will simply remove that button from the POST
-        // data.
-        function before_submit(evt) {
-          input_changed = false;
-
-          $(".gallery-widget-submit-button").each(
-            function () {
-              const clone = $(this).clone();
-              $(clone).attr("disabled", "1");
-              $(this).after(clone);
-              $(this).hide();
-            });
+        function on_input_change(evt) {
+          input_changed = true;
         }
-      {% endblock %}
 
-    {% endif %}
-
-    $('.files-widget').each(function () {
-      const that = $(this),
-        $fileupload = that,
-        fileInput = $('#{{ name }}-files'),
-        uploadURL = fileInput.data('action'),
-        sortableOptions = {
-          {{ jquery_fileupload_ui_sortable_options|safe }}
-        };
-
-      $fileupload.fileupload({
-        singleFileUploads: true,
-        url: uploadURL,
-        type: 'POST',
-        messages: {
-          maxFileSize: '{% trans "File is too big" %}',
-          minFileSize: '{% trans "File is too small" %}',
-          acceptFileTypes: '{% trans "Filetype not allowed" %}',
-          {% if maxNumberOfFiles %}
-            maxNumberOfFiles: "{% blocktrans trimmed %} Number of images exceeded, only {{ maxNumberOfFiles }}
-              allowed{% endblocktrans %}",
-          {% endif %}
-          uploadedBytes: '{% trans "Uploaded bytes exceed file size" %}',
-          emptyResult: '{% trans "Empty file upload result" %}'
-        },
-        {{ jquery_fileupload_ui_options|safe }}
-
-        sortableOptions: sortableOptions,
-
-        change: function (e, data) {
-          if (typeof on_input_change !== 'undefined') on_input_change();
-        },
-        inputChanged: function (e, data) {
-          if (typeof on_input_change !== 'undefined') on_input_change();
-        },
-
-        csrfCookieFunction: function () {
-          return get_cookie('{{ csrfCookieName }}')
-        },
-      });
-
-      {% if pks and fetch_url %}
-        {# Do not remove the comment below, we are using it for tests. #}
-        // fetching existing images
-        $fileupload.find(".hiddeninput").addClass("initializing");
-        $.ajax({
-          url: "{{ fetch_url }}",
-          dataType: 'json',
-          data: {"pks": encodeURIComponent(JSON.stringify({{pks}}))},
-          context: $fileupload[0]
-        }).always(function () {
-          $(this).removeClass('fileupload-processing');
-          $(".fileupload-loading").remove();
-        }).done(function (result) {
-          $(this).fileupload('option', 'done')
-            .call(this, $.Event('done'), {result: result});
+        $(window).on('beforeunload', function (evt) {
+          if (input_changed)
+            return "{% trans 'You have unsaved changes on this page.' %}";
         });
+        {% block GALLERY_WIDGET_FORM_SUBMIT_BUTTON %}
+          // We can't simply set "disabled" on the submitting button here.
+          // Otherwise the browser will simply remove that button from the POST
+          // data.
+          function before_submit(evt) {
+            input_changed = false;
+
+            $(".gallery-widget-submit-button").each(
+              function () {
+                const clone = $(this).clone();
+                $(clone).attr("disabled", "1");
+                $(this).after(clone);
+                $(this).hide();
+              });
+          }
+        {% endblock %}
 
       {% endif %}
 
-      // disable change alert when submit form.
-      if (typeof before_submit !== 'undefined') {
-        that.closest("form").on("submit", before_submit);
-      }
-    });
+      $('.gallery-widget').each(function () {
+        const that = $(this),
+          $fileupload = that,
+          fileInput = $('#{{ name }}-files'),
+          uploadURL = fileInput.data('action'),
+          sortableOptions = {
+            {{ jquery_fileupload_ui_sortable_options|safe }}
+          };
 
-    {% if not uploader_disabled and upload_url %}
-      {# Remove 'multiple' attribute from file input when uploading from wechat (Weixin) built-in browser #}
-      {# https://blog.csdn.net/candy_home/article/details/74440519 #}
-      {# https://gist.github.com/wjp2013/fff34c063cf0cf227d65#gistcomment-1705685 #}
-      $(document).ready(function () {
-        const isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
-        if (isWeixinBrowser)
-          $('.django-gallery-image-input')
-            .removeAttr('multiple')
-            .attr("accept", "image/*");
-      })
-    {% endif %}
+        $fileupload.fileupload({
+          singleFileUploads: true,
+          url: uploadURL,
+          type: 'POST',
+          messages: {
+            maxFileSize: '{% trans "File is too big" %}',
+            minFileSize: '{% trans "File is too small" %}',
+            acceptFileTypes: '{% trans "Filetype not allowed" %}',
+            {% if maxNumberOfFiles %}
+              maxNumberOfFiles: "{% blocktrans trimmed %} Number of images exceeded, only {{ maxNumberOfFiles }}
+                allowed{% endblocktrans %}",
+            {% endif %}
+            uploadedBytes: '{% trans "Uploaded bytes exceed file size" %}',
+            emptyResult: '{% trans "Empty file upload result" %}'
+          },
+          {{ jquery_fileupload_ui_options|safe }}
 
-  }));
-</script>
+          sortableOptions: sortableOptions,
 
-{% block JS_EXTRA %}
+          change: function (e, data) {
+            if (typeof on_input_change !== 'undefined') on_input_change();
+          },
+          inputChanged: function (e, data) {
+            if (typeof on_input_change !== 'undefined') on_input_change();
+          },
+
+          csrfCookieFunction: function () {
+            return get_cookie('{{ csrfCookieName }}')
+          },
+        });
+
+        {% if pks and fetch_url %}
+          {# Do not remove the comment below, we are using it for tests. #}
+          // fetching existing images
+          $fileupload.find(".hiddeninput").addClass("initializing");
+          $.ajax({
+            url: "{{ fetch_url }}",
+            dataType: 'json',
+            data: {"pks": encodeURIComponent(JSON.stringify({{pks}}))},
+            context: $fileupload[0]
+          }).always(function () {
+            $(this).removeClass('fileupload-processing');
+            $(".fileupload-loading").remove();
+          }).done(function (result) {
+            $(this).fileupload('option', 'done')
+              .call(this, $.Event('done'), {result: result});
+          });
+
+        {% endif %}
+
+        // disable change alert when submit form.
+        if (typeof before_submit !== 'undefined') {
+          that.closest("form").on("submit", before_submit);
+        }
+      });
+
+      {% if not uploader_disabled and upload_url %}
+
+        // Remove 'multiple' attribute from file input when uploading from
+        // wechat built-in browser
+
+        $(document).ready(function () {
+          const isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
+          if (isWeixinBrowser)
+            $('.gallery-widget-image-input')
+              .removeAttr('multiple')
+              .attr("accept", "image/*");
+        })
+      {% endif %}
+
+    }));
+  </script>
+{% endblock %}
+
+{% block GALLERY_WIDGET_JS_EXTRA %}
 {% endblock %}
