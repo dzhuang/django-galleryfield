@@ -1,3 +1,11 @@
+v2.1.1 (2022-07-18)
+------------------------------------
+
+- Fixes: fixed rendering when using Bootstrap 4 and 5 (`#31 <https://github.com/dzhuang/django-galleryfield/pull/31>`__).
+- Enhancements: optimized crop model on small screens (`#32 <https://github.com/dzhuang/django-galleryfield/pull/31>`__).
+- Breaking changes: template blocks renaming (`#34 <https://github.com/dzhuang/django-galleryfield/pull/34>`__).
+
+
 v2.0.1 (2022-07-14)
 ------------------------------------
 
