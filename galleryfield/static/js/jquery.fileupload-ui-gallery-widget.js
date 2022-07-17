@@ -1,7 +1,7 @@
 (function (factory) {
   'use strict';
-  factory(window.jQuery, window.loadImage, window.Sortable);
-})(function ($, loadImage, Sortable) {
+  factory(window.jQuery, window.loadImage, window.Sortable, window.Cropper);
+})(function ($, loadImage, Sortable, Cropper) {
     'use strict';
 
     $.blueimp.fileupload.prototype._specialOptions.push(
@@ -256,7 +256,7 @@
                         }
 
                         options.cropperButtonSelector.prop("disabled", true);
-                        $editImg.cropper('disable');
+                        $editImg.cropper.disable();
                         var jqxhr = $.ajax({
                             method: "POST",
                             url: $button.data("action"),
@@ -288,8 +288,8 @@
 
                 $editImg.rotateCanvas = function () {
                     var $this = $(this);
-                    var contData = $this.cropper('getContainerData');
-                    var canvData = $this.cropper('getCanvasData');
+                    var contData = $editImg.cropper.getContainerData();
+                    var canvData = $editImg.cropper.getCanvasData();
                     var newWidth = canvData.width * (contData.height / canvData.height);
 
                     if (newWidth >= contData.width) {
@@ -308,7 +308,7 @@
                             left: (contData.width - newWidth) / 2
                         };
                     }
-                    $this.cropper('setCanvasData', newCanvData).cropper('setCropBoxData', newCanvData);
+                    $editImg.cropper.setCanvasData(newCanvData).setCropBoxData(newCanvData);
                     options.cropperButtonSelector.prop("disabled", false);
                 };
 
@@ -378,15 +378,16 @@
                 var $editModal = this.options.editModalId,
                     that = this,
                     options = that.options,
-                    $image, editType, croppStartingData;
+                    $image, editType, croppStartingData, cropperElement;
                 $editModal.on('show.bs.modal', function (e) {
                     $image = e.relatedTarget[0];
+                    cropperElement = $image[0];
                     editType = e.relatedTarget[1];
                 })
                     .on('shown.bs.modal', function (e) {
                         $(this).data('new', true);
                         that._trigger("modalshownevent", e, true);
-                        $image.cropper({
+                        $image.cropper = new Cropper(cropperElement, {
                             viewMode: 1,
                             checkOrientation: false,
                             autoCrop: true,
@@ -396,7 +397,7 @@
                             zoomable: false,
                             restore: false,
                             ready: function (e) {
-                                croppStartingData = $image.cropper("getData", "true");
+                                croppStartingData = $image.cropper.getData(true);
                                 options.cropperRotateBtnSelector.prop("disabled", false);
                             },
                             cropstart: function (e) {
@@ -405,7 +406,7 @@
                             crop: function (e) {
                             },
                             cropend: function (e) {
-                                var currentData = $image.cropper("getData", "true");
+                                var currentData = $image.cropper.getData(true);
                                 var cropNotChanged = JSON.stringify(croppStartingData) === JSON.stringify(currentData);
                                 options.cropperStatusBtnSelector.prop("disabled", cropNotChanged);
                                 that._trigger('modalinprogessstatus', e, !cropNotChanged);
@@ -416,7 +417,7 @@
                     .on('hidden.bs.modal', function (e) {
                         that._trigger('modalinprogessstatus', e, false);
                         that._trigger("modalhiddenevent", e, true);
-                        $image.cropper('destroy');
+                        $image.cropper.destroy();
                         $(this).attr("data-new", false);
                         options.cropperButtonSelector.prop("disabled", false);
                         options.cropperStatusBtnSelector
@@ -439,8 +440,8 @@
                     function (e) {
                         var data = $.extend({}, $(this).data()); // Clone
                         if (data.method === "rotate") {
-                            var contData = $image.cropper('getContainerData');
-                            $image.cropper('setCropBoxData', {
+                            var contData = $image.cropper.getContainerData();
+                            $image.cropper.setCropBoxData({
                                 width: 2,
                                 height: 2,
                                 top: (contData.height / 2) - 1,
@@ -451,7 +452,7 @@
                         else if (data.method === "commit") {
                             if (editType === "download") {
                                 data.method = "getData";
-                                data.option = "true";
+                                data.option = true;
                             }
                             else if (editType === "upload") {
                                 data.method = "getCroppedCanvas";
@@ -460,8 +461,7 @@
 
                         that._trigger('modalinprogessstatus', e, true);
 
-                        var result = $image.cropper(data.method, data.option,
-                            data.secondOption);
+                        var result = $image.cropper[data.method](data.option);
 
                         switch (data.method) {
                             case 'scaleX':
@@ -489,7 +489,7 @@
                                 break;
                         }
 
-                        var currentData = $image.cropper("getData", "true");
+                        var currentData = $image.cropper.getData(true);
 
                         if (JSON.stringify(croppStartingData) === JSON.stringify(currentData))
                         {options.cropperStatusBtnSelector.prop("disabled", true);

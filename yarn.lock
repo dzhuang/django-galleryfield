@@ -840,14 +840,7 @@
     "path-type" "^4.0.0"
     "yaml" "^1.10.0"
 
-"cropper@^4.1.0":
-  "integrity" "sha512-dNbkWNT606oMgRQ2aYMerDnPpSVLBMTWyERDHsDwih1ahJiVpyfSM9ev/n6G4ElfRG8t0shUZ5FXLg7YtmDdBQ=="
-  "resolved" "https://registry.npmjs.org/cropper/-/cropper-4.1.0.tgz"
-  "version" "4.1.0"
-  dependencies:
-    "cropperjs" "^1.5.6"
-
-"cropperjs@^1.5.6":
+"cropperjs@^1.5.12":
   "integrity" "sha512-re7UdjE5UnwdrovyhNzZ6gathI4Rs3KGCBSc8HCIjUo5hO42CtzyblmWLj6QWVw7huHyDMfpKxhiO2II77nhDw=="
   "resolved" "https://registry.npmjs.org/cropperjs/-/cropperjs-1.5.12.tgz"
   "version" "1.5.12"
@@ -2113,7 +2106,7 @@
     "merge-stream" "^2.0.0"
     "supports-color" "^7.0.0"
 
-"jquery@^3.6.0", "jquery@>=1.7", "jquery@>=1.9.1":
+"jquery@^3.6.0", "jquery@>=1.7":
   "integrity" "sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw=="
   "resolved" "https://registry.npmjs.org/jquery/-/jquery-3.6.0.tgz"
   "version" "3.6.0"

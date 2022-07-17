@@ -11,3 +11,6 @@ window.loadImage = loadImage;
 
 import Sortable from 'sortablejs';
 window.Sortable = Sortable;
+
+import Cropper from 'cropperjs';
+window.Cropper = Cropper
