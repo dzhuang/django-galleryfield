@@ -19,8 +19,8 @@ Welcome to django-galleryfield's documentation!
    widget
    settings
    misc
+   contribute
    changelog
-
 
 Indices and tables
 ==================
