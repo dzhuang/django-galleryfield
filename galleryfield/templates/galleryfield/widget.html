@@ -15,53 +15,48 @@
         <div class="row fileupload-buttonbar">
 
           {% comment %}
-                 The fileupload-buttonbar contains buttons to add/delete files and
-                 start/cancel the upload
-                {% endcomment %}
+            The fileupload-buttonbar contains buttons to add/delete files and
+            start/cancel the upload
+          {% endcomment %}
 
           <div class="col-lg-7">
 
             {% comment %}
-                     The fileinput-button span is used to style the file input field as button
-                    {% endcomment %}
-
+              The fileinput-button span is used to style the file input field as button
+            {% endcomment %}
 
             {% block UPLOAD_FORM_BUTTON_BAR_ADD %}
               <span class="btn btn-success fileinput-button{% if uploader_disabled %} hidden{% endif %}">
-                        <i class="si-solid si-plus"></i>
-                            <span>{% trans "Add files..." %}</span>
+                <i class="si-solid si-plus"></i>
+                <span>{% trans "Add files..." %}</span>
 
                 {% block UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT %}
                   {% comment %}
-                                    UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT and FILE_INPUT
-                                    control the same block.
+                    UPLOAD_FORM_BUTTON_BAR_ADD_FILE_INPUT and FILE_INPUT
+                    control the same block.
 
-                                    FILE_INPUT is the original and shorter block name that has
-                                    been kept to function as a convenient alias as well as to
-                                    allow backward-compatibility with dependent projects.
+                    FILE_INPUT is the original and shorter block name that has
+                    been kept to function as a convenient alias as well as to
+                    allow backward-compatibility with dependent projects.
 
-                                    Note: Only one should be overriden in the inheriting templates.
-                                {% endcomment %}
+                    Note: Only one should be overriden in the inheriting templates.
+                  {% endcomment %}
+
                   {% block FILE_INPUT %}
                     {% comment %}
-                                        The file input for the upload form.
-                                    {% endcomment %}
+                      The file input for the upload form.
+                    {% endcomment %}
                     <input
-                      type="file" class="django-gallery-image-input" id="{{ name }}-files" {% if multiple %}
-                      multiple {% endif %}
+                      type="file" class="django-gallery-image-input" id="{{ name }}-files"
+                      {% if multiple %}multiple{% endif %}
 
-                      {% if accepted_mime_types %}
-                      accept='{{ accepted_mime_types|join:"," }}'
-                      {% endif %}
+                      {% if accepted_mime_types %}accept='{{ accepted_mime_types|join:"," }}'{% endif %}
                       data-action="{{ upload_url }}"
-
                       {% if uploader_disabled %}disabled{% endif %}
                     >
                   {% endblock %}
-
                 {% endblock %}
-
-                        </span>
+              </span>
 
               {% block UPLOAD_FORM_BUTTON_BAR_ADD_EXTRA %}
               {% endblock %}
@@ -106,7 +101,7 @@
                 role="progressbar"
                 aria-valuemin="0" aria-valuemax="100"
               >
-                <div class="progress-bar progress-bar-success" style="width:0%;">
+                <div class="progress-bar progress-bar-success" style="width:0;">
                 </div>
               </div>
               {% comment %}
@@ -266,11 +261,11 @@
   }(function ($) {
 
     function get_cookie(name) {
-      var cookieValue = null;
+      let cookieValue;
       if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-          var cookie = jQuery.trim(cookies[i]);
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = jQuery.trim(cookies[i]);
           // Does this cookie string begin with the name we want?
           if (cookie.substring(0, name.length + 1) === (name + '=')) {
             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -282,7 +277,7 @@
     }
 
     {% if prompt_alert_on_window_reload_if_changed %}
-      var input_changed = false;
+      let input_changed = false;
 
       function on_input_change(evt) {
         input_changed = true;
@@ -304,7 +299,7 @@
 
           $(".gallery-widget-submit-button").each(
             function () {
-              var clone = $(this).clone();
+              const clone = $(this).clone();
               $(clone).attr("disabled", "1");
               $(this).after(clone);
               $(this).hide();
@@ -315,14 +310,13 @@
     {% endif %}
 
     $('.files-widget').each(function () {
-      var that = $(this),
+      const that = $(this),
         $fileupload = that,
         fileInput = $('#{{ name }}-files'),
-        uploadURL = fileInput.data('action');
-
-      var sortableOptions = {
-        {{ jquery_fileupload_ui_sortable_options|safe }}
-      };
+        uploadURL = fileInput.data('action'),
+        sortableOptions = {
+          {{ jquery_fileupload_ui_sortable_options|safe }}
+        };
 
       $fileupload.fileupload({
         singleFileUploads: true,
@@ -385,7 +379,7 @@
       {# https://blog.csdn.net/candy_home/article/details/74440519 #}
       {# https://gist.github.com/wjp2013/fff34c063cf0cf227d65#gistcomment-1705685 #}
       $(document).ready(function () {
-        var isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
+        const isWeixinBrowser = (/micromessenger/i).test(navigator.userAgent);
         if (isWeixinBrowser)
           $('.django-gallery-image-input')
             .removeAttr('multiple')

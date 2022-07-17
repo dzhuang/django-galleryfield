@@ -13,9 +13,18 @@
 }
 
 
-/* Hide modal button text in small screens */
-@media (max-width: 767px) {
+/* Hide modal button text in medium screens */
+@media (max-width: 991px) {
   .cropper-btns .btn span {
     display: none;
   }
+}
+
+/*max height of edit modal*/
+.files-widget .edit-modal .modal-body {
+  max-height: calc(100vh - 100px);
+}
+
+.files-widget .img-container {
+  max-height: calc(100vh - 150px);
 }
