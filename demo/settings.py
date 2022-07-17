@@ -65,6 +65,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # We use this context processor to add static context
+                'demo.utils.static_context_processor',
             ],
         },
     },
@@ -141,7 +144,8 @@ SENDFILE_BACKEND = "django_sendfile.backends.development"
 SENDFILE_ROOT = BASE_DIR / 'protected'
 
 DJANGO_GALLERY_FIELD_CONFIG = {
-    # "bootstrap_version": 3
+    # You may change the value to 4 or 5 to see the results
+    "bootstrap_version": 5,
     # "assets": {
     #     "bootstrap_css": "https://cdnjs.cloudflare.com/ajax/libs/"
     #                      "twitter-bootstrap/3.4.1/css/bootstrap.min.css",
