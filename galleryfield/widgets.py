@@ -373,7 +373,8 @@ class GalleryWidget(forms.HiddenInput):
             'prompt_alert_on_window_reload_if_changed':
                 conf.PROMPT_ALERT_ON_WINDOW_RELOAD_IF_CHANGED,
             'upload_template': self.upload_template,
-            'download_template': self.download_template
+            'download_template': self.download_template,
+            'bootstrap_version': conf.BOOTSTRAP_VERSION,
         }
 
         # Do not fill in empty value to hidden inputs

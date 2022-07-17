@@ -190,13 +190,17 @@
       <div class="modal-dialog modal-lg modal-sm" role="document">
         <div class="modal-content">
           <div class="modal-header visible-lg">
-            <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close"><span aria-hidden="true">&times;</span>
-            </button>
+            {% if bootstrap_version == 3 %}
+              <button type="button" class="close" data-dismiss="modal"
+                      aria-label="Close"><span aria-hidden="true">&times;</span>
+              </button>
+            {% endif %}
             <h4 class="modal-title" id="modalLabel">{% trans "Edit image" %}</h4>
-            <!--[if lt IE 9]>
-                            <div class="browser alert alert-danger warning"><i class="si-solid si-triangle-exclamation"></i> {% trans "This page requires a modern browser so that it can work properly" %}. {% trans "Chrome/Firefox are prefered browsers. If you want use Internet Explorer, please install one with version higher than 10." %}</div>
-                        <![endif]-->
+            {% if bootstrap_version > 3 %}
+              <button type="button" class="{% if bootstrap_version == 4 %}close{% else %}btn-close{% endif %}" {% if bootstrap_version == 4 %}data-dismiss{% else %}data-bs-dismiss{% endif %}="modal"
+                      aria-label="Close"><span aria-hidden="true">{% if bootstrap_version == 4 %}&times;{% endif %}</span>
+              </button>
+            {% endif %}
           </div>
           <div class="modal-body">
             <div class="img-container">
@@ -235,13 +239,12 @@
               </div>
               <div class="btn-group cropper-btns">
                 <button type="button" class="btn btn-danger"
-                        data-dismiss="modal">
+                        {% if bootstrap_version < 5 %}data-dismiss{% else %}data-bs-dismiss{% endif %}="modal">
                   <i class="si-solid si-xmark"></i>
                   <span>{% trans "Close" %}</span>
                 </button>
               </div>
             </div>
-            {#            </div>#}
           </div>
         </div>
       </div>
