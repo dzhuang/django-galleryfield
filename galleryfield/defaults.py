@@ -2,9 +2,9 @@ JQUERY_FILE_UPLOAD_UI_DEFAULT_OPTIONS = {
     "autoUpload": False,
     "imageMaxWidth": 1024,
     "imageMaxHeight": 1024,
-    "loadImageFileTypes": r"/^image\/(gif|jpeg|png|bmp|svg\+xml)$/",
+    "loadImageFileTypes": r"/^image\/(gif|jpeg|png|bmp|webp|svg\+xml|x-icon)$/",
     "sequentialUploads": True,
-    "acceptFileTypes": r"/(\.|\/)(png|gif|bmp|jpe?g)$/i",
+    "acceptFileTypes": r"/(\.|\/)(png|gif|bmp|jpe?g|tif|ico|webp)$/i",
     "imageOrientation": True,
     "maxFileSize": 1.5 * 1024 ** 2,  # 1.5Mb
     "minFileSize": 0.0001 * 1024 ** 2,  # 0.0001Mb

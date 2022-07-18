@@ -1,4 +1,5 @@
 import json
+import mimetypes
 import os
 from io import BytesIO
 from urllib.parse import unquote
@@ -21,6 +22,27 @@ from sorl.thumbnail import get_thumbnail
 from galleryfield import conf, defaults
 from galleryfield.utils import (get_formatted_thumbnail_size,
                                 get_or_check_image_field)
+
+# cropping gif not supported by cropperjs
+# https://github.com/fengyuanchen/cropperjs/issues/756
+# cropping tiff were only supported on safari
+# https://github.com/fengyuanchen/cropperjs/issues/622
+ALLOWED_CROP_MIMETYPES = (
+    "image/jpeg",
+    "image/png",
+    "image/bmp",
+    "image/x-icon",
+    "image/vnd.microsoft.icon",
+    "image/webp",
+)
+
+
+def is_image_file_cropable(image_file):
+    # Python mimetypes doesn't support image/webp until 3.10
+    # https://github.com/python/cpython/issues/83083
+    return (
+            mimetypes.guess_type(image_file.path)[0] in ALLOWED_CROP_MIMETYPES
+            or os.path.splitext(image_file.path)[1] in [".webp"])
 
 
 class BaseImageModelMixin:
@@ -168,7 +190,6 @@ class BaseImageModelMixin:
         image_data = {
             'pk': obj.pk,
             'name': os.path.basename(image.path),
-            'url': self._get_image_url(obj),
         }
 
         errors = []
@@ -234,6 +255,17 @@ class BaseImageModelMixin:
 
         if errors:
             image_data["error"] = "; ".join(errors)
+
+        # Remove cropUrl data in case user defined it in
+        # serialize_extra in model method.
+        # todo: need tests
+        if (self.disable_server_side_crop
+                or not is_image_file_cropable(
+                    getattr(obj, self._image_field_name))):
+            try:
+                del image_data["cropUrl"]
+            except KeyError:
+                pass
 
         return image_data
 
