@@ -39,7 +39,7 @@
                 {% endblock %}
 
                 {% block JS_UPLOAD_TEMPLATE_EDIT %}
-                    {% templatetag openblock %} if (!i) { %{% templatetag closebrace %}
+                    {% templatetag openblock %} if (!i && /^image\/(jpeg|png|bmp|webp|x-icon)$/.test(file.type) ) { %{% templatetag closebrace %}
                         <button class="btn btn-info edit" disabled type="button">
                             <i class="si si-crop-rotate"></i>
                             <span>{% trans "Edit" %}</span>
