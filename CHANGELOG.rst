@@ -1,3 +1,9 @@
+v2.1.2 (2022-07-18)
+------------------------------------
+
+- Fixes: removed edit button for image mimetypes (``gif``, ``tiff``) in UI (`#36 <https://github.com/dzhuang/django-galleryfield/pull/36>`__).
+- Refactor: continue replacing ``%{% templatetag closebrace %}`` to ``{% templatetag closeblock %}`` in templates (`#37 <https://github.com/dzhuang/django-galleryfield/pull/37>`__).
+
 v2.1.1 (2022-07-18)
 ------------------------------------
 

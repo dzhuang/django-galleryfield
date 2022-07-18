@@ -50,16 +50,15 @@ TODOs
 **********
 
 -  More detailed Documentation
--  Gif not client side croppable (don't show crop button)
--  Scale large images in crop UI
 
 Known issues
 ********************
 
 -  Currently, it's hard (although not impossible) to use the widget in a Non-model formfield.
 -  CSS rendering of buttons in Admin.
--  Gif will be converted to png (to retain gif, you need to set ``disableImageResize`` to ``False`` in ``jquery_fileupload_ui_options`` when initializing ``GalleryWidget``).
--  Doesn't support svg because django ImageField can't handle svg images.
+-  Does not support ``.svg`` because django ImageField can't handle SVG images (`Django #14092 <https://code.djangoproject.com/ticket/14092>`__).
+-  Does not support cropping ``.gif`` (`cropperjs #756 <https://github.com/fengyuanchen/cropperjs/issues/756>`__).
+-  Does not support previewing and cropping ``.tiff`` (`jQuery-File-Upload #1576 <https://github.com/blueimp/jQuery-File-Upload/issues/1576>`__,  `cropperjs #622 <https://github.com/fengyuanchen/cropperjs/issues/622>`__).
 
 
 License
