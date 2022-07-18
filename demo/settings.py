@@ -145,7 +145,7 @@ SENDFILE_ROOT = BASE_DIR / 'protected'
 
 DJANGO_GALLERY_FIELD_CONFIG = {
     # You may change the value to 4 or 5 to see the results
-    "bootstrap_version": 5,
+    "bootstrap_version": 3,
     # "assets": {
     #     "bootstrap_css": "https://cdnjs.cloudflare.com/ajax/libs/"
     #                      "twitter-bootstrap/3.4.1/css/bootstrap.min.css",
