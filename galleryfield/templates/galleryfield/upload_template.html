@@ -1,6 +1,6 @@
 {% load static i18n %}
 
-{% templatetag openblock %} for (var i=0, file; file=o.files[i]; i++) { %{% templatetag closebrace %}
+{% templatetag openblock %} for (var i=0, file; file=o.files[i]; i++) { {% templatetag closeblock %}
 
     <tr class="template-upload fade">
 
@@ -12,7 +12,7 @@
 
         {% block JS_UPLOAD_TEMPLATE_UPLOAD %}
             <td>
-                <p class="name">{% templatetag openblock %}=file.name%{% templatetag closebrace %}</p>
+                <p class="name">{% templatetag openblock %}=file.name{% templatetag closeblock %}</p>
                 <strong class="error text-danger"></strong>
             </td>
         {% endblock %}
@@ -30,33 +30,33 @@
         {% block JS_UPLOAD_TEMPLATE_CONTROLS %}
             <td>
                 {% block JS_UPLOAD_TEMPLATE_START %}
-                    {% templatetag openblock %} if (!i && !o.options.autoUpload) { %{% templatetag closebrace %}
+                    {% templatetag openblock %} if (!i && !o.options.autoUpload) { {% templatetag closeblock %}
                         <button class="btn btn-primary start" disabled>
                             <i class="si-solid si-upload"></i>
                             <span>{% trans "Start" %}</span>
                         </button>
-                    {% templatetag openblock %} } %{% templatetag closebrace %}
+                    {% templatetag openblock %} } {% templatetag closeblock %}
                 {% endblock %}
 
                 {% block JS_UPLOAD_TEMPLATE_EDIT %}
-                    {% templatetag openblock %} if (!i && /^image\/(jpeg|png|bmp|webp|x-icon)$/.test(file.type) ) { %{% templatetag closebrace %}
+                    {% templatetag openblock %} if (!i && /^image\/(jpeg|png|bmp|webp|x-icon)$/.test(file.type) ) { {% templatetag closeblock %}
                         <button class="btn btn-info edit" disabled type="button">
                             <i class="si si-crop-rotate"></i>
                             <span>{% trans "Edit" %}</span>
                         </button>
-                    {% templatetag openblock %} } %{% templatetag closebrace %}
+                    {% templatetag openblock %} } {% templatetag closeblock %}
                 {% endblock %}
 
                 {% block JS_UPLOAD_TEMPLATE_CANCEL %}
-                    {% templatetag openblock %} if (!i) { %{% templatetag closebrace %}
+                    {% templatetag openblock %} if (!i) { {% templatetag closeblock %}
                         <button class="btn btn-warning cancel">
                             <i class="si si-cancel"></i>
                             <span>{% trans "Cancel" %}</span>
                         </button>
-                    {% templatetag openblock %} } %{% templatetag closebrace %}
+                    {% templatetag openblock %} } {% templatetag closeblock %}
                 {% endblock %}
             </td>
         {% endblock %}
 
     </tr>
-{% templatetag openblock %} } %{% templatetag closebrace %}
+{% templatetag openblock %} } {% templatetag closeblock %}

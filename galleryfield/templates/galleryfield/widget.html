@@ -125,6 +125,11 @@
 
 
     {% block GALLERY_WIDGET_MODAL_GALLERY %}
+      {% comment %}
+        Note: data-filter=":even" is important because we have 2 link for each image (in download template),
+        so we just pick one (the even one, maybe "odd" also works) to use in gallery ui, or else each image
+        will show twice in the gallery.
+      {% endcomment %}
       <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
         <div class="slides"></div>
         <h3 class="title"></h3>
