@@ -12,36 +12,6 @@
   line-height: 1;
 }
 
-// sets relative font-sizing and alignment (in _sizing)
-@mixin si-size ($font-size) {
-  font-size: si-divide($font-size, $si-size-scale-base) * 1em; // converts step in sizing scale into an em-based value that's relative to the scale's base
-  line-height: si-divide(1, $font-size) * 1em; // sets the line-height of the icon back to that of it's parent
-  vertical-align: (si-divide(6, $font-size) - si-divide(3, 8)) * 1em; // vertically centers the icon taking into account the surrounding text's descender
-}
 
-// only display content to screen readers
-// see: https://www.a11yproject.com/posts/2013-01-11-how-to-hide-content/
-// see: https://hugogiraudel.com/2016/10/13/css-hide-and-seek/
-@mixin si-sr-only() {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
 
-// use in conjunction with .sr-only to only display content when it's focused
-@mixin si-sr-only-focusable() {
-  &:not(:focus) {
-    @include si-sr-only();
-  }
-}
-
-// convenience mixins for declaring pseudo-elements by CSS variable,
-// including all style-specific font properties, and both the ::before
-// and ::after elements in the duotone case.
 

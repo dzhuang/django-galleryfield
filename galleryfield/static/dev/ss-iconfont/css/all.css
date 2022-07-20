@@ -21,16 +21,17 @@
   text-rendering: auto;
 }
 
-.si-1x {
-  font-size: 1em;
-}
-
 .si-flip-horizontal {
   transform: scale(-1, 1);
 }
 
 .si-flip-vertical {
   transform: scale(1, -1);
+}
+
+.si-flip-both,
+.si-flip-horizontal.si-flip-vertical {
+  transform: scale(-1, -1);
 }
 
 /* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
@@ -73,32 +74,6 @@ readers do not read off random characters that represent icons */
 
 .si-xmark::before {
   content: "\f00d";
-}
-
-.sr-only,
-.si-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-.sr-only-focusable:not(:focus),
-.si-sr-only-focusable:not(:focus) {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
 }
 
 :root, :host {
