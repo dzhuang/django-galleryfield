@@ -3933,10 +3933,10 @@
     "lodash" "^4.17.21"
     "p-limit" "^3.1.0"
 
-"subset-iconfont@^0.2.1":
-  "integrity" "sha512-TonzTUWiuNS1Krv422qsp7SPCLvBBFxj6i0dnyva7N+KxgMGQw5KH98qC1bdLAuCdak6e9jN1i+vT11TQOOq8g=="
-  "resolved" "https://registry.npmjs.org/subset-iconfont/-/subset-iconfont-0.2.1.tgz"
-  "version" "0.2.1"
+"subset-iconfont@^1.0.1":
+  "integrity" "sha512-l4kBwxlzotB4J7QoLlKsLN9wRpcFVnhK18wVFreuIclhTuUym8QDnvDUvf4ZAVu33ruN598Rh9FyF7IaeNN06g=="
+  "resolved" "https://registry.npmjs.org/subset-iconfont/-/subset-iconfont-1.0.1.tgz"
+  "version" "1.0.1"
   dependencies:
     "js-yaml" "^4.1.0"
     "mkdirp" "^1.0.4"
