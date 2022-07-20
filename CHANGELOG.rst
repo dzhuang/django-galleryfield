@@ -1,3 +1,8 @@
+v2.1.3 (2022-07-20)
+------------------------------------
+
+- Enhancement: Upgraded subset-iconfont dependency and optimized icon font css (`#38 <https://github.com/dzhuang/django-galleryfield/pull/38>`__).
+
 v2.1.2 (2022-07-18)
 ------------------------------------
 
