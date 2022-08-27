@@ -399,6 +399,7 @@
               movable: false,
               zoomable: false,
               restore: false,
+              // eslint-disable-next-line no-unused-vars
               ready: function (e) {
                 croppStartingData = $image.cropper.getData(true);
                 options.cropperRotateBtnSelector.prop("disabled", false);
@@ -406,6 +407,7 @@
               cropstart: function (e) {
                 that._trigger('modalinprogessstatus', e, true);
               },
+              // eslint-disable-next-line no-unused-vars
               crop: function (e) {
               },
               cropend: function (e) {

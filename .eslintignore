@@ -1,0 +1,6 @@
+node_modules
+dist
+output
+coverage
+.nyc_output
+galleryfield/static/js/galleryfield-ui.js
