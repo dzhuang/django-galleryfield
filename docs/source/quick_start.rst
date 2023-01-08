@@ -53,7 +53,7 @@ Configurations
         ...,
     )
 
-    DJANGO_GALLERY_CONFIG = ...
+    DJANGO_GALLERY_FIELD_CONFIG = ...
 
 - In ``urls.py``, add the following lines:
 
