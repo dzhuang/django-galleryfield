@@ -1,7 +1,7 @@
 django
 sorl-thumbnail
 pillow
-django-crispy-forms
+django-crispy-forms<2
 
 codecov
 factory_boy

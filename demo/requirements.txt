@@ -1,5 +1,5 @@
 django<=3.3
-django-crispy-forms
+django-crispy-forms<2
 sorl-thumbnail
 pillow
 
