@@ -31,7 +31,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "serve": "^14.1.2",
     "sortablejs": "^1.15.0",
-    "subset-iconfont": "^1.0.1"
+    "subset-iconfont": "^1.0.3"
   },
   "scripts": {
     "build": "rollup --config"
