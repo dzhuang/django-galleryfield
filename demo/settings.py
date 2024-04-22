@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'galleryfield',
     'sorl.thumbnail',
     'demo',
-    'demo_custom'
+    'demo_custom',
+    'demo_multiple_fields_1_model'
 ]
 
 MIDDLEWARE = [
