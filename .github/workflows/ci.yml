@@ -46,9 +46,11 @@ jobs:
         run: |
           pytest --cov-config=setup.cfg --cov-report=xml --cov=.
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
 
   pypi:
     name: PYPI check
