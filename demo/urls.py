@@ -16,6 +16,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
-urlpatterns += [path(r"custom/", include("demo_custom.urls"))]
+urlpatterns += [
+    path(r"custom/", include("demo_custom.urls")),
+    path(r"multifields/", include("demo_multiple_fields_1_model.urls")),
+]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
