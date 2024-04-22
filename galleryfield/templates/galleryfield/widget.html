@@ -293,9 +293,8 @@
 
       {% endif %}
 
-      $('.gallery-widget').each(function () {
-        const that = $(this),
-          $fileupload = that,
+      $(function () {
+        const $fileupload = $("#id-{{ name }}-gallery-widget"),
           fileInput = $('#{{ name }}-files'),
           uploadURL = fileInput.data('action'),
           sortableOptions = {
@@ -306,6 +305,7 @@
           singleFileUploads: true,
           url: uploadURL,
           type: 'POST',
+          hiddenFileInput: 'input#id_{{ name }}',
           messages: {
             maxFileSize: '{% trans "File is too big" %}',
             minFileSize: '{% trans "File is too small" %}',
@@ -354,7 +354,7 @@
 
         // disable change alert when submit form.
         if (typeof before_submit !== 'undefined') {
-          that.closest("form").on("submit", before_submit);
+          $fileupload.closest("form").on("submit", before_submit);
         }
       });
 

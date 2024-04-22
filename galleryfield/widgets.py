@@ -345,10 +345,7 @@ class GalleryWidget(forms.HiddenInput):
         _width, _height = self.thumbnail_size.split("x")
         ui_options.update(
             {"previewMaxWidth": int(_width),
-             "previewMaxHeight": int(_height),
-
-             # This is used as a CSS selector to fine the input field
-             "hiddenFileInput": f".{conf.FILES_FIELD_CLASS_NAME}",
+             "previewMaxHeight": int(_height)
              })
 
         # Compatibility with Bootstrap 4 and 5
