@@ -1,7 +1,7 @@
+from demo_multiple_fields_1_model.models import MyGallery
 from django import forms
 from django.contrib import admin
 
-from demo_multiple_fields_1_model.models import MyGallery
 from galleryfield.mixins import GalleryFormMediaMixin
 
 
