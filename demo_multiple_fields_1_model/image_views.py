@@ -15,7 +15,7 @@ class MyImage1CreateView(ImageCreateView):
 
 
 class MyImage1ListView(ImageListView):
-    target_model = "event.MyImage1"
+    target_model = "demo_multiple_fields_1_model.MyImage1"
     disable_server_side_crop = False
 
     def get_queryset(self):

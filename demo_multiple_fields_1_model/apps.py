@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-class DemoCustomConfig(AppConfig):
+class DemoMultipleConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'demo_multiple_fields_1_model'
 
